@@ -266,22 +266,6 @@ Contributor planning docs: [`docs/internal/`](docs/internal/).
 
 ---
 
-## Development
-
-```bash
-git clone git@github.com:mivaya/Stambha.git
-cd Stambha
-pnpm install
-pnpm build
-pnpm test
-```
-
-Branch naming: `feature/{short-description}`.
-
-Org security & GitHub setup: [`.github/ORG_SECURITY.md`](.github/ORG_SECURITY.md).
-
----
-
 ## Status
 
 **v0.2.2** — Migration DX: per-command `gateNames`, opt-in `global` gates, dynamic `resolvePrefix`, gates-before-commands loader order; `@stambha/cache`, `@stambha/metrics`, and `@stambha/vault-sql` publish from [Stambha-plugins](https://github.com/Mivaya/Stambha-plugins) only. See [CHANGELOG.md](CHANGELOG.md). API may still evolve before `1.0.0`.
