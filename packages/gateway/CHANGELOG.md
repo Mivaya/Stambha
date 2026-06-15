@@ -1,5 +1,13 @@
 # @stambha/gateway
 
+## Unreleased — 0.3.0
+
+### Minor Changes
+
+- **`createNativeGatewayClient`** — bundled Discord gateway WebSocket client (identify, resume, heartbeat, dispatch → `GatewayEventHub`).
+- **`fetchGatewayBot`**, **`normalizeDispatch`**, and related dispatch helpers.
+- Dependency: **`ws`** (used when global `WebSocket` is unavailable).
+
 ## 0.2.2
 
 ### Patch Changes

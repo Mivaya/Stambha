@@ -1,4 +1,11 @@
-import { attachStambhaClient, createGatewayEventHub } from "@stambha/gateway";
+import {
+  GatewayIntent,
+  type NativeGatewayClient,
+  attachStambhaClient,
+  combineIntents,
+  createGatewayEventHub,
+  createNativeGatewayClient,
+} from "@stambha/gateway";
 import { createNativeRestWorker } from "@stambha/rest";
 import type { StambhaMessage } from "@stambha/transform";
 import { setupBot } from "./lib/setup.js";
@@ -18,6 +25,7 @@ attachStambhaClient(hub, client);
 client.setBridge(hub);
 
 let restCloser: (() => Promise<void>) | null = null;
+let gateway: NativeGatewayClient | null = null;
 
 if (!demo && token && !process.env.REST_WORKER_URL) {
   const rest = await createNativeRestWorker({ token, port: Number(process.env.REST_PORT ?? 4000) });
@@ -27,14 +35,20 @@ if (!demo && token && !process.env.REST_WORKER_URL) {
   };
 }
 
-const botUserId = process.env.BOT_USER_ID ?? "demo-bot";
-hub.markReady({ user: { id: botUserId, username: "StambhaBot" } });
+if (demo) {
+  const botUserId = process.env.BOT_USER_ID ?? "demo-bot";
+  hub.markReady({ user: { id: botUserId, username: "StambhaBot" } });
+}
+
 await client.start();
 
-console.log("Stambha bot online (native gateway hub + REST).");
-console.log("Folder layout: commands, listeners, scouts, barriers, gates, conduits, epilogues, signals, tasks, schemas.");
+console.log("Stambha bot online (native gateway + REST).");
+console.log(
+  "Folder layout: commands, listeners, scouts, barriers, gates, conduits, epilogues, signals, tasks, schemas.",
+);
 
 if (demo) {
+  const botUserId = process.env.BOT_USER_ID ?? "demo-bot";
   console.log("\n--- demo events ---\n");
 
   hub.emit("messageCreate", {
@@ -62,11 +76,27 @@ if (demo) {
   } satisfies StambhaMessage);
 
   console.log("\n--- end demo ---\n");
-} else {
-  console.log("Connect your WebSocket shard worker and hub.emit(...) Discord events here.");
+} else if (token) {
+  const gatewayOptions = {
+    token,
+    hub,
+    intents: combineIntents(
+      GatewayIntent.Guilds,
+      GatewayIntent.GuildMessages,
+      GatewayIntent.MessageContent,
+      GatewayIntent.DirectMessages,
+    ),
+  };
+  if (process.env.TOTAL_SHARDS) {
+    Object.assign(gatewayOptions, { totalShards: Number(process.env.TOTAL_SHARDS) });
+  }
+  gateway = await createNativeGatewayClient(gatewayOptions);
+  await gateway.connect();
+  console.log(`Native WebSocket gateway connected (${gateway.shards.length} shard(s)).`);
 }
 
 process.on("SIGINT", async () => {
+  await gateway?.disconnect();
   await client.stop();
   if (restCloser) await restCloser();
   process.exit(0);

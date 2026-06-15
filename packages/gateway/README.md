@@ -20,12 +20,17 @@ Requires **Node.js 20+**.
 
 ```ts
 import { createStambhaBot } from "@stambha/core";
-import { attachStambhaClient, createGatewayEventHub } from "@stambha/gateway";
+import {
+  attachStambhaClient,
+  combineIntents,
+  createGatewayEventHub,
+  createNativeGatewayClient,
+  GatewayIntent,
+} from "@stambha/gateway";
 import { createNativeRestPort } from "@stambha/rest";
 
-const client = createStambhaBot({
-  restPort: createNativeRestPort(process.env.DISCORD_TOKEN!),
-});
+const token = process.env.DISCORD_TOKEN!;
+const client = createStambhaBot({ restPort: createNativeRestPort(token) });
 
 const hub = createGatewayEventHub();
 attachStambhaClient(hub, client, {
@@ -33,20 +38,21 @@ attachStambhaClient(hub, client, {
 });
 client.setBridge(hub);
 
-hub.markReady({ user: { id: "YOUR_BOT_USER_ID" } });
 await client.start();
 
-// Your WebSocket shard worker feeds normalized events:
-hub.emit("messageCreate", {
-  id: "…",
-  content: "!ping",
-  channelId: "…",
-  guildId: "…",
-  author: { id: "…", bot: false },
+const gateway = await createNativeGatewayClient({
+  token,
+  hub,
+  intents: combineIntents(
+    GatewayIntent.Guilds,
+    GatewayIntent.GuildMessages,
+    GatewayIntent.MessageContent,
+  ),
 });
+await gateway.connect();
 ```
 
-Use types from `@stambha/transform` (`StambhaMessage`, etc.) for payloads.
+For tests or custom workers, you can still call `hub.emit("messageCreate", …)` with `@stambha/transform` shapes.
 
 ---
 
@@ -75,6 +81,7 @@ See `examples/bot` (`pnpm split:gateway`) for a full tier-split relay.
 | Export | Purpose |
 |--------|---------|
 | `createGatewayEventHub`, `GatewayEventHub` | Event bus → Stambha client |
+| `createNativeGatewayClient` | Bundled WebSocket shard client (0.3.0) |
 | `attachStambhaClient` | Wire hub to `InboundRouter` |
 | `ShardManager`, `createShardManager` | Shard lifecycle |
 | `buildIdentifyPayload`, `buildResumePayload` | Gateway session payloads |
