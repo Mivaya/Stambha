@@ -18,6 +18,7 @@
     "split:bot": "tsx src/workers/bot.ts",
     "split:gateway": "tsx src/workers/gateway.ts",
     "split:demo": "tsx src/workers/in-memory.ts",
+    "deploy:dry-run": "tsx scripts/deploy-dry-run.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

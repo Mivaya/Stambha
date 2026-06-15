@@ -27,6 +27,14 @@ Minor release focused on **native gateway WebSocket** and migration completion (
 - **`attachCommandLifecycleEpilogues`** / **`createCommandLoggingEpilogue`** — replace bootstrap `client.on('command*')`.
 - Docs: [Epilogues](/features/epilogues), expanded [project structure](/guide/project-structure).
 
+### Added (N5 / N6)
+
+- **`shouldDeploySlashCommands`**, **`deployCommandsIfShardZero`**, **`formatDeployDiff`**, **`resolveShardIdFromEnv`** (`@stambha/rest`).
+- **`deployCommands`** — `existing` snapshot for offline `dryRun` + `diff`.
+- **`examples/bot`** — shard-0 deploy on gateway `ready`; tier-split bot worker deploys once; `pnpm deploy:dry-run`.
+- **CI** — slash deploy dry-run step on example bot.
+- Docs: [Slash deploy](/deployment/slash-deploy).
+
 ## [0.2.2] - 2026-06-11
 
 Patch release focused on **migration ergonomics** (gates, prefixes, loader order) and repo hygiene.

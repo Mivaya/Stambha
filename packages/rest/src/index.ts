@@ -17,5 +17,13 @@ export {
   type DeployCommandsOptions,
   type DeployCommandsResult,
 } from "./deployCommands.js";
+export {
+  shouldDeploySlashCommands,
+  resolveShardIdFromEnv,
+  formatDeployDiff,
+  deployCommandsIfShardZero,
+  type ShouldDeploySlashOptions,
+  type DeployCommandsIfShardZeroOptions,
+} from "./deploySlash.js";
 export type { RestTelemetry, RateLimitQueueListener } from "./telemetry.js";
 export { createRestTelemetryListener } from "./telemetry.js";

@@ -27,4 +27,22 @@ describe("deployCommands", () => {
     expect(result.global).toBe(true);
     expect(result.diff?.added).toContain("ping");
   });
+
+  it("dry-run diff uses existing snapshot when provided", async () => {
+    const registry = { register: (c: Command) => c } as Registry<Command>;
+    const ping = new PingCommand(registry);
+
+    const result = await deployCommands({
+      token: "test",
+      applicationId: "app-1",
+      commands: [ping],
+      dryRun: true,
+      diff: true,
+      existing: [{ name: "ping" }, { name: "legacy" }],
+    });
+
+    expect(result.diff?.added).toEqual([]);
+    expect(result.diff?.removed).toContain("legacy");
+    expect(result.diff?.updated).toContain("ping");
+  });
 });

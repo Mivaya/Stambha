@@ -9,6 +9,7 @@ import {
 import { createNativeRestWorker } from "@stambha/rest";
 import type { StambhaMessage } from "@stambha/transform";
 import { setupBot } from "./lib/setup.js";
+import { deployExampleSlashCommands } from "./lib/deploySlash.js";
 
 const demo = process.env.DEMO === "1";
 const token = process.env.DISCORD_TOKEN;
@@ -91,6 +92,9 @@ if (demo) {
     Object.assign(gatewayOptions, { totalShards: Number(process.env.TOTAL_SHARDS) });
   }
   gateway = await createNativeGatewayClient(gatewayOptions);
+  hub.once("ready", () => {
+    void deployExampleSlashCommands(client, { shardId: 0 });
+  });
   await gateway.connect();
   console.log(`Native WebSocket gateway connected (${gateway.shards.length} shard(s)).`);
 }
