@@ -1,10 +1,3 @@
-import {
-  basename,
-  cwd,
-  extname,
-  pathToFileURL,
-  resolve,
-} from "@stambha/runtime";
 import { PiecePaths, type StambhaClient } from "@stambha/core";
 import type { Command } from "@stambha/core";
 import type { Hook } from "@stambha/core";
@@ -15,8 +8,10 @@ import type { Epilogue } from "@stambha/core";
 import type { Conduit } from "@stambha/core";
 import type { Signal } from "@stambha/core";
 import type { Chron } from "@stambha/core";
+import { basename, cwd, extname, pathToFileURL, resolve } from "@stambha/runtime";
+import { applyLoaderBindings, buildLoaderContext } from "./factory.js";
 import { scanFiles } from "./scan.js";
-import type { LoadPiecesOptions, LoadPiecesResult, PieceKind, LoaderContext } from "./types.js";
+import type { LoadPiecesOptions, LoadPiecesResult, LoaderContext, PieceKind } from "./types.js";
 
 const DEFAULT_PATHS: Record<PieceKind, string> = {
   commands: PiecePaths.commands,
@@ -30,6 +25,19 @@ const DEFAULT_PATHS: Record<PieceKind, string> = {
   tasks: PiecePaths.tasks,
 };
 
+/** Load gates before commands so {@link CommandOptions.gateNames} can resolve at construct time. */
+const LOAD_ORDER: PieceKind[] = [
+  "gates",
+  "barriers",
+  "conduits",
+  "epilogues",
+  "scouts",
+  "signals",
+  "tasks",
+  "listeners",
+  "commands",
+];
+
 /**
  * Load pieces from disk using Sapphire/Klasa folder conventions.
  */
@@ -38,7 +46,11 @@ export async function loadPieces(
   options: LoadPiecesOptions = {},
 ): Promise<LoadPiecesResult> {
   const basePath = options.basePath ?? cwd();
-  const ctx: LoaderContext = { client, ...options.context };
+  applyLoaderBindings(client.binder, options.bindings);
+  const ctx: LoaderContext = buildLoaderContext(
+    client,
+    options.context as LoaderContext | undefined,
+  );
 
   const result: LoadPiecesResult = {
     loaded: {
@@ -55,9 +67,7 @@ export async function loadPieces(
     errors: [],
   };
 
-  const kinds = Object.keys(DEFAULT_PATHS) as PieceKind[];
-
-  for (const kind of kinds) {
+  for (const kind of LOAD_ORDER) {
     const custom = options.paths?.[kind];
     if (custom === false) continue;
 
@@ -79,14 +89,20 @@ export async function loadPieces(
     }
   }
 
+  client.resolveCommandGates();
   client.rebuildCommandIndex();
   await client.pluginLifecycle?.runHook("postLoad");
   return result;
 }
 
-function resolveExport(mod: Record<string, unknown>, file: string): (new (...a: never[]) => unknown) | null {
+function resolveExport(
+  mod: Record<string, unknown>,
+  file: string,
+): (new (...a: never[]) => unknown) | null {
   if (typeof mod.default === "function") {
-    return mod.default as new (...a: never[]) => unknown;
+    return mod.default as new (
+      ...a: never[]
+    ) => unknown;
   }
   const base = basename(file, extname(file));
   const named = mod[base];

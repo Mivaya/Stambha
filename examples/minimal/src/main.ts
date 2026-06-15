@@ -1,4 +1,4 @@
-import { createStambhaBot, MockBridge, type CommandContext } from "@stambha/core";
+import { createStambhaBot, MockBridge, attachCommandLifecycleEpilogues, type CommandContext } from "@stambha/core";
 import { PingCommand } from "./commands/PingCommand.js";
 
 const bridge = new MockBridge();
@@ -6,12 +6,14 @@ const client = createStambhaBot({ bridge, prefix: "!" });
 
 client.register(new PingCommand(client.registries.commands));
 
-client.on("ready", () => {
-  console.log("Stambha bot ready (mock bridge).");
+attachCommandLifecycleEpilogues(client, {
+  onSuccess: ({ commandName, durationMs }) => {
+    console.log(`[${commandName}] OK (${durationMs.toFixed(1)}ms)`);
+  },
 });
 
-client.on("commandSuccess", ({ command, durationMs }) => {
-  console.log(`[${command}] OK (${durationMs.toFixed(1)}ms)`);
+client.on("ready", () => {
+  console.log("Stambha bot ready (mock bridge).");
 });
 
 await client.start();

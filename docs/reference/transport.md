@@ -1,6 +1,6 @@
 # Transport foundation
 
-Phase 15 introduces Stambha-owned Discord transport primitives — independent of discord.js and Discordeno. Bridges remain supported; native transport is the long-term default for new bots.
+Stambha-owned Discord transport primitives live in `@stambha/transport` and `@stambha/rest` — no third-party Discord library required. New bots should use the native stack (`@stambha/rest`, `@stambha/gateway`, `@stambha/transform`).
 
 ---
 
@@ -9,7 +9,7 @@ Phase 15 introduces Stambha-owned Discord transport primitives — independent o
 | Package | Role |
 |---------|------|
 | `@stambha/transport` | Session info, route normalization, rate-limit bucket model |
-| `@stambha/rest` | Native REST client + centralized queue (Discordeno-inspired) |
+| `@stambha/rest` | Native REST client + centralized queue |
 
 Core still defines {@link RestPort} and tier-split HTTP worker protocol in `@stambha/core`. Native REST implements the same `RestPort` surface.
 

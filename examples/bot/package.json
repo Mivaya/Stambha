@@ -1,6 +1,6 @@
 {
   "name": "@stambha/example-bot",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "private": true,
   "description": "Full Stambha bot — Sapphire-style folders, native gateway + REST",
   "author": "Mivaya",
@@ -18,6 +18,7 @@
     "split:bot": "tsx src/workers/bot.ts",
     "split:gateway": "tsx src/workers/gateway.ts",
     "split:demo": "tsx src/workers/in-memory.ts",
+    "deploy:dry-run": "tsx scripts/deploy-dry-run.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

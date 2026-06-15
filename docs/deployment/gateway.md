@@ -1,6 +1,54 @@
 # Gateway manager & worker protocol
 
-Phase 18 adds `@stambha/gateway` (shard state, identify/resume payloads, gateway↔bot messaging) and `@stambha/cache` (pluggable in-memory cache). Native WebSocket gateway and Redis cache are planned for later phases.
+`@stambha/gateway` covers shard state, identify/resume payloads, **bundled native WebSocket shards**, and gateway↔bot messaging.
+
+## Native WebSocket client (0.3.0)
+
+Connect Discord gateway shards directly into a `GatewayEventHub` — no discord.js or manual `hub.emit` wiring:
+
+```ts
+import {
+  attachStambhaClient,
+  combineIntents,
+  createGatewayEventHub,
+  createNativeGatewayClient,
+  GatewayIntent,
+} from "@stambha/gateway";
+import { createStambhaBot } from "@stambha/core";
+import { createNativeRestPort } from "@stambha/rest";
+
+const client = createStambhaBot({
+  prefix: "!",
+  restPort: createNativeRestPort(process.env.DISCORD_TOKEN!),
+});
+
+const hub = createGatewayEventHub();
+attachStambhaClient(hub, client);
+client.setBridge(hub);
+
+await client.start();
+
+const gateway = await createNativeGatewayClient({
+  token: process.env.DISCORD_TOKEN!,
+  hub,
+  intents: combineIntents(
+    GatewayIntent.Guilds,
+    GatewayIntent.GuildMessages,
+    GatewayIntent.MessageContent,
+  ),
+});
+
+await gateway.connect();
+```
+
+`createNativeGatewayClient`:
+
+- Fetches `GET /gateway/bot` for recommended shard count and gateway URL (override with `totalShards` / `gatewayUrl`)
+- Sends identify / resume with heartbeat handling
+- Normalizes `MESSAGE_CREATE`, `INTERACTION_CREATE`, and `READY` into Stambha hub shapes
+- Emits other dispatches as camelCase hub events (`guildCreate`, `messageDelete`, …)
+
+Requires Node 22+ global `WebSocket` or the bundled `ws` dependency (installed with `@stambha/gateway`).
 
 ## Shard manager
 
@@ -59,7 +107,7 @@ const bus = createHttpWorkerClient({ baseUrl: "http://127.0.0.1:5000", secret: p
 const hub = createGatewayEventHub();
 attachGatewayRelay(hub, { bus, shardId: 0 });
 
-// Your WebSocket shard worker:
+// Your WebSocket shard worker (tier split) — or use createNativeGatewayClient in-process:
 // hub.emit("messageCreate", { id, content, channelId, guildId, author: { id, bot } });
 await hub.connect();
 ```
@@ -105,13 +153,13 @@ Redis and gateway-backed cache adapters are planned; the `Cache` interface is st
 | Process | Packages | Role |
 |---------|----------|------|
 | REST worker | `@stambha/rest` | Centralized rate limits |
-| Gateway worker | Bridge + `@stambha/gateway` | WebSocket only, relay events |
-| Bot worker | `@stambha/core` + bridge context helpers | Commands, vault, sequences |
+| Gateway worker | `@stambha/gateway` | WebSocket shards, relay events |
+| Bot worker | `@stambha/core` + `@stambha/transform` | Commands, vault, sequences |
 
 See [Tier split](/deployment/tier-split) and `examples/bot` for the three-process layout.
 
 ## Related
 
-- [TRANSPORT.md](./TRANSPORT.md) — session info and REST routes
-- [ROADMAP.md](./ROADMAP.md) — Phase 20 cross-runtime, native WebSocket gateway
-- [RESHARDING.md](./RESHARDING.md) — threshold resharding, identify budget, operator API
+- [Transport](/reference/transport) — session info and REST routes
+- [Cross-runtime](/deployment/cross-runtime) — Node, Bun, Deno support
+- [Resharding](/deployment/resharding) — threshold resharding, identify budget, operator API

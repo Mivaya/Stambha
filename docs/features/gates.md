@@ -1,6 +1,6 @@
 # Built-in gates (`@stambha/gates`)
 
-Phase 11 — Sapphire-style **preconditions** as Stambha **gates**. Use on individual commands or register globally.
+**Gates** are per-command checks — inline on commands, via `gateNames`, or `global: true` on gate pieces.
 
 ## Installation
 
@@ -48,16 +48,16 @@ export class BanCommand extends Command {
 
 ## Available gates
 
-| Gate | Sapphire equivalent | Description |
-|------|---------------------|-------------|
-| `cooldownGate()` | Cooldown | Rate limit by user / guild / global |
-| `permissionsGate()` | UserPermissions + ClientPermissions | Bitfield checks on `meta` |
-| `userPermissionsGate()` | UserPermissions | Shorthand member check |
-| `clientPermissionsGate()` | ClientPermissions | Shorthand bot check |
-| `nsfwGate()` | NSFW | Requires NSFW channel |
-| `runInGate()` | RunIn | Channel type allow-list |
-| `guildOnlyGate()` | RunIn guild | No DMs |
-| `dmOnlyGate()` | RunIn DM | DMs only |
+| Gate | Description |
+|------|-------------|
+| `cooldownGate()` | Rate limit by user / guild / global |
+| `permissionsGate()` | Bitfield checks on `meta` (member + bot) |
+| `userPermissionsGate()` | Shorthand member check |
+| `clientPermissionsGate()` | Shorthand bot check |
+| `nsfwGate()` | Requires NSFW channel |
+| `runInGate()` | Channel type allow-list |
+| `guildOnlyGate()` | No DMs |
+| `dmOnlyGate()` | DMs only |
 
 Compose with core helpers: `gateAnd()`, `gateOr()`, `defineGate()`.
 
@@ -96,11 +96,29 @@ cooldownGate({ limit: 1, delay: 5000, store: myRedisCooldownStore });
 | `memberPermissions` | `userPermissionsGate` |
 | `clientPermissions` | `clientPermissionsGate` |
 
-When metadata is missing, gates allow the command (graceful degradation). Populate `meta` when building contexts — `@stambha/transform` provides `metaFromDiscordJsMessage` / `metaFromDiscordenoMessage` if your gateway worker still uses those library types.
+When metadata is missing, gates allow the command (graceful degradation). Populate `meta` when building contexts — `@stambha/transform` provides bridge helpers such as `metaFromDiscordJsMessage` and `metaFromDiscordenoMessage` when your gateway worker uses those library types.
+
+## Registry gates (`gateNames`)
+
+Gate **pieces** in `src/gates/` register on `client.registries.gates`. They do **not** run on every command automatically — list them on each command via `gateNames`:
+
+```ts
+export class BanCommand extends Command {
+  constructor(registry: Registry<Command>) {
+    super(registry, {
+      name: "ban",
+      gateNames: ["mod-only", "global-slowdown"],
+      gates: [userPermissionsGate(Permission.BanMembers)],
+    });
+  }
+}
+```
+
+Load order: `@stambha/loader` loads `gates/` before `commands/` and validates `gateNames` after `loadPieces()`.
 
 ## Global gates
 
-Register on the client registry (runs before command-level gates):
+Set `global: true` on a gate piece to run it on **every** command (before `gateNames` and inline gates):
 
 ```ts
 import { Gate } from "@stambha/core";
@@ -108,7 +126,7 @@ import { cooldownGate } from "@stambha/gates";
 
 class GlobalSlowdown extends Gate {
   constructor(registry: Registry<Gate>) {
-    super(registry, { name: "global-slowdown", priority: 10 });
+    super(registry, { name: "global-slowdown", priority: 10, global: true });
   }
 
   check(ctx: CommandContext) {
@@ -119,7 +137,7 @@ class GlobalSlowdown extends Gate {
 client.registries.gates.register(new GlobalSlowdown(client.registries.gates));
 ```
 
-Or use inline gates on each command (recommended for permissions).
+Inline `gates: [...]` on each command remains the simplest option for one-off permission checks.
 
 ## Denial UX
 
@@ -132,4 +150,4 @@ Listens to `commandDenied` and sends the gate's reason. Prefix commands use `rep
 ## See also
 
 - [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) — `gates/` folder
-- [ROADMAP.md](./ROADMAP.md) — Phase 12 (Arguments)
+- [Arguments](/features/args) — prefix and slash option parsing

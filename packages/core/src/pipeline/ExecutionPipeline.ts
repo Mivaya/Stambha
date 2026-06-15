@@ -1,8 +1,8 @@
-import { isOk, type Outcome, StambhaError } from "../outcome/Outcome.js";
-import type { CommandContext, EpilogueContext, ScoutContext } from "../context/types.js";
 import type { StambhaClient } from "../client/StambhaClient.js";
+import type { CommandContext, EpilogueContext, ScoutContext } from "../context/types.js";
+import { commandGatesForRun } from "../gates/resolveCommandGates.js";
+import { type Outcome, StambhaError, isOk } from "../outcome/Outcome.js";
 import type { Command } from "../registries/Command.js";
-import type { GateLike } from "../registries/Gate.js";
 
 export interface PipelineRunOptions {
   /** Skip barriers marked skipOnHelp (e.g. rate limits while listing commands). */
@@ -54,6 +54,7 @@ export class ExecutionPipeline {
 
     const blocked = await this.runBarriers(ctx, options);
     if (blocked) {
+      const durationMs = performance.now() - start;
       const payload: {
         ctx: CommandContext;
         reason?: string;
@@ -62,6 +63,14 @@ export class ExecutionPipeline {
       if (blocked.reason !== undefined) payload.reason = blocked.reason;
       if (blocked.silent !== undefined) payload.silent = blocked.silent;
       this.client.emit("commandBlocked", payload);
+      await this.runEpilogues({
+        commandName: command.name,
+        ctx,
+        phase: "blocked",
+        outcome: null,
+        durationMs,
+        blocked,
+      });
       return {
         ok: false,
         error: new StambhaError(blocked.reason ?? "Blocked.", "BARRIER"),
@@ -70,7 +79,16 @@ export class ExecutionPipeline {
 
     const denied = await this.runGates(command, ctx);
     if (denied) {
+      const durationMs = performance.now() - start;
       this.client.emit("commandDenied", { ctx, error: denied });
+      await this.runEpilogues({
+        commandName: command.name,
+        ctx,
+        phase: "denied",
+        outcome: null,
+        durationMs,
+        denied,
+      });
       return { ok: false, error: denied };
     }
 
@@ -88,6 +106,7 @@ export class ExecutionPipeline {
     await this.runEpilogues({
       commandName: command.name,
       ctx,
+      phase: "completed",
       outcome,
       durationMs,
     });
@@ -135,10 +154,7 @@ export class ExecutionPipeline {
     command: Command,
     ctx: CommandContext,
   ): Promise<{ message: string; silent: boolean; gate: string } | null> {
-    const globalGates = this.client.registries.gates.sortedByPriority((g) => g.priority);
-    const allGates: GateLike[] = [...globalGates, ...command.gates];
-
-    for (const gate of allGates) {
+    for (const gate of commandGatesForRun(this.client, command)) {
       const result = await gate.check(ctx);
       if (!result.allow) {
         return {
@@ -153,10 +169,10 @@ export class ExecutionPipeline {
 
   private async runEpilogues(epilogueCtx: EpilogueContext): Promise<void> {
     const epilogues = this.client.registries.epilogues.sortedByPriority((e) => e.priority);
-    const success = isOk(epilogueCtx.outcome);
+    const success = epilogueCtx.outcome !== null && isOk(epilogueCtx.outcome);
 
     for (const epilogue of epilogues) {
-      if (!epilogue.matches(success)) continue;
+      if (!epilogue.matches(epilogueCtx.phase, success)) continue;
       try {
         await epilogue.run(epilogueCtx);
       } catch (error) {

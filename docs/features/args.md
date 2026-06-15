@@ -1,6 +1,6 @@
 # Arguments (`@stambha/args`)
 
-Phase 12 — Sapphire-style **Args** for prefix commands and typed **slash option** accessors.
+**Args** for prefix commands and typed **slash option** accessors.
 
 ## Installation
 
@@ -84,7 +84,7 @@ async execute(ctx: CommandContext) {
 }
 ```
 
-Bridges normalize discord.js / Discordeno interaction options into `SlashOption[]` on the context.
+Bridge helpers normalize third-party interaction options into `SlashOption[]` on the context.
 
 ## Unified helper
 
@@ -108,4 +108,4 @@ See `examples/bot/src/commands/General/EchoCommand.ts`.
 ## See also
 
 - [GATES.md](./GATES.md) — pre-execution checks
-- [ROADMAP.md](./ROADMAP.md) — Phase 13 command tree
+- [Command tree & deploy](/features/command-tree) — slash groups, deploy, autocomplete

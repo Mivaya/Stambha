@@ -1,6 +1,6 @@
 # Pieces & pipeline
 
-Stambha organizes bot logic into **pieces** — classes registered in registries and executed through a shared pipeline. If you know Sapphire, this maps closely to commands, listeners, and preconditions.
+Stambha organizes bot logic into **pieces** — classes registered in registries and executed through a shared pipeline.
 
 ## Execution order
 
@@ -8,17 +8,17 @@ Stambha organizes bot logic into **pieces** — classes registered in registries
 Gateway event → InboundRouter → Conduits → Barriers → Gates → Command → Epilogues
 ```
 
-| Piece | Folder | Sapphire equivalent | Purpose |
-|-------|--------|---------------------|---------|
-| **Command** | `src/commands/` | Command | Slash, prefix, context menu |
-| **Hook** | `src/listeners/` | Listener | React to gateway events |
-| **Scout** | `src/scouts/` | — | Passive message watchers |
-| **Barrier** | `src/barriers/` | — | Global command blockers |
-| **Gate** | `src/gates/` | Precondition | Per-command checks |
-| **Conduit** | `src/conduits/` | — | Middleware before gates |
-| **Epilogue** | `src/epilogues/` | — | Post-command hooks |
-| **Signal** | `src/signals/` | Interaction handler | Buttons, selects, modals |
-| **Chron** | `src/tasks/` | — | Scheduled cron jobs |
+| Piece | Folder | Purpose |
+|-------|--------|---------|
+| **Command** | `src/commands/` | Slash, prefix, context menu |
+| **Hook** | `src/listeners/` | React to gateway events |
+| **Scout** | `src/scouts/` | Passive message watchers |
+| **Barrier** | `src/barriers/` | Global command blockers |
+| **Gate** | `src/gates/` | Per-command checks |
+| **Conduit** | `src/conduits/` | Middleware before gates |
+| **Epilogue** | `src/epilogues/` | Post-command hooks |
+| **Signal** | `src/signals/` | Buttons, selects, modals |
+| **Chron** | `src/tasks/` | Scheduled cron jobs |
 
 ## Auto-loading
 

@@ -1,6 +1,6 @@
 {
   "name": "@stambha/gateway",
-  "version": "0.1.0",
+  "version": "0.3.3",
   "description": "Gateway shard manager, resharding, worker bus, GatewayEventHub, and native Stambha routing",
   "author": "Mivaya",
   "license": "MIT",
@@ -13,17 +13,28 @@
   "bugs": {
     "url": "https://github.com/mivaya/Stambha/issues"
   },
-  "keywords": ["discord", "discord-bot", "stambha", "gateway", "sharding"],
+  "keywords": [
+    "discord",
+    "discord-bot",
+    "stambha",
+    "gateway",
+    "sharding"
+  ],
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
@@ -35,18 +46,24 @@
     "@stambha/transform": "workspace:*"
   },
   "dependencies": {
-    "@stambha/transform": "workspace:*"
+    "@stambha/transform": "workspace:*",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@stambha/core": "workspace:*",
     "@stambha/transform": "workspace:*",
     "@stambha/transport": "workspace:*",
     "@types/node": "^22.13.4",
+    "@types/ws": "^8.18.1",
     "tsup": "^8.3.6",
     "typescript": "^5.7.3",
-    "vitest": "^3.0.5"
+    "vitest": "^3.2.6"
   },
   "engines": {
     "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }

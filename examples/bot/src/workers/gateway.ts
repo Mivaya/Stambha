@@ -1,4 +1,17 @@
-import { attachGatewayRelay, createGatewayEventHub, createHttpWorkerClient } from "@stambha/gateway";
+import {
+  GatewayIntent,
+  attachGatewayRelay,
+  combineIntents,
+  createGatewayEventHub,
+  createHttpWorkerClient,
+  createNativeGatewayClient,
+} from "@stambha/gateway";
+
+const token = process.env.DISCORD_TOKEN;
+if (!token) {
+  console.error("[gateway worker] DISCORD_TOKEN is required.");
+  process.exit(1);
+}
 
 const botWorkerUrl = process.env.BOT_WORKER_URL ?? "http://127.0.0.1:5000";
 
@@ -10,13 +23,27 @@ const bus = createHttpWorkerClient({
 const hub = createGatewayEventHub();
 attachGatewayRelay(hub, { bus });
 
-hub.markReady({ user: { id: process.env.BOT_USER_ID ?? "0" } });
-await hub.connect();
+const gatewayOptions = {
+  token,
+  hub,
+  intents: combineIntents(
+    GatewayIntent.Guilds,
+    GatewayIntent.GuildMessages,
+    GatewayIntent.MessageContent,
+    GatewayIntent.DirectMessages,
+  ),
+};
+if (process.env.TOTAL_SHARDS) {
+  Object.assign(gatewayOptions, { totalShards: Number(process.env.TOTAL_SHARDS) });
+}
 
-console.log(`Gateway relay online → ${botWorkerUrl}`);
-console.log("Feed shard events: hub.emit('messageCreate', { ... })");
+const gateway = await createNativeGatewayClient(gatewayOptions);
+
+await gateway.connect();
+
+console.log(`Gateway worker online → ${botWorkerUrl} (${gateway.shards.length} shard(s))`);
 
 process.on("SIGINT", async () => {
-  await hub.disconnect();
+  await gateway.disconnect();
   process.exit(0);
 });

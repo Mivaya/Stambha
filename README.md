@@ -5,9 +5,11 @@
 [![GitHub](https://img.shields.io/github/license/mivaya/Stambha)](https://github.com/mivaya/Stambha/blob/main/LICENSE)
 [![Node](https://img.shields.io/node/v/@stambha/core?color=339933&logo=node.js)](https://nodejs.org)
 
-Stambha is a **transport-agnostic** bot framework with a first-class **native stack** — your command pipeline, vault, and workers do not depend on discord.js or Discordeno. Folder layout follows [Sapphire](https://sapphirejs.dev/) conventions so teams migrating off Sapphire keep familiar `commands/`, `listeners/`, and `preconditions/` → `gates/` paths.
+Stambha is a **transport-agnostic** bot framework with a first-class **native stack** — your command pipeline, vault, and workers do not depend on a third-party Discord library. Bots use a conventional piece layout: `commands/`, `listeners/`, `gates/`, and related folders under `src/`.
 
-Connect via `@stambha/rest`, `@stambha/gateway`, and `@stambha/transform`. See [docs/migration/](docs/migration/) and `examples/bot`.
+Connect via `@stambha/rest`, `@stambha/gateway`, and `@stambha/transform`. See [docs/migration/](docs/migration/) if you are moving from another framework, and `examples/bot` for a full native bot.
+
+**Extensions** (`@stambha/cache`, `@stambha/vault-sql`, `@stambha/metrics`, future dashboard/i18n) live in the separate [**Stambha-plugins**](https://github.com/Mivaya/Stambha-plugins) repo with independent versioning.
 
 ---
 
@@ -15,13 +17,13 @@ Connect via `@stambha/rest`, `@stambha/gateway`, and `@stambha/transform`. See [
 
 ### Command pipeline
 
-Piece-based architecture inspired by Sapphire — commands, hooks, middleware, and post-run epilogues in a predictable pipeline.
+Piece-based architecture — commands, hooks, middleware, and post-run epilogues in a predictable pipeline.
 
 - **Commands** — slash, prefix, and context menu in one `Command` class
 - **Hooks** — gateway event listeners (`src/listeners/`)
 - **Scouts** — passive message watchers (`src/scouts/`)
 - **Barriers** — global command blockers (`src/barriers/`)
-- **Gates** — per-command checks, Sapphire precondition equivalent (`src/gates/`)
+- **Gates** — per-command checks (`src/gates/`)
 - **Conduits** — middleware before gates (`src/conduits/`)
 - **Epilogues** — post-command hooks (`src/epilogues/`)
 - **Signals** — buttons, selects, modals via `stambha:` custom ids
@@ -31,15 +33,15 @@ Auto-load pieces from disk with `@stambha/loader`.
 
 ### Arguments (`@stambha/args`)
 
-Typed prefix lexer and slash option parsing — Sapphire `ArgumentStore` equivalent without coupling to discord.js.
+Typed prefix lexer and slash option parsing without coupling to a Discord client library.
 
 ### Gates (`@stambha/gates`)
 
-Built-in preconditions: cooldown, permissions, NSFW, RunIn, guild/DM-only. Attach to commands or register globally.
+Built-in gates: cooldown, permissions, NSFW, RunIn, guild/DM-only. Attach inline, reference by `gateNames`, or mark gate pieces `global: true`.
 
 ### Vault (`@stambha/vault`)
 
-Schema-first guild, user, and channel settings — Blueprint + Ledger with optional SQLite/PostgreSQL drivers.
+Typed guild, user, and member **config** (prefix, flags, modules) — Blueprint + Ledger. Use alongside Prisma/SQL for domain data; Vault is not a full ORM. See [docs/features/vault.md](docs/features/vault.md).
 
 ### Sequences
 
@@ -47,7 +49,7 @@ Multi-step flows with `sequence()` and `stambha:seq:` custom ids — wizards and
 
 ### Native REST (`@stambha/rest`)
 
-Discordeno-inspired centralized REST queue, rate-limit buckets, and split-tier REST worker. No discord.js in the REST process.
+Centralized REST queue, rate-limit buckets, and split-tier REST worker. No Discord client library in the REST process.
 
 ### Gateway & sharding (`@stambha/gateway`)
 
@@ -59,7 +61,7 @@ Run gateway, REST, and bot logic in separate processes — see [docs/deployment/
 
 ### Desired properties (`@stambha/transform`)
 
-Slim command contexts and REST payloads — Discordeno-style memory control for large bots.
+Slim command contexts and REST payloads — memory-conscious field masks for large bots.
 
 ### Metrics (`@stambha/metrics`)
 
@@ -71,18 +73,18 @@ Shared abstractions for Node.js, Bun, and Deno (env, fs, paths, timers).
 
 ---
 
-## How Stambha compares
+## What Stambha provides
 
-| | [Sapphire](https://sapphirejs.dev/) | [Discordeno](https://discordeno.deno.dev/) | **Stambha** |
-|---|:---:|:---:|:---:|
-| Discord coupling | discord.js required | Low-level API | **Native transport** — no library bridge layer |
-| Piece / command model | Built-in | Bring your own | **Sapphire-style folders** |
-| Preconditions | `@sapphire/*` plugins | DIY | **`@stambha/gates`** |
-| Settings | Plugins / manual | DIY | **Vault** |
-| Gateway + REST split | Manual | Native | **`RestPort` + tier split** |
-| Sharding / resharding | Manual | Built-in | **`@stambha/gateway`** |
-| Multi-step UI | Plugins | DIY | **Sequences** |
-| Observability | Community | DIY | **`@stambha/metrics`** |
+| Capability | Stambha |
+|---|:---:|
+| Discord coupling | **Native transport** — no library bridge layer |
+| Piece / command model | **Built-in folders & registries** |
+| Per-command checks | **`@stambha/gates`** |
+| Settings | **Vault** (+ your ORM for domain) |
+| Gateway + REST split | **`RestPort` + tier split** |
+| Sharding / resharding | **`@stambha/gateway`** |
+| Multi-step UI | **Sequences** |
+| Observability | **`@stambha/metrics`** |
 
 ---
 
@@ -193,13 +195,13 @@ pnpm gateway # gateway relay (native hub)
 
 ---
 
-## Project layout (Sapphire-aligned)
+## Project layout
 
 ```text
 src/
   commands/       # slash, prefix, context menu
-  listeners/      # Hook pieces (Sapphire listeners)
-  gates/          # Gate pieces (Sapphire preconditions)
+  listeners/      # Hook pieces
+  gates/          # Gate pieces
   scouts/         # passive watchers
   barriers/       # global blockers
   epilogues/      # post-command hooks
@@ -216,19 +218,23 @@ Full mapping: [docs/guide/project-structure.md](docs/guide/project-structure.md)
 
 ## Packages
 
+Published under the [**@stambha** npm org](https://www.npmjs.com/org/stambha). Each package has its own README with install steps and examples.
+
 | Package | Description |
 |---------|-------------|
 | [`@stambha/core`](packages/core) | Client, pipeline, registries, sequences, chron |
 | [`@stambha/rest`](packages/rest) | **Native REST** client + worker |
 | [`@stambha/gateway`](packages/gateway) | **Native gateway** hub, sharding, worker bus |
 | [`@stambha/transform`](packages/transform) | Payload normalization + REST contexts |
-| [`@stambha/loader`](packages/loader) | Auto-load Sapphire-style folders |
-| [`@stambha/gates`](packages/gates) | Built-in gates (Sapphire preconditions) |
+| [`@stambha/transport`](packages/transport) | API constants, session, rate-limit routes |
+| [`@stambha/loader`](packages/loader) | Auto-load piece folders |
+| [`@stambha/gates`](packages/gates) | Built-in gates |
 | [`@stambha/args`](packages/args) | Argument parsing |
+| [`@stambha/plugins`](packages/plugins) | Plugin lifecycle and DI container |
 | [`@stambha/vault`](packages/vault) | Settings persistence |
-| [`@stambha/metrics`](packages/metrics) | Prometheus metrics |
-| [`@stambha/cache`](packages/cache) | Pluggable cache |
 | [`@stambha/runtime`](packages/runtime) | Node / Bun / Deno helpers |
+
+**Extensions** ([Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)): `@stambha/cache`, `@stambha/metrics`, `@stambha/vault-sql`, future `@stambha/dashboard`.
 
 ---
 
@@ -236,7 +242,7 @@ Full mapping: [docs/guide/project-structure.md](docs/guide/project-structure.md)
 
 | Example | Stack |
 |---------|--------|
-| [`examples/bot`](examples/bot) | Full Sapphire-style layout — commands, gates, vault, signals, … |
+| [`examples/bot`](examples/bot) | Full piece-based layout — commands, gates, vault, signals, … |
 | [`examples/minimal`](examples/minimal) | MockBridge + unit-style invoke |
 
 See [`examples/README.md`](examples/README.md) for run instructions.
@@ -254,28 +260,12 @@ Deploy to GitHub Pages: see [Hosting the docs](docs/guide/hosting-the-docs.md).
 | [Getting started](docs/guide/getting-started.md) | Install and first bot |
 | [Features](docs/features/gates.md) | Gates, vault, sequences, … |
 | [Deployment](docs/deployment/overview.md) | Tier split, gateway, metrics |
-| [Migration](docs/migration/) | From Sapphire or Discordeno |
+| [Migration](docs/migration/) | Guides for moving from other bot stacks |
 
 Contributor planning docs: [`docs/internal/`](docs/internal/).
 
 ---
 
-## Development
-
-```bash
-git clone git@github.com:mivaya/Stambha.git
-cd Stambha
-pnpm install
-pnpm build
-pnpm test
-```
-
-Branch naming: `feature/{short-description}`.
-
-Org security & GitHub setup: [`.github/ORG_SECURITY.md`](.github/ORG_SECURITY.md).
-
----
-
 ## Status
 
-**v0.1.0** — first public release of the native stack. See [CHANGELOG.md](CHANGELOG.md). API may still evolve before `1.0.0`.
+**v0.3.3** — Native gateway WebSocket, loader DI, epilogues, slash deploy helpers, and docs cleanup. Extensions publish from [Stambha-plugins](https://github.com/Mivaya/Stambha-plugins) only. See [CHANGELOG.md](CHANGELOG.md). API may still evolve before `1.0.0`.
