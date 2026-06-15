@@ -32,7 +32,7 @@ pnpm docs:build
 
 1. Add `.github/workflows/docs.yml` (see below).
 2. In GitHub repo **Settings → Pages**, set source to **GitHub Actions**.
-3. Push to `main` — the site publishes to `https://mivaya.github.io/Stambha/`.
+3. Create a **published** GitHub Release for the tag — the site publishes to `https://mivaya.github.io/Stambha/` (same trigger as npm publish).
 
 For a custom domain (e.g. `stambha.dev`), add a `CNAME` file in `docs/public/` and configure DNS.
 
@@ -41,9 +41,9 @@ For a custom domain (e.g. `stambha.dev`), add a `CNAME` file in `docs/public/` a
 ```yaml
 name: Docs
 on:
-  push:
-    branches: [main]
-    paths: ['docs/**']
+  release:
+    types: [published]
+  workflow_dispatch:
 permissions:
   contents: read
   pages: write
