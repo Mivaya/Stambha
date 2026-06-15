@@ -1,11 +1,11 @@
 # @stambha/rest
 
-## Unreleased — 0.3.0
+## 0.3.3
 
 ### Added
 
-- **`shouldDeploySlashCommands`**, **`deployCommandsIfShardZero`**, **`formatDeployDiff`**, **`resolveShardIdFromEnv`** — shard-0 deploy pattern (N5).
-- **`deployCommands`** `existing` option for offline diff in CI (N6).
+- **`shouldDeploySlashCommands`**, **`deployCommandsIfShardZero`**, **`formatDeployDiff`**, **`resolveShardIdFromEnv`** — shard-0 deploy pattern.
+- **`deployCommands`** `existing` option for offline diff in CI.
 
 ## 0.2.2
 

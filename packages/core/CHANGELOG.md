@@ -1,6 +1,6 @@
 # @stambha/core
 
-## Unreleased — 0.3.0
+## 0.3.3
 
 ### Added
 
@@ -10,7 +10,7 @@
 
 ### Changed
 
-- **`Hook`** JSDoc — documents `static create(ctx)` factory pattern (N3).
+- **`Hook`** JSDoc — documents `static create(ctx)` factory pattern.
 
 ## 0.2.2
 

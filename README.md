@@ -268,4 +268,4 @@ Contributor planning docs: [`docs/internal/`](docs/internal/).
 
 ## Status
 
-**v0.2.2** — Migration DX: per-command `gateNames`, opt-in `global` gates, dynamic `resolvePrefix`, gates-before-commands loader order; `@stambha/cache`, `@stambha/metrics`, and `@stambha/vault-sql` publish from [Stambha-plugins](https://github.com/Mivaya/Stambha-plugins) only. See [CHANGELOG.md](CHANGELOG.md). API may still evolve before `1.0.0`.
+**v0.3.3** — Native gateway WebSocket, loader DI, epilogues, slash deploy helpers, and docs cleanup. Extensions publish from [Stambha-plugins](https://github.com/Mivaya/Stambha-plugins) only. See [CHANGELOG.md](CHANGELOG.md). API may still evolve before `1.0.0`.

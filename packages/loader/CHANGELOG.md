@@ -1,6 +1,6 @@
 # @stambha/loader
 
-## Unreleased — 0.3.0
+## 0.3.3
 
 ### Added
 
