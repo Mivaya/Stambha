@@ -19,6 +19,14 @@ Minor release focused on **native gateway WebSocket** and migration completion (
 
 - Gateway deployment docs updated for native WebSocket bootstrap.
 
+### Added (N3 / N4)
+
+- **`LoaderContext`** auto-injects `binder`, `container`, `logger`; optional `bindings` on `loadPieces`.
+- **Hook `static create(ctx)`** documented — replaces app-layer hook base classes with `container` getter.
+- **Epilogue phases** — `runOn: "denied" | "blocked"`; `EpilogueContext.phase`.
+- **`attachCommandLifecycleEpilogues`** / **`createCommandLoggingEpilogue`** — replace bootstrap `client.on('command*')`.
+- Docs: [Epilogues](/features/epilogues), expanded [project structure](/guide/project-structure).
+
 ## [0.2.2] - 2026-06-11
 
 Patch release focused on **migration ergonomics** (gates, prefixes, loader order) and repo hygiene.

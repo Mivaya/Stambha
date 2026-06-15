@@ -1,5 +1,17 @@
 # @stambha/core
 
+## Unreleased — 0.3.0
+
+### Added
+
+- **`EpiloguePhase`**, `runOn: "denied" | "blocked"` — epilogues run when gates/barriers stop a command.
+- **`attachCommandLifecycleEpilogues`**, **`createCommandLoggingEpilogue`** — replace bootstrap `client.on('command*')`.
+- Extended **`EpilogueContext`** with `phase`, optional `denied` / `blocked`, nullable `outcome`.
+
+### Changed
+
+- **`Hook`** JSDoc — documents `static create(ctx)` factory pattern (N3).
+
 ## 0.2.2
 
 ### Patch Changes

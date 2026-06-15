@@ -30,7 +30,56 @@ import { loadPieces } from "@stambha/loader";
 await loadPieces(client, { context: { client, vault } });
 ```
 
-Pieces with extra dependencies can expose `static create(ctx: LoaderContext)`.
+## Piece factories & dependency injection (0.3.0)
+
+`loadPieces` calls `static create(ctx)` when a piece class defines it. The loader builds `ctx` with:
+
+| Field | Source |
+|-------|--------|
+| `client` | Stambha client |
+| `binder` | `client.binder` |
+| `container` | `client.container` |
+| `logger` | `client.container.logger` |
+| … | Your `context` option (`vault`, `prisma`, …) |
+
+### Hook with injected logger
+
+```ts
+import { Hook, type Registry, type StambhaLogger } from "@stambha/core";
+import type { LoaderContext } from "@stambha/loader";
+
+export class ReadyListener extends Hook {
+  static create(ctx: LoaderContext) {
+    const logger = ctx.logger ?? ctx.client.container.logger;
+    return new ReadyListener(ctx.client.registries.hooks, logger);
+  }
+
+  constructor(registry: Registry<Hook>, private readonly logger: StambhaLogger) {
+    super(registry, { name: "ready-log", event: "ready", once: true });
+  }
+
+  handle(payload: unknown): void {
+    this.logger.info("ready", payload);
+  }
+}
+```
+
+### Binder tokens before load
+
+```ts
+import { loadPieces, type LoaderBinding } from "@stambha/loader";
+
+const PRISMA = Symbol("prisma");
+
+await loadPieces(client, {
+  bindings: [{ token: PRISMA, value: prisma }],
+  context: { vault },
+});
+```
+
+Pieces resolve services with `ctx.binder.resolve(PRISMA)` inside `static create`.
+
+See [Epilogues](/features/epilogues) for post-command hooks (prefer over `client.on('command*')`).
 
 ## Sapphire mapping
 

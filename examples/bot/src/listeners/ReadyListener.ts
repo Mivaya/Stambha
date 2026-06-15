@@ -1,13 +1,23 @@
 import { Hook, type Registry } from "@stambha/core";
+import type { LoaderContext } from "@stambha/loader";
+import type { StambhaLogger } from "@stambha/core";
 
 export class ReadyListener extends Hook {
-  constructor(registry: Registry<Hook>) {
+  static create(ctx: LoaderContext) {
+    const logger = ctx.logger ?? ctx.client.container.logger;
+    return new ReadyListener(ctx.client.registries.hooks, logger);
+  }
+
+  constructor(
+    registry: Registry<Hook>,
+    private readonly logger: StambhaLogger,
+  ) {
     super(registry, { name: "ready-log", event: "ready", once: true });
   }
 
   handle(payload: unknown): void {
     const user = (payload as { user?: { id: string; username?: string } })?.user;
     const label = user?.username ?? user?.id ?? "unknown";
-    console.log(`[listener:ready] Logged in as ${label}`);
+    this.logger.info(`[listener:ready] Logged in as ${label}`);
   }
 }

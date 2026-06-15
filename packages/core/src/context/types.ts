@@ -5,6 +5,9 @@ import type { CommandSlashPath } from "../command/slashTypes.js";
 /** How the user invoked a command. */
 export type CommandKind = "slash" | "prefix" | "contextMenu" | "message";
 
+/** When an epilogue runs relative to the command pipeline. */
+export type EpiloguePhase = "completed" | "denied" | "blocked";
+
 /** Normalized context for command execution (transport-agnostic). */
 export interface CommandContext {
   readonly kind: CommandKind;
@@ -45,12 +48,18 @@ export interface ChronContext {
   readonly runAt: Date;
 }
 
-/** Payload passed to Epilogue hooks after command execution. */
+/** Payload passed to Epilogue hooks after command execution or early exit. */
 export interface EpilogueContext {
   readonly commandName: string;
   readonly ctx: CommandContext;
-  readonly outcome: import("../outcome/Outcome.js").Outcome<unknown>;
+  /** `completed` after execute; `denied` / `blocked` when gates or barriers stop the run. */
+  readonly phase: EpiloguePhase;
+  readonly outcome: import("../outcome/Outcome.js").Outcome<unknown> | null;
   readonly durationMs: number;
+  /** Set when {@link phase} is `denied`. */
+  readonly denied?: { message: string; silent: boolean; gate: string };
+  /** Set when {@link phase} is `blocked`. */
+  readonly blocked?: { reason?: string; silent?: boolean };
 }
 
 /** @deprecated Use {@link CommandKind} */

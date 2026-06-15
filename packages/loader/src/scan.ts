@@ -1,4 +1,4 @@
-import { join, readDir, type DirEntry } from "@stambha/runtime";
+import { type DirEntry, join, readDir } from "@stambha/runtime";
 
 const JS_EXT = /\.(js|mjs|cjs|ts|mts|cts)$/;
 

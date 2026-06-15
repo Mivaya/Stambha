@@ -25,9 +25,12 @@ import { loadPieces } from "@stambha/loader";
 const client = createStambhaBot({ prefix: "!" });
 
 // Loads gates before commands (for Command.gateNames) and validates gate names after scan.
+const PRISMA = Symbol("prisma");
+
 const { loaded, errors } = await loadPieces(client, {
   basePath: process.cwd(),
-  context: { client, vault },
+  context: { vault },
+  bindings: [{ token: PRISMA, value: prisma }],
 });
 
 console.log(loaded.commands); // ["src/commands/General/PingCommand.ts", …]
@@ -40,6 +43,22 @@ if (errors.length) {
 ```
 
 Pieces are discovered recursively under each folder. Export a **default class** that extends the matching piece type (`Command`, `Hook`, `Gate`, …).
+
+### `static create(ctx)` factories
+
+When a piece needs `vault`, Prisma, or other services, add a static factory instead of a custom base class with a `container` getter:
+
+```ts
+import type { LoaderContext } from "@stambha/loader";
+
+export class MyHook extends Hook {
+  static create(ctx: LoaderContext) {
+    return new MyHook(ctx.client.registries.hooks, ctx.logger!);
+  }
+}
+```
+
+`loadPieces` always passes `client`, `binder`, `container`, and `logger` on `ctx`. Register binder tokens via `bindings` or before calling `loadPieces`.
 
 ---
 
@@ -77,7 +96,10 @@ Paths align with `PiecePaths` from `@stambha/core`.
 | Export | Purpose |
 |--------|---------|
 | `loadPieces` | Scan folders and register pieces |
-| `LoadPiecesOptions` | `basePath`, `context`, `paths` |
+| `LoadPiecesOptions` | `basePath`, `context`, `bindings`, `paths` |
+| `LoaderContext` | Factory context (`client`, `binder`, `logger`, …) |
+| `LoaderBinding` | Pre-load `binder.registerSingleton` / `registerFactory` |
+| `buildLoaderContext` | Build ctx for manual piece registration |
 | `LoadPiecesResult` | `loaded` map + `errors` |
 
 ---
