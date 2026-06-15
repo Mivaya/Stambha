@@ -88,4 +88,4 @@ deno run --allow-env --allow-read packages/runtime/dist/smoke.js
 ## Related
 
 - [Transport](/reference/transport) — native REST (Node HTTP worker today)
-- [Migration from Sapphire](/migration/from-sapphire) — native stack setup
+- [Migration guides](/migration/) — native stack setup

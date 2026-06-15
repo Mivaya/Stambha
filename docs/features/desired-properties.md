@@ -2,7 +2,7 @@
 
 **Context slimming** on `StambhaClient` and **`@stambha/transform`** provide a bidirectional layer between Discord transports and Stambha's transport-agnostic shapes.
 
-Inspired by [Discordeno desired properties](https://discordeno.deno.dev/) (gateway RAM trimming) and Stambha's own `CommandContext` field mask.
+Gateway RAM trimming (select which fields to keep on incoming payloads) pairs with Stambha's own `CommandContext` field mask.
 
 ---
 
@@ -66,9 +66,9 @@ import {
 
 `@stambha/transform` applies slimming when building contexts. Bot authors usually set `desiredProperties` on the client.
 
-### Discordeno shape helpers
+### Gateway trim helpers
 
-`buildDiscordenoDesiredProperties()` in `@stambha/transform` maps Stambha gate needs to Discordeno-style desired property flags when your gateway worker still uses Discordeno types.
+`buildDiscordenoDesiredProperties()` in `@stambha/transform` maps Stambha gate needs to gateway desired-property flags from the client mask.
 
 ---
 

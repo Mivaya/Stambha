@@ -1,8 +1,9 @@
 import { HttpRestPort } from "@stambha/core";
-import { createWorkerServer, WorkerMessageTypes } from "@stambha/gateway";
+import { WorkerMessageTypes, createWorkerServer } from "@stambha/gateway";
 import { commandContextFromStambhaMessageViaRest } from "@stambha/transform";
 import type { StambhaMessage } from "@stambha/transform";
 import { setupBot } from "../lib/setup.js";
+import { deployExampleSlashCommands } from "../lib/deploySlash.js";
 
 const token = process.env.DISCORD_TOKEN;
 const restUrl = process.env.REST_WORKER_URL ?? "http://127.0.0.1:4000";
@@ -24,6 +25,8 @@ const { client } = await setupBot({
   restPort,
 });
 
+await deployExampleSlashCommands(client, { force: true });
+
 const server = await createWorkerServer({
   port,
   ...(process.env.WORKER_SECRET ? { secret: process.env.WORKER_SECRET } : {}),
@@ -44,8 +47,8 @@ const server = await createWorkerServer({
     if (!msg.content || msg.author?.bot) return;
 
     const parsed = await client.router.parsePrefixCommand(msg.content, {
-      guildId: msg.guildId,
-      channelId: msg.channelId,
+      ...(msg.guildId ? { guildId: msg.guildId } : {}),
+      ...(msg.channelId ? { channelId: msg.channelId } : {}),
       userId: msg.author.id,
     });
     if (!parsed) return;

@@ -56,6 +56,37 @@ export {
 } from "./attachStambhaClient.js";
 
 export {
+  GatewayOpcode,
+  buildGatewayUrl,
+  DISCORD_GATEWAY_BASE,
+  type GatewayPayload,
+} from "./ws/constants.js";
+
+export {
+  gatewayEventToHubName,
+  messageFromDispatch,
+  interactionFromDispatch,
+  readyFromDispatch,
+  normalizeDispatch,
+} from "./ws/dispatch.js";
+
+export { fetchGatewayBot, type GatewayBotResponse } from "./ws/fetchGatewayBot.js";
+
+export {
+  createNativeGatewayClient,
+  type NativeGatewayClient,
+  type NativeGatewayClientOptions,
+} from "./ws/createNativeGatewayClient.js";
+
+export { GatewayShard, type GatewayShardOptions } from "./ws/GatewayShard.js";
+
+export {
+  resolveWebSocketFactory,
+  type CreateGatewayWebSocket,
+  type GatewayWebSocket,
+} from "./ws/socket.js";
+
+export {
   evaluateReshard,
   type ReshardPolicyOptions,
   type ReshardEvaluation,

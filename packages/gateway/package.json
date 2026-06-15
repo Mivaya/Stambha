@@ -1,6 +1,6 @@
 {
   "name": "@stambha/gateway",
-  "version": "0.2.2",
+  "version": "0.3.3",
   "description": "Gateway shard manager, resharding, worker bus, GatewayEventHub, and native Stambha routing",
   "author": "Mivaya",
   "license": "MIT",
@@ -46,16 +46,18 @@
     "@stambha/transform": "workspace:*"
   },
   "dependencies": {
-    "@stambha/transform": "workspace:*"
+    "@stambha/transform": "workspace:*",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@stambha/core": "workspace:*",
     "@stambha/transform": "workspace:*",
     "@stambha/transport": "workspace:*",
     "@types/node": "^22.13.4",
+    "@types/ws": "^8.18.1",
     "tsup": "^8.3.6",
     "typescript": "^5.7.3",
-    "vitest": "^3.0.5"
+    "vitest": "^3.2.6"
   },
   "engines": {
     "node": ">=20"

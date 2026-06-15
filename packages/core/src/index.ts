@@ -101,6 +101,12 @@ export {
 
 // Pipeline
 export { ExecutionPipeline, type PipelineRunOptions } from "./pipeline/ExecutionPipeline.js";
+export {
+  attachCommandLifecycleEpilogues,
+  createCommandLoggingEpilogue,
+  type CommandLifecycleHandlers,
+  type CommandLifecycleEpilogueOptions,
+} from "./epilogues/commandLifecycle.js";
 
 // Context
 export type {
@@ -109,6 +115,7 @@ export type {
   ScoutContext,
   ScoutTrigger,
   EpilogueContext,
+  EpiloguePhase,
   ChronContext,
   DirectiveContext,
   DirectiveKind,

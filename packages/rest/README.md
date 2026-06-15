@@ -51,17 +51,26 @@ Point the bot worker at it with `HttpRestPort` from `@stambha/core` (`REST_WORKE
 ### Deploy slash commands
 
 ```ts
-import { deployCommands } from "@stambha/rest";
+import {
+  deployCommands,
+  deployCommandsIfShardZero,
+  formatDeployDiff,
+  shouldDeploySlashCommands,
+} from "@stambha/rest";
 
-const result = await deployCommands({
-  token: process.env.DISCORD_TOKEN!,
-  applicationId: process.env.DISCORD_CLIENT_ID!,
-  guildId: process.env.DISCORD_GUILD_ID, // omit for global deploy
-  commands: client.registries.commands.values(),
-});
-
-console.log(`Deployed ${result.count} command(s)`);
+// Shard 0 only when sharded — see docs/deployment/slash-deploy.md
+if (shouldDeploySlashCommands({ shardId: 0 })) {
+  const result = await deployCommands({
+    token: process.env.DISCORD_TOKEN!,
+    applicationId: process.env.DISCORD_APPLICATION_ID!,
+    commands: client.registries.commands.values(),
+    diff: true,
+  });
+  if (result.diff) console.log(formatDeployDiff(result.diff));
+}
 ```
+
+**CI dry-run:** `pnpm --filter @stambha/example-bot deploy:dry-run`
 
 ---
 
@@ -74,6 +83,9 @@ console.log(`Deployed ${result.count} command(s)`);
 | `RateLimitQueue` | Per-route bucket queue |
 | `createNativeRestWorker` | HTTP REST worker process |
 | `deployCommands` | Register application commands |
+| `deployCommandsIfShardZero` | Deploy only on shard 0 |
+| `shouldDeploySlashCommands` | Guard for multi-process sharding |
+| `formatDeployDiff` | Log diff summary |
 | `createRestTelemetryListener` | Hook metrics into the queue |
 
 ---

@@ -1,15 +1,21 @@
 import type { Command } from "@stambha/core";
 import { buildApplicationCommands, diffApplicationCommands } from "@stambha/core";
-import { createRestClient, type RestClient } from "./RestClient.js";
+import { type RestClient, createRestClient } from "./RestClient.js";
 
 export interface DeployCommandsOptions {
   token: string;
   applicationId: string;
   guildId?: string;
   commands: Iterable<Command>;
+  /** Build payload only — no `PUT` to Discord. */
   dryRun?: boolean;
-  /** Log added/removed/updated command names (fetches existing when not dry-run). */
+  /** Compare desired vs existing command names. */
   diff?: boolean;
+  /**
+   * Existing command names for offline diff (`dryRun` + `diff` in CI).
+   * When omitted and not dry-run, fetched from Discord REST.
+   */
+  existing?: readonly { name: string }[];
   /** Reuse an existing REST client (optional). */
   rest?: RestClient;
 }
@@ -38,7 +44,9 @@ async function fetchExisting(
 }
 
 /** Sync slash command metadata to Discord via native REST (no bridge). */
-export async function deployCommands(options: DeployCommandsOptions): Promise<DeployCommandsResult> {
+export async function deployCommands(
+  options: DeployCommandsOptions,
+): Promise<DeployCommandsResult> {
   const rest =
     options.rest ??
     createRestClient({ token: options.token, applicationId: options.applicationId });
@@ -46,11 +54,11 @@ export async function deployCommands(options: DeployCommandsOptions): Promise<De
   const payload = buildApplicationCommands(options.commands);
 
   let diffResult: DeployCommandsResult["diff"];
-  if (options.diff && !options.dryRun) {
-    const existing = await fetchExisting(rest, options.applicationId, options.guildId);
+  if (options.diff) {
+    const existing =
+      options.existing ??
+      (options.dryRun ? [] : await fetchExisting(rest, options.applicationId, options.guildId));
     diffResult = diffApplicationCommands(existing, payload);
-  } else if (options.diff && options.dryRun) {
-    diffResult = diffApplicationCommands([], payload);
   }
 
   if (options.dryRun) {

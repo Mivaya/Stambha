@@ -5,6 +5,47 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.3] - 2026-06-15
+
+Minor release focused on **native gateway WebSocket**, loader dependency injection, epilogues, and slash command deploy helpers.
+
+### Added
+
+- **`createNativeGatewayClient`** in `@stambha/gateway` — bundled Discord gateway WebSocket client that feeds a `GatewayEventHub` (identify, resume, heartbeat, dispatch normalization).
+- **`fetchGatewayBot`**, dispatch normalizers (`messageFromDispatch`, `interactionFromDispatch`, …).
+- **`examples/bot`** — monolith and tier-split gateway workers use the native client when `DISCORD_TOKEN` is set.
+- **`LoaderContext`** auto-injects `binder`, `container`, `logger`; optional `bindings` on `loadPieces`.
+- **Hook `static create(ctx)`** documented — replaces app-layer hook base classes with `container` getter.
+- **Epilogue phases** — `runOn: "denied" | "blocked"`; `EpilogueContext.phase`.
+- **`attachCommandLifecycleEpilogues`** / **`createCommandLoggingEpilogue`** — replace bootstrap `client.on('command*')`.
+- **`shouldDeploySlashCommands`**, **`deployCommandsIfShardZero`**, **`formatDeployDiff`**, **`resolveShardIdFromEnv`** (`@stambha/rest`).
+- **`deployCommands`** — `existing` snapshot for offline `dryRun` + `diff`.
+- **`examples/bot`** — shard-0 deploy on gateway `ready`; tier-split bot worker deploys once; `pnpm deploy:dry-run`.
+- **CI** — slash deploy dry-run step on example bot.
+
+### Changed
+
+- Gateway deployment docs updated for native WebSocket bootstrap.
+- Docs: [Epilogues](/features/epilogues), expanded [project structure](/guide/project-structure), [Slash deploy](/deployment/slash-deploy).
+
+### Packages in this release
+
+| Package | Version |
+|---------|---------|
+| `@stambha/core` | 0.3.3 |
+| `@stambha/gateway` | 0.3.3 |
+| `@stambha/loader` | 0.3.3 |
+| `@stambha/gates` | 0.3.3 |
+| `@stambha/args` | 0.3.3 |
+| `@stambha/plugins` | 0.3.3 |
+| `@stambha/rest` | 0.3.3 |
+| `@stambha/runtime` | 0.3.3 |
+| `@stambha/transform` | 0.3.3 |
+| `@stambha/transport` | 0.3.3 |
+| `@stambha/vault` | 0.3.3 |
+
+Extensions **`@stambha/cache`**, **`@stambha/metrics`**, **`@stambha/vault-sql`** — see [Stambha-plugins CHANGELOG](https://github.com/Mivaya/Stambha-plugins/blob/main/CHANGELOG.md).
+
 ## [0.2.2] - 2026-06-11
 
 Patch release focused on **migration ergonomics** (gates, prefixes, loader order) and repo hygiene.
@@ -217,6 +258,7 @@ First public release of the **native Stambha stack** — a transport-agnostic Di
 | `@stambha/metrics` | 0.1.0 |
 | `@stambha/runtime` | 0.1.0 |
 
+[0.3.3]: https://github.com/mivaya/Stambha/releases/tag/v0.3.3
 [0.2.2]: https://github.com/mivaya/Stambha/releases/tag/v0.2.2
 [0.2.1]: https://github.com/mivaya/Stambha/releases/tag/v0.2.1
 [0.2.0]: https://github.com/mivaya/Stambha/releases/tag/v0.2.0

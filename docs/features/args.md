@@ -1,6 +1,6 @@
 # Arguments (`@stambha/args`)
 
-Sapphire-style **Args** for prefix commands and typed **slash option** accessors.
+**Args** for prefix commands and typed **slash option** accessors.
 
 ## Installation
 
@@ -84,7 +84,7 @@ async execute(ctx: CommandContext) {
 }
 ```
 
-Bridges normalize discord.js / Discordeno interaction options into `SlashOption[]` on the context.
+Bridge helpers normalize third-party interaction options into `SlashOption[]` on the context.
 
 ## Unified helper
 

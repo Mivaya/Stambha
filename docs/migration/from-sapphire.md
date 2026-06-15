@@ -50,13 +50,20 @@ await client.login(token);
 
 ```ts
 import { createStambhaBot } from "@stambha/core";
-import { attachStambhaClient, createGatewayEventHub } from "@stambha/gateway";
+import {
+  attachStambhaClient,
+  combineIntents,
+  createGatewayEventHub,
+  createNativeGatewayClient,
+  GatewayIntent,
+} from "@stambha/gateway";
 import { loadPieces } from "@stambha/loader";
 import { createNativeRestPort } from "@stambha/rest";
 
+const token = process.env.DISCORD_TOKEN!;
 const client = createStambhaBot({
   prefix: "!",
-  restPort: createNativeRestPort(process.env.DISCORD_TOKEN!),
+  restPort: createNativeRestPort(token),
 });
 
 await loadPieces(client);
@@ -69,11 +76,16 @@ attachStambhaClient(hub, client, {
 client.setBridge(hub);
 
 // Startup order matters:
-// 1. markReady — bot user id for routing
-// 2. start() — binds hooks, starts Chron, emits client "ready"
-// 3. Wire WebSocket shard → hub.emit("messageCreate", stambhaMessage)
-hub.markReady({ user: { id: "YOUR_BOT_USER_ID" } });
+// 1. start() — binds hooks, starts Chron
+// 2. connect native WebSocket gateway — READY sets bot user id on the hub
 await client.start();
+
+const gateway = await createNativeGatewayClient({
+  token,
+  hub,
+  intents: combineIntents(GatewayIntent.Guilds, GatewayIntent.GuildMessages, GatewayIntent.MessageContent),
+});
+await gateway.connect();
 ```
 
 ---
