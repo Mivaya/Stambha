@@ -2,7 +2,7 @@
 
 > **Contributor-only.** This page is excluded from the public VitePress build (`srcExclude` in `.vitepress/config.ts`). Read it on GitHub or in the repo; it is not published to GitHub Pages.
 
-This repo ships a [VitePress](https://vitepress.dev/) site in `/docs`. Sapphire and Discordeno use [Docusaurus](https://docusaurus.io/) — both are solid choices; VitePress is lighter to bootstrap and fits markdown-first docs in the same folder as the site.
+This repo ships a [VitePress](https://vitepress.dev/) site in `/docs`. [Docusaurus](https://docusaurus.io/) is a common alternative for large doc sites — VitePress is lighter to bootstrap and fits markdown-first docs in the same folder as the site.
 
 ## Run locally
 
@@ -70,13 +70,13 @@ jobs:
 
 Set `base: '/Stambha/'` in `.vitepress/config.ts` if using project Pages URL (not custom domain).
 
-## Matching Sapphire / Discordeno
+## Doc site tooling comparison
 
-| | Sapphire | Discordeno | Stambha (this repo) |
-|---|----------|------------|---------------------|
-| Generator | Docusaurus | Docusaurus | VitePress |
-| Content repo | [sapphiredev/docs](https://github.com/sapphiredev/docs) | `discordeno/discordeno/docs` | `/docs` in monorepo |
-| API reference | TypeDoc plugin | Generated API docs | Future: TypeDoc → VitePress or separate section |
+| | Docusaurus (typical) | Stambha (this repo) |
+|---|----------------------|---------------------|
+| Generator | Docusaurus | VitePress |
+| Content repo | Separate docs repo | `/docs` in monorepo |
+| API reference | TypeDoc plugin | Future: TypeDoc → VitePress or separate section |
 
 ### Switching to Docusaurus later
 
@@ -86,7 +86,7 @@ If you outgrow VitePress (versioning, i18n, heavy plugin ecosystem):
 pnpm create docusaurus@latest website classic
 ```
 
-Move markdown from `/docs/guide`, `/docs/features`, etc. into `website/docs/`. Sapphire’s site lives in [sapphiredev/website](https://github.com/sapphiredev/website) — use it as a reference for sidebar structure and TypeDoc integration.
+Move markdown from `/docs/guide`, `/docs/features`, etc. into `website/docs/`. Look at other Docusaurus-based bot-framework sites for sidebar structure and TypeDoc integration patterns.
 
 ### Versioned documentation
 

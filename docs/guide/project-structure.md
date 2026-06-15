@@ -1,6 +1,6 @@
 # Project structure
 
-Stambha bots use **Sapphire-aligned folders** so teams migrating from Sapphire keep familiar paths.
+Stambha bots use a **conventional piece layout** — one folder per piece type under `src/`.
 
 ## Recommended layout
 
@@ -81,15 +81,17 @@ Pieces resolve services with `ctx.binder.resolve(PRISMA)` inside `static create`
 
 See [Epilogues](/features/epilogues) for post-command hooks (prefer over `client.on('command*')`).
 
-## Sapphire mapping
+## Folder reference
 
-| Folder | Sapphire | Stambha class |
-|--------|----------|---------------|
-| `commands/` | commands | `Command` |
-| `listeners/` | listeners | `Hook` |
-| `gates/` | preconditions | `Gate` |
+| Folder | Stambha class |
+|--------|---------------|
+| `commands/` | `Command` |
+| `listeners/` | `Hook` |
+| `gates/` | `Gate` |
 
 `PiecePaths` in `@stambha/core` lists default paths (`PiecePaths.commands === "src/commands"`, `PiecePaths.preconditions === "src/gates"`).
+
+Migrating from another stack? See [migration guides](/migration/) for piece-name mappings.
 
 ## Manual registration
 

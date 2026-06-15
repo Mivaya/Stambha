@@ -1,6 +1,6 @@
 # Transport foundation
 
-Stambha-owned Discord transport primitives live in `@stambha/transport` and `@stambha/rest` — independent of discord.js and Discordeno. New bots should use the native stack (`@stambha/rest`, `@stambha/gateway`, `@stambha/transform`).
+Stambha-owned Discord transport primitives live in `@stambha/transport` and `@stambha/rest` — no third-party Discord library required. New bots should use the native stack (`@stambha/rest`, `@stambha/gateway`, `@stambha/transform`).
 
 ---
 
@@ -9,7 +9,7 @@ Stambha-owned Discord transport primitives live in `@stambha/transport` and `@st
 | Package | Role |
 |---------|------|
 | `@stambha/transport` | Session info, route normalization, rate-limit bucket model |
-| `@stambha/rest` | Native REST client + centralized queue (Discordeno-inspired) |
+| `@stambha/rest` | Native REST client + centralized queue |
 
 Core still defines {@link RestPort} and tier-split HTTP worker protocol in `@stambha/core`. Native REST implements the same `RestPort` surface.
 

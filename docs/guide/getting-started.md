@@ -89,7 +89,7 @@ pnpm demo              # full folder layout, simulated events
 
 ## Next steps
 
-- [Project structure](/guide/project-structure) — folder layout (Sapphire-aligned)
+- [Project structure](/guide/project-structure) — folder layout
 - [Pieces & pipeline](/guide/pieces) — commands, hooks, gates, and more
 - [Gates](/features/gates) — built-in preconditions
 - [Tier split](/deployment/tier-split) — multi-process deployment
