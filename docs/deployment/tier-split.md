@@ -1,6 +1,6 @@
 # Tier split (REST / gateway / bot workers)
 
-Inspired by [Discordeno’s architecture](https://discordeno.js.org/docs/architecture), Stambha can run **gateway**, **REST**, and **bot logic** in separate processes. The gateway receives Discord events; outbound API calls go through a dedicated REST worker with isolated rate limits; command routing runs in a bot worker.
+Stambha can run **gateway**, **REST**, and **bot logic** in separate processes. The gateway receives Discord events; outbound API calls go through a dedicated REST worker with isolated rate limits; command routing runs in a bot worker.
 
 ## Roles
 
@@ -72,7 +72,7 @@ attachGatewayRelay(hub, {
 
 ## Example: `examples/bot`
 
-Full Sapphire-style layout plus optional split workers in `src/workers/`.
+Full piece-based layout plus optional split workers in `src/workers/`.
 
 Three processes:
 

@@ -1,6 +1,6 @@
 # Plugins & container
 
-**`@stambha/plugins`** provides Sapphire-style lifecycle hooks plus a shared **container** (logger, config, DI).
+**`@stambha/plugins`** provides lifecycle hooks plus a shared **container** (logger, config, DI).
 
 Core stays transport-free: `@stambha/core` exposes `PluginLifecycle`, `DefaultStambhaContainer`, and `ConsoleLogger`. The plugins package wires hooks and optional interaction helpers.
 
@@ -123,10 +123,10 @@ resolveInteractionTarget(client, { kind: "signal", customId: "stambha:confirm:ab
 
 ## Official extensions (separate repo)
 
-**`@stambha/plugins` is the host** — hooks and DI only. Optional add-ons (dashboard HTTP, i18n, cron, etc.) live in a **separate monorepo**, same idea as [sapphiredev/plugins](https://github.com/sapphiredev/plugins):
+**`@stambha/plugins` is the host** — hooks and DI only. Optional add-ons (dashboard HTTP, i18n, cron, etc.) live in a **separate monorepo**:
 
 - Planned org/repo: **`stambhadev/plugins`**
-- Package names describe **capability**, not Sapphire’s `plugin-*` pattern
+- Package names describe **capability** (e.g. `@stambha/dashboard`), not a generic `plugin-*` prefix
 
 | Extension | Package |
 |-----------|---------|

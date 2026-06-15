@@ -15,6 +15,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
     text: "Features",
     items: [
       { text: "Gates", link: "/features/gates" },
+      { text: "Epilogues", link: "/features/epilogues" },
       { text: "Arguments", link: "/features/args" },
       { text: "Command tree", link: "/features/command-tree" },
       { text: "Plugins", link: "/features/plugins" },
@@ -31,6 +32,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
       { text: "Tier split", link: "/deployment/tier-split" },
       { text: "Native REST", link: "/deployment/native-rest" },
       { text: "Gateway", link: "/deployment/gateway" },
+      { text: "Slash deploy", link: "/deployment/slash-deploy" },
       { text: "Resharding", link: "/deployment/resharding" },
       { text: "Metrics", link: "/deployment/metrics" },
       { text: "Cross-runtime", link: "/deployment/cross-runtime" },

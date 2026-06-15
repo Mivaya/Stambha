@@ -74,7 +74,7 @@ You get:
 
 1. **One transport story** — native REST and gateway; no official hybrid path that keeps e.g. discord.js for gateway and Stambha for commands only
 2. **Predictable scaling** — promote from monolith → tier split when rate limits or shard count demand it
-3. **Migration guides** — [piece-based layouts](/migration/from-sapphire) and [native transport stacks](/migration/from-discordeno) without renaming your entire tree
+3. **Migration guides** — [piece-based layouts and native transport stacks](/migration/) without renaming your entire tree
 4. **Room to grow** — sequences, signals, chron, desired properties, and vault-backed config without forking the framework
 
 ## Who Stambha is for

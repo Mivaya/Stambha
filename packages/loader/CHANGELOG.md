@@ -1,5 +1,13 @@
 # @stambha/loader
 
+## 0.3.3
+
+### Added
+
+- **`LoaderBinding`** + **`bindings`** option on `loadPieces` — register `client.binder` tokens before scan.
+- **`buildLoaderContext`** — auto-injects `binder`, `container`, `logger` on factory context.
+- **`PieceFactory`** / **`LoaderPieceConstructor`** types.
+
 ## 0.2.2
 
 ### Patch Changes

@@ -24,6 +24,7 @@ pnpm docs:archive <semver> $(git rev-parse HEAD)   # optional frozen docs snapsh
 git tag v<semver> && git push origin v<semver>
        ↓
 GitHub Release (published)  →  publish-npm.yml  →  npm (latest or beta)
+                          →  docs.yml          →  GitHub Pages
 ```
 
 Workflow: [`.github/workflows/publish-npm.yml`](./workflows/publish-npm.yml)

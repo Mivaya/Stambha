@@ -1,8 +1,10 @@
-import type { EpilogueContext } from "../context/types.js";
+import type { EpilogueContext, EpiloguePhase } from "../context/types.js";
+import type { Registry } from "../pieces/Registry.js";
 import { Unit, type UnitOptions } from "../pieces/Unit.js";
-import { Registry } from "../pieces/Registry.js";
 
-export type EpilogueRunOn = "success" | "failure" | "always";
+export type EpilogueRunOn = "success" | "failure" | "always" | "denied" | "blocked";
+
+export type { EpiloguePhase } from "../context/types.js";
 
 export interface EpilogueOptions extends UnitOptions {
   runOn?: EpilogueRunOn;
@@ -21,8 +23,11 @@ export abstract class Epilogue extends Unit<EpilogueOptions> {
 
   abstract run(ctx: EpilogueContext): Promise<void>;
 
-  matches(outcomeOk: boolean): boolean {
+  matches(phase: EpiloguePhase, outcomeOk: boolean): boolean {
     if (this.runOn === "always") return true;
+    if (this.runOn === "denied") return phase === "denied";
+    if (this.runOn === "blocked") return phase === "blocked";
+    if (phase !== "completed") return false;
     if (this.runOn === "success") return outcomeOk;
     return !outcomeOk;
   }

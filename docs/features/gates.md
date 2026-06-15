@@ -1,6 +1,6 @@
 # Built-in gates (`@stambha/gates`)
 
-Sapphire-style **preconditions** map to Stambha **gates** — inline on commands, via `gateNames`, or `global: true` on gate pieces.
+**Gates** are per-command checks — inline on commands, via `gateNames`, or `global: true` on gate pieces.
 
 ## Installation
 
@@ -48,16 +48,16 @@ export class BanCommand extends Command {
 
 ## Available gates
 
-| Gate | Sapphire equivalent | Description |
-|------|---------------------|-------------|
-| `cooldownGate()` | Cooldown | Rate limit by user / guild / global |
-| `permissionsGate()` | UserPermissions + ClientPermissions | Bitfield checks on `meta` |
-| `userPermissionsGate()` | UserPermissions | Shorthand member check |
-| `clientPermissionsGate()` | ClientPermissions | Shorthand bot check |
-| `nsfwGate()` | NSFW | Requires NSFW channel |
-| `runInGate()` | RunIn | Channel type allow-list |
-| `guildOnlyGate()` | RunIn guild | No DMs |
-| `dmOnlyGate()` | RunIn DM | DMs only |
+| Gate | Description |
+|------|-------------|
+| `cooldownGate()` | Rate limit by user / guild / global |
+| `permissionsGate()` | Bitfield checks on `meta` (member + bot) |
+| `userPermissionsGate()` | Shorthand member check |
+| `clientPermissionsGate()` | Shorthand bot check |
+| `nsfwGate()` | Requires NSFW channel |
+| `runInGate()` | Channel type allow-list |
+| `guildOnlyGate()` | No DMs |
+| `dmOnlyGate()` | DMs only |
 
 Compose with core helpers: `gateAnd()`, `gateOr()`, `defineGate()`.
 
@@ -96,11 +96,11 @@ cooldownGate({ limit: 1, delay: 5000, store: myRedisCooldownStore });
 | `memberPermissions` | `userPermissionsGate` |
 | `clientPermissions` | `clientPermissionsGate` |
 
-When metadata is missing, gates allow the command (graceful degradation). Populate `meta` when building contexts — `@stambha/transform` provides `metaFromDiscordJsMessage` / `metaFromDiscordenoMessage` if your gateway worker still uses those library types.
+When metadata is missing, gates allow the command (graceful degradation). Populate `meta` when building contexts — `@stambha/transform` provides bridge helpers such as `metaFromDiscordJsMessage` and `metaFromDiscordenoMessage` when your gateway worker uses those library types.
 
 ## Registry gates (`gateNames`)
 
-Gate **pieces** in `src/gates/` register on `client.registries.gates`. They do **not** run on every command automatically — list them on each command (Sapphire preconditions style):
+Gate **pieces** in `src/gates/` register on `client.registries.gates`. They do **not** run on every command automatically — list them on each command via `gateNames`:
 
 ```ts
 export class BanCommand extends Command {

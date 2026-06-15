@@ -18,7 +18,7 @@ When migrating a **production Sapphire** bot to Stambha, early adopters sometime
 | **`LegacySlashRegistry`** | `SlashCommandBuilder` + custom deploy | `deployCommands` + declarative slash (**1.x B1**) | Use Stambha `Command` metadata |
 | **`fetchGuildPrefix` helper** | Per-guild prefix from database | **0.2.2 P2** resolver; **1.x C2** Vault prefix field | Resolver or Vault |
 | **Gate `appliesTo(command)` filter** | Global gates on every command | **0.2.2 P1** — `gateNames` on `Command` | Use per-command gate names |
-| **Hook base with `container` getter** | Hooks only receive `registry` | **0.3.0 N3** — `Hook.create(ctx)` factory | Binder injection |
+| **Hook base with `container` getter** | Hooks only receive `registry` | **0.3.0 N3** — `Hook.create(ctx)` factory | **Done** — binder + loader context |
 | **`RouteStub` + unwired `routes/`** | `@sapphire/plugin-api` | **Plugins E** — `@stambha/dashboard` | Dashboard plugin |
 | **Prisma for all data + no Vault** | Guild config in SQL | **1.x C2** — Vault for settings ([ADR 004](./adr/004-vault-scope-orm-coexistence.md)) | Keep Prisma for domain |
 | **Command base with `messageRun` / `chatInputRun`** | Legacy run methods | Rewrite to `execute(ctx)` | No framework `preserveRaw` |
@@ -74,7 +74,7 @@ Per [adr/002-bridge-deprecation.md](./adr/002-bridge-deprecation.md) and [adr/00
 
 - [ ] Remove discord.js gateway wiring; use bundled WS client or tier split
 - [ ] Align bootstrap with native `examples/bot`
-- [ ] Move `client.on('command*')` to epilogues or documented pattern
+- [ ] Move `client.on('command*')` to epilogues or `attachCommandLifecycleEpilogues` (**0.3.0 N4**)
 
 ### After 1.x (B1, B2, C1)
 
