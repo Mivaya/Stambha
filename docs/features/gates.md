@@ -103,7 +103,7 @@ When metadata is missing:
 | Permission gates | **Deny** (missing bitfield treated as no permissions) |
 | `runInGate`, `nsfwGate` | **Allow** (graceful degradation) |
 
-On the **native** stack (`attachStambhaClient`), `meta` population from gateway dispatch is planned for **0.3.5**. Until then, permission gates may deny unexpectedly unless you populate `meta` when building contexts.
+On the **native** stack, `meta` is populated from gateway dispatch (`interactionFromDispatch`, 0.3.5+).
 
 ## Registry gates (`gateNames`)
 

@@ -29,7 +29,19 @@ export function interactionReplyBody(
   return { type: 4, data: body };
 }
 
+export function interactionDeferBody(ephemeral = false): { type: number; data?: { flags: number } } {
+  if (ephemeral) return { type: 5, data: { flags: 64 } };
+  return { type: 5 };
+}
+
 /** Edit webhook / follow-up / channel message body. */
 export function webhookMessageBody(payload: ReplyPayload): MessageBody {
   return normalizeReplyData(payload);
+}
+
+/** Autocomplete callback (type 8). */
+export function autocompleteCallbackBody(
+  choices: { name: string; value: string }[],
+): { type: number; data: { choices: { name: string; value: string }[] } } {
+  return { type: 8, data: { choices: choices.slice(0, 25) } };
 }

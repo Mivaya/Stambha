@@ -81,7 +81,7 @@ async autocomplete(ctx: AutocompleteContext) {
 }
 ```
 
-Autocomplete routing on the native path is planned for **0.3.5** — see [Signals](/features/signals) and [Plugins](/features/plugins#interaction-routing).
+Autocomplete is routed on the native path via `attachStambhaClient` (0.3.5+). See [Signals](/features/signals) and [Plugins](/features/plugins#interaction-routing).
 
 ## Deploy v2
 
