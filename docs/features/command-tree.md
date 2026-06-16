@@ -81,7 +81,7 @@ async autocomplete(ctx: AutocompleteContext) {
 }
 ```
 
-Bridges route autocomplete interactions to the resolved command.
+Autocomplete routing on the native path is planned for **0.3.5** — see [Signals](/features/signals) and [Plugins](/features/plugins#interaction-routing).
 
 ## Deploy v2
 

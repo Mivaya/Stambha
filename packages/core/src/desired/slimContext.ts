@@ -55,5 +55,9 @@ export function slimCommandContext(
     Object.assign(slim, { slashPath: ctx.slashPath });
   }
 
+  if (ctx.editReply) {
+    Object.assign(slim, { editReply: ctx.editReply });
+  }
+
   return slim;
 }

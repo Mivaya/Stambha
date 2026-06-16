@@ -16,6 +16,8 @@ export interface AttachStambhaClientOptions {
    * When omitted, uses {@link StambhaClient.prefix}.
    */
   resolvePrefix?: PrefixResolver;
+  /** Discord application id — enables slash {@link CommandContext.editReply} when missing from interaction payloads. */
+  applicationId?: string;
 }
 
 function asStambhaMessage(payload: unknown): StambhaMessage | null {
@@ -41,7 +43,7 @@ export function attachStambhaClient(
   client: StambhaClient,
   options: AttachStambhaClientOptions = {},
 ): () => void {
-  const { prefixCommands = true, slashCommands = true, scouts = true, resolvePrefix } = options;
+  const { prefixCommands = true, slashCommands = true, scouts = true, resolvePrefix, applicationId } = options;
   const previousResolvePrefix = client.resolvePrefix;
   if (resolvePrefix) {
     client.resolvePrefix = resolvePrefix;
@@ -112,7 +114,7 @@ export function attachStambhaClient(
         interaction,
         commandName,
         client.restPort,
-        { desired: client.desiredProperties },
+        { desired: client.desiredProperties, applicationId: interaction.applicationId ?? applicationId ?? null },
       );
       await client.router.processSlashCommand(ctx);
     });

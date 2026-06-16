@@ -6,14 +6,16 @@
 
 Many production bots already use **Prisma, Drizzle, or SQL** for economy, quests, achievements, and analytics. Stambha still ships Vault because that stack does **not** solve the same problem:
 
-| Problem | Without Vault | With Vault |
-|---------|---------------|------------|
-| Guild prefix, module toggles, log channels | Custom `GuildConfig` table + validation + cache | Blueprint + `record.get` / `set` |
-| Per-guild settings (`prefix`, channels, toggles) | Custom tables + validation + cache | Ledgers + drivers |
-| Dashboard editing config | Ad-hoc JSON routes | Typed blueprints + `@stambha/dashboard` (plugins) |
-| Permission level overrides per guild | Hardcoded or extra SQL columns | Guild blueprint + `@stambha/levels` |
-| Tests without Postgres | Mock Prisma or spin up DB | `MemoryDriver` |
-| Split-tier workers sharing config | In-memory Maps or custom Redis glue | Shared Vault driver (SQL / Redis) |
+
+| Problem                                          | Without Vault                                   | With Vault                                        |
+| ------------------------------------------------ | ----------------------------------------------- | ------------------------------------------------- |
+| Guild prefix, module toggles, log channels       | Custom `GuildConfig` table + validation + cache | Blueprint + `record.get` / `set`                  |
+| Per-guild settings (`prefix`, channels, toggles) | Custom tables + validation + cache              | Ledgers + drivers                                 |
+| Dashboard editing config                         | Ad-hoc JSON routes                              | Typed blueprints + `@stambha/dashboard` (plugins) |
+| Permission level overrides per guild             | Hardcoded or extra SQL columns                  | Guild blueprint + `@stambha/levels`               |
+| Tests without Postgres                           | Mock Prisma or spin up DB                       | `MemoryDriver`                                    |
+| Split-tier workers sharing config                | In-memory Maps or custom Redis glue             | Shared Vault driver (SQL / Redis)                 |
+
 
 **Use Vault** for settings-shaped and bot-shaped documents (guild, user, member, feature flags).  
 **Use your ORM** for heavy relational domain (transactions, quest graphs, large mod-log tables, BI).
@@ -28,31 +30,37 @@ await loadPieces(client, {
 
 ## What Vault covers (Path B)
 
-| In scope | Examples |
-|----------|----------|
-| Guild config | `prefix`, `modLogChannel`, `disabledModules`, nested toggles |
-| User / member config | Per-user prefs; per-guild member XP/points **as simple ledgers** |
-| Feature flags | Module on/off, beta flags |
-| Level overrides | `userId → permission level` in guild blueprint (1.x) |
-| Setup wizards | Sequences writing to Vault records |
 
-| Out of scope (use ORM) | Examples |
-|------------------------|----------|
-| Complex economy | Shops, inventories, multi-table transfers |
-| Large audit / mod history | Millions of cases, reporting queries |
-| Analytics | Aggregations, dashboards over arbitrary SQL |
+| In scope             | Examples                                                         |
+| -------------------- | ---------------------------------------------------------------- |
+| Guild config         | `prefix`, `modLogChannel`, `disabledModules`, nested toggles     |
+| User / member config | Per-user prefs; per-guild member XP/points **as simple ledgers** |
+| Feature flags        | Module on/off, beta flags                                        |
+| Level overrides      | `userId → permission level` in guild blueprint (1.x)             |
+| Setup wizards        | Sequences writing to Vault records                               |
+
+
+
+| Out of scope (use ORM)      | Examples                                      |
+| --------------------------- | --------------------------------------------- |
+| Complex economy             | Shops, inventories, multi-table transfers     |
+| Large audit / mod history   | Millions of cases, reporting queries          |
+| Analytics                   | Aggregations, dashboards over arbitrary SQL   |
 | Arbitrary relational models | Anything you’d model in `schema.prisma` today |
+
 
 ---
 
 ## Concepts
 
-| Term | Role |
-|------|------|
-| **Ledger** | Namespace for records (`guild`, `user`, `member`) |
-| **Blueprint** | Schema + defaults for one document shape |
-| **Record** | One loaded document (sync, get, set, save) |
+
+| Term            | Role                                                           |
+| --------------- | -------------------------------------------------------------- |
+| **Ledger**      | Namespace for records (`guild`, `user`, `member`)              |
+| **Blueprint**   | Schema + defaults for one document shape                       |
+| **Record**      | One loaded document (sync, get, set, save)                     |
 | **VaultDriver** | Storage backend (`MemoryDriver` built-in; SQL via `vault-sql`) |
+
 
 Typical ledgers:
 
@@ -160,3 +168,4 @@ vault.on("recordDelete", ({ ledger, id }) => {});
 - [Getting started](/guide/getting-started) — Vault is optional at install time
 - [Migration guides](/migration/) — when to add Vault (settings & config)
 - [@stambha/vault-sql](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/vault-sql) — SQL persistence driver (plugins repo)
+

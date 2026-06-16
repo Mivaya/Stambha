@@ -39,8 +39,20 @@ client.registries.hooks.register(new ReadyListener(client.registries.hooks));
 
 ## Related guides
 
+Pipeline pieces (in execution order):
+
+- [Conduits](/features/conduits)
+- [Barriers](/features/barriers)
+- [Gates](/features/gates)
+- [Epilogues](/features/epilogues)
+
+Other pieces:
+
+- [Hooks (listeners)](/features/hooks)
+- [Scouts](/features/scouts)
+- [Signals](/features/signals)
 - [Arguments](/features/args)
 - [Command tree](/features/command-tree)
-- [Gates](/features/gates)
 - [Plugins](/features/plugins)
 - [Sequences](/features/sequences)
+- [Chron](/features/chron)

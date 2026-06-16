@@ -63,7 +63,17 @@ if (await replyIfArgError(ctx, picked)) return ok(undefined);
 
 ## Built-in resolvers
 
-`Args` includes parsers for `string`, `integer`, `float`, `boolean`, `user`, `member`, `channel`, `role`, `mention`, `rest`, and more — see package exports.
+| Resolver | Parses |
+|----------|--------|
+| `stringArg` | Raw token |
+| `integerArg`, `numberArg`, `booleanArg` | Numeric / boolean literals |
+| `snowflakeArg` | Discord snowflake id |
+| `userMentionArg` | `<@id>` mention or raw id |
+| `channelMentionArg` | `<#id>` mention or raw id |
+| `roleMentionArg` | `<@&id>` mention or raw id |
+| `rest` (via registry) | Remaining tokens as one string |
+
+REST-backed resolvers (fetch user/member/channel objects) are **not** built in — use `@stambha/rest` `fetchUser` / `fetchGuildMember` with `defineArgResolver`. Full Sapphire-style entity resolvers are planned for **1.x B2**.
 
 Low-level lexer: `tokenize`, `joinFrom`.
 

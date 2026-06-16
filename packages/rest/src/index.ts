@@ -27,3 +27,29 @@ export {
 } from "./deploySlash.js";
 export type { RestTelemetry, RateLimitQueueListener } from "./telemetry.js";
 export { createRestTelemetryListener } from "./telemetry.js";
+export {
+  fetchUser,
+  fetchGuild,
+  fetchGuildMember,
+  fetchChannel,
+  fetchChannelMessage,
+  sendChannelMessage,
+  editChannelMessage,
+  deleteChannelMessage,
+  fetchGuildRoles,
+  fetchGuildChannels,
+  addGuildMemberRole,
+  timeoutGuildMember,
+  userDisplayName,
+  userAvatarUrl,
+  memberHasPermission,
+  PermissionBits,
+  ChannelType,
+  type ApiUser,
+  type GuildSummary,
+  type GuildMember,
+  type ChannelSummary,
+  type MessageDetail,
+  type ChannelMessageBody,
+  type GuildRole,
+} from "./resources.js";

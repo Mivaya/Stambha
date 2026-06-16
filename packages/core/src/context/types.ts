@@ -1,6 +1,10 @@
 import type { CommandContextMeta } from "./meta.js";
 import type { ArgsText, SlashOption } from "./args.js";
 import type { CommandSlashPath } from "../command/slashTypes.js";
+import type { ReplyPayload } from "./reply.js";
+
+export type { ReplyPayload } from "./reply.js";
+export { normalizeReplyData } from "./reply.js";
 
 /** How the user invoked a command. */
 export type CommandKind = "slash" | "prefix" | "contextMenu" | "message";
@@ -24,8 +28,11 @@ export interface CommandContext {
   /** Slash commands: root / group / subcommand path. */
   readonly slashPath?: CommandSlashPath;
   readonly raw: unknown;
-  reply(text: string): Promise<void>;
-  replyEphemeral(text: string): Promise<void>;
+  /** Text or rich payload (content, embeds). Prefix: channel message. Slash: interaction callback. */
+  reply(message: string | ReplyPayload): Promise<void>;
+  replyEphemeral(message: string | ReplyPayload): Promise<void>;
+  /** Slash only — edit the initial deferred interaction response (requires bot user id on the client). */
+  editReply?(payload: ReplyPayload): Promise<void>;
 }
 
 /** Context for Scout passive watchers. */
