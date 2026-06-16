@@ -119,7 +119,7 @@ resolveInteractionTarget(client, { kind: "signal", customId: "stambha:confirm:ab
 - Autocomplete → `CommandIndex.resolveSlash`
 - Signals → `Signal.parseCustomId` + signal registry
 
-On the **native** path, `attachStambhaClient` auto-routes slash chat commands only. Signal and autocomplete routing is planned for **0.3.5** — see [Signals](/features/signals).
+On the **native** path, `attachStambhaClient` auto-routes slash, autocomplete, and component interactions (0.3.5+). See [Signals](/features/signals).
 
 ---
 

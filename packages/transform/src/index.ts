@@ -1,4 +1,12 @@
-export type { StambhaUser, StambhaMessage, StambhaSlashInteraction } from "./shapes.js";
+export type {
+  StambhaUser,
+  StambhaMessage,
+  StambhaSlashInteraction,
+  StambhaAutocompleteInteraction,
+  StambhaComponentInteraction,
+  StambhaModalInteraction,
+  StambhaInteraction,
+} from "./shapes.js";
 
 export {
   userFromDiscordJs,
@@ -20,16 +28,23 @@ export {
   type DiscordenoInteractionLike,
 } from "./discordeno.js";
 
+export { interactionFromDispatch, metaFromDiscordInteraction } from "./discordNative.js";
+
 export {
   channelMessageBody,
   interactionReplyBody,
+  interactionDeferBody,
   webhookMessageBody,
+  autocompleteCallbackBody,
 } from "./rest.js";
 
 export {
   scoutContextFromStambhaMessage,
   commandContextFromStambhaMessageViaRest,
   commandContextFromStambhaSlashViaRest,
+  autocompleteContextFromStambhaInteraction,
+  signalContextFromStambhaInteraction,
+  signalNameFromCustomId,
   type ContextBuildOptions,
 } from "./splitContext.js";
 
