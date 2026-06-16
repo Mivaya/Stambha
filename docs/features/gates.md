@@ -96,7 +96,14 @@ cooldownGate({ limit: 1, delay: 5000, store: myRedisCooldownStore });
 | `memberPermissions` | `userPermissionsGate` |
 | `clientPermissions` | `clientPermissionsGate` |
 
-When metadata is missing, gates allow the command (graceful degradation). Populate `meta` when building contexts — `@stambha/transform` provides bridge helpers such as `metaFromDiscordJsMessage` and `metaFromDiscordenoMessage` when your gateway worker uses those library types.
+When metadata is missing:
+
+| Gate | Behavior without `meta` |
+|------|-------------------------|
+| Permission gates | **Deny** (missing bitfield treated as no permissions) |
+| `runInGate`, `nsfwGate` | **Allow** (graceful degradation) |
+
+On the **native** stack (`attachStambhaClient`), `meta` population from gateway dispatch is planned for **0.3.5**. Until then, permission gates may deny unexpectedly unless you populate `meta` when building contexts.
 
 ## Registry gates (`gateNames`)
 
@@ -149,5 +156,6 @@ Listens to `commandDenied` and sends the gate's reason. Prefix commands use `rep
 
 ## See also
 
-- [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) — `gates/` folder
+- [Project structure](/guide/project-structure) — `gates/` folder
+- [Barriers](/features/barriers) — global blockers before gates
 - [Arguments](/features/args) — prefix and slash option parsing

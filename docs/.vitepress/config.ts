@@ -20,7 +20,7 @@ export default defineVersionedConfig(
     lastUpdated: true,
 
     /** Contributor-only — not published to GitHub Pages. */
-    srcExclude: ["internal/**", "guide/hosting-the-docs.md", "scripts/**"],
+    srcExclude: ["internal/**", "scripts/**"],
 
     versioning: {
       latestVersion: readMonorepoVersion(),

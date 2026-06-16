@@ -1,8 +1,10 @@
 # Migration shims — deprecated app-layer patterns
 
-> **Policy (ADR 005):** Official Stambha migrations are **native-only** (`@stambha/rest`, `@stambha/gateway`, `@stambha/transform`). The hybrid discord.js patterns below are **historical** — documented so maintainers recognize them in early adopters and know what to delete. Do not add new shims; do not document hybrid flows in public guides.
+> **Policy (ADR 005):** Official Stambha migrations are **native-only** (`@stambha/rest`, `@stambha/gateway`, `@stambha/transform`). Patterns below are **historical** — so maintainers recognize them in early adopters and know what to delete.
 
-When migrating a **production Sapphire** bot to Stambha, early adopters sometimes added a `lib/stambha/` layer. This internal doc maps those patterns to framework gaps and **native replacements**.
+When migrating a production bot to Stambha, adopters sometimes added `lib/stambha/` or similar. This doc maps those patterns to framework gaps and **native replacements**.
+
+**Last updated:** 2026-06-15 (post **0.3.4**)
 
 ---
 
@@ -10,87 +12,82 @@ When migrating a **production Sapphire** bot to Stambha, early adopters sometime
 
 | App-layer pattern | What it compensated for | Native replacement | Status |
 |-------------------|-------------------------|-------------------|--------|
-| **Bootstrap `setup.ts`** | Orchestrates bot, loader, hub, deploy, DB init | `examples/bot` native bootstrap (**0.3.0 N2**) | Replace with reference example |
-| **Custom `attach*Client`** | Dynamic guild prefix; legacy run methods | `resolvePrefix` on gateway attach (**0.2.2 P2**); rewrite to `execute(ctx)` | **P2** ships; no `preserveRaw` |
-| **`wire*ToHub` / `attachDiscordJsGateway`** | discord.js events → `GatewayEventHub` | Bundled WS gateway (**0.3.0 N1**) or manual `hub.emit` until N1 | **Cancelled** — do not ship helpers |
-| **Service locator `container`** | Sapphire `container` (prisma, logger, …) | `client.container.binder` + plugins (**0.3.0 N3**) | In progress |
-| **`LegacyArgs`** | Sapphire `Args.pick` for `messageRun` | `Args.fromContext` + **1.x B2** | Migrate commands to `execute(ctx)` |
-| **`LegacySlashRegistry`** | `SlashCommandBuilder` + custom deploy | `deployCommands` + declarative slash (**1.x B1**) | Use Stambha `Command` metadata |
-| **`fetchGuildPrefix` helper** | Per-guild prefix from database | **0.2.2 P2** resolver; **1.x C2** Vault prefix field | Resolver or Vault |
-| **Gate `appliesTo(command)` filter** | Global gates on every command | **0.2.2 P1** — `gateNames` on `Command` | Use per-command gate names |
-| **Hook base with `container` getter** | Hooks only receive `registry` | **0.3.0 N3** — `Hook.create(ctx)` factory | **Done** — binder + loader context |
-| **`RouteStub` + unwired `routes/`** | `@sapphire/plugin-api` | **Plugins E** — `@stambha/dashboard` | Dashboard plugin |
-| **Prisma for all data + no Vault** | Guild config in SQL | **1.x C2** — Vault for settings ([ADR 004](./adr/004-vault-scope-orm-coexistence.md)) | Keep Prisma for domain |
-| **Command base with `messageRun` / `chatInputRun`** | Legacy run methods | Rewrite to `execute(ctx)` | No framework `preserveRaw` |
-| **Weak `HotLoader`** | Sapphire store reload | **Plugins** — `@stambha/dev-reload` | Dev-reload plugin |
+| **`lib/core/reply.ts`** (embeds, deferred edit) | Text-only `ctx.reply` | `ReplyPayload` + `editReply` (**0.3.4 R1–R2**) | ✅ Delete after 0.3.4 |
+| **`lib/rest/api.ts`** (`fetchUser`, guild, messages) | No REST helpers | `@stambha/rest` resources (**0.3.4 R3**) | ✅ Delete after 0.3.4 |
+| **Bootstrap `setup.ts`** | Orchestrates bot, loader, hub, deploy | `examples/bot` native bootstrap (**0.3.0 N2**) | ✅ Use reference |
+| **Custom `attach*Client`** | Dynamic prefix; legacy run methods | `resolvePrefix` (**0.2.2 P2**); `execute(ctx)` | ✅ |
+| **`wire*ToHub` / discord.js gateway** | Events → hub | `createNativeGatewayClient` (**0.3.0 N1**) | ✅ Cancelled hybrid |
+| **Service locator `container`** | Sapphire `container` | `client.container.binder` + plugins (**0.3.3 N3**) | ✅ |
+| **Manual interaction routing** | Signals/autocomplete not on attach | **0.3.5 I3–I4** | 🔲 Delete after 0.3.5 |
+| **Manual `meta` / permission fetch** | Gates need `ctx.meta` on native | **0.3.5 I2** | 🔲 Delete after 0.3.5 |
+| **`LegacyArgs`** | Sapphire `Args.pick` for `messageRun` | `Args.fromContext` + **1.x B2** | Migrate to `execute(ctx)` |
+| **`LegacySlashRegistry`** | `SlashCommandBuilder` + custom deploy | `deployCommands` + Stambha `Command` metadata | **1.x B1** optional |
+| **`fetchGuildPrefix` helper** | Per-guild prefix from DB | `resolvePrefix`; **1.x C2** Vault prefix | ✅ resolver |
+| **Gate `appliesTo(command)` filter** | Global gates on every command | `gateNames` on `Command` (**0.2.2 P1**) | ✅ |
+| **Hook base with `container` getter** | Hooks only receive `registry` | `Hook.create(ctx)` (**0.3.3 N3**) | ✅ |
+| **`RouteStub` + unwired `routes/`** | `@sapphire/plugin-api` | **Plugins E** — `@stambha/dashboard` | Planned |
+| **Prisma for all data, no Vault** | Guild config in SQL | **1.x C2** Vault for settings ([ADR 004](./adr/004-vault-scope-orm-coexistence.md)) | Keep Prisma for domain |
+| **`messageRun` / `chatInputRun` bases** | Legacy run methods | `execute(ctx)` | No `preserveRaw` |
+| **Weak `HotLoader`** | Sapphire store reload | **Plugins** `@stambha/dev-reload` | Planned |
 
 ---
 
 ## Historical hybrid bootstrap (do not use)
 
-Early migrations kept **discord.js** for sharding while routing commands through Stambha. **Not supported** per ADR 005:
+**Not supported** per ADR 005:
 
 ```text
-1. createStambhaBot({ restPort, prefix: default })
+1. createStambhaBot({ restPort, prefix })
 2. loadPieces(client, { context: { prisma, … } })
 3. createGatewayEventHub()
-4. attach*Client(hub, client, { resolvePrefix, preserveRaw: true })  // cancelled
+4. attach*Client(hub, client, { preserveRaw: true })   // cancelled
 5. wire discord.js Client → hub
 6. discord.login()
 ```
 
-**Native flow** (public docs): `createStambhaBot` → `loadPieces` → `GatewayEventHub` + native shard WS (or tier split) → `client.start()` → `deployCommands`. See [from-sapphire.md](../migration/from-sapphire.md).
-
----
-
-## Dashboard routes (unwired)
-
-Migrating bots with `@sapphire/plugin-api` often kept `src/routes/**` as stubs until a dashboard plugin exists.
-
-**Owner:** [future-v2.md](./future-v2.md) Pillar E — `@stambha/dashboard` (ADR 003). Not core Stambha.
-
----
-
-## What adopters should not expect in core
-
-Per [adr/002-bridge-deprecation.md](./adr/002-bridge-deprecation.md) and [adr/005-native-only-migration.md](./adr/005-native-only-migration.md):
-
-- No `@stambha/bridge-discordjs` package
-- No `attachDiscordJsGateway` or `preserveRaw` migration helpers
-- No 1:1 Sapphire plugin names (`@stambha/plugin-api`)
-- Core never imports discord.js
+**Native flow:** `createStambhaBot` → `loadPieces` → `GatewayEventHub` + native WS (or tier split) → `attachStambhaClient` → gateway `connect` / `client.start()` → `deployCommands`. See [from-sapphire.md](../migration/from-sapphire.md).
 
 ---
 
 ## Checklist for deleting app shims
 
-### After 0.2.2
+### After 0.2.2 ✅
 
-- [ ] Remove gate `appliesTo` filter; use `gateNames` on commands
-- [ ] Replace custom prefix logic with `resolvePrefix` on gateway attach
-- [ ] Fix loader to load gates before commands (or use framework resolver)
+- [x] Remove gate `appliesTo` filter; use `gateNames`
+- [x] Replace custom prefix logic with `resolvePrefix`
+- [x] Loader loads gates before commands
 
-### After 0.3.0
+### After 0.3.x ✅
 
-- [ ] Remove discord.js gateway wiring; use bundled WS client or tier split
-- [ ] Align bootstrap with native `examples/bot`
-- [ ] Move `client.on('command*')` to epilogues or `attachCommandLifecycleEpilogues` (**0.3.0 N4**)
+- [x] Remove discord.js gateway wiring
+- [x] Align bootstrap with `examples/bot`
+- [x] Move `client.on('command*')` to epilogues
+
+### After 0.3.4 ✅
+
+- [ ] Remove `lib/core/reply.ts` — use `ctx.reply({ embeds })` and `ctx.editReply`
+- [ ] Remove `lib/rest/api.ts` — use `@stambha/rest` resource helpers
+
+### After 0.3.5
+
+- [ ] Remove manual `interactionCreate` handlers for signals/autocomplete
+- [ ] Remove manual permission/meta fetching before gates
+- [ ] Remove manual slash option parsing from `ctx.raw`
 
 ### After 1.x (B1, B2, C1)
 
-- [ ] Remove `LegacyArgs`; migrate commands to `execute(ctx)`
-- [ ] Remove `LegacySlashRegistry`; use declarative slash or REST collector
-- [ ] Replace custom permission gate with `@stambha/levels`
+- [ ] Remove `LegacyArgs`; migrate to `execute(ctx)` + B2 resolvers if needed
+- [ ] Remove `LegacySlashRegistry` if still present
+- [ ] Replace custom permission level gate with `@stambha/levels`
 
-### After plugins (`@stambha/dashboard`)
+### After `@stambha/dashboard`
 
 - [ ] Delete `RouteStub`; wire routes through dashboard plugin
-- [ ] Restore route typechecking in `tsconfig`
 
 ---
 
 ## Related
 
-- [release-plan.md](./release-plan.md) — 0.2.2 / 0.3.0 ticket IDs
+- [release-plan.md](./release-plan.md) — 0.3.5 ticket IDs
 - [future-v2.md](./future-v2.md) — 1.x / 2.0 pipeline
 - [../migration/from-sapphire.md](../migration/from-sapphire.md) — public native migration guide
