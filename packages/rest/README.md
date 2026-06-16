@@ -72,6 +72,21 @@ if (shouldDeploySlashCommands({ shardId: 0 })) {
 
 **CI dry-run:** `pnpm --filter @stambha/example-bot deploy:dry-run`
 
+### Resource helpers (0.3.4+)
+
+Thin wrappers over `RestPort.request` for common bot operations — no discord.js required:
+
+```ts
+import { fetchUser, fetchGuildMember, sendChannelMessage } from "@stambha/rest";
+
+const user = await fetchUser(client.restPort!, userId);
+await sendChannelMessage(client.restPort!, channelId, {
+  embeds: [{ title: "Hello" }],
+});
+```
+
+Use with `defineArgResolver` from `@stambha/args` when you need REST-backed entity parsing.
+
 ---
 
 ## Key exports
@@ -86,6 +101,7 @@ if (shouldDeploySlashCommands({ shardId: 0 })) {
 | `deployCommandsIfShardZero` | Deploy only on shard 0 |
 | `shouldDeploySlashCommands` | Guard for multi-process sharding |
 | `formatDeployDiff` | Log diff summary |
+| `fetchUser`, `fetchGuild`, `fetchGuildMember`, … | Common REST resource helpers |
 | `createRestTelemetryListener` | Hook metrics into the queue |
 
 ---

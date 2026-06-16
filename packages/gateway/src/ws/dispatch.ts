@@ -23,6 +23,7 @@ interface DiscordInteractionPayload {
   id?: string;
   token?: string;
   type?: number;
+  application_id?: string;
   data?: { name?: string };
   user?: DiscordUserPayload;
   member?: { user?: DiscordUserPayload };
@@ -69,6 +70,7 @@ export function interactionFromDispatch(
   return {
     id: i.id ?? null,
     token: i.token ?? null,
+    applicationId: i.application_id ?? null,
     user,
     guildId: i.guild_id ?? null,
     channelId: i.channel_id ?? null,

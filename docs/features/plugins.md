@@ -100,9 +100,9 @@ For larger plugins, export a `StambhaPlugin` object with the same shape.
 
 ---
 
-## Interaction routing (optional)
+## Interaction routing
 
-Bridges already route slash autocomplete and component signals. For custom tooling, use:
+Use `resolveInteractionTarget` when wiring component or autocomplete handlers yourself:
 
 ```ts
 import { resolveInteractionTarget } from "@stambha/plugins";
@@ -119,6 +119,8 @@ resolveInteractionTarget(client, { kind: "signal", customId: "stambha:confirm:ab
 - Autocomplete → `CommandIndex.resolveSlash`
 - Signals → `Signal.parseCustomId` + signal registry
 
+On the **native** path, `attachStambhaClient` auto-routes slash chat commands only. Signal and autocomplete routing is planned for **0.3.5** — see [Signals](/features/signals).
+
 ---
 
 ## Official extensions (separate repo)
@@ -134,11 +136,13 @@ resolveInteractionTarget(client, { kind: "signal", customId: "stambha:confirm:ab
 | Translations | `@stambha/i18n` |
 | Scheduled tasks | `@stambha/cron` |
 
-Install from npm, register with `attachPlugins()` like any local plugin. See [ADR 003](/internal/adr/003-plugins-monorepo) (internal).
+Install from npm, register with `attachPlugins()` like any local plugin.
 
 ---
 
 ## Related
 
+- [Hooks](/features/hooks) — gateway event listeners
+- [Signals](/features/signals) — component routing
 - [Gates](/features/gates) — preconditions (often used inside plugins)
 - [Command tree](/features/command-tree) — slash paths for autocomplete

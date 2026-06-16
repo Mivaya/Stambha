@@ -14,8 +14,13 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
   {
     text: "Features",
     items: [
+      { text: "Hooks (listeners)", link: "/features/hooks" },
+      { text: "Scouts", link: "/features/scouts" },
+      { text: "Conduits", link: "/features/conduits" },
+      { text: "Barriers", link: "/features/barriers" },
       { text: "Gates", link: "/features/gates" },
       { text: "Epilogues", link: "/features/epilogues" },
+      { text: "Signals", link: "/features/signals" },
       { text: "Arguments", link: "/features/args" },
       { text: "Command tree", link: "/features/command-tree" },
       { text: "Plugins", link: "/features/plugins" },

@@ -2,7 +2,7 @@
 
 Epilogues run **after** the command pipeline decides an outcome — including when a **gate denies** or a **barrier blocks** before `execute()`.
 
-Prefer epilogues over `client.on("commandSuccess")` / `client.on("commandDenied")` in bootstrap (0.3.0 N4).
+Prefer epilogues over `client.on("commandSuccess")` / `client.on("commandDenied")` in bootstrap.
 
 ## File-based epilogue
 
@@ -90,5 +90,6 @@ Client events still emit for metrics plugins and backward compatibility. New bot
 ## Related
 
 - [Gates](/features/gates) — `attachGateDeniedReply` still handles user-facing denial messages
+- [Barriers](/features/barriers) — `phase: "blocked"` epilogues
 - [Project structure](/guide/project-structure) — `src/epilogues/`
 - [Plugins](/features/plugins) — metrics listen to client events

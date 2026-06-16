@@ -8,7 +8,7 @@
 pnpm add @stambha/args
 ```
 
-Bridges populate `CommandContext.argsText` (prefix) and `CommandContext.slashOptions` (slash).
+Prefix commands populate `CommandContext.argsText` on the native stack. **Slash options** (`CommandContext.slashOptions`) require gateway dispatch wiring — planned for **0.3.5** on `attachStambhaClient`.
 
 ## Prefix commands
 
