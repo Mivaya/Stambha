@@ -122,6 +122,8 @@ export type {
 } from "./context/types.js";
 export type { ChannelType, CommandContextMeta } from "./context/meta.js";
 export { isGuildChannelType } from "./context/meta.js";
+export type { ReplyPayload } from "./context/reply.js";
+export { normalizeReplyData } from "./context/reply.js";
 export type { SlashOption, ParsedSlashOptionType, ArgsText } from "./context/args.js";
 export type { AutocompleteContext, AutocompleteChoice } from "./context/autocomplete.js";
 export type {

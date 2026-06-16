@@ -30,7 +30,7 @@ import { loadPieces } from "@stambha/loader";
 await loadPieces(client, { context: { client, vault } });
 ```
 
-## Piece factories & dependency injection (0.3.0)
+## Piece factories & dependency injection (0.3.x)
 
 `loadPieces` calls `static create(ctx)` when a piece class defines it. The loader builds `ctx` with:
 
@@ -83,13 +83,20 @@ See [Epilogues](/features/epilogues) for post-command hooks (prefer over `client
 
 ## Folder reference
 
-| Folder | Stambha class |
-|--------|---------------|
-| `commands/` | `Command` |
-| `listeners/` | `Hook` |
-| `gates/` | `Gate` |
+| Folder | Stambha class | Guide |
+|--------|---------------|-------|
+| `commands/` | `Command` | [Command tree](/features/command-tree) |
+| `listeners/` | `Hook` | [Hooks](/features/hooks) |
+| `scouts/` | `Scout` | [Scouts](/features/scouts) |
+| `conduits/` | `Conduit` | [Conduits](/features/conduits) |
+| `barriers/` | `Barrier` | [Barriers](/features/barriers) |
+| `gates/` | `Gate` | [Gates](/features/gates) |
+| `epilogues/` | `Epilogue` | [Epilogues](/features/epilogues) |
+| `signals/` | `Signal` | [Signals](/features/signals) |
+| `tasks/` | `Chron` | [Chron](/features/chron) |
+| `schemas/` | Vault blueprints | [Vault](/features/vault) |
 
-`PiecePaths` in `@stambha/core` lists default paths (`PiecePaths.commands === "src/commands"`, `PiecePaths.preconditions === "src/gates"`).
+`PiecePaths` in `@stambha/core` lists default paths (`PiecePaths.commands === "src/commands"`, `PiecePaths.preconditions === "src/gates"`, etc.).
 
 Migrating from another stack? See [migration guides](/migration/) for piece-name mappings.
 
@@ -98,6 +105,7 @@ Migrating from another stack? See [migration guides](/migration/) for piece-name
 ```ts
 client.register(new PingCommand(client.registries.commands));
 client.registries.hooks.register(new ReadyListener(client.registries.hooks));
+client.registries.scouts.register(new MentionScout(client.registries.scouts));
 ```
 
 See [`examples/bot`](../../examples/bot) for a complete native bot using auto-load.

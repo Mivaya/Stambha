@@ -1,10 +1,12 @@
-# Stambha roadmap — future goals
+# Stambha roadmap
 
-Stambha’s long-term goal is to be a **first-class bot framework** that combines the best of **Sapphire** (developer ergonomics, piece model, command pipeline) and **Discordeno** (scale, split processes, memory control) — plus **original capabilities neither provides** (Vault, Sequences, transport-agnostic core).
+Stambha’s goal is a **first-class native Discord bot framework** — Sapphire-style ergonomics (pieces, pipeline, gates, args) plus Discordeno-style scale (split tier, centralized REST, sharding) plus **originals** (Vault, Sequences, Chron, Outcome pipeline).
 
-This document lists **core unique features** from each source, what Stambha already has, and the planned phases to close gaps.
+This document is the **feature matrix** and **phase history**. Release sequencing lives in [release-plan.md](./release-plan.md); post-1.0 pillars in [future-v2.md](./future-v2.md).
 
-**Branch rule (unchanged):** `feature/{short-name}`
+**Branch rule:** `feature/{short-name}`
+
+**Current version:** **0.3.4** · **Next:** **0.3.5** (native interaction routing) → **1.0.0**
 
 ---
 
@@ -15,333 +17,169 @@ This document lists **core unique features** from each source, what Stambha alre
 │  Stambha = Sapphire ergonomics + Discordeno scale + originals   │
 ├─────────────────────────────────────────────────────────────────┤
 │  @stambha/core        Framework (never imports discord.js/Deno) │
-│  @stambha/transport*  Native gateway + REST (future, optional)  │
-│  @stambha/transform   Payload normalization (optional lib shape helpers) │
+│  @stambha/transport   Rate limits, session, route keys          │
+│  @stambha/rest        Native Discord REST + deploy              │
+│  @stambha/gateway     WebSocket shards → GatewayEventHub        │
+│  @stambha/transform   Dispatch → Stambha shapes → REST bodies   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**End state:** Authors write against Stambha APIs only. Discord connectivity comes from Stambha-owned transport **or** optional bridges — not from wrapping Sapphire or requiring discord.js in core.
+**End state:** Authors write against Stambha APIs only. Discord connectivity is **Stambha-owned transport** ([ADR 005](./adr/005-native-only-migration.md)). Bridge packages were removed ([ADR 002](./adr/002-bridge-deprecation.md)).
+
+---
+
+## Native attach status (honest snapshot)
+
+`attachStambhaClient` is the default wiring for production bots. As of **0.3.4**:
+
+| Flow | Native attach | Notes |
+|------|---------------|-------|
+| Prefix commands | ✅ | `messageCreate` → router |
+| Simple slash (no options) | ✅ | Interaction type 2 |
+| Slash options / subcommands | 🔲 **0.3.5** | `slashOptions` not populated from dispatch |
+| Permission / RunIn / NSFW gates | 🔲 **0.3.5** | `ctx.meta` not populated on native path |
+| Buttons / selects / modals | 🔲 **0.3.5** | `Signal` pieces exist; attach does not route |
+| Autocomplete | 🔲 **0.3.5** | `Command.autocomplete()` exists; attach does not route |
+| Rich replies + embeds | ✅ **0.3.4** | `ReplyPayload` |
+| Deferred slash + `editReply` | ⚠️ Partial | `editReply` ✅; `deferReply` → **0.3.5 I5** |
+| Scouts, hooks, chron, vault | ✅ | Via hub events + loader |
 
 ---
 
 ## Feature matrix
 
-Legend: **Done** · **Partial** · **Planned** · **Won't** (explicit non-goal)
+Legend: **Done** · **Partial** · **Planned** · **Won't**
 
-### From Sapphire (discord.js ergonomics)
+### From Sapphire (authoring ergonomics)
 
-Sapphire’s value is **structure and DX** on top of discord.js — command stores, preconditions, arguments, plugins, interaction handlers.
+| Feature | Stambha today | Target |
+|---------|---------------|--------|
+| Piece stores (commands, hooks, …) | **Done** — registries + `@stambha/loader` | Maintain |
+| Preconditions / gates | **Done** — `@stambha/gates` | **Partial on native** until 0.3.5 meta |
+| Barriers, epilogues, conduits | **Done** | Maintain |
+| Prefix `Args` + mention/snowflake ids | **Done** — `@stambha/args` (0.3.4) | B2 REST entity resolvers in 1.x |
+| Slash options / `SlashArgs` | **Partial** — API done; native attach 🔲 0.3.5 | 0.3.5 |
+| Subcommands & groups (deploy + router) | **Done** deploy; **Partial** native routing | 0.3.5 |
+| Prefix aliases, categories | **Done** | Maintain |
+| Autocomplete handlers | **Partial** — `Command.autocomplete()`; native attach 🔲 | 0.3.5 |
+| Component handlers (buttons, …) | **Partial** — `Signal`; native attach 🔲 | 0.3.5 |
+| Slash deploy / diff | **Done** — `@stambha/rest` | Maintain |
+| Plugins + container DI | **Done** — `@stambha/plugins`, loader context | Maintain |
+| Rich replies (embeds, ephemeral) | **Done** — `ReplyPayload` (0.3.4) | Maintain |
+| REST entity helpers | **Done** — `@stambha/rest` resources (0.3.4) | Maintain |
+| Declarative command options → gates | **Planned** — 1.x B1 | — |
+| Permission levels | **Planned** — 1.x C1 `@stambha/levels` | — |
+| Built-in help package | **Planned** — 1.x B3 | — |
+| Dashboard HTTP API | **Planned** — plugins `@stambha/dashboard` | — |
+| Typing indicator | **Planned** — 1.x | — |
+| Depends on discord.js | **Won't** — native only | — |
 
-| Feature | Sapphire | Stambha today | Target |
-|---------|----------|---------------|--------|
-| Piece stores (commands, listeners) | CommandStore, ListenerStore | **Done** — `Command`, `Hook`, registries + `@stambha/loader` | Keep |
-| Preconditions | PreconditionStore | **Done** — `@stambha/gates` (cooldown, permissions, NSFW, RunIn) | Maintain |
-| Global inhibitors | — (use plugins) | **Done** — `Barrier` | Keep |
-| Post-command hooks | — | **Done** — `Epilogue` | Keep |
-| Middleware | — | **Done** — `Conduit` | Keep |
-| Arguments / `Args` parsing | ArgumentStore, typed resolvers | **Done** — `@stambha/args` | Maintain |
-| Slash subcommands & groups | Command options tree | **Done** — Phase 13 | Core + deploy |
-| Prefix aliases | Command aliases | **Done** — `CommandIndex` | Router |
-| Command categories | category / subCategory | **Done** — metadata + help | Help command |
-| Built-in cooldown gate | Precondition + scope | **Done** — `@stambha/gates` | Maintain |
-| Built-in permission gate | Client + user permissions | **Done** — `@stambha/gates` | Maintain |
-| Built-in NSFW / RunIn gates | Channel type checks | **Done** — `@stambha/gates` | Maintain |
-| Interaction handlers | InteractionHandlerStore | **Partial** — `Signal` + `resolveInteractionTarget` | Full handler store later |
-| Autocomplete handlers | Interaction handlers | **Done** — `Command.autocomplete()` | Bridge routing |
-| Slash deploy / registry | Application command registries | **Done** — `buildApplicationCommands`, deploy diff | Bridges |
-| Plugin system | Plugin hooks (pre/post init, login) | **Done** — `@stambha/plugins` | Maintain |
-| Logger / container DI | `@sapphire/pieces` Container | **Done** — `StambhaContainer` + `Binder` | Maintain |
-| Error listeners | Default error listeners | **Partial** — client events (`commandError`, etc.) | Default handlers Phase 11 |
-| Message commands | Optional loadMessageCommandListeners | **Done** — prefix via bridge + router | Keep |
-| Depends on discord.js | Always | **No** — bridge only | Keep core free |
+### From Discordeno (scale & ops)
 
-### From Discordeno (scale & architecture)
+| Feature | Stambha today | Target |
+|---------|---------------|--------|
+| Split gateway / REST / bot | **Done** — tier split + workers | Maintain |
+| Centralized REST rate limits | **Done** — `@stambha/rest` | Maintain |
+| Native WebSocket gateway | **Done** — 0.3.0 `createNativeGatewayClient` | Maintain |
+| desiredProperties / slim context | **Done** | Maintain |
+| Transform layer | **Done** — `@stambha/transform` | Extend in 0.3.5 |
+| Sharding + resharding APIs | **Done** — `@stambha/gateway` | Maintain |
+| Custom cache | **Done** — `@stambha/cache` (plugins); Redis → 1.x A1 | — |
+| Cross-runtime (Node, Bun, Deno) | **Done** — `@stambha/runtime` | Maintain |
+| Gateway proxy patterns | **Planned** — optional | — |
+| Horizontal worker bus (RabbitMQ) | **Planned** — 2.0 A3 | — |
+| Functional-only pieces | **Won't** — class pieces + `defineGate` functions | — |
 
-Discordeno’s value is **operational scale** — split gateway/REST, rate-limit centralization, memory trimming, sharding/resharding.
+### Stambha originals
 
-| Feature | Discordeno | Stambha today | Target |
-|---------|------------|---------------|--------|
-| Split gateway / REST / bot processes | First-class | **Partial** — `RestPort`, tier split, REST worker | Native transport Phase 15–16 |
-| Centralized REST rate limits | `@discordeno/rest` proxy | **Done** — `@stambha/rest` + metrics | Native gateway **Done** (Phase 18) |
-| desiredProperties (RAM trim) | Per-bot property mask | **Done** — client mask + Discordeno sync | Maintain |
-| Transformers (Discord ↔ internal) | Bidirectional transformers | **Done** — `@stambha/transform` | Bridge adapters |
-| Gateway manager + shard workers | `@discordeno/gateway` | **Done** — Phase 18 | `@stambha/gateway` |
-| Zero-downtime resharding | Automated / manual | **Done** — Phase 19 | `@stambha/gateway` reshard API |
-| Gateway proxy / fast resume | DD proxy patterns | **Planned** — Phase 19 | Optional proxy package |
-| Custom caches | Pluggable cache layer | **Done** — Phase 18 (memory) | `@stambha/cache` |
-| Cross-runtime (Node, Deno, Bun) | Yes | **Done** — Phase 20 | `@stambha/runtime` |
-| Functional handlers (no classes) | Preferred style | **Won't** — class pieces match Sapphire ergonomics | Gates/args support functions |
-| Horizontal worker scaling | Cluster / workers | **Partial** — tier split v1 + v2 | Worker orchestration Phase 19 |
-| REST proxy from gateway | `rest.proxy` | **Partial** — `HttpRestPort` | Unified with native REST |
-
-### Stambha originals (neither Sapphire nor Discordeno)
-
-| Feature | Stambha today | Notes |
-|---------|---------------|-------|
+| Feature | Status | Notes |
+|---------|--------|-------|
 | Transport-agnostic `Bridge` | **Done** | Core never imports Discord libs |
-| `Outcome` / typed errors | **Done** | `ok()` / `err()` pipeline |
-| **Vault** (Blueprint / Ledger / Record) | **Done** | Settings + bot-shaped data ([ADR 004](./adr/004-vault-scope-orm-coexistence.md)); ORM for heavy domain |
-| **Sequences** (multi-step UI) | **Done** | `stambha:seq:…` custom IDs |
-| **Chron** (cron tasks) | **Done** | `src/tasks/` loader path |
-| **Scouts** (passive watchers) | **Done** | Passive event watchers |
-| **Signals** (components) | **Done** | Buttons, selects, modals |
-| **Metrics** (Prometheus) | **Done** | `@stambha/metrics` |
-| **MockBridge** (test without Discord) | **Done** | Core testing |
-| **Tier** + **worker roles** | **Done** | monolith / split |
-| Native `@stambha/transport` | **Planned** | Phase 15+ — Stambha-owned gateway/REST |
-| Migration guides from Sapphire / Discordeno | **Done** — Phase 21 | [MIGRATION.md](./MIGRATION.md) |
+| `Outcome` pipeline | **Done** | `ok()` / `err()` |
+| **Vault** | **Done** | Settings + bot-shaped data ([ADR 004](./adr/004-vault-scope-orm-coexistence.md)) |
+| **Sequences** | **Partial** | Store + custom IDs; native `runSequence` → 2.0 |
+| **Chron** | **Done** | In-process; distributed → 2.0 |
+| **Scouts** / **Signals** | **Done** pieces; signals routing → 0.3.5 |
+| **Metrics** | **Done** — `@stambha/metrics` (plugins repo) | |
+| **MockBridge** | **Done** | Tests without Discord |
+| Migration guides | **Done** | `docs/migration/*` |
 
 ---
 
 ## What we are **not** building
 
 - A fork of Sapphire or a discord.js wrapper marketed as Stambha
-- A 1:1 Discordeno API clone inside `@stambha/core`
-- Requiring discord.js **or** Discordeno to use the framework core (bridges stay optional)
-- **Vault as a full ORM** — Prisma/Drizzle remain the right tool for economy, quest graphs, analytics, and large relational models ([ADR 004](./adr/004-vault-scope-orm-coexistence.md))
+- Re-introducing `@stambha/bridge-*` packages
+- **Vault as a full ORM** — Prisma/Drizzle for heavy domain ([ADR 004](./adr/004-vault-scope-orm-coexistence.md))
+- Requiring Redis/RabbitMQ for single-process bots
 
 ---
 
 ## Vault scope (Path B)
 
-**Decision:** Vault = **settings + bot-shaped data only**. Official coexistence with Prisma/SQL.
+Vault = **settings + bot-shaped data**. ORM/SQL for economy, quests, analytics.
 
 | Vault owns | ORM / SQL owns |
 |------------|----------------|
 | Guild / user / member config | Multi-table transactions |
-| Prefix, modules, toggles, log channel ids | Economy, shops, inventories |
-| Feature flags | Quest / achievement graphs |
-| Permission level overrides (1.x + `@stambha/levels`) | Large mod-log tables & reporting |
-| Dashboard-editable bot settings | Analytics & ad-hoc queries |
-| Small per-member stats as ledgers (optional) | Anything already in `schema.prisma` |
+| Prefix, modules, toggles | Economy, inventories |
+| Feature flags, level overrides (1.x) | Quest graphs, mod-log at scale |
+| Dashboard-editable bot settings | Analytics |
 
-**Reference:** Document-oriented guild/user settings (common in older bots); not a Prisma replacement.
-
-### Vault evolution (1.x)
-
-| Deliverable | Package | Notes |
-|-------------|---------|-------|
-| Blueprint migrations | `@stambha/vault` | Versioned schema changes |
-| Discord serializers + `resolve()` | `@stambha/vault` | Channel / role / user fields |
-| Array update API | `@stambha/vault` | `add` / `remove` / `overwrite` on array fields |
-| Guild settings attach | `@stambha/core` or vault plugin | `guild.settings` ergonomics |
-| SQL / Redis drivers | plugins repo | `vault-sql`, `vault-redis` |
-| Level overrides in blueprint | `@stambha/levels` + vault | Pillar C2 |
-| Dashboard CRUD | `@stambha/dashboard` | Pillar E3 |
+Vault evolution (1.x): migrations, serializers, SQL/Redis drivers, dashboard CRUD — see [future-v2.md](./future-v2.md).
 
 ---
 
-## Implementation phases (11+)
+## Phase history (11–23)
 
-Phases 1–10 are complete — see [PHASES.md](./PHASES.md#completed).
+Phases 1–10: see [phases.md](./phases.md). Summary of 11+:
 
-### Phase 11 — Built-in gates (`@stambha/gates`) ✅
-
-**From Sapphire:** Cooldown, Permissions, NSFW, RunIn, UserPermissions.
-
-| Deliverable | Status |
-|-------------|--------|
-| `@stambha/gates` package | Done |
-| Cooldown | Done — limit + delay + scope |
-| Permissions | Done — member + client bitfields |
-| NSFW / RunIn | Done |
-| Default error UX | Done — `attachGateDeniedReply()` |
-| `CommandContext.meta` | Done — bridges populate metadata |
-
-**Branch:** `feature/gates`
-
----
-
-### Phase 12 — Arguments (`@stambha/args`) ✅
-
-**From Sapphire:** ArgumentStore, `Args`, resolvers (string, integer, member, channel, …).
-
-| Deliverable | Status |
-|-------------|--------|
-| `@stambha/args` | Done |
-| Prefix lexer + `Args` | Done |
-| `CommandContext.argsText` | Done — bridges pass prefix args |
-| Slash options | Done — `SlashArgs`, `slashOptions` on context |
-| Custom resolvers | Done — `defineArgResolver`, `ArgRegistry` |
-| Validation UX | Done — `replyArgError`, `replyIfArgError` |
-
-**Branch:** `feature/args`
+| Phase | Status | Highlight |
+|-------|--------|-------------|
+| 11 Gates | ✅ | `@stambha/gates`; meta from bridges — native meta → 0.3.5 |
+| 12 Args | ✅ | Prefix + slash API; native slash options → 0.3.5 |
+| 13 Command tree | ✅ | Deploy, subcommands, autocomplete API |
+| 14 Plugins | ✅ | `@stambha/plugins`, container |
+| 15–16 Transport + REST | ✅ | `@stambha/transport`, `@stambha/rest`, REST worker |
+| 17 Transform | ✅ | desiredProperties, slim context |
+| 18 Gateway | ✅ | `@stambha/gateway`, bundled WS (0.3.0) |
+| 19 Resharding | ✅ | Operator APIs |
+| 20 Cross-runtime | ✅ | `@stambha/runtime` |
+| 21 Migration docs | ✅ | Public guides + ADRs |
+| 22 Authoring (0.3.4) | ✅ | ReplyPayload, REST resources, mention args |
+| **23 Native routing (0.3.5)** | 🔲 | Options, meta, signals, autocomplete, defer |
 
 ---
 
-### Phase 13 — Command tree & deploy ✅
+## 1.0.0 success criteria
 
-**From Sapphire:** Subcommands, groups, aliases, autocomplete, application command registry.
+Ship **1.0.0** after **0.3.5**, when all of the following are true:
 
-| Deliverable | Status |
-|-------------|--------|
-| `CommandSlashPath`, slash metadata on `Command` | Done |
-| `buildApplicationCommands()` | Done |
-| `CommandIndex` (aliases + slash paths) | Done |
-| Autocomplete on `Command` | Done |
-| Deploy diff + permissions fields | Done |
-| Help command example | Done |
+| # | Criterion | 0.3.4 status |
+|---|-----------|--------------|
+| 1 | Production bot on **native transport** (no discord.js) | ✅ monolith + tier split |
+| 2 | **Daily authoring** — prefix, slash *with options*, gates, args, deploy, loader | 🔲 options/meta/signals/autocomplete |
+| 3 | **Ops parity** — split tier, REST queue, sharding path, desired properties | ✅ |
+| 4 | **Originals** documented — Vault, Chron, Sequences (scope honest), Metrics | ✅ (Sequences partial) |
+| 5 | **Known gaps** documented for 1.x/2.0 (levels, declarative gates, Redis, dashboard) | 🔲 publish at 1.0.0 |
 
-**Branch:** `feature/command-tree`
-
----
-
-### Phase 14 — Plugins & container ✅
-
-**From Sapphire:** Plugin hooks, Container, logger.
-
-| Deliverable | Description |
-|-------------|-------------|
-| `@stambha/plugins` | `preInit`, `postInit`, `preStart`, `postStart`, `postLoad` hooks |
-| `StambhaContainer` | Logger, config, shared services (extends `DefaultStambhaContainer`) |
-| Interaction handler unification | `resolveInteractionTarget` facade (Signal + autocomplete) |
-| Official extensions | Separate repo **`stambhadev/plugins`** — e.g. `@stambha/dashboard`, `@stambha/i18n` ([ADR 003](./adr/003-plugins-monorepo.md); no `@stambha/plugin-*` names) |
-
-**Branch:** `feature/plugins` · **Docs:** [PLUGINS.md](./PLUGINS.md)
+**0.3.4 is sufficient** for a *minimal* native bot (ping, echo, prefix, simple slash, embeds, REST helpers). It is **not sufficient** to declare 1.0.0 without 0.3.5.
 
 ---
 
-### Phase 15 — Transport foundation (`@stambha/transport`) ✅
-
-**From Discordeno:** Own the Discord wire protocol inside Stambha (not a bridge).
-
-| Deliverable | Description |
-|-------------|-------------|
-| `@stambha/transport` | Shared types, rate-limit bucket model, session info |
-| `@stambha/rest` | REST client with centralized queue (Discordeno-inspired) |
-| Bridge deprecation path | Document: new bots → transport; existing → bridges |
-
-**Branch:** `feature/transport` · **Docs:** [TRANSPORT.md](./TRANSPORT.md)
-
----
-
-### Phase 16 — Native REST worker ✅
-
-**From Discordeno:** Standalone REST process, proxy from gateway workers.
-
-| Deliverable | Description |
-|-------------|-------------|
-| REST worker server | `createNativeRestWorker` replaces discord.js REST worker |
-| `RestPort` implementation | `NativeRestPort` + `HttpRestPort` gateway client |
-| Bearer auth + health | Parity with `createRestWorkerServer` |
-| Rate-limit metrics | `createPrometheusRestMetrics` in `@stambha/metrics` |
-
-**Branch:** `feature/native-rest` · **Docs:** [NATIVE_REST.md](./NATIVE_REST.md)
-
----
-
-### Phase 17 — Desired properties & transformers ✅
-
-**From Discordeno:** Memory-efficient payloads, bidirectional transform layer.
-
-| Deliverable | Description |
-|-------------|-------------|
-| `desiredProperties` config | On `StambhaClient` / transport bot |
-| Slim `CommandContext` fields | Only requested props populated |
-| `@stambha/transform` | Gateway payload → Stambha shapes → REST payloads |
-| Bridge adapters | discord.js + Discordeno context via transform layer |
-
-**Branch:** `feature/desired-properties` · **Docs:** [DESIRED_PROPERTIES.md](./DESIRED_PROPERTIES.md)
-
----
-
-### Phase 18 — Gateway manager & cache
-
-**From Discordeno:** Shard spawning, workers, custom cache.
-
-| Deliverable | Description |
-|-------------|-------------|
-| `@stambha/gateway` | Shard manager, identify, resume |
-| Worker protocol | Gateway worker ↔ bot worker messaging |
-| `@stambha/cache` | Pluggable cache (memory, Redis) |
-| Tier split v2 | Native gateway + REST + bot workers |
-
-**Branch:** `feature/gateway` · **Docs:** [GATEWAY.md](./GATEWAY.md)
-
----
-
-### Phase 19 — Sharding & resharding
-
-**From Discordeno:** Zero-downtime resharding, gateway proxy patterns.
-
-| Deliverable | Description |
-|-------------|-------------|
-| Shard calculator | Guild count → shard count |
-| Automated resharding | Threshold-based (configurable %) |
-| Manual resharding API | Operator-triggered |
-| Identify budget management | Safe identify spacing |
-
-**Branch:** `feature/resharding` · **Docs:** [RESHARDING.md](./RESHARDING.md)
-
----
-
-### Phase 20 — Cross-runtime
-
-**From Discordeno:** Node, Deno, Bun.
-
-| Deliverable | Description |
-|-------------|-------------|
-| Runtime abstraction | FS, env, timers where needed |
-| CI matrix | Node 20+, Bun, Deno |
-| Publish `exports` conditions | Dual package if required |
-
-**Branch:** `feature/cross-runtime` · **Docs:** [CROSS_RUNTIME.md](./CROSS_RUNTIME.md)
-
----
-
-### Phase 21 — Migration & docs
-
-**Stambha original:** Onboard Sapphire and Discordeno users.
-
-| Deliverable | Description |
-|-------------|-------------|
-| `docs/MIGRATION_SAPPHIRE.md` | Piece name mapping, Gate vs Precondition |
-| `docs/MIGRATION_DISCORDENO.md` | Big bot → Stambha tier layout |
-| `docs/MIGRATION_KLASA.md` | Monitors → Scouts, etc. |
-| Architecture decision records | Transport vs bridge strategy |
-
-**Branch:** `feature/migration-docs` · **Docs:** [MIGRATION.md](./MIGRATION.md)
-
----
-
-## Priority order (recommended)
-
-For **DX first** (Sapphire audience):
+## Priority order (for new contributors)
 
 ```text
-11 gates → 12 args → 13 command tree → 14 plugins → 15+ transport
+Now:     0.3.5 native interaction routing (I1–I6)
+Next:    1.0.0 stable API + docs
+Then:    1.x B1/C1, Redis (A1–A2), help (B3)
+Later:   2.0 bus, distributed chron, native runSequence
 ```
-
-For **scale first** (Discordeno audience):
-
-```text
-15 transport → 16 native REST → 17 desired props → 18 gateway → 19 resharding
-```
-
-For **balanced** (recommended default):
-
-```text
-11 gates → 12 args → 13 command tree → 15 transport → 16 REST → 17 props → 18 gateway
-```
-
-Plugins (14) can run parallel to transport work — different contributors, no hard dependency.
-
----
-
-## Success criteria
-
-Stambha reaches **1.0.0** when:
-
-1. **Core** runs a production bot with **native transport** (no required bridge).
-2. **Sapphire parity** on daily authoring: gates pack, args, subcommands, deploy, loader.
-3. **Discordeno parity** on ops: split tier, centralized REST, sharding path, desired properties.
-4. **Originals** remain first-class: Vault (Path B scope documented), Sequences, Chron, Metrics documented and stable.
-5. Bridges (`discord.js`, Discordeno) are **optional compatibility layers**, not the main story.
 
 ---
 
 ## Contributing
 
-Pick a phase, open an issue referencing this doc, branch `feature/{short-name}`, and follow [.github/CONTRIBUTING.md](../.github/CONTRIBUTING.md).
+Pick a release lane or phase, reference this doc in the issue, branch `feature/{short-name}`, follow [.github/CONTRIBUTING.md](../../.github/CONTRIBUTING.md).
 
-Large phases (15–19) should be broken into sub-PRs (e.g. `feature/transport-types` before `feature/gateway-shards`).
+Large work should split into reviewable PRs (e.g. `feature/0.3.5-slash-options` before `feature/0.3.5-signals`).
