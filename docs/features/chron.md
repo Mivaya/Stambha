@@ -45,3 +45,8 @@ schedule: { cron: "0 */6 * * *" } // every 6 hours (5-field cron)
 await loadPieces(client, { context: { client, vault } });
 // loads src/tasks/*.ts into client.registries.chrons
 ```
+
+## Related
+
+- [Project structure](/guide/project-structure) — `src/tasks/`
+- [Hooks](/features/hooks) — one-off gateway events vs scheduled ticks

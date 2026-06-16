@@ -11,7 +11,7 @@ Gateway RAM trimming (select which fields to keep on incoming payloads) pairs wi
 ```ts
 import { createStambhaBot, gatesDesiredProperties, minimalDesiredProperties } from "@stambha/core";
 
-// Default: full context + meta (discord.js bots)
+// Default: full context + meta
 const full = createStambhaBot({ prefix: "!" });
 
 // Drop raw Discord objects; keep gate metadata
@@ -21,13 +21,13 @@ const gated = createStambhaBot({ desiredProperties: gatesDesiredProperties });
 const slim = createStambhaBot({ desiredProperties: minimalDesiredProperties });
 ```
 
-`client.desiredProperties` is a frozen {@link ResolvedDesiredProperties} mask. Bridges read it when building {@link CommandContext}.
+`client.desiredProperties` is a frozen mask. `@stambha/transform` applies it when building {@link CommandContext} via `slimCommandContext`.
 
 ### Presets
 
 | Preset | `raw` | `meta` | Use case |
 |--------|-------|--------|----------|
-| `defaultDesiredProperties` | yes | full | Development, discord.js |
+| `defaultDesiredProperties` | yes | full | Development |
 | `gatesDesiredProperties` | no | full | Production with `@stambha/gates` |
 | `minimalDesiredProperties` | no | none | High-scale bots, custom gates |
 

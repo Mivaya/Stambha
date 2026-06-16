@@ -1,10 +1,10 @@
 # Release plan — migration fixes & pipeline alignment
 
-Planning doc for maintainers. Captures **near-term patch/minor work** validated by migrating an existing Sapphire production bot to Stambha, without duplicating work already scheduled in [future-v2.md](./future-v2.md).
-
-**Rule:** Items marked **Pipeline** stay owned by [future-v2.md](./future-v2.md) and [roadmap.md](./roadmap.md). This document only adds **0.2.2** and **0.3.0** scope and maps every known gap to an owner.
+Planning doc for maintainers. Captures **semver release lanes** and maps every known migration gap to an owner. Long-term pillars live in [future-v2.md](./future-v2.md); the feature matrix in [roadmap.md](./roadmap.md).
 
 **Migration policy:** [ADR 005](./adr/005-native-only-migration.md) — native stack only; no official hybrid discord.js path.
+
+**Last updated:** 2026-06-15 (post **0.3.4**)
 
 ---
 
@@ -12,115 +12,145 @@ Planning doc for maintainers. Captures **near-term patch/minor work** validated 
 
 | Lane | Version | Scope |
 |------|---------|--------|
-| **Patch** | **0.2.2** | Bugs and small API extensions that unblock native Sapphire migrations |
-| **Minor** | **0.3.x** | Native migration completion — bundled WS gateway (A5), loader/DX, bootstrap docs |
-| **Minor** | **0.3.4** | Bot authoring gaps closed — rich replies, REST resource helpers, mention id args |
-| **Pipeline** | **1.x** | [future-v2.md](./future-v2.md) — B1 declarative gates, C1 permission levels, Redis drivers |
+| **Patch** | **0.2.2** | Gates, prefix resolver, loader order — ✅ shipped |
+| **Minor** | **0.3.0–0.3.3** | Native WS gateway, loader/DX, epilogues, slash deploy — ✅ shipped |
+| **Minor** | **0.3.4** | Rich replies, REST resource helpers, mention id args — ✅ shipped |
+| **Minor** | **0.3.5** | Native interaction routing — **next** before 1.0.0 |
+| **Minor** | **1.0.0** | Stable API; semver promise; known gaps documented |
+| **Minor** | **1.x** | [future-v2.md](./future-v2.md) — B1, C1, Redis, help, B2 entity args |
 | **Plugins repo** | `@stambha/dashboard` etc. | Pillar E — HTTP, OAuth, dashboard routes |
-| **Major** | **2.0** | Bus, distributed chron, breaking CommandOptions only if required |
+| **Major** | **2.0** | Bus, distributed chron, native `runSequence`, breaking CommandOptions if needed |
 
-Sequencing:
+### Sequencing
 
 ```text
-0.2.2  — Per-command gates, prefix resolver, loader order, native bootstrap docs
-0.3.0  — A5 bundled gateway WS, native examples, epilogue/DI docs (no hybrid helpers)
-0.3.4  — Rich replies, REST resource helpers, mention/snowflake args (closes migration shims)
-1.0.0  — Stable API, documented known gaps
-1.x    — B1, C1, Redis cache/cooldown, REST-backed arg resolvers (B2), help, typing
-2.0.0  — A3 bus, native runSequence, distributed chron (A5 already in 0.3)
+0.2.2  ✅ Per-command gates, prefix resolver, loader order
+0.3.0  ✅ Bundled gateway WS, native examples, epilogue/DI docs
+0.3.3  ✅ Native gateway polish, deploy helpers, docs cleanup
+0.3.4  ✅ Rich replies, REST helpers, mention/snowflake args
+0.3.5  🔲 Slash options/subcommands, meta, signals, autocomplete on native attach
+1.0.0  🔲 Stable API + honest known-gaps doc
+1.x    🔲 B1 declarative gates, C1 levels, Redis, help, typing, B2 REST resolvers
+2.0.0  🔲 A3 bus, distributed chron, native runSequence
 ```
 
 ---
 
-## 0.2.2 (patch) — backlog
+## Shipped: 0.2.2 (patch)
 
-| ID | Item | Type | Package | Closes |
-|----|------|------|---------|--------|
-| **P1** | Per-command gate resolution (`gateNames` on `Command`, not all global gates on every command) | Design fix | `@stambha/core` | App `appliesTo()` gate filters |
-| **P2** | `resolvePrefix` on gateway attach / `attachStambhaClient` | Extension | `@stambha/gateway` | Dynamic per-guild prefix |
-| **P4** | Loader loads gates before commands, or post-load `resolveCommandGateNames()` | Bug | `@stambha/loader` | Gate name resolution at command construct time |
-| **P5** | Native startup order documented (`markReady` → `start()` → lifecycle events) | Docs | `docs/migration/from-sapphire.md` | Ad-hoc bootstrap ordering |
-| **P6** | Registry API documented (`values()`, not iterable `Registry`) | Docs | `packages/core/README.md` | Help/admin commands iterating commands |
-| **P7** | CJS migration notes (`import type`, `moduleResolution`) | Docs | Migration guide | Done in 0.2.1 — keep documented |
+| ID | Item | Status |
+|----|------|--------|
+| **P1** | Per-command gate resolution (`gateNames` on `Command`) | ✅ |
+| **P2** | `resolvePrefix` on `attachStambhaClient` | ✅ |
+| **P4** | Loader loads gates before commands | ✅ |
+| **P5–P7** | Native bootstrap + registry + CJS docs | ✅ |
 
 **Cancelled (ADR 005):** P3 `preserveRaw`, hybrid startup patterns.
 
-**Explicitly not in 0.2.2** (pipeline): dashboard HTTP, declarative cooldowns, `@stambha/levels`, Redis, help package, bundled WS gateway.
-
 ---
 
-## 0.3.0 (minor) — native migration
+## Shipped: 0.3.0–0.3.3 (minor)
 
-| ID | Item | Package | Notes |
-|----|------|---------|-------|
-| **N1** | Bundled WebSocket shard client → `GatewayEventHub` | `@stambha/gateway` | Pulls forward future-v2 **A5**; blocker for full native migration |
-| **N2** | `examples/bot` native bootstrap as reference (monolith + tier split) | `examples/`, docs | Replaces planned `hybrid-discordjs` example |
-| **N3** | Hook `static create(ctx)` factory documented; optional binder injection | `@stambha/loader`, docs | Replaces hook base classes with `container` getter |
-| **N4** | Client events → epilogue templates (`commandSuccess`, `commandDenied`, `commandError`) | `@stambha/core` docs | Replaces `client.on(...)` in bootstrap |
-| **N5** | Shard-0-only slash deploy pattern | `@stambha/rest` docs | Multi-process sharding with native gateway |
-| **N6** | `deployCommands` dry-run + diff in CI examples | `@stambha/rest` | Operational safety |
+| ID | Item | Status |
+|----|------|--------|
+| **N1** | Bundled WebSocket shard client → `GatewayEventHub` | ✅ 0.3.0 |
+| **N2** | `examples/bot` native bootstrap (monolith + tier split) | ✅ 0.3.0 |
+| **N3** | Hook `static create(ctx)` + loader `LoaderContext` DI | ✅ 0.3.3 |
+| **N4** | Epilogue phases + `attachCommandLifecycleEpilogues` | ✅ 0.3.3 |
+| **N5–N6** | Shard-0 deploy + `deployCommands` dry-run/diff | ✅ 0.3.3 |
 
 **Cancelled (ADR 005):** M1 `attachDiscordJsGateway`, M2 `examples/hybrid-discordjs`.
 
 ---
 
-## 0.3.4 (minor) — bot authoring parity
+## Shipped: 0.3.4 (minor)
 
-Closes gaps that forced every production bot to ship app-layer shims (`reply` with embeds, `fetchUser`, mention parsing).
+| ID | Item | Package | Status |
+|----|------|---------|--------|
+| **R1** | `ReplyPayload` on `CommandContext.reply` / `replyEphemeral` | `@stambha/core`, `@stambha/transform` | ✅ |
+| **R2** | Slash `editReply` (deferred follow-up) | `@stambha/transform`, `@stambha/gateway` | ✅ |
+| **R3** | REST resource helpers (`fetchUser`, guild, messages, …) | `@stambha/rest` | ✅ |
+| **R4** | Snowflake + mention id resolvers | `@stambha/args` | ✅ |
+
+Closes app-layer shims for embed replies, `fetchUser`, and mention parsing. Does **not** close native attach routing gaps (see 0.3.5).
+
+---
+
+## 0.3.5 (minor) — native interaction routing
+
+**Blocker for 1.0.0.** Framework APIs exist; `attachStambhaClient` + gateway dispatch do not wire them end-to-end on the native path.
 
 | ID | Item | Package | Notes |
 |----|------|---------|-------|
-| **R1** | `ReplyPayload` on `CommandContext.reply` / `replyEphemeral` (content + embeds) | `@stambha/core`, `@stambha/transform` | Prefix + slash via REST |
-| **R2** | Slash `editReply` (deferred interaction follow-up) | `@stambha/transform`, `@stambha/gateway` | Needs `application_id` on interaction or attach option |
-| **R3** | REST resource helpers (`fetchUser`, `fetchGuild`, channel messages, …) | `@stambha/rest` | Thin wrappers over `RestPort.request` |
-| **R4** | Snowflake + mention id resolvers (no REST fetch) | `@stambha/args` | Full entity resolvers → **1.x B2** |
+| **I1** | `slashOptions` + `slashPath` on slash `CommandContext` | `@stambha/gateway`, `@stambha/transform` | Parse interaction `data.options`; resolve subcommands/groups |
+| **I2** | `CommandContext.meta` from gateway dispatch | `@stambha/gateway`, `@stambha/transform` | Member/client permissions, channel type, NSFW — gates work on native |
+| **I3** | Route component interactions → `SignalRouter` | `@stambha/gateway` | Buttons, selects, modals (types 3, 5) |
+| **I4** | Route autocomplete → `Command.autocomplete()` | `@stambha/gateway`, `@stambha/core` | Interaction type 4 |
+| **I5** | `deferReply` on slash `CommandContext` | `@stambha/core`, `@stambha/transform` | Type 5 deferred callback; pairs with existing `editReply` |
+| **I6** | `SignalContext` rich replies + meta parity | `@stambha/transform` | Align with `ReplyPayload` where applicable |
 
-**Deferred to 1.x (enhancements, not blockers):** declarative gates (B1), permission levels (C1), dashboard plugin, Redis drivers, built-in help, typing indicator, REST-backed member/channel resolvers.
+**Explicitly still 1.x (enhancements):** declarative gates (B1), permission levels (C1), dashboard, Redis, built-in help, typing indicator, REST-backed entity resolvers (B2), file attachments on `ReplyPayload`, native `runSequence` (2.0).
+
+**Branch:** `feature/0.3.5`
+
+---
+
+## 1.0.0 — stable API
+
+**Not a feature dump.** Ship when:
+
+1. **0.3.5** is done (native attach covers daily command/interaction flows).
+2. `examples/bot` demonstrates slash options, a signal, and permission gates on native stack.
+3. Public docs distinguish **supported native path** vs **1.x enhancements**.
+4. CHANGELOG + semver policy: breaking changes only in major releases after 1.0.0.
+
+Known gaps documented for 1.x/2.0 (levels, declarative options, Redis, dashboard, distributed chron).
 
 ---
 
 ## Full gap coverage matrix
 
-Every gap identified during a full Sapphire → Stambha migration is assigned below. **Nothing unowned.**
+Every gap from production Sapphire → Stambha migrations is assigned. **Nothing unowned.**
 
-| Gap | Owner |
-|-----|--------|
-| Dashboard HTTP API (routes, OAuth, CORS) | **Plugins E1–E4** (`@stambha/dashboard`) |
-| Per-command gates (Sapphire preconditions) | **0.2.2 P1** |
-| Dynamic / per-guild prefix | **0.2.2 P2**; long-term **1.x C2** (Vault) |
-| Native gateway WebSocket (no custom `hub.emit` wiring) | **0.3.0 N1** (A5) |
-| Declarative command options → auto-gates | **1.x B1** |
-| Permission levels | **1.x C1** (`@stambha/levels`) |
-| Slash `SlashCommandBuilder` interop | **1.x** REST collector or **B1** slash tree |
-| Sapphire `Args` parity | **0.3.4 R4** (ids/mentions) + **1.x B2** (REST entity resolvers) |
-| Rich / embed replies | **0.3.4 R1–R2** |
-| `fetchUser` / guild REST helpers | **0.3.4 R3** |
-| Container / DI (prisma, logger) | **0.3.0 N3** + **1.x** plugins |
-| Sharding / resharding | **0.3.0 N1, N5** + existing `@stambha/gateway` APIs |
-| Hot load / unload / reload | **Plugins** `@stambha/dev-reload` |
-| Pipeline events vs Sapphire command listeners | **0.3.0 N4** |
-| Hook multi-argument event payloads | **0.3.0 N3** + native hub normalization |
-| Loader category from folder path (`fullCategory`) | **1.x B3** help system |
-| Registry iteration | **0.2.2 P6** |
-| Built-in help command | **1.x B3** (`@stambha/help`) |
-| Structured logger | **1.x** plugins (LoggingPlugin pattern) |
-| Guild config (prefix, modules, flags, level overrides) in Vault — **not** full ORM migration | **1.x C2** ([ADR 004](./adr/004-vault-scope-orm-coexistence.md)) |
-| Redis cache / shared cooldown | **1.x A1–A2** |
-| Distributed Chron | **2.0 D2** |
-| Dual ESM/CJS builds | **Done 0.2.1** |
-| Sequences / complex slash trees | **2.0 D1** + **1.x B1** |
-| Hybrid discord.js gateway / `preserveRaw` | **Cancelled** — [ADR 005](./adr/005-native-only-migration.md) |
+| Gap | Owner | Status |
+|-----|--------|--------|
+| Dashboard HTTP API (routes, OAuth, CORS) | **Plugins E** (`@stambha/dashboard`) | Planned |
+| Per-command gates | **0.2.2 P1** | ✅ |
+| Dynamic / per-guild prefix | **0.2.2 P2**; long-term **1.x C2** Vault | ✅ resolver |
+| Native gateway WebSocket | **0.3.0 N1** | ✅ |
+| Rich / embed replies | **0.3.4 R1–R2** | ✅ |
+| `fetchUser` / guild REST helpers | **0.3.4 R3** | ✅ |
+| Mention / snowflake id args | **0.3.4 R4** | ✅ |
+| Slash options on native context | **0.3.5 I1** | 🔲 |
+| Gate `meta` on native context | **0.3.5 I2** | 🔲 |
+| Signals (buttons/selects/modals) on native attach | **0.3.5 I3** | 🔲 |
+| Autocomplete on native attach | **0.3.5 I4** | 🔲 |
+| Slash `deferReply` | **0.3.5 I5** | 🔲 |
+| Declarative command options → auto-gates | **1.x B1** | Planned |
+| Permission levels | **1.x C1** (`@stambha/levels`) | Planned |
+| REST entity arg resolvers | **1.x B2** | Planned |
+| Built-in help command | **1.x B3** | Planned |
+| Typing indicator | **1.x B1** | Planned |
+| Guild config in Vault (prefix, flags, levels) | **1.x C2** | Planned |
+| Redis cache / shared cooldown | **1.x A1–A2** | Planned |
+| Native `runSequence` orchestration | **2.0 D1** | Planned |
+| Distributed Chron | **2.0 D2** | Planned |
+| Container / DI (prisma, logger) | **0.3.3 N3** + **1.x** plugins | ✅ core pattern |
+| Sharding / resharding | **0.3.0 N1, N5** + `@stambha/gateway` | ✅ |
+| Hot load / unload / reload | **Plugins** `@stambha/dev-reload` | Planned |
+| Hybrid discord.js / `preserveRaw` | **Cancelled** ADR 005 | — |
+| Dual ESM/CJS | **0.2.1** | ✅ |
 
 ---
 
-## Pipeline (unchanged — do not reprioritize)
+## Pipeline (1.x / 2.0 — do not fold into 0.3.5)
 
 | Pillar | Source | Deliverables |
 |--------|--------|--------------|
-| **A** | Distributed infra | Redis cache/cooldown, RabbitMQ bus, Influx (**A5 → 0.3.0**) |
-| **B** | Sapphire command options | B1 declarative gates, B2 prefix flags, B3 help |
+| **A** | Distributed infra | Redis cache/cooldown, RabbitMQ bus, Influx (**A5 → 0.3.0** ✅) |
+| **B** | Sapphire command options | B1 declarative gates, B2 prefix flags + REST resolvers, B3 help |
 | **C** | Permission levels | C1 `@stambha/levels`, C2 Vault overrides |
-| **D** | Stambha-only | Vault HTTP, sequences, reshard barriers, distributed chron |
+| **D** | Stambha-only | Native `runSequence`, reshard barriers, distributed chron |
 | **E** | Dashboard | `@stambha/dashboard` in plugins repo (ADR 003) |
 
 See [future-v2.md](./future-v2.md) for phases, dependency graph, and open questions.
@@ -130,8 +160,7 @@ See [future-v2.md](./future-v2.md) for phases, dependency graph, and open questi
 ## Related
 
 - [migration-shims.md](./migration-shims.md) — deprecated app-layer patterns
-- [future-v2.md](./future-v2.md) — post-1.0 pillars
-- [roadmap.md](./roadmap.md) — feature matrix
-- [adr/005-native-only-migration.md](./adr/005-native-only-migration.md) — native-only policy
-- [adr/002-bridge-deprecation.md](./adr/002-bridge-deprecation.md) — no bridge packages
-- [adr/004-vault-scope-orm-coexistence.md](./adr/004-vault-scope-orm-coexistence.md) — Vault = settings + bot-shaped data; ORM for domain
+- [roadmap.md](./roadmap.md) — feature matrix and 1.0.0 criteria
+- [phases.md](./phases.md) — completed phase index
+- [adr/005-native-only-migration.md](./adr/005-native-only-migration.md)
+- [adr/004-vault-scope-orm-coexistence.md](./adr/004-vault-scope-orm-coexistence.md)

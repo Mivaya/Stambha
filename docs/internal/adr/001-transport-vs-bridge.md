@@ -81,7 +81,7 @@ A running Stambha client attaches **one** `Bridge` instance. Multi-shard gateway
 
 ## References
 
-- [TRANSPORT.md](../TRANSPORT.md)
-- [TIER_SPLIT.md](../TIER_SPLIT.md)
-- [GATEWAY.md](../GATEWAY.md)
-- [ROADMAP.md](../ROADMAP.md)
+- [Transport reference](/reference/transport)
+- [Tier split deployment](/deployment/tier-split)
+- [Gateway deployment](/deployment/gateway)
+- [roadmap.md](../roadmap.md)
