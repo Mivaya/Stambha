@@ -1,6 +1,6 @@
 {
   "name": "@stambha/runtime",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Cross-runtime abstractions for Stambha — Node.js, Bun, and Deno",
   "author": "Mivaya",
   "license": "MIT",

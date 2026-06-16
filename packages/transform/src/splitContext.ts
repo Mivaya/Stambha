@@ -1,10 +1,12 @@
-import type { CommandContext, ResolvedDesiredProperties, RestPort, ScoutContext } from "@stambha/core";
+import type { CommandContext, ReplyPayload, ResolvedDesiredProperties, RestPort, ScoutContext } from "@stambha/core";
 import { slimCommandContext, slimMeta } from "@stambha/core";
-import { channelMessageBody, interactionReplyBody } from "./rest.js";
+import { channelMessageBody, interactionReplyBody, webhookMessageBody } from "./rest.js";
 import type { StambhaMessage, StambhaSlashInteraction } from "./shapes.js";
 
 export interface ContextBuildOptions {
   desired?: ResolvedDesiredProperties;
+  /** Discord application id — used for slash `editReply` webhook route when not on the interaction payload. */
+  applicationId?: string | null;
 }
 
 function finalize(ctx: CommandContext, desired?: ResolvedDesiredProperties): CommandContext {
@@ -17,6 +19,13 @@ function finalize(ctx: CommandContext, desired?: ResolvedDesiredProperties): Com
     return rest as CommandContext;
   }
   return slim;
+}
+
+function slashApplicationId(
+  interaction: StambhaSlashInteraction,
+  options?: ContextBuildOptions,
+): string | null {
+  return interaction.applicationId ?? options?.applicationId ?? null;
 }
 
 /** Build scout context from a transport-agnostic message. */
@@ -51,6 +60,8 @@ export function commandContextFromStambhaMessageViaRest(
     throw new Error("message.channelId is required for REST replies");
   }
 
+  const messageReference = message.id ? { message_reference: { message_id: message.id } } : {};
+
   const full: CommandContext = {
     kind: "prefix",
     commandName,
@@ -59,23 +70,27 @@ export function commandContextFromStambhaMessageViaRest(
     channelId,
     ...(argsText.length > 0 ? { argsText } : {}),
     raw: message,
-    reply: async (text) => {
+    reply: async (messageOrPayload) => {
       await restPort.request({
         method: "POST",
         route: `/channels/${channelId}/messages`,
         body: {
-          ...channelMessageBody(text),
-          ...(message.id ? { message_reference: { message_id: message.id } } : {}),
+          ...channelMessageBody(messageOrPayload),
+          ...messageReference,
         },
       });
     },
-    replyEphemeral: async (text) => {
+    replyEphemeral: async (messageOrPayload) => {
+      const payload: ReplyPayload =
+        typeof messageOrPayload === "string"
+          ? { content: messageOrPayload, ephemeral: true }
+          : { ...messageOrPayload, ephemeral: true };
       await restPort.request({
         method: "POST",
         route: `/channels/${channelId}/messages`,
         body: {
-          ...channelMessageBody(text),
-          ...(message.id ? { message_reference: { message_id: message.id } } : {}),
+          ...channelMessageBody(payload),
+          ...messageReference,
         },
       });
     },
@@ -98,6 +113,18 @@ export function commandContextFromStambhaSlashViaRest(
     throw new Error("interaction id, token, and channelId are required for REST replies");
   }
 
+  const applicationId = slashApplicationId(interaction, options);
+
+  const editReply = applicationId
+    ? async (payload: ReplyPayload) => {
+        await restPort.request({
+          method: "PATCH",
+          route: `/webhooks/${applicationId}/${token}/messages/@original`,
+          body: webhookMessageBody(payload),
+        });
+      }
+    : null;
+
   const full: CommandContext = {
     kind: "slash",
     commandName,
@@ -106,20 +133,21 @@ export function commandContextFromStambhaSlashViaRest(
     channelId,
     slashPath: { root: commandName },
     raw: interaction,
-    reply: async (text) => {
+    reply: async (messageOrPayload) => {
       await restPort.request({
         method: "POST",
         route: `/interactions/${interactionId}/${token}/callback`,
-        body: interactionReplyBody(text),
+        body: interactionReplyBody(messageOrPayload),
       });
     },
-    replyEphemeral: async (text) => {
+    replyEphemeral: async (messageOrPayload) => {
       await restPort.request({
         method: "POST",
         route: `/interactions/${interactionId}/${token}/callback`,
-        body: interactionReplyBody(text, true),
+        body: interactionReplyBody(messageOrPayload, true),
       });
     },
+    ...(editReply ? { editReply } : {}),
   };
   return finalize(full, desired);
 }

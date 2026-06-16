@@ -18,6 +18,7 @@ export interface StambhaMessage {
 export interface StambhaSlashInteraction {
   readonly id: string | null;
   readonly token: string | null;
+  readonly applicationId?: string | null;
   readonly user: StambhaUser;
   readonly guildId: string | null;
   readonly channelId: string | null;
