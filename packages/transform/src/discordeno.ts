@@ -40,12 +40,18 @@ export function messageFromDiscordeno(message: DiscordenoMessageLike): StambhaMe
 export function slashInteractionFromDiscordeno(
   interaction: DiscordenoInteractionLike,
 ): StambhaSlashInteraction {
+  const commandName = (interaction as { data?: { name?: string } }).data?.name ?? "unknown";
   return {
+    kind: "slash",
     id: interaction.id ? String(interaction.id) : null,
     token: interaction.token ?? null,
     user: interaction.user?.id ? userFromDiscordeno(interaction.user) : { id: "0" },
     guildId: idString(interaction.guildId),
     channelId: idString(interaction.channelId),
+    commandName,
+    slashPath: { root: commandName },
+    slashOptions: [],
+    raw: interaction,
   };
 }
 

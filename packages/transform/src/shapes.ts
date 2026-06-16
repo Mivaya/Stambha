@@ -1,3 +1,5 @@
+import type { CommandContextMeta, CommandSlashPath, SlashOption } from "@stambha/core";
+
 /** Transport-agnostic user slice. */
 export interface StambhaUser {
   readonly id: string;
@@ -14,12 +16,46 @@ export interface StambhaMessage {
   readonly author: StambhaUser;
 }
 
-/** Transport-agnostic slash interaction slice. */
-export interface StambhaSlashInteraction {
+export interface StambhaInteractionBase {
   readonly id: string | null;
   readonly token: string | null;
   readonly applicationId?: string | null;
   readonly user: StambhaUser;
   readonly guildId: string | null;
   readonly channelId: string | null;
+  readonly meta?: CommandContextMeta;
+  readonly raw: unknown;
 }
+
+/** Transport-agnostic slash command interaction. */
+export interface StambhaSlashInteraction extends StambhaInteractionBase {
+  readonly kind: "slash";
+  readonly commandName: string;
+  readonly slashPath: CommandSlashPath;
+  readonly slashOptions: readonly SlashOption[];
+}
+
+export interface StambhaAutocompleteInteraction extends StambhaInteractionBase {
+  readonly kind: "autocomplete";
+  readonly commandName: string;
+  readonly slashPath: CommandSlashPath;
+  readonly focusedOption: string;
+  readonly userInput: string;
+}
+
+export interface StambhaComponentInteraction extends StambhaInteractionBase {
+  readonly kind: "component";
+  readonly customId: string;
+  readonly componentType: "button" | "select";
+}
+
+export interface StambhaModalInteraction extends StambhaInteractionBase {
+  readonly kind: "modal";
+  readonly customId: string;
+}
+
+export type StambhaInteraction =
+  | StambhaSlashInteraction
+  | StambhaAutocompleteInteraction
+  | StambhaComponentInteraction
+  | StambhaModalInteraction;

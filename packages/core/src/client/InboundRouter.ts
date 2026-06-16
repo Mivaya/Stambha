@@ -1,4 +1,5 @@
 import type { CommandContext, ScoutContext } from "../context/types.js";
+import type { AutocompleteContext } from "../context/autocomplete.js";
 import type { CommandSlashPath } from "../command/slashTypes.js";
 import type { Outcome } from "../outcome/Outcome.js";
 import type { StambhaClient } from "./StambhaClient.js";
@@ -59,5 +60,22 @@ export class InboundRouter {
       return { ok: false, error: new Error(`Unknown slash command: ${path.root}`) };
     }
     return this.client.invoke(command.name, ctx);
+  }
+
+  async processAutocomplete(ctx: AutocompleteContext): Promise<void> {
+    const path: CommandSlashPath = ctx.slashPath ?? { root: ctx.commandName };
+    const command = this.client.commandIndex.resolveSlash(path);
+    if (!command?.autocomplete) return;
+
+    try {
+      await command.autocomplete(ctx);
+    } catch (error) {
+      this.client.emit("autocompleteError", { command: command.name, error, ctx });
+      try {
+        await ctx.respond([]);
+      } catch {
+        // interaction may have expired
+      }
+    }
   }
 }

@@ -268,4 +268,4 @@ Contributor planning docs: [`docs/internal/`](docs/internal/).
 
 ## Status
 
-**v0.3.4** — Rich replies (`ReplyPayload`), REST resource helpers, mention/snowflake args. Extensions publish from [Stambha-plugins](https://github.com/Mivaya/Stambha-plugins) only. See [CHANGELOG.md](CHANGELOG.md). API may still evolve before `1.0.0`.
+**v0.3.5** — Native interaction routing (slash options, meta, signals, autocomplete, deferReply). See [CHANGELOG.md](CHANGELOG.md).

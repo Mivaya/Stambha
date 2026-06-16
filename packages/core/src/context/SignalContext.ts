@@ -1,3 +1,5 @@
+import type { ReplyPayload } from "./reply.js";
+
 /** Context for component interactions (buttons, selects, modals). */
 export interface SignalContext {
   readonly signalName: string;
@@ -6,7 +8,9 @@ export interface SignalContext {
   readonly channelId: string | null;
   readonly customId: string;
   readonly raw: unknown;
-  reply(text: string): Promise<void>;
-  replyEphemeral(text: string): Promise<void>;
-  deferReply?(): Promise<void>;
+  reply(message: string | ReplyPayload): Promise<void>;
+  replyEphemeral(message: string | ReplyPayload): Promise<void>;
+  deferReply?(ephemeral?: boolean): Promise<void>;
 }
+
+export type { ReplyPayload } from "./reply.js";
