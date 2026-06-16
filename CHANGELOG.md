@@ -5,6 +5,32 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.5] - 2026-06-16
+
+Native **interaction routing** — closes the 1.0.0 blocker for production bots on `attachStambhaClient`.
+
+### Added
+
+- **`interactionFromDispatch`** — parses slash, autocomplete, component, and modal interactions with `slashOptions`, `slashPath`, and `meta`.
+- **`attachStambhaClient`** routes autocomplete → `Command.autocomplete()`, components/modals → `SignalRouter`, with `signals` / `autocomplete` toggles.
+- **`deferReply`** on slash `CommandContext` (interaction callback type 5).
+- **`autocompleteContextFromStambhaInteraction`**, **`signalContextFromStambhaInteraction`** in `@stambha/transform`.
+- **`SignalContext`** rich replies (`string | ReplyPayload`) and `deferReply`.
+- **`InboundRouter.processAutocomplete`** + `autocompleteError` client event.
+
+### Changed
+
+- **`commandContextFromStambhaSlashViaRest`** takes a full `StambhaSlashInteraction` (includes options, path, meta).
+- Public docs updated for native slash options, signals, autocomplete, and gate metadata.
+
+### Packages in this release
+
+| Package | Version |
+|---------|---------|
+| `@stambha/core` | 0.3.5 |
+| `@stambha/gateway` | 0.3.5 |
+| `@stambha/transform` | 0.3.5 |
+| All other `@stambha/*` | 0.3.5 |
 
 ## [0.3.4] - 2026-06-16
 

@@ -1,22 +1,27 @@
 import type { Bridge, PrefixResolver, StambhaClient } from "@stambha/core";
+import { Signal } from "@stambha/core";
 import {
+  autocompleteContextFromStambhaInteraction,
   commandContextFromStambhaMessageViaRest,
   commandContextFromStambhaSlashViaRest,
   scoutContextFromStambhaMessage,
+  signalContextFromStambhaInteraction,
+  type StambhaInteraction,
   type StambhaMessage,
-  type StambhaSlashInteraction,
 } from "@stambha/transform";
 
 export interface AttachStambhaClientOptions {
   prefixCommands?: boolean;
   slashCommands?: boolean;
+  signals?: boolean;
+  autocomplete?: boolean;
   scouts?: boolean;
   /**
    * Per-guild or dynamic prefix. Sets {@link StambhaClient.resolvePrefix} for the lifetime of the attach.
    * When omitted, uses {@link StambhaClient.prefix}.
    */
   resolvePrefix?: PrefixResolver;
-  /** Discord application id — enables slash {@link CommandContext.editReply} when missing from interaction payloads. */
+  /** Discord application id — enables slash `editReply` when missing from interaction payloads. */
   applicationId?: string;
 }
 
@@ -27,23 +32,31 @@ function asStambhaMessage(payload: unknown): StambhaMessage | null {
   return m;
 }
 
-function asStambhaSlash(payload: unknown): StambhaSlashInteraction | null {
+function asStambhaInteraction(payload: unknown): StambhaInteraction | null {
   if (!payload || typeof payload !== "object") return null;
-  const i = payload as StambhaSlashInteraction;
-  if (!i.user?.id) return null;
+  const i = payload as StambhaInteraction;
+  if (!i.kind || !i.user?.id) return null;
   return i;
 }
 
 /**
  * Wire a native {@link GatewayEventHub} (or any {@link Bridge}) to Stambha routing.
- * Expects `messageCreate` / `interactionCreate` payloads as {@link StambhaMessage} shapes.
+ * Expects normalized `messageCreate` / `interactionCreate` payloads from gateway dispatch.
  */
 export function attachStambhaClient(
   hub: Bridge,
   client: StambhaClient,
   options: AttachStambhaClientOptions = {},
 ): () => void {
-  const { prefixCommands = true, slashCommands = true, scouts = true, resolvePrefix, applicationId } = options;
+  const {
+    prefixCommands = true,
+    slashCommands = true,
+    signals = true,
+    autocomplete = true,
+    scouts = true,
+    resolvePrefix,
+    applicationId,
+  } = options;
   const previousResolvePrefix = client.resolvePrefix;
   if (resolvePrefix) {
     client.resolvePrefix = resolvePrefix;
@@ -54,6 +67,11 @@ export function attachStambhaClient(
     hub.on(event, handler);
     unsubs.push(() => hub.off(event, handler));
   };
+
+  const buildOptions = () => ({
+    desired: client.desiredProperties,
+    applicationId: applicationId ?? null,
+  });
 
   on("ready", (payload) => {
     const user = (payload as { user?: { id: string } })?.user;
@@ -94,29 +112,57 @@ export function attachStambhaClient(
         parsed.name,
         client.restPort,
         parsed.args,
-        { desired: client.desiredProperties },
+        buildOptions(),
       );
       await client.router.processPrefixCommand(ctx);
     });
   }
 
-  if (slashCommands) {
+  const needsInteractions = slashCommands || signals || autocomplete;
+  if (needsInteractions) {
     on("interactionCreate", async (payload) => {
-      const interaction = asStambhaSlash(payload);
+      const interaction = asStambhaInteraction(payload);
       if (!interaction) return;
 
-      const commandName = (payload as { commandName?: string }).commandName ?? "unknown";
       if (!client.restPort) {
-        throw new Error("Native slash commands require restPort");
+        throw new Error("Native interactions require restPort");
       }
 
-      const ctx = commandContextFromStambhaSlashViaRest(
-        interaction,
-        commandName,
-        client.restPort,
-        { desired: client.desiredProperties, applicationId: interaction.applicationId ?? applicationId ?? null },
-      );
-      await client.router.processSlashCommand(ctx);
+      const ctxOpts = {
+        ...buildOptions(),
+        applicationId: interaction.applicationId ?? applicationId ?? null,
+      };
+
+      switch (interaction.kind) {
+        case "slash": {
+          if (!slashCommands) return;
+          const ctx = commandContextFromStambhaSlashViaRest(interaction, client.restPort, ctxOpts);
+          await client.router.processSlashCommand(ctx);
+          return;
+        }
+        case "autocomplete": {
+          if (!autocomplete) return;
+          const ctx = autocompleteContextFromStambhaInteraction(interaction, client.restPort);
+          await client.router.processAutocomplete(ctx);
+          return;
+        }
+        case "component":
+        case "modal": {
+          if (!signals) return;
+          const parsed = Signal.parseCustomId(interaction.customId);
+          if (!parsed) return;
+          const signalType = interaction.kind === "modal" ? "modal" : interaction.componentType;
+          const signalCtx = signalContextFromStambhaInteraction(
+            interaction,
+            parsed.name,
+            client.restPort,
+          );
+          await client.signalRouter.dispatch(signalCtx, signalType);
+          return;
+        }
+        default:
+          return;
+      }
     });
   }
 

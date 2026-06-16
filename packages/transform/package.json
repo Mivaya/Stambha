@@ -1,6 +1,6 @@
 {
   "name": "@stambha/transform",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Stambha transform layer — gateway payloads to slim context shapes and REST bodies",
   "author": "Mivaya",
   "license": "MIT",

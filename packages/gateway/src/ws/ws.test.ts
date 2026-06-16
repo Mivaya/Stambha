@@ -45,8 +45,11 @@ describe("ws/dispatch", () => {
       guild_id: "g1",
       channel_id: "c1",
     });
-    expect(interaction?.commandName).toBe("ping");
-    expect(interaction?.user.id).toBe("u1");
+    expect(interaction?.kind).toBe("slash");
+    if (interaction?.kind === "slash") {
+      expect(interaction.commandName).toBe("ping");
+      expect(interaction.user.id).toBe("u1");
+    }
   });
 
   it("passes through unknown dispatch payloads", () => {

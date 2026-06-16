@@ -1,7 +1,30 @@
-import type { CommandContext, ReplyPayload, ResolvedDesiredProperties, RestPort, ScoutContext } from "@stambha/core";
+import type {
+  AutocompleteContext,
+  AutocompleteChoice,
+  CommandContext,
+  ReplyPayload,
+  ResolvedDesiredProperties,
+  RestPort,
+  ScoutContext,
+  SignalContext,
+} from "@stambha/core";
+import { Signal } from "@stambha/core";
 import { slimCommandContext, slimMeta } from "@stambha/core";
-import { channelMessageBody, interactionReplyBody, webhookMessageBody } from "./rest.js";
-import type { StambhaMessage, StambhaSlashInteraction } from "./shapes.js";
+import {
+  autocompleteCallbackBody,
+  channelMessageBody,
+  interactionDeferBody,
+  interactionReplyBody,
+  webhookMessageBody,
+} from "./rest.js";
+import type {
+  StambhaAutocompleteInteraction,
+  StambhaComponentInteraction,
+  StambhaInteractionBase,
+  StambhaMessage,
+  StambhaModalInteraction,
+  StambhaSlashInteraction,
+} from "./shapes.js";
 
 export interface ContextBuildOptions {
   desired?: ResolvedDesiredProperties;
@@ -22,10 +45,80 @@ function finalize(ctx: CommandContext, desired?: ResolvedDesiredProperties): Com
 }
 
 function slashApplicationId(
-  interaction: StambhaSlashInteraction,
+  interaction: StambhaInteractionBase,
   options?: ContextBuildOptions,
 ): string | null {
   return interaction.applicationId ?? options?.applicationId ?? null;
+}
+
+function slashInteractionCallbacks(
+  interaction: StambhaInteractionBase,
+  restPort: RestPort,
+  options?: ContextBuildOptions,
+): {
+  reply: CommandContext["reply"];
+  replyEphemeral: CommandContext["replyEphemeral"];
+  deferReply: (ephemeral?: boolean) => Promise<void>;
+  editReply: ((payload: ReplyPayload) => Promise<void>) | null;
+} {
+  const interactionId = interaction.id;
+  const token = interaction.token;
+  if (!interactionId || !token) {
+    throw new Error("interaction id and token are required for REST replies");
+  }
+
+  const applicationId = slashApplicationId(interaction, options);
+
+  const editReply = applicationId
+    ? async (payload: ReplyPayload) => {
+        await restPort.request({
+          method: "PATCH",
+          route: `/webhooks/${applicationId}/${token}/messages/@original`,
+          body: webhookMessageBody(payload),
+        });
+      }
+    : null;
+
+  return {
+    reply: async (messageOrPayload) => {
+      await restPort.request({
+        method: "POST",
+        route: `/interactions/${interactionId}/${token}/callback`,
+        body: interactionReplyBody(messageOrPayload),
+      });
+    },
+    replyEphemeral: async (messageOrPayload) => {
+      await restPort.request({
+        method: "POST",
+        route: `/interactions/${interactionId}/${token}/callback`,
+        body: interactionReplyBody(messageOrPayload, true),
+      });
+    },
+    deferReply: async (ephemeral = false) => {
+      await restPort.request({
+        method: "POST",
+        route: `/interactions/${interactionId}/${token}/callback`,
+        body: interactionDeferBody(ephemeral),
+      });
+    },
+    editReply,
+  };
+}
+
+function signalInteractionCallbacks(
+  interaction: StambhaInteractionBase,
+  restPort: RestPort,
+): {
+  reply: SignalContext["reply"];
+  replyEphemeral: SignalContext["replyEphemeral"];
+  deferReply: (ephemeral?: boolean) => Promise<void>;
+} {
+  const callbacks = slashInteractionCallbacks(interaction, restPort);
+  return {
+    reply: callbacks.reply,
+    replyEphemeral: callbacks.replyEphemeral,
+    deferReply: callbacks.deferReply,
+  };
 }
 
 /** Build scout context from a transport-agnostic message. */
@@ -101,53 +194,86 @@ export function commandContextFromStambhaMessageViaRest(
 /** Slash command context — replies via {@link RestPort}. */
 export function commandContextFromStambhaSlashViaRest(
   interaction: StambhaSlashInteraction,
-  commandName: string,
   restPort: RestPort,
   options?: ContextBuildOptions,
 ): CommandContext {
   const desired = options?.desired;
   const channelId = interaction.channelId;
-  const interactionId = interaction.id;
-  const token = interaction.token;
-  if (!channelId || !interactionId || !token) {
-    throw new Error("interaction id, token, and channelId are required for REST replies");
+  if (!channelId) {
+    throw new Error("interaction channelId is required for REST replies");
   }
 
-  const applicationId = slashApplicationId(interaction, options);
-
-  const editReply = applicationId
-    ? async (payload: ReplyPayload) => {
-        await restPort.request({
-          method: "PATCH",
-          route: `/webhooks/${applicationId}/${token}/messages/@original`,
-          body: webhookMessageBody(payload),
-        });
-      }
-    : null;
+  const callbacks = slashInteractionCallbacks(interaction, restPort, options);
 
   const full: CommandContext = {
     kind: "slash",
-    commandName,
+    commandName: interaction.commandName,
     userId: interaction.user.id,
     guildId: interaction.guildId,
     channelId,
-    slashPath: { root: commandName },
+    ...(interaction.meta ? { meta: interaction.meta } : {}),
+    slashPath: interaction.slashPath,
+    slashOptions: interaction.slashOptions,
     raw: interaction,
-    reply: async (messageOrPayload) => {
-      await restPort.request({
-        method: "POST",
-        route: `/interactions/${interactionId}/${token}/callback`,
-        body: interactionReplyBody(messageOrPayload),
-      });
-    },
-    replyEphemeral: async (messageOrPayload) => {
-      await restPort.request({
-        method: "POST",
-        route: `/interactions/${interactionId}/${token}/callback`,
-        body: interactionReplyBody(messageOrPayload, true),
-      });
-    },
-    ...(editReply ? { editReply } : {}),
+    reply: callbacks.reply,
+    replyEphemeral: callbacks.replyEphemeral,
+    deferReply: callbacks.deferReply,
+    ...(callbacks.editReply ? { editReply: callbacks.editReply } : {}),
   };
   return finalize(full, desired);
+}
+
+/** Autocomplete context — responds via interaction callback type 8. */
+export function autocompleteContextFromStambhaInteraction(
+  interaction: StambhaAutocompleteInteraction,
+  restPort: RestPort,
+): AutocompleteContext {
+  const interactionId = interaction.id;
+  const token = interaction.token;
+  if (!interactionId || !token) {
+    throw new Error("interaction id and token are required for autocomplete");
+  }
+
+  return {
+    commandName: interaction.commandName,
+    slashPath: interaction.slashPath,
+    focusedOption: interaction.focusedOption,
+    userInput: interaction.userInput,
+    userId: interaction.user.id,
+    guildId: interaction.guildId,
+    channelId: interaction.channelId,
+    raw: interaction,
+    respond: async (choices: AutocompleteChoice[]) => {
+      await restPort.request({
+        method: "POST",
+        route: `/interactions/${interactionId}/${token}/callback`,
+        body: autocompleteCallbackBody(choices),
+      });
+    },
+  };
+}
+
+/** Component or modal signal context. */
+export function signalContextFromStambhaInteraction(
+  interaction: StambhaComponentInteraction | StambhaModalInteraction,
+  signalName: string,
+  restPort: RestPort,
+): SignalContext {
+  const callbacks = signalInteractionCallbacks(interaction, restPort);
+  return {
+    signalName,
+    userId: interaction.user.id,
+    guildId: interaction.guildId,
+    channelId: interaction.channelId,
+    customId: interaction.customId,
+    raw: interaction,
+    reply: callbacks.reply,
+    replyEphemeral: callbacks.replyEphemeral,
+    deferReply: callbacks.deferReply,
+  };
+}
+
+/** Resolve signal name from custom id; returns null when not a `stambha:` id. */
+export function signalNameFromCustomId(customId: string): string | null {
+  return Signal.parseCustomId(customId)?.name ?? null;
 }
