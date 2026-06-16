@@ -94,9 +94,9 @@ if (target?.kind === "signal") {
 
 `SignalRouter.dispatch(ctx, type)` runs the matching signal's `run()` method.
 
-### Native attach (0.3.4)
+### Native attach (0.3.5+)
 
-`attachStambhaClient` routes **slash chat commands** today. **Button, select, modal, and autocomplete routing on the native path** is planned for **0.3.5** — until then, wire `interactionCreate` on your `GatewayEventHub` and build `SignalContext` + call `client.signalRouter.dispatch()` yourself, or wait for the next minor release.
+`attachStambhaClient` routes slash commands, autocomplete, buttons/selects, and modals when the gateway emits normalized `StambhaInteraction` payloads from `interactionFromDispatch`.
 
 ## Related
 
