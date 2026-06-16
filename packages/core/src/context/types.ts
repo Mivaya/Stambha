@@ -31,8 +31,10 @@ export interface CommandContext {
   /** Text or rich payload (content, embeds). Prefix: channel message. Slash: interaction callback. */
   reply(message: string | ReplyPayload): Promise<void>;
   replyEphemeral(message: string | ReplyPayload): Promise<void>;
-  /** Slash only — edit the initial deferred interaction response (requires bot user id on the client). */
+  /** Slash only — edit the initial deferred interaction response (requires application id on the client). */
   editReply?(payload: ReplyPayload): Promise<void>;
+  /** Slash only — acknowledge with a deferred response (type 5) before `editReply`. */
+  deferReply?(ephemeral?: boolean): Promise<void>;
 }
 
 /** Context for Scout passive watchers. */

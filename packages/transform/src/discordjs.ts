@@ -1,4 +1,5 @@
 import type { ChannelType, CommandContextMeta } from "@stambha/core";
+import type { SlashOption } from "@stambha/core";
 import {
   ChannelType as DjsChannelType,
   type ChatInputCommandInteraction,
@@ -55,13 +56,60 @@ export function messageFromDiscordJs(message: Message): StambhaMessage {
 export function slashInteractionFromDiscordJs(
   interaction: ChatInputCommandInteraction,
 ): StambhaSlashInteraction {
+  const slashOptions: SlashOption[] = [];
+  for (const opt of interaction.options.data) {
+    const type = mapDjsOptionType(opt.type);
+    if (!type) continue;
+    slashOptions.push({ name: opt.name, type, value: opt.value as string | number | boolean });
+  }
+
+  const group = interaction.options.getSubcommandGroup(false);
+  const sub = interaction.options.getSubcommand(false);
+
+  const slashPath = {
+    root: interaction.commandName,
+    ...(group ? { group } : {}),
+    ...(sub ? { subcommand: sub } : {}),
+  };
+
   return {
+    kind: "slash",
     id: interaction.id,
     token: interaction.token,
+    applicationId: interaction.applicationId,
     user: userFromDiscordJs(interaction.user),
     guildId: interaction.guildId,
     channelId: interaction.channelId,
+    commandName: interaction.commandName,
+    slashPath,
+    slashOptions,
+    raw: interaction,
   };
+}
+
+function mapDjsOptionType(type: number): import("@stambha/core").ParsedSlashOptionType | null {
+  switch (type) {
+    case 3:
+      return "string";
+    case 4:
+      return "integer";
+    case 5:
+      return "boolean";
+    case 6:
+      return "user";
+    case 7:
+      return "channel";
+    case 8:
+      return "role";
+    case 9:
+      return "mentionable";
+    case 10:
+      return "number";
+    case 11:
+      return "attachment";
+    default:
+      return null;
+  }
 }
 
 function metaFromGuildChannel(channel: GuildChannel): CommandContextMeta {

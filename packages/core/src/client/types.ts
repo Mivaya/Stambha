@@ -71,6 +71,9 @@ export type StambhaClientEvents = {
   epilogueError: [{ epilogue: string; error: unknown; ctx: import("../context/types.js").EpilogueContext }];
   hookError: [{ hook: string; error: unknown }];
   signalError: [{ signal: string; error: unknown; ctx: import("../context/SignalContext.js").SignalContext }];
+  autocompleteError: [
+    { command: string; error: unknown; ctx: import("../context/autocomplete.js").AutocompleteContext },
+  ];
   chronError: [{ chron: string; error: unknown }];
 };
 

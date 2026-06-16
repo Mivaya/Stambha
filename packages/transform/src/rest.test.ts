@@ -2,10 +2,25 @@ import { describe, expect, it, vi } from "vitest";
 import type { RestPort } from "@stambha/core";
 import {
   channelMessageBody,
+  interactionDeferBody,
   interactionReplyBody,
   webhookMessageBody,
 } from "./rest.js";
 import { commandContextFromStambhaSlashViaRest } from "./splitContext.js";
+
+const slashInteraction = {
+  kind: "slash" as const,
+  id: "i1",
+  token: "tok",
+  applicationId: "app1",
+  user: { id: "u1" },
+  guildId: "g1",
+  channelId: "c1",
+  commandName: "ping",
+  slashPath: { root: "ping" },
+  slashOptions: [],
+  raw: {},
+};
 
 describe("rest payloads", () => {
   it("builds channel message with embeds", () => {
@@ -22,6 +37,10 @@ describe("rest payloads", () => {
     });
   });
 
+  it("builds deferred interaction body", () => {
+    expect(interactionDeferBody(true)).toEqual({ type: 5, data: { flags: 64 } });
+  });
+
   it("passes embed-only webhook edit bodies through", () => {
     expect(webhookMessageBody({ embeds: [{ title: "only" }] })).toEqual({
       embeds: [{ title: "only" }],
@@ -29,30 +48,32 @@ describe("rest payloads", () => {
   });
 });
 
-describe("slash editReply", () => {
-  it("patches the interaction webhook message", async () => {
+describe("slash callbacks", () => {
+  it("patches the interaction webhook message via editReply", async () => {
     const request = vi.fn().mockResolvedValue(undefined);
     const rest: RestPort = { request };
 
-    const ctx = commandContextFromStambhaSlashViaRest(
-      {
-        id: "i1",
-        token: "tok",
-        applicationId: "app1",
-        user: { id: "u1" },
-        guildId: "g1",
-        channelId: "c1",
-      },
-      "ping",
-      rest,
-    );
-
+    const ctx = commandContextFromStambhaSlashViaRest(slashInteraction, rest);
     await ctx.editReply?.({ content: "done" });
 
     expect(request).toHaveBeenCalledWith({
       method: "PATCH",
       route: "/webhooks/app1/tok/messages/@original",
       body: { content: "done" },
+    });
+  });
+
+  it("defers via deferReply", async () => {
+    const request = vi.fn().mockResolvedValue(undefined);
+    const rest: RestPort = { request };
+
+    const ctx = commandContextFromStambhaSlashViaRest(slashInteraction, rest);
+    await ctx.deferReply?.(true);
+
+    expect(request).toHaveBeenCalledWith({
+      method: "POST",
+      route: "/interactions/i1/tok/callback",
+      body: { type: 5, data: { flags: 64 } },
     });
   });
 });
