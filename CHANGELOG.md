@@ -5,6 +5,41 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [0.3.4] - 2026-06-15
+
+Minor release closing **bot authoring gaps** that previously required app-layer shims (rich replies, REST helpers, mention parsing).
+
+### Added
+
+- **`ReplyPayload`** on `CommandContext.reply` / `replyEphemeral` — content, embeds, and ephemeral flag (`@stambha/core`, `@stambha/transform`).
+- Slash **`editReply`** for deferred interaction follow-ups (requires `application_id` on the interaction or `applicationId` on `attachStambhaClient`).
+- **`@stambha/rest` resource helpers** — `fetchUser`, `fetchGuild`, `fetchGuildMember`, `fetchChannel`, channel message CRUD, guild roles/channels, moderation helpers.
+- **Mention / snowflake id resolvers** in `@stambha/args` — `snowflakeArg`, `userMentionArg`, `channelMentionArg`, `roleMentionArg`.
+
+### Changed
+
+- **`interactionFromDispatch`** includes `applicationId` for slash `editReply`.
+- **`@stambha/args` README** — documents actual built-in resolvers; REST entity resolvers deferred to **1.x B2**.
+- Internal roadmap / release plan — **0.3.4** vs **1.x** enhancement split documented.
+
+### Packages in this release
+
+| Package | Version |
+|---------|---------|
+| `@stambha/core` | 0.3.4 |
+| `@stambha/gateway` | 0.3.4 |
+| `@stambha/loader` | 0.3.4 |
+| `@stambha/gates` | 0.3.4 |
+| `@stambha/args` | 0.3.4 |
+| `@stambha/plugins` | 0.3.4 |
+| `@stambha/rest` | 0.3.4 |
+| `@stambha/runtime` | 0.3.4 |
+| `@stambha/transform` | 0.3.4 |
+| `@stambha/transport` | 0.3.4 |
+| `@stambha/vault` | 0.3.4 |
+
 ## [0.3.3] - 2026-06-15
 
 Minor release focused on **native gateway WebSocket**, loader dependency injection, epilogues, and slash command deploy helpers.

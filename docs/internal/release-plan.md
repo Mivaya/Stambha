@@ -14,6 +14,7 @@ Planning doc for maintainers. Captures **near-term patch/minor work** validated 
 |------|---------|--------|
 | **Patch** | **0.2.2** | Bugs and small API extensions that unblock native Sapphire migrations |
 | **Minor** | **0.3.x** | Native migration completion — bundled WS gateway (A5), loader/DX, bootstrap docs |
+| **Minor** | **0.3.4** | Bot authoring gaps closed — rich replies, REST resource helpers, mention id args |
 | **Pipeline** | **1.x** | [future-v2.md](./future-v2.md) — B1 declarative gates, C1 permission levels, Redis drivers |
 | **Plugins repo** | `@stambha/dashboard` etc. | Pillar E — HTTP, OAuth, dashboard routes |
 | **Major** | **2.0** | Bus, distributed chron, breaking CommandOptions only if required |
@@ -23,8 +24,9 @@ Sequencing:
 ```text
 0.2.2  — Per-command gates, prefix resolver, loader order, native bootstrap docs
 0.3.0  — A5 bundled gateway WS, native examples, epilogue/DI docs (no hybrid helpers)
+0.3.4  — Rich replies, REST resource helpers, mention/snowflake args (closes migration shims)
 1.0.0  — Stable API, documented known gaps
-1.x    — B1, C1, Redis cache/cooldown
+1.x    — B1, C1, Redis cache/cooldown, REST-backed arg resolvers (B2), help, typing
 2.0.0  — A3 bus, native runSequence, distributed chron (A5 already in 0.3)
 ```
 
@@ -62,6 +64,21 @@ Sequencing:
 
 ---
 
+## 0.3.4 (minor) — bot authoring parity
+
+Closes gaps that forced every production bot to ship app-layer shims (`reply` with embeds, `fetchUser`, mention parsing).
+
+| ID | Item | Package | Notes |
+|----|------|---------|-------|
+| **R1** | `ReplyPayload` on `CommandContext.reply` / `replyEphemeral` (content + embeds) | `@stambha/core`, `@stambha/transform` | Prefix + slash via REST |
+| **R2** | Slash `editReply` (deferred interaction follow-up) | `@stambha/transform`, `@stambha/gateway` | Needs `application_id` on interaction or attach option |
+| **R3** | REST resource helpers (`fetchUser`, `fetchGuild`, channel messages, …) | `@stambha/rest` | Thin wrappers over `RestPort.request` |
+| **R4** | Snowflake + mention id resolvers (no REST fetch) | `@stambha/args` | Full entity resolvers → **1.x B2** |
+
+**Deferred to 1.x (enhancements, not blockers):** declarative gates (B1), permission levels (C1), dashboard plugin, Redis drivers, built-in help, typing indicator, REST-backed member/channel resolvers.
+
+---
+
 ## Full gap coverage matrix
 
 Every gap identified during a full Sapphire → Stambha migration is assigned below. **Nothing unowned.**
@@ -75,7 +92,9 @@ Every gap identified during a full Sapphire → Stambha migration is assigned be
 | Declarative command options → auto-gates | **1.x B1** |
 | Permission levels | **1.x C1** (`@stambha/levels`) |
 | Slash `SlashCommandBuilder` interop | **1.x** REST collector or **B1** slash tree |
-| Sapphire `Args` parity | **1.x B2** |
+| Sapphire `Args` parity | **0.3.4 R4** (ids/mentions) + **1.x B2** (REST entity resolvers) |
+| Rich / embed replies | **0.3.4 R1–R2** |
+| `fetchUser` / guild REST helpers | **0.3.4 R3** |
 | Container / DI (prisma, logger) | **0.3.0 N3** + **1.x** plugins |
 | Sharding / resharding | **0.3.0 N1, N5** + existing `@stambha/gateway` APIs |
 | Hot load / unload / reload | **Plugins** `@stambha/dev-reload` |

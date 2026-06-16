@@ -7,7 +7,41 @@ export type BuiltinArgType =
   | "number"
   | "boolean"
   | "rest"
-  | "stringArray";
+  | "stringArray"
+  | "snowflake";
+
+const SNOWFLAKE_RE = /^\d{17,20}$/;
+const USER_MENTION_RE = /^<@!?(\d{17,20})>$/;
+const CHANNEL_MENTION_RE = /^<#(\d{17,20})>$/;
+const ROLE_MENTION_RE = /^<@&(\d{17,20})>$/;
+
+export function parseSnowflake(parameter: string): ArgResult<string> {
+  if (SNOWFLAKE_RE.test(parameter)) return argOk(parameter);
+  return argInvalid(parameter, `"${parameter}" is not a valid snowflake id.`);
+}
+
+export function parseUserMentionId(parameter: string): ArgResult<string> {
+  const match = USER_MENTION_RE.exec(parameter);
+  if (match?.[1]) return argOk(match[1]);
+  return parseSnowflake(parameter);
+}
+
+export function parseChannelMentionId(parameter: string): ArgResult<string> {
+  const match = CHANNEL_MENTION_RE.exec(parameter);
+  if (match?.[1]) return argOk(match[1]);
+  return parseSnowflake(parameter);
+}
+
+export function parseRoleMentionId(parameter: string): ArgResult<string> {
+  const match = ROLE_MENTION_RE.exec(parameter);
+  if (match?.[1]) return argOk(match[1]);
+  return parseSnowflake(parameter);
+}
+
+export const snowflakeArg: ArgResolver<string> = (parameter) => parseSnowflake(parameter);
+export const userMentionArg: ArgResolver<string> = (parameter) => parseUserMentionId(parameter);
+export const channelMentionArg: ArgResolver<string> = (parameter) => parseChannelMentionId(parameter);
+export const roleMentionArg: ArgResolver<string> = (parameter) => parseRoleMentionId(parameter);
 
 export type ArgResolver<T> = (parameter: string) => ArgResult<T>;
 
@@ -43,6 +77,7 @@ const BUILTIN: Record<BuiltinArgType, ArgResolver<unknown>> = {
   boolean: booleanArg,
   rest: (parameter) => argOk(parameter),
   stringArray: (parameter) => argOk(parameter.split(",").map((s) => s.trim())),
+  snowflake: snowflakeArg,
 };
 
 export class ArgRegistry {

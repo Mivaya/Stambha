@@ -39,7 +39,7 @@ Sapphire’s value is **structure and DX** on top of discord.js — command stor
 | Global inhibitors | — (use plugins) | **Done** — `Barrier` | Keep |
 | Post-command hooks | — | **Done** — `Epilogue` | Keep |
 | Middleware | — | **Done** — `Conduit` | Keep |
-| Arguments / `Args` parsing | ArgumentStore, typed resolvers | **Done** — `@stambha/args` | Maintain |
+| Arguments / `Args` parsing | ArgumentStore, typed resolvers | **Done** — `@stambha/args`; mention/snowflake ids **0.3.4**; REST entity resolvers **1.x B2** | Maintain |
 | Slash subcommands & groups | Command options tree | **Done** — Phase 13 | Core + deploy |
 | Prefix aliases | Command aliases | **Done** — `CommandIndex` | Router |
 | Command categories | category / subCategory | **Done** — metadata + help | Help command |
@@ -54,6 +54,12 @@ Sapphire’s value is **structure and DX** on top of discord.js — command stor
 | Error listeners | Default error listeners | **Partial** — client events (`commandError`, etc.) | Default handlers Phase 11 |
 | Message commands | Optional loadMessageCommandListeners | **Done** — prefix via bridge + router | Keep |
 | Depends on discord.js | Always | **No** — bridge only | Keep core free |
+| Rich replies (embeds, ephemeral) | `message.reply({ embeds })` | **Done 0.3.4** — `ReplyPayload` on `CommandContext` | Maintain |
+| REST entity helpers | Client REST getters | **Done 0.3.4** — `@stambha/rest` resources | Maintain |
+| Permission levels | Custom / plugins | **Planned** — **1.x C1** `@stambha/levels` | — |
+| Declarative command options → gates | `@sapphire/framework` options | **Planned** — **1.x B1** | — |
+| Dashboard HTTP API | `@sapphire/plugin-api` | **Planned** — plugins `@stambha/dashboard` | — |
+| Typing indicator | REST trigger typing | **Planned** — **1.x B1** | — |
 
 ### From Discordeno (scale & architecture)
 
@@ -301,6 +307,23 @@ Phases 1–10 are complete — see [PHASES.md](./PHASES.md#completed).
 | Architecture decision records | Transport vs bridge strategy |
 
 **Branch:** `feature/migration-docs` · **Docs:** [MIGRATION.md](./MIGRATION.md)
+
+---
+
+### Phase 22 — Bot authoring parity (0.3.4) ✅
+
+**Gap closure:** Production bots no longer need app-layer reply/REST shims.
+
+| Deliverable | Status |
+|-------------|--------|
+| `ReplyPayload` + embed replies on `CommandContext` | Done |
+| Slash `editReply` for deferred interactions | Done |
+| `@stambha/rest` resource helpers | Done |
+| Mention / snowflake id args | Done |
+| REST-backed member/user resolvers | **1.x B2** |
+| Declarative gates, levels, dashboard, typing | **1.x** (enhancements) |
+
+**Branch:** `feature/0.3.4`
 
 ---
 
