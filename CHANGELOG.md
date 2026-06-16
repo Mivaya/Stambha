@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.3.5] - 2026-06-15
+## [0.3.5] - 2026-06-16
 
 Native **interaction routing** — closes the 1.0.0 blocker for production bots on `attachStambhaClient`.
 
@@ -34,7 +34,7 @@ Native **interaction routing** — closes the 1.0.0 blocker for production bots 
 | `@stambha/transform` | 0.3.5 |
 | All other `@stambha/*` | 0.3.5 |
 
-## [0.3.4] - 2026-06-15
+## [0.3.4] - 2026-06-16
 
 Minor release closing **bot authoring gaps** that previously required app-layer shims (rich replies, REST helpers, mention parsing).
 
