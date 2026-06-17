@@ -18,10 +18,7 @@ export class Blueprint<T extends Record<string, FieldSchema> = Record<string, Fi
     return validateData(this.shape, data) as InferBlueprint<T>;
   }
 
-  patch(
-    current: Record<string, unknown>,
-    patch: Record<string, unknown>,
-  ): InferBlueprint<T> {
+  patch(current: Record<string, unknown>, patch: Record<string, unknown>): InferBlueprint<T> {
     const merged = { ...current, ...patch };
     return this.validate(merged);
   }

@@ -1,15 +1,15 @@
 import {
-  GatewayIntent,
-  type NativeGatewayClient,
   attachStambhaClient,
   combineIntents,
   createGatewayEventHub,
   createNativeGatewayClient,
+  GatewayIntent,
+  type NativeGatewayClient,
 } from "@stambha/gateway";
 import { createNativeRestWorker } from "@stambha/rest";
 import type { StambhaMessage } from "@stambha/transform";
-import { setupBot } from "./lib/setup.js";
 import { deployExampleSlashCommands } from "./lib/deploySlash.js";
+import { setupBot } from "./lib/setup.js";
 
 const demo = process.env.DEMO === "1";
 const token = process.env.DISCORD_TOKEN;

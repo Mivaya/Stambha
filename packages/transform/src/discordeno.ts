@@ -1,5 +1,4 @@
-import type { CommandContextMeta } from "@stambha/core";
-import type { ResolvedDesiredProperties } from "@stambha/core";
+import type { CommandContextMeta, ResolvedDesiredProperties } from "@stambha/core";
 import type { StambhaMessage, StambhaSlashInteraction, StambhaUser } from "./shapes.js";
 
 export interface DiscordenoMessageLike {
@@ -23,7 +22,11 @@ function idString(value: bigint | undefined | null): string | null {
   return value === undefined || value === null ? null : String(value);
 }
 
-export function userFromDiscordeno(user: { id?: bigint; bot?: boolean; username?: string }): StambhaUser {
+export function userFromDiscordeno(user: {
+  id?: bigint;
+  bot?: boolean;
+  username?: string;
+}): StambhaUser {
   return { id: String(user.id!), ...(user.bot !== undefined ? { bot: user.bot } : {}) };
 }
 
@@ -55,7 +58,9 @@ export function slashInteractionFromDiscordeno(
   };
 }
 
-export function metaFromDiscordenoMessage(message: DiscordenoMessageLike): CommandContextMeta | undefined {
+export function metaFromDiscordenoMessage(
+  message: DiscordenoMessageLike,
+): CommandContextMeta | undefined {
   if (!message.guildId) {
     return { channelType: "dm", channelNsfw: false };
   }

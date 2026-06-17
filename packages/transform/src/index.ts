@@ -1,52 +1,48 @@
-export type {
-  StambhaUser,
-  StambhaMessage,
-  StambhaSlashInteraction,
-  StambhaAutocompleteInteraction,
-  StambhaComponentInteraction,
-  StambhaModalInteraction,
-  StambhaInteraction,
-} from "./shapes.js";
-
+/** @deprecated Use {@link defaultDiscordenoDesiredProperties} */
 export {
-  userFromDiscordJs,
-  messageFromDiscordJs,
-  slashInteractionFromDiscordJs,
-  metaFromDiscordJsMessage,
-  metaFromDiscordJsSlash,
-} from "./discordjs.js";
-
-export {
-  userFromDiscordeno,
+  buildDiscordenoDesiredProperties,
+  type DiscordenoInteractionLike,
+  type DiscordenoMessageLike,
+  defaultDiscordenoDesiredProperties,
+  defaultDiscordenoDesiredProperties as stambhaDesiredProperties,
   messageFromDiscordeno,
-  slashInteractionFromDiscordeno,
   metaFromDiscordenoMessage,
   metaFromDiscordenoSlash,
-  defaultDiscordenoDesiredProperties,
-  buildDiscordenoDesiredProperties,
-  type DiscordenoMessageLike,
-  type DiscordenoInteractionLike,
+  slashInteractionFromDiscordeno,
+  userFromDiscordeno,
 } from "./discordeno.js";
+export {
+  messageFromDiscordJs,
+  metaFromDiscordJsMessage,
+  metaFromDiscordJsSlash,
+  slashInteractionFromDiscordJs,
+  userFromDiscordJs,
+} from "./discordjs.js";
 
 export { interactionFromDispatch, metaFromDiscordInteraction } from "./discordNative.js";
 
 export {
-  channelMessageBody,
-  interactionReplyBody,
-  interactionDeferBody,
-  webhookMessageBody,
   autocompleteCallbackBody,
+  channelMessageBody,
+  interactionDeferBody,
+  interactionReplyBody,
+  webhookMessageBody,
 } from "./rest.js";
-
+export type {
+  StambhaAutocompleteInteraction,
+  StambhaComponentInteraction,
+  StambhaInteraction,
+  StambhaMessage,
+  StambhaModalInteraction,
+  StambhaSlashInteraction,
+  StambhaUser,
+} from "./shapes.js";
 export {
-  scoutContextFromStambhaMessage,
+  autocompleteContextFromStambhaInteraction,
+  type ContextBuildOptions,
   commandContextFromStambhaMessageViaRest,
   commandContextFromStambhaSlashViaRest,
-  autocompleteContextFromStambhaInteraction,
+  scoutContextFromStambhaMessage,
   signalContextFromStambhaInteraction,
   signalNameFromCustomId,
-  type ContextBuildOptions,
 } from "./splitContext.js";
-
-/** @deprecated Use {@link defaultDiscordenoDesiredProperties} */
-export { defaultDiscordenoDesiredProperties as stambhaDesiredProperties } from "./discordeno.js";

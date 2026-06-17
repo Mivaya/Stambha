@@ -4,7 +4,7 @@ Long-term pillars **after** the native stack stabilizes at **1.0.0**. Near-term 
 
 **Scope:** Enhancements and scale — **not** blockers for a basic native bot once **0.3.5** ships.
 
-**Last updated:** 2026-06-15
+**Last updated:** 2026-06-16 (post **0.3.5**)
 
 ---
 
@@ -21,10 +21,10 @@ Long-term pillars **after** the native stack stabilizes at **1.0.0**. Near-term 
 
 ```text
 0.3.4  ✅ Rich replies, REST helpers, mention args
-0.3.5  🔲 Native interaction routing (options, meta, signals, autocomplete, defer)
-1.0.0  🔲 Stable semver API + documented known gaps
-1.x    🔲 B1 declarative gates, C1 levels, A1–A2 Redis, B3 help, B2 REST resolvers
-2.0.0  🔲 A3 bus, native runSequence, distributed chron/cooldown
+0.3.5  ✅ Native interaction routing (options, meta, signals, autocomplete, defer)
+1.0.0  🔲 Stable semver API + [public docs audit](./docs-1.0.0.md)
+1.x    🔲 B1–B6, C1, A1–A2, B3 help, plugins P1
+2.0.0  🔲 A3 bus, native runSequence, distributed chron/cooldown, G2 gateway proxy
 ```
 
 ### Dependency graph
@@ -79,9 +79,17 @@ Today: gates work via manual `gateNames` / inline gates. **Declarative options o
 
 **B1** (`feature/declarative-gates`): `resolveCommandGates(command)` merges options + explicit `gates[]`.
 
-**B2** (`feature/rest-arg-resolvers`): `fetchUser`-backed resolvers + prefix flags.
+**B2** (`feature/rest-arg-resolvers`): `fetchUser`-backed resolvers + prefix flags + **bridge command DX** (Pycord/Poise).
 
 **B3** (`feature/help-system`): `@stambha/help` using categories and `detailedDescription`.
+
+**B4** (`feature/piece-lifecycle`): `onLoad` / `onUnload` / `onCommandError` on pieces (discord.py cogs parity).
+
+**B5** (`feature/component-builder`): Menu/modal row layout + `registerPersistentSignals()` (Lightbulb, discord.py Views).
+
+**B6** (`feature/edit-tracking`): Prefix command edit → update bot reply (Poise, Akairo).
+
+See [ecosystem-survey.md](./ecosystem-survey.md) for full cross-framework mapping.
 
 ---
 
@@ -158,8 +166,16 @@ Phases E1–E4: router, OAuth, Vault routes, tier-split mount. Depends on Vault 
 | `@stambha/cache`, `@stambha/metrics`, `@stambha/vault-sql` | Already published from plugins repo |
 | `@stambha/i18n` | Locale / help translation |
 | `@stambha/dev-reload` | Dev piece hot reload |
+| `@stambha/pagination` | Embed pagination + signal buttons (Pycord `ext.pages`) — **P1** |
 
 **Core keeps:** `@stambha/plugins` (host only).
+
+### Gateway polish (1.x / 2.0)
+
+| ID | Feature | Inspired by | When |
+|----|---------|-------------|------|
+| **G1** | Automated resharding threshold | Discordeno | 1.x `@stambha/gateway` |
+| **G2** | Gateway proxy (zero-downtime deploy) | Discordeno | 2.0 or optional plugin |
 
 ---
 
@@ -167,5 +183,7 @@ Phases E1–E4: router, OAuth, Vault routes, tier-split mount. Depends on Vault 
 
 - [release-plan.md](./release-plan.md) — 0.3.5 and 1.0.0 gates
 - [roadmap.md](./roadmap.md) — feature matrix
+- [ecosystem-survey.md](./ecosystem-survey.md) — cross-framework adoption backlog
+- [docs-1.0.0.md](./docs-1.0.0.md) — public docs gate for 1.0.0
 - [migration-shims.md](./migration-shims.md) — app-layer patterns to delete
-- [phases.md](./phases.md) — completed phases 1–22
+- [phases.md](./phases.md) — completed phases 1–23

@@ -34,8 +34,7 @@ export interface BuildIdentifyOptions {
 }
 
 export function buildIdentifyPayload(options: BuildIdentifyOptions): GatewayIdentifyPayload {
-  const intents =
-    typeof options.intents === "bigint" ? Number(options.intents) : options.intents;
+  const intents = typeof options.intents === "bigint" ? Number(options.intents) : options.intents;
   return {
     op: 2,
     d: {

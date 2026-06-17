@@ -4,10 +4,10 @@ import {
   autocompleteContextFromStambhaInteraction,
   commandContextFromStambhaMessageViaRest,
   commandContextFromStambhaSlashViaRest,
-  scoutContextFromStambhaMessage,
-  signalContextFromStambhaInteraction,
   type StambhaInteraction,
   type StambhaMessage,
+  scoutContextFromStambhaMessage,
+  signalContextFromStambhaInteraction,
 } from "@stambha/transform";
 
 export interface AttachStambhaClientOptions {
@@ -104,7 +104,9 @@ export function attachStambhaClient(
       if (!parsed) return;
 
       if (!client.restPort) {
-        throw new Error("Native prefix commands require restPort (createNativeRestPort or HttpRestPort)");
+        throw new Error(
+          "Native prefix commands require restPort (createNativeRestPort or HttpRestPort)",
+        );
       }
 
       const ctx = commandContextFromStambhaMessageViaRest(

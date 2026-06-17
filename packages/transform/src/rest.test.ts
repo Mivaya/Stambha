@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
 import type { RestPort } from "@stambha/core";
+import { describe, expect, it, vi } from "vitest";
 import {
   channelMessageBody,
   interactionDeferBody,

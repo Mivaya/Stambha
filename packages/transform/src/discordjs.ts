@@ -1,8 +1,7 @@
-import type { ChannelType, CommandContextMeta } from "@stambha/core";
-import type { SlashOption } from "@stambha/core";
+import type { ChannelType, CommandContextMeta, SlashOption } from "@stambha/core";
 import {
-  ChannelType as DjsChannelType,
   type ChatInputCommandInteraction,
+  ChannelType as DjsChannelType,
   type GuildChannel,
   type GuildMember,
   type Message,
@@ -36,7 +35,11 @@ function mapChannelType(type: DjsChannelType): ChannelType {
   }
 }
 
-export function userFromDiscordJs(user: { id: string; bot?: boolean; username?: string }): StambhaUser {
+export function userFromDiscordJs(user: {
+  id: string;
+  bot?: boolean;
+  username?: string;
+}): StambhaUser {
   const out: StambhaUser = { id: user.id };
   if (user.bot !== undefined) (out as { bot?: boolean }).bot = user.bot;
   if (user.username !== undefined) (out as { username?: string }).username = user.username;
@@ -126,7 +129,10 @@ function memberPermissions(member: GuildMember | null): bigint | undefined {
   return member?.permissions.bitfield;
 }
 
-function clientPermissionsInChannel(member: GuildMember | null, channelId: string): bigint | undefined {
+function clientPermissionsInChannel(
+  member: GuildMember | null,
+  channelId: string,
+): bigint | undefined {
   if (!member) return undefined;
   return member.permissionsIn(channelId).bitfield;
 }

@@ -4,7 +4,7 @@
 
 When migrating a production bot to Stambha, adopters sometimes added `lib/stambha/` or similar. This doc maps those patterns to framework gaps and **native replacements**.
 
-**Last updated:** 2026-06-15 (post **0.3.4**)
+**Last updated:** 2026-06-16 (post **0.3.4** / **0.3.5**)
 
 ---
 
@@ -18,8 +18,8 @@ When migrating a production bot to Stambha, adopters sometimes added `lib/stambh
 | **Custom `attach*Client`** | Dynamic prefix; legacy run methods | `resolvePrefix` (**0.2.2 P2**); `execute(ctx)` | ✅ |
 | **`wire*ToHub` / discord.js gateway** | Events → hub | `createNativeGatewayClient` (**0.3.0 N1**) | ✅ Cancelled hybrid |
 | **Service locator `container`** | Sapphire `container` | `client.container.binder` + plugins (**0.3.3 N3**) | ✅ |
-| **Manual interaction routing** | Signals/autocomplete not on attach | **0.3.5 I3–I4** | 🔲 Delete after 0.3.5 |
-| **Manual `meta` / permission fetch** | Gates need `ctx.meta` on native | **0.3.5 I2** | 🔲 Delete after 0.3.5 |
+| **Manual interaction routing** | Signals/autocomplete not on attach | **0.3.5 I3–I4** | ✅ Delete after 0.3.5 |
+| **Manual `meta` / permission fetch** | Gates need `ctx.meta` on native | **0.3.5 I2** | ✅ Delete after 0.3.5 |
 | **`LegacyArgs`** | Sapphire `Args.pick` for `messageRun` | `Args.fromContext` + **1.x B2** | Migrate to `execute(ctx)` |
 | **`LegacySlashRegistry`** | `SlashCommandBuilder` + custom deploy | `deployCommands` + Stambha `Command` metadata | **1.x B1** optional |
 | **`fetchGuildPrefix` helper** | Per-guild prefix from DB | `resolvePrefix`; **1.x C2** Vault prefix | ✅ resolver |
@@ -68,10 +68,10 @@ When migrating a production bot to Stambha, adopters sometimes added `lib/stambh
 - [ ] Remove `lib/core/reply.ts` — use `ctx.reply({ embeds })` and `ctx.editReply`
 - [ ] Remove `lib/rest/api.ts` — use `@stambha/rest` resource helpers
 
-### After 0.3.5
+### After 0.3.5 ✅
 
 - [ ] Remove manual `interactionCreate` handlers for signals/autocomplete
-- [ ] Remove manual permission/meta fetching before gates
+- [ ] Remove manual permission/meta fetching before gates (use `ctx.meta`)
 - [ ] Remove manual slash option parsing from `ctx.raw`
 
 ### After 1.x (B1, B2, C1)
@@ -89,5 +89,6 @@ When migrating a production bot to Stambha, adopters sometimes added `lib/stambh
 ## Related
 
 - [release-plan.md](./release-plan.md) — 0.3.5 ticket IDs
+- [ecosystem-survey.md](./ecosystem-survey.md) — 1.x feature ideas from other frameworks
 - [future-v2.md](./future-v2.md) — 1.x / 2.0 pipeline
 - [../migration/from-sapphire.md](../migration/from-sapphire.md) — public native migration guide

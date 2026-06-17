@@ -1,6 +1,10 @@
+import {
+  gatesDesiredProperties,
+  resolveDesiredProperties,
+  slimCommandContext,
+  slimMeta,
+} from "@stambha/core";
 import { describe, expect, it } from "vitest";
-import { resolveDesiredProperties, slimCommandContext, slimMeta } from "@stambha/core";
-import { gatesDesiredProperties } from "@stambha/core";
 import { buildDiscordenoDesiredProperties, metaFromDiscordenoSlash } from "./discordeno.js";
 import { interactionReplyBody } from "./rest.js";
 
@@ -43,6 +47,10 @@ describe("@stambha/transform", () => {
       desired,
     );
     expect(slim.raw).toBe(null);
-    expect(slimMeta(slim.meta, desired.meta)).toEqual({ channelType: "dm", memberPermissions: 1n, clientPermissions: 2n });
+    expect(slimMeta(slim.meta, desired.meta)).toEqual({
+      channelType: "dm",
+      memberPermissions: 1n,
+      clientPermissions: 2n,
+    });
   });
 });

@@ -1,11 +1,11 @@
+import { Command, type Registry } from "@stambha/core";
 import { describe, expect, it } from "vitest";
 import {
-  shouldDeploySlashCommands,
-  resolveShardIdFromEnv,
-  formatDeployDiff,
   deployCommandsIfShardZero,
+  formatDeployDiff,
+  resolveShardIdFromEnv,
+  shouldDeploySlashCommands,
 } from "./deploySlash.js";
-import { Command, type Registry } from "@stambha/core";
 
 class PingCommand extends Command {
   constructor(registry: Registry<Command>) {

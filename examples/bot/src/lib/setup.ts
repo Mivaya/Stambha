@@ -45,9 +45,7 @@ export async function setupBot(options: BotSetupOptions = {}): Promise<BotSetupR
     } else if (useExternalRest) {
       restPort = new HttpRestPort({
         baseUrl: process.env.REST_WORKER_URL!,
-        ...(process.env.REST_WORKER_SECRET
-          ? { secret: process.env.REST_WORKER_SECRET }
-          : {}),
+        ...(process.env.REST_WORKER_SECRET ? { secret: process.env.REST_WORKER_SECRET } : {}),
       });
     } else if (token) {
       restPort = createNativeRestPort(token);

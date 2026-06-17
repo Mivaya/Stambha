@@ -120,8 +120,7 @@ export function createReshardServer(options: ReshardServerOptions): Promise<Resh
     server.once("error", reject);
     server.listen(options.port, host, () => {
       const addr = server.address();
-      const actualPort =
-        typeof addr === "object" && addr !== null ? addr.port : options.port;
+      const actualPort = typeof addr === "object" && addr !== null ? addr.port : options.port;
       resolve({
         url: `http://${host}:${actualPort}`,
         close: () =>

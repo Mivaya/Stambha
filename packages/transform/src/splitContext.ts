@@ -1,6 +1,6 @@
 import type {
-  AutocompleteContext,
   AutocompleteChoice,
+  AutocompleteContext,
   CommandContext,
   ReplyPayload,
   ResolvedDesiredProperties,
@@ -8,8 +8,7 @@ import type {
   ScoutContext,
   SignalContext,
 } from "@stambha/core";
-import { Signal } from "@stambha/core";
-import { slimCommandContext, slimMeta } from "@stambha/core";
+import { Signal, slimCommandContext, slimMeta } from "@stambha/core";
 import {
   autocompleteCallbackBody,
   channelMessageBody,

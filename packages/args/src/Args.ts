@@ -2,11 +2,7 @@ import type { CommandContext } from "@stambha/core";
 import type { ArgResult } from "./errors.js";
 import { argMissing } from "./errors.js";
 import { joinFrom, tokenize } from "./lexer.js";
-import {
-  defaultArgRegistry,
-  type ArgResolver,
-  type BuiltinArgType,
-} from "./resolvers.js";
+import { type ArgResolver, type BuiltinArgType, defaultArgRegistry } from "./resolvers.js";
 
 export class Args {
   private index = 0;

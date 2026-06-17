@@ -47,7 +47,11 @@ export function slimCommandContext(
     Object.assign(slim, { argsText: ctx.argsText });
   }
 
-  if (desired.context.slashOptions && ctx.slashOptions !== undefined && ctx.slashOptions.length > 0) {
+  if (
+    desired.context.slashOptions &&
+    ctx.slashOptions !== undefined &&
+    ctx.slashOptions.length > 0
+  ) {
     Object.assign(slim, { slashOptions: ctx.slashOptions });
   }
 

@@ -1,11 +1,6 @@
 /** Optional hooks for REST queue telemetry (wired by `@stambha/metrics`). */
 export interface RestTelemetry {
-  recordRequest(event: {
-    method: string;
-    route: string;
-    status: number;
-    durationMs: number;
-  }): void;
+  recordRequest(event: { method: string; route: string; status: number; durationMs: number }): void;
   recordRateLimit(bucketId: string): void;
   recordWait(bucketId: string, waitMs: number): void;
 }

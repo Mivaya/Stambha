@@ -1,4 +1,4 @@
-import { err, ok, type Outcome } from "@stambha/core";
+import { err, type Outcome, ok } from "@stambha/core";
 
 export type ArgErrorCode = "MISSING" | "INVALID" | "UNKNOWN_TYPE";
 

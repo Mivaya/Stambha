@@ -1,33 +1,33 @@
 import { EventEmitter } from "node:events";
+import type { Binder } from "../binder/Binder.js";
 import type { Bridge, Tier, WorkerRole } from "../bridge/types.js";
-import type { RestPort, TierBus } from "../tier/types.js";
-import { Binder } from "../binder/Binder.js";
+import { ChronScheduler } from "../chron/ChronScheduler.js";
+import { CommandIndex } from "../command/CommandIndex.js";
 import { DefaultStambhaContainer } from "../container/DefaultStambhaContainer.js";
 import type { StambhaContainerLike } from "../container/types.js";
-import type { PluginLifecycle } from "../plugins/types.js";
-import { Registry } from "../pieces/Registry.js";
-import { Command } from "../registries/Command.js";
-import { Hook } from "../registries/Hook.js";
-import { Scout } from "../registries/Scout.js";
-import { Barrier } from "../registries/Barrier.js";
-import { Gate } from "../registries/Gate.js";
-import { Conduit } from "../registries/Conduit.js";
-import { Epilogue } from "../registries/Epilogue.js";
-import { Signal } from "../registries/Signal.js";
-import { Chron } from "../registries/Chron.js";
-import { ChronScheduler } from "../chron/ChronScheduler.js";
-import { ExecutionPipeline } from "../pipeline/ExecutionPipeline.js";
-import { InboundRouter } from "./InboundRouter.js";
-import { SignalRouter } from "./SignalRouter.js";
-import { SequenceStore } from "../sequence/SequenceStore.js";
-import { CommandIndex } from "../command/CommandIndex.js";
 import type { CommandContext } from "../context/types.js";
 import type { ResolvedDesiredProperties } from "../desired/DesiredProperties.js";
 import { resolveDesiredProperties } from "../desired/DesiredProperties.js";
 import { resolveCommandGates } from "../gates/resolveCommandGates.js";
-import type { PrefixResolver } from "./prefix.js";
-import type { StambhaClientEvents, StambhaClientOptions, StambhaRegistries } from "./types.js";
 import type { Outcome } from "../outcome/Outcome.js";
+import { Registry } from "../pieces/Registry.js";
+import { ExecutionPipeline } from "../pipeline/ExecutionPipeline.js";
+import type { PluginLifecycle } from "../plugins/types.js";
+import type { Barrier } from "../registries/Barrier.js";
+import type { Chron } from "../registries/Chron.js";
+import type { Command } from "../registries/Command.js";
+import type { Conduit } from "../registries/Conduit.js";
+import type { Epilogue } from "../registries/Epilogue.js";
+import type { Gate } from "../registries/Gate.js";
+import type { Hook } from "../registries/Hook.js";
+import type { Scout } from "../registries/Scout.js";
+import type { Signal } from "../registries/Signal.js";
+import { SequenceStore } from "../sequence/SequenceStore.js";
+import type { RestPort, TierBus } from "../tier/types.js";
+import { InboundRouter } from "./InboundRouter.js";
+import type { PrefixResolver } from "./prefix.js";
+import { SignalRouter } from "./SignalRouter.js";
+import type { StambhaClientEvents, StambhaClientOptions, StambhaRegistries } from "./types.js";
 
 export class StambhaClient extends EventEmitter {
   readonly tier: Tier;
@@ -57,8 +57,7 @@ export class StambhaClient extends EventEmitter {
   constructor(options: StambhaClientOptions = {}) {
     super();
     this.tier = options.tier ?? "monolith";
-    this.workerRole =
-      options.workerRole ?? (this.tier === "split" ? "gateway" : "monolith");
+    this.workerRole = options.workerRole ?? (this.tier === "split" ? "gateway" : "monolith");
     this.restPort = options.restPort ?? null;
     this.tierBus = options.tierBus ?? null;
     this.prefix = options.prefix ?? "!";
@@ -130,17 +129,24 @@ export class StambhaClient extends EventEmitter {
       return { ok: false, error: new Error(`Unknown command: ${commandName}`) };
     }
     if (!command.supports(ctx.kind)) {
-      return { ok: false, error: new Error(`Command "${commandName}" does not support kind "${ctx.kind}"`) };
+      return {
+        ok: false,
+        error: new Error(`Command "${commandName}" does not support kind "${ctx.kind}"`),
+      };
     }
     return this.pipeline.runCommand(command, ctx);
   }
 
   async start(): Promise<void> {
     if (!this.bridge) {
-      throw new Error("No bridge configured. Pass bridge in options or call setBridge() before start().");
+      throw new Error(
+        "No bridge configured. Pass bridge in options or call setBridge() before start().",
+      );
     }
     if (this.tier === "split" && this.workerRole === "gateway" && !this.restPort) {
-      throw new Error('Split-tier gateway requires a RestPort (e.g. new HttpRestPort({ baseUrl })).');
+      throw new Error(
+        "Split-tier gateway requires a RestPort (e.g. new HttpRestPort({ baseUrl })).",
+      );
     }
     await this.pluginLifecycle?.runHook("preStart");
     await this.bridge.connect();

@@ -1,13 +1,18 @@
+import type { Bridge } from "@stambha/core";
+import { createSession } from "@stambha/transport";
 import { describe, expect, it, vi } from "vitest";
 import { guildShardId, recommendedShardCount, shardIdsForWorker } from "./shard/calculator.js";
+import {
+  buildIdentifyPayload,
+  buildResumePayload,
+  combineIntents,
+  GatewayIntent,
+} from "./shard/identify.js";
 import { createShardManager } from "./shard/ShardManager.js";
-import { buildIdentifyPayload, buildResumePayload, combineIntents, GatewayIntent } from "./shard/identify.js";
-import { createSession } from "@stambha/transport";
-import { InMemoryWorkerBus } from "./worker/InMemoryWorkerBus.js";
-import { createWorkerMessage, WorkerMessageTypes } from "./worker/types.js";
 import { attachGatewayRelay } from "./worker/gatewayRelay.js";
 import { createWorkerServer } from "./worker/HttpWorkerBus.js";
-import type { Bridge } from "@stambha/core";
+import { InMemoryWorkerBus } from "./worker/InMemoryWorkerBus.js";
+import { createWorkerMessage, WorkerMessageTypes } from "./worker/types.js";
 
 describe("@stambha/gateway", () => {
   it("calculates shard ids", () => {

@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import { ChronScheduler } from "./ChronScheduler.js";
-import { Chron, type ChronOptions } from "../registries/Chron.js";
-import { Registry } from "../pieces/Registry.js";
 import { StambhaClient } from "../client/StambhaClient.js";
 import type { ChronContext } from "../context/types.js";
+import type { Registry } from "../pieces/Registry.js";
+import { Chron, type ChronOptions } from "../registries/Chron.js";
+import { ChronScheduler } from "./ChronScheduler.js";
 
 class TestChron extends Chron {
   runs = 0;
