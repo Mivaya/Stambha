@@ -27,7 +27,7 @@ When migrating a production bot to Stambha, adopters sometimes added `lib/stambh
 | **Hook base with `container` getter** | Hooks only receive `registry` | `Hook.create(ctx)` (**0.3.3 N3**) | ✅ |
 | **`RouteStub` + unwired `routes/`** | `@sapphire/plugin-api` | **Plugins E** — `@stambha/dashboard` | Planned |
 | **Prisma for all data, no Vault** | Guild config in SQL | **1.x C2** Vault for settings ([ADR 004](./adr/004-vault-scope-orm-coexistence.md)) | Keep Prisma for domain |
-| **`messageRun` / `chatInputRun` bases** | Legacy run methods | `execute(ctx)` | No `preserveRaw` |
+| **`messageFromDiscordJs` / `messageFromDiscordeno`** | Transitional library adapters | Native `StambhaMessage`, `interactionFromDispatch` | **Deprecated 1.0.0** — delete **1.5.0** |
 | **Weak `HotLoader`** | Sapphire store reload | **Plugins** `@stambha/dev-reload` | Planned |
 
 ---

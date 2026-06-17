@@ -22,10 +22,15 @@ Long-term pillars **after** the native stack stabilizes at **1.0.0**. Near-term 
 ```text
 0.3.4  ✅ Rich replies, REST helpers, mention args
 0.3.5  ✅ Native interaction routing (options, meta, signals, autocomplete, defer)
-1.0.0  🔲 Stable semver API + [public docs audit](./docs-1.0.0.md)
+1.0.0  🔲 Stable semver API + public docs (deprecate library adapters)
+1.5.0  🔲 Remove discord.js / Discordeno shape adapters from @stambha/transform
 1.x    🔲 B1–B6, C1, A1–A2, B3 help, plugins P1
 2.0.0  🔲 A3 bus, native runSequence, distributed chron/cooldown, G2 gateway proxy
 ```
+
+### Remove legacy library adapters (1.5.0)
+
+**1.0.0** deprecates `messageFromDiscordJs`, `messageFromDiscordeno`, `buildDiscordenoDesiredProperties`, and related exports in `@stambha/transform`. **1.5.0** deletes them. Official migrations must ship fully native — no piece-by-piece library bridging at release time (ADR 005).
 
 ### Dependency graph
 

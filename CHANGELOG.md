@@ -13,18 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`ReplyPayload.components`** — buttons and action rows on `CommandContext.reply` (`@stambha/core`, `@stambha/transform`).
 - **Public [Known gaps](/guide/known-gaps)** — honest 1.x / 2.0 / plugins backlog.
-- **Migration from Klasa** guide.
 - **`examples/bot` demos** — `SayCommand` (slash options), `ConfirmCommand` (signal button), `LockCommand` (permission gate on native meta).
-- **Archived docs** snapshot for `0.3.5`.
 
 ### Changed
 
 - **Getting started**, **gateway**, **pieces**, scouts, signals, sequences, args, tier-split, resharding, transport reference, chron, plugins, hooks — expanded for native 0.3.5 attach.
-- **`@stambha/transform`** — discord.js adapters use type-only imports so native bots do not load discord.js at startup.
+- **`@stambha/transform`** — discord.js / Discordeno shape adapters **deprecated** (removal in **1.5.0**); `discord.js` removed from package devDependencies; native bots use `interactionFromDispatch` only.
+- **`@stambha/transform`** — discord.js no longer loaded at import time (type-only adapters replaced with duck-typed interfaces).
 
-### Semver policy (from 1.0.0)
-
-After **1.0.0**, breaking API changes ship in **major** releases only. Minor releases add features; patch releases fix bugs. Pre-1.0 minors (0.3.x) may include additive API changes.
 
 ## [0.3.5] - 2026-06-16
 

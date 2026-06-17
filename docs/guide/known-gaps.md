@@ -2,8 +2,6 @@
 
 Stambha **1.0.0** ships a stable native stack and honest documentation. This page lists what is **supported today** versus what is **planned** for 1.x, plugins, or 2.0.
 
-For the full cross-framework survey, see the maintainer [ecosystem survey](https://github.com/Mivaya/Stambha/blob/main/docs/internal/ecosystem-survey.md) (internal).
-
 ---
 
 ## Supported native path (1.0.0)
@@ -22,6 +20,10 @@ Use this stack for new bots:
 **Routing (0.3.5+):** `attachStambhaClient` handles prefix commands, slash commands (with options and `ctx.meta`), autocomplete, signals (buttons/selects/modals), and scouts — when the gateway emits normalized payloads.
 
 **Not supported:** discord.js (or any library) owning the gateway while Stambha owns commands only. Use the [native bootstrap](/guide/getting-started).
+
+### Deprecated library adapters
+
+`@stambha/transform` still exports discord.js / Discordeno **shape converters** for transitional code, but they are **deprecated in 1.0.0** and **removed in future release**. New migrations and releases must use native shapes only (`StambhaMessage`, `interactionFromDispatch`, `attachStambhaClient`).
 
 ---
 
