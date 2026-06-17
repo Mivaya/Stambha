@@ -4,6 +4,7 @@ import { normalizeReplyData } from "@stambha/core";
 export interface MessageBody {
   content?: string;
   embeds?: unknown[];
+  components?: unknown[];
   flags?: number;
 }
 

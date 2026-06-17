@@ -37,6 +37,18 @@ describe("rest payloads", () => {
     });
   });
 
+  it("passes components through interaction and channel bodies", () => {
+    const row = { type: 1, components: [{ type: 2, style: 1, label: "OK", custom_id: "stambha:ok" }] };
+    expect(interactionReplyBody({ content: "Pick", components: [row] })).toEqual({
+      type: 4,
+      data: { content: "Pick", components: [row] },
+    });
+    expect(channelMessageBody({ content: "Pick", components: [row] })).toEqual({
+      content: "Pick",
+      components: [row],
+    });
+  });
+
   it("builds deferred interaction body", () => {
     expect(interactionDeferBody(true)).toEqual({ type: 5, data: { flags: 64 } });
   });

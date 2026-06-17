@@ -4,6 +4,16 @@
 
 Place scout pieces under `src/scouts/`.
 
+## Scout vs Hook vs Signal
+
+| | **Scout** | **Hook** | **Signal** |
+|---|-----------|----------|------------|
+| Folder | `src/scouts/` | `src/listeners/` | `src/signals/` |
+| Events | Message create/update | Any bridge event | Component interactions |
+| Pipeline | Pre-router; non-blocking | Outside pipeline | Parallel interaction router |
+| Built-in filters | `ignoreBots`, `triggers`, … | You implement | `stambha:` custom id routing |
+| Typical use | Mention log, auto-react | `ready`, `guildCreate` | Buttons, selects, modals |
+
 ## Quick start
 
 ```ts
@@ -31,7 +41,15 @@ export class MentionScout extends Scout {
 }
 ```
 
-With the native stack, `attachStambhaClient` calls `client.router.processScout()` on `messageCreate` and `messageUpdate`.
+## Native attach
+
+```ts
+attachStambhaClient(hub, client, { scouts: true }); // default
+```
+
+Calls `client.router.processScout()` on `messageCreate` and `messageUpdate` when payloads are normalized `StambhaMessage` shapes.
+
+Load scouts from `src/scouts/` with `@stambha/loader` — same as other piece folders.
 
 ## ScoutContext
 
@@ -41,7 +59,7 @@ With the native stack, `attachStambhaClient` calls `client.router.processScout()
 | `userId`, `guildId`, `channelId` | Routing ids |
 | `content` | Message text when available |
 | `raw` | Normalized transport payload |
-| `delete()` | Delete the message via REST (requires RestPort wiring in your gateway worker) |
+| `delete()` | Delete the message via REST (requires RestPort) |
 
 ## Options
 
@@ -58,8 +76,12 @@ With the native stack, `attachStambhaClient` calls `client.router.processScout()
 
 Scout failures emit `client.on("scoutError", …)` — they do not crash the gateway handler.
 
+## Example
+
+See `examples/bot/src/scouts/MentionScout.ts` — triggered in `pnpm demo` when a user mentions the bot.
+
 ## Related
 
 - [Hooks](/features/hooks) — raw event listeners
 - [Barriers](/features/barriers) — block commands globally (different path)
-- [Project structure](/guide/project-structure) — `src/scouts/`
+- [Pieces & pipeline](/guide/pieces) — scout position before router

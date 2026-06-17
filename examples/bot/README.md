@@ -6,8 +6,8 @@ Sapphire-style folder layout with the **native** Stambha stack (`@stambha/gatewa
 
 ```text
 src/
-  commands/General/     Ping, echo, help, config
-  commands/Admin/       Setup (sequence builder demo)
+  commands/General/     Ping, say, confirm, echo, help, config
+  commands/Admin/       Setup (sequence builder), lock (permission gate demo)
   listeners/            Ready hook
   scouts/               Mention logger
   barriers/             Maintenance mode
@@ -28,7 +28,7 @@ src/
 ```bash
 cp .env.example .env
 pnpm install
-pnpm demo          # no Discord token — simulates !ping, !echo, mention scout
+pnpm demo          # no Discord token — simulates !ping, !say, !confirm, signal click, mention scout
 ```
 
 With a token (monolith + in-process REST):
