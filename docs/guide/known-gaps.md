@@ -71,16 +71,16 @@ Today, [Sequences](/features/sequences) are built with `sequence()` + manual Sig
 
 ## Documentation gaps (Tier 2)
 
-These are documented briefly or deferred with a known-gaps entry until post-1.0.0:
+These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
-| Topic | Status |
-|-------|--------|
-| [Chron](/features/chron) tier-split example | Single-process only |
-| [Vault](/features/vault) dashboard CRUD | Cross-link plugins when shipped |
-| [Tier split](/deployment/tier-split) interaction routing | Which events must hit the bot worker |
-| [Resharding](/deployment/resharding) vs Discordeno auto-reshard | Manual operator story |
-| Migration from Klasa | Optional page |
-| Versioned doc snapshots | Run `pnpm docs:archive` at each minor release |
+| Topic | 1.0.0 status |
+|-------|----------------|
+| [Chron](/features/chron) tier-split | Single-process documented; distributed → **2.0 D2** |
+| [Vault](/features/vault) dashboard CRUD | Cross-link `@stambha/dashboard` (plugins) |
+| [Tier split](/deployment/tier-split) interactions | Bot worker must receive all `interactionCreate` |
+| [Resharding](/deployment/resharding) | Manual operator APIs; auto threshold → **G1** |
+| [Migration from Klasa](/migration/from-klasa) | Optional page shipped |
+| Versioned doc snapshots | `0.3.5` archived; archive again at 1.0.0 tag |
 
 ---
 

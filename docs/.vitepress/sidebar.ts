@@ -54,6 +54,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
       { text: "Overview", link: "/migration/" },
       { text: "Piece-based framework", link: "/migration/from-sapphire" },
       { text: "Native transport stack", link: "/migration/from-discordeno" },
+      { text: "From Klasa", link: "/migration/from-klasa" },
     ],
   },
 ];

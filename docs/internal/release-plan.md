@@ -29,7 +29,7 @@ Planning doc for maintainers. Captures **semver release lanes** and maps every k
 0.3.3  ✅ Native gateway polish, deploy helpers, docs cleanup
 0.3.4  ✅ Rich replies, REST helpers, mention/snowflake args
 0.3.5  ✅ Slash options/subcommands, meta, signals, autocomplete, deferReply
-1.0.0  🔲 Stable API + public docs (see docs-1.0.0.md)
+1.0.0  🔲 Stable API + public docs (ready on release/1.0.0; tag pending)
 1.x    🔲 B1–B6, C1, Redis, help, plugins (see ecosystem-survey.md)
 2.0.0  🔲 A3 bus, distributed chron, native runSequence
 ```
@@ -116,9 +116,9 @@ Closes native attach routing gaps. **1.0.0** is unblocked for code; [docs-1.0.0.
 **Not a feature dump.** Ship when:
 
 1. **0.3.5** is done (native attach covers daily command/interaction flows). ✅
-2. `examples/bot` demonstrates slash options, a signal, and permission gates on native stack. 🔲
-3. Public docs complete per [docs-1.0.0.md](./docs-1.0.0.md) (including **Known gaps** page). 🔲
-4. CHANGELOG + semver policy: breaking changes only in major releases after 1.0.0. 🔲
+2. `examples/bot` demonstrates slash options, a signal, and permission gates on native stack. ✅
+3. Public docs complete per [docs-1.0.0.md](./docs-1.0.0.md) (including **Known gaps** page). ✅
+4. CHANGELOG + semver policy: breaking changes only in major releases after 1.0.0. ✅ (on `release/1.0.0`; tag pending)
 
 Known gaps documented for 1.x/2.0/plugins (levels, declarative options, Redis, dashboard, runSequence, pagination).
 

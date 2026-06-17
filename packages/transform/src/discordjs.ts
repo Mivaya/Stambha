@@ -1,14 +1,27 @@
 import type { ChannelType, CommandContextMeta, SlashOption } from "@stambha/core";
-import {
-  type ChatInputCommandInteraction,
-  ChannelType as DjsChannelType,
-  type GuildChannel,
-  type GuildMember,
-  type Message,
+import type {
+  ChatInputCommandInteraction,
+  GuildChannel,
+  GuildMember,
+  Message,
 } from "discord.js";
 import type { StambhaMessage, StambhaSlashInteraction, StambhaUser } from "./shapes.js";
 
-function mapChannelType(type: DjsChannelType): ChannelType {
+/** discord.js `ChannelType` values — inlined so native bots do not load discord.js at import time. */
+const DjsChannelType = {
+  GuildText: 0,
+  DM: 1,
+  GuildVoice: 2,
+  GroupDM: 3,
+  GuildAnnouncement: 5,
+  AnnouncementThread: 10,
+  PublicThread: 11,
+  PrivateThread: 12,
+  GuildStageVoice: 13,
+  GuildForum: 15,
+} as const;
+
+function mapChannelType(type: number): ChannelType {
   switch (type) {
     case DjsChannelType.DM:
       return "dm";

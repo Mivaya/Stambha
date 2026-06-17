@@ -31,15 +31,6 @@ export class AuditEpilogue extends Epilogue {
 
 Place under `src/epilogues/` and load with `@stambha/loader`.
 
-## Denied vs blocked
-
-| Phase | Cause | User UX |
-|-------|-------|---------|
-| `denied` | A **gate** on the command failed | `attachGateDeniedReply` sends the gate reason (optional) |
-| `blocked` | A **barrier** stopped the command globally | Barrier `reason` unless `silent: true` |
-
-Both run **before** `execute()`. Epilogues with `runOn: "denied"` or `runOn: "blocked"` audit these paths; conduits have already run but gates may not have.
-
 ## `runOn` phases
 
 | `runOn` | When it runs |

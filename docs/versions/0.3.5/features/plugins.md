@@ -80,38 +80,6 @@ const container = client.binder.resolve(ContainerToken);
 
 Register your own services with `client.binder.registerSingleton(MyToken, instance)`.
 
-### Piece factories (`Hook.create`)
-
-For pieces that need logger, Vault, or Prisma, use `static create(ctx: LoaderContext)` instead of a bare constructor:
-
-```ts
-import { Hook, type Registry } from "@stambha/core";
-import type { LoaderContext } from "@stambha/loader";
-
-export class ReadyListener extends Hook {
-  static create(ctx: LoaderContext) {
-    const logger = ctx.logger ?? ctx.client.container.logger;
-    return new ReadyListener(ctx.client.registries.hooks, logger);
-  }
-  // ...
-}
-```
-
-`loadPieces` calls `create` when present — see [Project structure](/guide/project-structure#piece-factories--dependency-injection-030).
-
-### Unloading plugins
-
-`attachPlugins` returns a detach function. Call it on shutdown to run plugin `preStop` hooks and remove listeners:
-
-```ts
-const detachPlugins = await attachPlugins(client, { plugins: [...] });
-// on SIGINT:
-detachPlugins();
-await client.stop();
-```
-
-There is no hot-reload of piece folders in core — use [`@stambha/dev-reload`](https://github.com/Mivaya/Stambha-plugins) (plugins repo) when available.
-
 ---
 
 ## definePlugin vs class plugins

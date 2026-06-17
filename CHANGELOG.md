@@ -5,6 +5,27 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — 1.0.0
+
+**Stable API + public documentation gate.** Not a feature dump — completes Tier 1 docs, known-gaps page, and `examples/bot` demos on the native stack.
+
+### Added
+
+- **`ReplyPayload.components`** — buttons and action rows on `CommandContext.reply` (`@stambha/core`, `@stambha/transform`).
+- **Public [Known gaps](/guide/known-gaps)** — honest 1.x / 2.0 / plugins backlog.
+- **Migration from Klasa** guide.
+- **`examples/bot` demos** — `SayCommand` (slash options), `ConfirmCommand` (signal button), `LockCommand` (permission gate on native meta).
+- **Archived docs** snapshot for `0.3.5`.
+
+### Changed
+
+- **Getting started**, **gateway**, **pieces**, scouts, signals, sequences, args, tier-split, resharding, transport reference, chron, plugins, hooks — expanded for native 0.3.5 attach.
+- **`@stambha/transform`** — discord.js adapters use type-only imports so native bots do not load discord.js at startup.
+
+### Semver policy (from 1.0.0)
+
+After **1.0.0**, breaking API changes ship in **major** releases only. Minor releases add features; patch releases fix bugs. Pre-1.0 minors (0.3.x) may include additive API changes.
+
 ## [0.3.5] - 2026-06-16
 
 Native **interaction routing** — closes the 1.0.0 blocker for production bots on `attachStambhaClient`.

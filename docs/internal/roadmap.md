@@ -6,7 +6,7 @@ This document is the **feature matrix** and **phase history**. Release sequencin
 
 **Branch rule:** `feature/{short-name}`
 
-**Current version:** **0.3.5** · **Next:** **1.0.0** (stable API + [public docs](./docs-1.0.0.md))
+**Current version:** **0.3.5** published · **1.0.0** docs complete on `release/1.0.0` ([audit](./docs-1.0.0.md))
 
 ---
 
@@ -151,7 +151,7 @@ Phases 1–10: see [phases.md](./phases.md). Summary of 11+:
 | 21 Migration docs | ✅ | Public guides + ADRs |
 | 22 Authoring (0.3.4) | ✅ | ReplyPayload, REST resources, mention args |
 | **23 Native routing (0.3.5)** | ✅ | Options, meta, signals, autocomplete, defer |
-| **24 Docs & 1.0.0** | 🔲 | [docs-1.0.0.md](./docs-1.0.0.md), known-gaps page, examples |
+| **24 Docs & 1.0.0** | ✅ | [docs-1.0.0.md](./docs-1.0.0.md), known-gaps, examples — tag pending |
 
 ---
 
@@ -164,8 +164,8 @@ Ship **1.0.0** after **0.3.5** ✅, when all of the following are true:
 | 1 | Production bot on **native transport** (no discord.js) | ✅ monolith + tier split |
 | 2 | **Daily authoring** — prefix, slash with options, gates, signals, autocomplete, deploy | ✅ code (0.3.5) |
 | 3 | **Ops parity** — split tier, REST queue, sharding path, desired properties | ✅ |
-| 4 | **Originals** documented — Vault, Chron, Sequences (scope honest), pipeline pieces | 🔲 [docs-1.0.0](./docs-1.0.0.md) |
-| 5 | **Known gaps** public page + 1.x/2.0/plugins backlog | 🔲 [ecosystem-survey](./ecosystem-survey.md) |
+| 4 | **Originals** documented — Vault, Chron, Sequences (scope honest), pipeline pieces | ✅ [docs-1.0.0](./docs-1.0.0.md) |
+| 5 | **Known gaps** public page + 1.x/2.0/plugins backlog | ✅ [known-gaps](/guide/known-gaps) |
 
 **0.3.5 closes the native routing blocker.** **1.0.0** is primarily **docs + semver promise**, not a feature dump.
 
@@ -174,7 +174,7 @@ Ship **1.0.0** after **0.3.5** ✅, when all of the following are true:
 ## Priority order (for new contributors)
 
 ```text
-Now:     1.0.0 — public docs audit + known-gaps page + examples/bot demos
+Now:     Tag 1.0.0 (version:bump + release) after merge of release/1.0.0
 Next:    1.x B1/C1, B2 bridge args, plugins pagination (P1)
 Then:    1.x B4–B6 (lifecycle, components, edit tracking)
 Later:   2.0 bus, distributed chron, native runSequence

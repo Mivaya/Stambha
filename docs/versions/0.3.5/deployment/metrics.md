@@ -1,14 +1,12 @@
 # Metrics (Prometheus)
 
-`@stambha/metrics` exposes Stambha runtime stats for Prometheus scraping. The package ships from **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)** — independent semver from core.
+`@stambha/metrics` exposes Stambha runtime stats for Prometheus scraping.
 
 ## Install
 
 ```bash
 pnpm add @stambha/metrics prom-client
 ```
-
-Pin to the same **minor** as your `@stambha/core` release when possible (e.g. `@stambha/metrics@0.3.5` with `@stambha/core@0.3.5`). See the plugins repo README for current versions.
 
 ## Wire to a bot
 

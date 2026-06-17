@@ -14,6 +14,8 @@ Conduits run on **every** command invocation (prefix and slash) after routing, b
 
 Conduits do **not** run for signal-only interactions (buttons routed via `SignalRouter`). Use a [Signal](/features/signals) or [Hook](/features/hooks) for component-side logging.
 
+**Epilogues** run after the command pipeline completes — conduits run *before* gates, so a conduit cannot see the final outcome. Use epilogues (or `attachCommandLifecycleEpilogues`) for success/failure/denied/blocked auditing.
+
 ## Quick start
 
 ```ts

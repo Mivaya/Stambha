@@ -6,7 +6,6 @@ Onboarding paths from **Sapphire** and **Discordeno** to Stambha's native transp
 |-------|----------|
 | [From Sapphire](/migration/from-sapphire) | Sapphire bots → native Stambha |
 | [From Discordeno](/migration/from-discordeno) | Discordeno big bots → tier split + native REST/gateway |
-| [From Klasa](/migration/from-klasa) | Klasa bots → gates, Vault, native stack |
 
 ## Native stack
 
