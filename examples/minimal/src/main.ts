@@ -1,4 +1,9 @@
-import { createStambhaBot, MockBridge, attachCommandLifecycleEpilogues, type CommandContext } from "@stambha/core";
+import {
+  attachCommandLifecycleEpilogues,
+  type CommandContext,
+  createStambhaBot,
+  MockBridge,
+} from "@stambha/core";
 import { PingCommand } from "./commands/PingCommand.js";
 
 const bridge = new MockBridge();

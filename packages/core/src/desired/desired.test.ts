@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { CommandContext } from "../context/types.js";
-import { gatesDesiredProperties, minimalDesiredProperties, resolveDesiredProperties } from "./DesiredProperties.js";
+import {
+  gatesDesiredProperties,
+  minimalDesiredProperties,
+  resolveDesiredProperties,
+} from "./DesiredProperties.js";
 import { slimCommandContext, slimMeta } from "./slimContext.js";
 
 function baseCtx(): CommandContext {
@@ -32,7 +36,12 @@ describe("desired properties", () => {
   });
 
   it("slims meta fields", () => {
-    const meta = slimMeta(baseCtx().meta, { channelType: true, channelNsfw: false, memberPermissions: false, clientPermissions: false });
+    const meta = slimMeta(baseCtx().meta, {
+      channelType: true,
+      channelNsfw: false,
+      memberPermissions: false,
+      clientPermissions: false,
+    });
     expect(meta).toEqual({ channelType: "guild_text" });
   });
 

@@ -5,11 +5,11 @@ import {
   shardCapacityRatio,
 } from "../shard/calculator.js";
 import { createShardManager } from "../shard/ShardManager.js";
-import { createIdentifyBudget } from "./IdentifyBudget.js";
-import { evaluateReshard } from "./policy.js";
-import { createReshardPlan } from "./plan.js";
-import { createReshardController } from "./ReshardController.js";
 import { createReshardServer } from "./createReshardServer.js";
+import { createIdentifyBudget } from "./IdentifyBudget.js";
+import { createReshardPlan } from "./plan.js";
+import { evaluateReshard } from "./policy.js";
+import { createReshardController } from "./ReshardController.js";
 
 describe("@stambha/gateway resharding", () => {
   it("evaluates scale-up when over threshold", () => {

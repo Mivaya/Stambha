@@ -41,15 +41,22 @@ Load with `@stambha/loader` — hooks bind when you call `client.start()` (after
 
 Native gateway events use camelCase hub names (`messageCreate`, `interactionCreate`) — see [Gateway deployment](/deployment/gateway).
 
-## Hooks vs scouts
+## Hooks vs scouts vs signals
 
-| | **Hook** | **Scout** |
-|---|----------|-----------|
-| Folder | `src/listeners/` | `src/scouts/` |
-| Trigger | Any bridge event | Message / update scouts only |
-| Filtering | You implement in `handle()` | Built-in (`ignoreBots`, `triggers`, …) |
-| Pipeline | No | No — parallel passive path |
-| Use case | Login logging, guild join setup | Mention detection, auto-moderation hints |
+| | **Hook** | **Scout** | **Signal** |
+|---|----------|-----------|------------|
+| Folder | `src/listeners/` | `src/scouts/` | `src/signals/` |
+| Trigger | Any bridge event | Message create/update | Component interactions |
+| Pipeline | Outside command pipeline | Pre-router watcher | `SignalRouter` on `interactionCreate` |
+| Filtering | You implement in `handle()` | Built-in (`ignoreBots`, `triggers`, …) | `stambha:` custom id prefix |
+| Use when | `ready`, audit logs, raw events | Mention detection, light automation | Buttons, selects, modals |
+
+**Decision tree**
+
+1. **Discord component click?** → [Signal](/features/signals)
+2. **Need to block or allow a command?** → [Gate](/features/gates) or [Barrier](/features/barriers)
+3. **Watch messages before routing?** → [Scout](/features/scouts)
+4. **React to any gateway event as-is?** → Hook
 
 For message watching with shared filters, prefer [Scouts](/features/scouts).
 

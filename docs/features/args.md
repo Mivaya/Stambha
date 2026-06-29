@@ -8,7 +8,7 @@
 pnpm add @stambha/args
 ```
 
-Prefix commands populate `CommandContext.argsText` on the native stack. Slash options populate `CommandContext.slashOptions` via `interactionFromDispatch` (0.3.5+).
+On the **native** stack (0.3.5+), prefix commands populate `CommandContext.argsText` via `attachStambhaClient`. Slash options populate `CommandContext.slashOptions` from `interactionFromDispatch` — use `SlashArgs.fromContext(ctx)` in `execute()`.
 
 ## Prefix commands
 
@@ -53,6 +53,22 @@ tokenize('say "hello world"'); // ["say", "hello world"]
 | `rest` | Remaining text (via `pickRest()` / `rest()`) |
 | `stringArray` | Comma-separated in one token |
 
+### Mention and snowflake ids (0.3.4+)
+
+```ts
+import {
+  channelMentionArg,
+  roleMentionArg,
+  snowflakeArg,
+  userMentionArg,
+} from "@stambha/args";
+
+const userId = args.pick(userMentionArg); // <@123> or raw snowflake
+const channelId = args.pick(channelMentionArg);
+```
+
+REST entity resolvers (fetch user object by mention) are planned for **1.x B2** — today you get validated ids only.
+
 ### Custom resolvers
 
 ```ts
@@ -72,11 +88,11 @@ args.pickType("hexColor");
 ## Slash commands
 
 ```ts
-import { slashArgsFromContext } from "@stambha/args";
+import { SlashArgs } from "@stambha/args";
 
 async execute(ctx: CommandContext) {
-  const opts = slashArgsFromContext(ctx);
-  const value = opts.getString("value");
+  const opts = SlashArgs.fromContext(ctx);
+  const text = opts.getString("text");
   const count = opts.getInteger("count") ?? 1;
 
   const required = opts.requireString("name");
@@ -84,7 +100,7 @@ async execute(ctx: CommandContext) {
 }
 ```
 
-Bridge helpers normalize third-party interaction options into `SlashOption[]` on the context.
+No third-party bridge is required when using `createNativeGatewayClient` + `attachStambhaClient`.
 
 ## Unified helper
 
@@ -101,11 +117,14 @@ const args = argsForContext(ctx); // Args or SlashArgs based on ctx.kind
 - `replyArgError(ctx, error)` — user-facing reply
 - `replyIfArgError(ctx, result)` — reply and return `true` when failed
 
-## Example
+## Examples
 
-See `examples/bot/src/commands/General/EchoCommand.ts`.
+| Command | Demo |
+|---------|------|
+| Prefix lexer | `examples/bot/src/commands/General/EchoCommand.ts` |
+| Slash options | `examples/bot/src/commands/General/SayCommand.ts` |
 
 ## See also
 
-- [GATES.md](./GATES.md) — pre-execution checks
+- [Gates](/features/gates) — pre-execution checks
 - [Command tree & deploy](/features/command-tree) — slash groups, deploy, autocomplete

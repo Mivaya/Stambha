@@ -1,6 +1,6 @@
 {
   "name": "@stambha/rest",
-  "version": "0.3.5",
+  "version": "1.0.0",
   "description": "Native Discord REST client, rate-limit queue, REST worker, and slash command deploy",
   "author": "Mivaya",
   "license": "MIT",
@@ -47,10 +47,10 @@
   "devDependencies": {
     "@stambha/core": "workspace:*",
     "@stambha/transport": "workspace:*",
-    "@types/node": "^22.13.4",
+    "@types/node": "^25.9.3",
     "tsup": "^8.3.6",
-    "typescript": "^5.7.3",
-    "vitest": "^3.2.6"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
   },
   "engines": {
     "node": ">=20"

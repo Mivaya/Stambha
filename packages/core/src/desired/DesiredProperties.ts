@@ -55,7 +55,12 @@ export const defaultDesiredProperties: ResolvedDesiredProperties = Object.freeze
 /** Drop `raw` and gate metadata — lower RAM, commands still run. */
 export const minimalDesiredProperties: DesiredProperties = Object.freeze({
   context: { meta: false, argsText: true, slashOptions: true, slashPath: true, raw: false },
-  meta: { channelType: false, channelNsfw: false, memberPermissions: false, clientPermissions: false },
+  meta: {
+    channelType: false,
+    channelNsfw: false,
+    memberPermissions: false,
+    clientPermissions: false,
+  },
 });
 
 /** Only fields required by `@stambha/gates`. */
@@ -64,9 +69,7 @@ export const gatesDesiredProperties: DesiredProperties = Object.freeze({
   meta: { channelType: true, channelNsfw: true, memberPermissions: true, clientPermissions: true },
 });
 
-export function resolveDesiredProperties(
-  overrides?: DesiredProperties,
-): ResolvedDesiredProperties {
+export function resolveDesiredProperties(overrides?: DesiredProperties): ResolvedDesiredProperties {
   return Object.freeze({
     context: { ...DEFAULT_CONTEXT, ...overrides?.context },
     meta: { ...DEFAULT_META, ...overrides?.meta },

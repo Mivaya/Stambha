@@ -41,6 +41,30 @@ const gateway = await createNativeGatewayClient({
 await gateway.connect();
 ```
 
+### `attachStambhaClient` options
+
+Wire hub events into `InboundRouter` and `SignalRouter`:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `prefixCommands` | `true` | Route `messageCreate` through prefix parser |
+| `slashCommands` | `true` | Route slash `interactionCreate` payloads |
+| `signals` | `true` | Route buttons, selects, modals with `stambha:` custom ids |
+| `autocomplete` | `true` | Route autocomplete interactions to `Command.autocomplete()` |
+| `scouts` | `true` | Run scouts on `messageCreate` / `messageUpdate` |
+| `resolvePrefix` | — | Per-guild prefix resolver; sets `client.resolvePrefix` for attach lifetime |
+| `applicationId` | — | Discord app id for slash `editReply` when missing from interaction payloads |
+
+```ts
+attachStambhaClient(hub, client, {
+  applicationId: process.env.DISCORD_APPLICATION_ID,
+  resolvePrefix: async ({ guildId }) => (guildId ? await fetchPrefix(guildId) : "!"),
+  signals: true,
+});
+```
+
+Returns a detach function. Expects normalized `StambhaMessage` / `StambhaInteraction` shapes from `interactionFromDispatch` (native gateway) or manual `hub.emit` in tests.
+
 `createNativeGatewayClient`:
 
 - Fetches `GET /gateway/bot` for recommended shard count and gateway URL (override with `totalShards` / `gatewayUrl`)

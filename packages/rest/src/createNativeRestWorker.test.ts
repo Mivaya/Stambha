@@ -1,7 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import { createNativeRestWorker } from "./createNativeRestWorker.js";
 
-function jsonResponse(status: number, body: unknown, headers: Record<string, string> = {}): Response {
+function jsonResponse(
+  status: number,
+  body: unknown,
+  headers: Record<string, string> = {},
+): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { "Content-Type": "application/json", ...headers },
@@ -11,7 +15,11 @@ function jsonResponse(status: number, body: unknown, headers: Record<string, str
 describe("createNativeRestWorker", () => {
   it("serves /health and /v1/rest with bearer auth", async () => {
     const fetchImpl = vi.fn(async () =>
-      jsonResponse(200, { id: "1" }, { "x-ratelimit-limit": "5", "x-ratelimit-remaining": "4", "x-ratelimit-reset-after": "1" }),
+      jsonResponse(
+        200,
+        { id: "1" },
+        { "x-ratelimit-limit": "5", "x-ratelimit-remaining": "4", "x-ratelimit-reset-after": "1" },
+      ),
     );
 
     const worker = await createNativeRestWorker({

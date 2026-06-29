@@ -10,7 +10,11 @@ Place conduit pieces under `src/conduits/`.
 Conduits → Barriers → Gates → Command → Epilogues
 ```
 
-Conduits cannot deny commands. To block execution, use a [Barrier](/features/barriers) or [Gate](/features/gates).
+Conduits run on **every** command invocation (prefix and slash) after routing, before barriers. They cannot deny commands — use a [Barrier](/features/barriers) or [Gate](/features/gates) to block.
+
+Conduits do **not** run for signal-only interactions (buttons routed via `SignalRouter`). Use a [Signal](/features/signals) or [Hook](/features/hooks) for component-side logging.
+
+**Epilogues** run after the command pipeline completes — conduits run *before* gates, so a conduit cannot see the final outcome. Use epilogues (or `attachCommandLifecycleEpilogues`) for success/failure/denied/blocked auditing.
 
 ## Quick start
 
@@ -29,6 +33,25 @@ export class LoggingConduit extends Conduit {
 ```
 
 Load from `src/conduits/` with `@stambha/loader`.
+
+### Metrics-style conduit
+
+Tag commands for Prometheus or structured logs without touching command code:
+
+```ts
+export class MetricsConduit extends Conduit {
+  constructor(registry: Registry<Conduit>) {
+    super(registry, { name: "metrics", priority: 5 });
+  }
+
+  async process(ctx: CommandContext): Promise<void> {
+    // ctx.commandName, ctx.kind, ctx.guildId — emit counter before gates run
+    console.log(`[metrics] command=${ctx.commandName} kind=${ctx.kind}`);
+  }
+}
+```
+
+For production metrics, use [`@stambha/metrics`](https://github.com/Mivaya/Stambha-plugins) from Stambha-plugins.
 
 ## Options
 

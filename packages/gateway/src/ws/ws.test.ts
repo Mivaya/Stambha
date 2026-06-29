@@ -2,7 +2,6 @@ import { createSession } from "@stambha/transport";
 import { describe, expect, it } from "vitest";
 import { createGatewayEventHub } from "../GatewayEventHub.js";
 import { createShardManager } from "../shard/ShardManager.js";
-import { GatewayShard } from "./GatewayShard.js";
 import { GatewayOpcode } from "./constants.js";
 import {
   gatewayEventToHubName,
@@ -10,6 +9,7 @@ import {
   messageFromDispatch,
   normalizeDispatch,
 } from "./dispatch.js";
+import { GatewayShard } from "./GatewayShard.js";
 import type { CreateGatewayWebSocket, GatewayWebSocket } from "./socket.js";
 
 describe("ws/dispatch", () => {

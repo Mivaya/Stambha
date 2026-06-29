@@ -1,15 +1,15 @@
 import {
-  GatewayIntent,
-  type NativeGatewayClient,
   attachStambhaClient,
   combineIntents,
   createGatewayEventHub,
   createNativeGatewayClient,
+  GatewayIntent,
+  type NativeGatewayClient,
 } from "@stambha/gateway";
 import { createNativeRestWorker } from "@stambha/rest";
-import type { StambhaMessage } from "@stambha/transform";
-import { setupBot } from "./lib/setup.js";
+import type { StambhaInteraction, StambhaMessage } from "@stambha/transform";
 import { deployExampleSlashCommands } from "./lib/deploySlash.js";
+import { setupBot } from "./lib/setup.js";
 
 const demo = process.env.DEMO === "1";
 const token = process.env.DISCORD_TOKEN;
@@ -22,7 +22,9 @@ if (!demo && !token) {
 const { client } = await setupBot({ demo });
 
 const hub = createGatewayEventHub();
-attachStambhaClient(hub, client);
+attachStambhaClient(hub, client, {
+  applicationId: process.env.DISCORD_APPLICATION_ID,
+});
 client.setBridge(hub);
 
 let restCloser: (() => Promise<void>) | null = null;
@@ -62,11 +64,32 @@ if (demo) {
 
   hub.emit("messageCreate", {
     id: "2",
-    content: "!echo hello from demo",
+    content: "!say hello from demo",
     channelId: "c1",
     guildId: "g1",
     author: { id: "u1", bot: false },
   } satisfies StambhaMessage);
+
+  hub.emit("messageCreate", {
+    id: "2b",
+    content: "!confirm",
+    channelId: "c1",
+    guildId: "g1",
+    author: { id: "u1", bot: false },
+  } satisfies StambhaMessage);
+
+  hub.emit("interactionCreate", {
+    kind: "component",
+    id: "i-demo",
+    token: "demo-token",
+    applicationId: process.env.DISCORD_APPLICATION_ID ?? "demo-app",
+    user: { id: "u1", bot: false },
+    guildId: "g1",
+    channelId: "c1",
+    customId: "stambha:confirm:yes",
+    componentType: "button",
+    raw: {},
+  } satisfies StambhaInteraction);
 
   hub.emit("messageCreate", {
     id: "3",

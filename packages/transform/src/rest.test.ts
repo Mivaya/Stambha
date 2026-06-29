@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
 import type { RestPort } from "@stambha/core";
+import { describe, expect, it, vi } from "vitest";
 import {
   channelMessageBody,
   interactionDeferBody,
@@ -34,6 +34,18 @@ describe("rest payloads", () => {
     expect(interactionReplyBody({ embeds: [{ title: "x" }], ephemeral: true })).toEqual({
       type: 4,
       data: { embeds: [{ title: "x" }], flags: 64 },
+    });
+  });
+
+  it("passes components through interaction and channel bodies", () => {
+    const row = { type: 1, components: [{ type: 2, style: 1, label: "OK", custom_id: "stambha:ok" }] };
+    expect(interactionReplyBody({ content: "Pick", components: [row] })).toEqual({
+      type: 4,
+      data: { content: "Pick", components: [row] },
+    });
+    expect(channelMessageBody({ content: "Pick", components: [row] })).toEqual({
+      content: "Pick",
+      components: [row],
     });
   });
 
