@@ -107,8 +107,7 @@ export function createWorkerServer(options: WorkerServerOptions): Promise<Worker
     server.once("error", reject);
     server.listen(options.port, host, () => {
       const addr = server.address();
-      const actualPort =
-        typeof addr === "object" && addr !== null ? addr.port : options.port;
+      const actualPort = typeof addr === "object" && addr !== null ? addr.port : options.port;
       const url = `http://${host}:${actualPort}`;
       resolve({
         url,

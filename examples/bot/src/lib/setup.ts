@@ -22,8 +22,9 @@ export interface BotSetupOptions {
 function createDemoRestPort(): RestPort {
   return {
     async request<T>(req: RestRequest) {
-      const body = req.body as { content?: string } | undefined;
-      if (body?.content) console.log(`[demo:reply] ${body.content}`);
+      const body = req.body as { content?: string; data?: { content?: string } } | undefined;
+      const text = body?.content ?? body?.data?.content;
+      if (text) console.log(`[demo:reply] ${text}`);
       return {} as T;
     },
   };
@@ -45,9 +46,7 @@ export async function setupBot(options: BotSetupOptions = {}): Promise<BotSetupR
     } else if (useExternalRest) {
       restPort = new HttpRestPort({
         baseUrl: process.env.REST_WORKER_URL!,
-        ...(process.env.REST_WORKER_SECRET
-          ? { secret: process.env.REST_WORKER_SECRET }
-          : {}),
+        ...(process.env.REST_WORKER_SECRET ? { secret: process.env.REST_WORKER_SECRET } : {}),
       });
     } else if (token) {
       restPort = createNativeRestPort(token);

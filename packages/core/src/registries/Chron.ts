@@ -1,6 +1,6 @@
-import { Unit, type UnitOptions } from "../pieces/Unit.js";
-import { Registry } from "../pieces/Registry.js";
 import type { ChronContext } from "../context/types.js";
+import type { Registry } from "../pieces/Registry.js";
+import { Unit, type UnitOptions } from "../pieces/Unit.js";
 
 /** Interval in milliseconds or a standard 5-field cron expression. */
 export type ChronSchedule = { every: number } | { cron: string };

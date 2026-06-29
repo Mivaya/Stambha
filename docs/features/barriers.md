@@ -45,6 +45,14 @@ export class MaintenanceBarrier extends Barrier {
 
 Blocked commands emit `commandBlocked` and run epilogues with `runOn: "blocked"`. See [Epilogues](/features/epilogues).
 
+### Maintenance mode
+
+Set `MAINTENANCE=1` in the environment and use a barrier that checks it (see `examples/bot/src/barriers/MaintenanceBarrier.ts`). Set `skipOnHelp: true` so help commands still work during maintenance.
+
+### Resharding barrier (1.x)
+
+Automatic resharding during live traffic is **not** built in for 1.0.0. Use `ReshardController` APIs manually — see [Resharding](/deployment/resharding) and [Known gaps](/guide/known-gaps) (**G1**).
+
 ## Options
 
 | Option | Default | Description |

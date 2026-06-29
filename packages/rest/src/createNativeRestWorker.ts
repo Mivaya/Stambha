@@ -1,6 +1,6 @@
 import { createRestWorkerServer, type RestWorkerServerHandle } from "@stambha/core";
-import { createRestClient, NativeRestPort, type RestClient } from "./RestClient.js";
 import { RateLimitQueue } from "./RateLimitQueue.js";
+import { createRestClient, NativeRestPort, type RestClient } from "./RestClient.js";
 import { createRestTelemetryListener, type RestTelemetry } from "./telemetry.js";
 
 export interface NativeRestWorkerOptions {

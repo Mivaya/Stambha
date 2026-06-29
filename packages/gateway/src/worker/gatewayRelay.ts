@@ -1,6 +1,6 @@
 import type { Bridge } from "@stambha/core";
 import type { WorkerMessage } from "./types.js";
-import { WorkerMessageTypes, createWorkerMessage } from "./types.js";
+import { createWorkerMessage, WorkerMessageTypes } from "./types.js";
 
 /** Minimal publish-only surface for HTTP or in-memory relay. */
 export interface WorkerPublisher {

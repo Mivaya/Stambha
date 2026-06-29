@@ -1,10 +1,10 @@
+import type { CommandContext } from "@stambha/core";
 import { describe, expect, it } from "vitest";
 import { Args } from "./Args.js";
-import { SlashArgs } from "./SlashArgs.js";
+import { unwrapArg } from "./errors.js";
 import { tokenize } from "./lexer.js";
 import { integerArg, stringArg } from "./resolvers.js";
-import { unwrapArg } from "./errors.js";
-import type { CommandContext } from "@stambha/core";
+import { SlashArgs } from "./SlashArgs.js";
 
 describe("tokenize", () => {
   it("splits on whitespace", () => {

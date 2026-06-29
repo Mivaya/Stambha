@@ -20,12 +20,7 @@ export class SequenceBuilder {
     return this.defaultTimeoutMs;
   }
 
-  button(
-    id: string,
-    prompt: string,
-    buttons: SequenceButtonOption[],
-    timeoutMs?: number,
-  ): this {
+  button(id: string, prompt: string, buttons: SequenceButtonOption[], timeoutMs?: number): this {
     this.steps.push({
       id,
       type: "button",

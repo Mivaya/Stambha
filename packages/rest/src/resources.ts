@@ -46,7 +46,10 @@ export interface ChannelMessageBody {
   message_reference?: { message_id: string; channel_id?: string };
 }
 
-async function tryRequest<T>(rest: RestPort, req: Parameters<RestPort["request"]>[0]): Promise<T | null> {
+async function tryRequest<T>(
+  rest: RestPort,
+  req: Parameters<RestPort["request"]>[0],
+): Promise<T | null> {
   try {
     return await rest.request<T>(req);
   } catch {
@@ -73,7 +76,10 @@ export async function fetchGuildMember(
   });
 }
 
-export async function fetchChannel(rest: RestPort, channelId: string): Promise<ChannelSummary | null> {
+export async function fetchChannel(
+  rest: RestPort,
+  channelId: string,
+): Promise<ChannelSummary | null> {
   return tryRequest<ChannelSummary>(rest, { method: "GET", route: `/channels/${channelId}` });
 }
 
@@ -167,12 +173,21 @@ export interface GuildRole {
 }
 
 export async function fetchGuildRoles(rest: RestPort, guildId: string): Promise<GuildRole[]> {
-  return (await tryRequest<GuildRole[]>(rest, { method: "GET", route: `/guilds/${guildId}/roles` })) ?? [];
+  return (
+    (await tryRequest<GuildRole[]>(rest, { method: "GET", route: `/guilds/${guildId}/roles` })) ??
+    []
+  );
 }
 
-export async function fetchGuildChannels(rest: RestPort, guildId: string): Promise<ChannelSummary[]> {
+export async function fetchGuildChannels(
+  rest: RestPort,
+  guildId: string,
+): Promise<ChannelSummary[]> {
   return (
-    (await tryRequest<ChannelSummary[]>(rest, { method: "GET", route: `/guilds/${guildId}/channels` })) ?? []
+    (await tryRequest<ChannelSummary[]>(rest, {
+      method: "GET",
+      route: `/guilds/${guildId}/channels`,
+    })) ?? []
   );
 }
 

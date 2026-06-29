@@ -6,7 +6,7 @@ This document is the **feature matrix** and **phase history**. Release sequencin
 
 **Branch rule:** `feature/{short-name}`
 
-**Current version:** **0.3.4** · **Next:** **0.3.5** (native interaction routing) → **1.0.0**
+**Current version:** **0.3.5** published · **1.0.0** docs complete on `release/1.0.0` ([audit](./docs-1.0.0.md))
 
 ---
 
@@ -30,18 +30,17 @@ This document is the **feature matrix** and **phase history**. Release sequencin
 
 ## Native attach status (honest snapshot)
 
-`attachStambhaClient` is the default wiring for production bots. As of **0.3.4**:
+`attachStambhaClient` is the default wiring for production bots. As of **0.3.5**:
 
 | Flow | Native attach | Notes |
 |------|---------------|-------|
 | Prefix commands | ✅ | `messageCreate` → router |
-| Simple slash (no options) | ✅ | Interaction type 2 |
-| Slash options / subcommands | 🔲 **0.3.5** | `slashOptions` not populated from dispatch |
-| Permission / RunIn / NSFW gates | 🔲 **0.3.5** | `ctx.meta` not populated on native path |
-| Buttons / selects / modals | 🔲 **0.3.5** | `Signal` pieces exist; attach does not route |
-| Autocomplete | 🔲 **0.3.5** | `Command.autocomplete()` exists; attach does not route |
-| Rich replies + embeds | ✅ **0.3.4** | `ReplyPayload` |
-| Deferred slash + `editReply` | ⚠️ Partial | `editReply` ✅; `deferReply` → **0.3.5 I5** |
+| Slash commands (options, subcommands) | ✅ | `slashOptions`, `slashPath` from dispatch |
+| Permission / RunIn / NSFW gates | ✅ | `ctx.meta` on native path |
+| Buttons / selects / modals | ✅ | `signals` toggle on attach (default on) |
+| Autocomplete | ✅ | `autocomplete` toggle on attach (default on) |
+| Rich replies + embeds | ✅ | `ReplyPayload` |
+| Deferred slash + `editReply` | ✅ | `deferReply` + `editReply` |
 | Scouts, hooks, chron, vault | ✅ | Via hub events + loader |
 
 ---
@@ -55,18 +54,21 @@ Legend: **Done** · **Partial** · **Planned** · **Won't**
 | Feature | Stambha today | Target |
 |---------|---------------|--------|
 | Piece stores (commands, hooks, …) | **Done** — registries + `@stambha/loader` | Maintain |
-| Preconditions / gates | **Done** — `@stambha/gates` | **Partial on native** until 0.3.5 meta |
-| Barriers, epilogues, conduits | **Done** | Maintain |
+| Preconditions / gates | **Done** — `@stambha/gates` | Native `meta` ✅ 0.3.5 |
+| Barriers, epilogues, conduits | **Done** | Public docs → [docs-1.0.0](./docs-1.0.0.md) |
 | Prefix `Args` + mention/snowflake ids | **Done** — `@stambha/args` (0.3.4) | B2 REST entity resolvers in 1.x |
-| Slash options / `SlashArgs` | **Partial** — API done; native attach 🔲 0.3.5 | 0.3.5 |
-| Subcommands & groups (deploy + router) | **Done** deploy; **Partial** native routing | 0.3.5 |
+| Slash options / `SlashArgs` | **Done** — native attach 0.3.5 | |
+| Subcommands & groups (deploy + router) | **Done** | |
 | Prefix aliases, categories | **Done** | Maintain |
-| Autocomplete handlers | **Partial** — `Command.autocomplete()`; native attach 🔲 | 0.3.5 |
-| Component handlers (buttons, …) | **Partial** — `Signal`; native attach 🔲 | 0.3.5 |
+| Autocomplete handlers | **Done** — native attach 0.3.5 | |
+| Component handlers (buttons, …) | **Done** — native attach 0.3.5 | B5 menu builder → 1.x |
 | Slash deploy / diff | **Done** — `@stambha/rest` | Maintain |
 | Plugins + container DI | **Done** — `@stambha/plugins`, loader context | Maintain |
 | Rich replies (embeds, ephemeral) | **Done** — `ReplyPayload` (0.3.4) | Maintain |
 | REST entity helpers | **Done** — `@stambha/rest` resources (0.3.4) | Maintain |
+| Bridge / hybrid command DX | **Planned** — 1.x B2 | Pycord, Poise |
+| Piece lifecycle + error hooks | **Planned** — 1.x B4 | discord.py cogs |
+| Built-in pagination | **Planned** — plugins P1 | Pycord pages |
 | Declarative command options → gates | **Planned** — 1.x B1 | — |
 | Permission levels | **Planned** — 1.x C1 `@stambha/levels` | — |
 | Built-in help package | **Planned** — 1.x B3 | — |
@@ -86,7 +88,8 @@ Legend: **Done** · **Partial** · **Planned** · **Won't**
 | Sharding + resharding APIs | **Done** — `@stambha/gateway` | Maintain |
 | Custom cache | **Done** — `@stambha/cache` (plugins); Redis → 1.x A1 | — |
 | Cross-runtime (Node, Bun, Deno) | **Done** — `@stambha/runtime` | Maintain |
-| Gateway proxy patterns | **Planned** — optional | — |
+| Gateway proxy patterns | **Planned** — optional | Discordeno-inspired; 2.0 |
+| Auto resharding threshold | **Planned** — 1.x G1 | Discordeno 80% rule |
 | Horizontal worker bus (RabbitMQ) | **Planned** — 2.0 A3 | — |
 | Functional-only pieces | **Won't** — class pieces + `defineGate` functions | — |
 
@@ -99,7 +102,7 @@ Legend: **Done** · **Partial** · **Planned** · **Won't**
 | **Vault** | **Done** | Settings + bot-shaped data ([ADR 004](./adr/004-vault-scope-orm-coexistence.md)) |
 | **Sequences** | **Partial** | Store + custom IDs; native `runSequence` → 2.0 |
 | **Chron** | **Done** | In-process; distributed → 2.0 |
-| **Scouts** / **Signals** | **Done** pieces; signals routing → 0.3.5 |
+| **Scouts** / **Signals** | **Done** — routing ✅ 0.3.5 | Scouts/docs → [docs-1.0.0](./docs-1.0.0.md) |
 | **Metrics** | **Done** — `@stambha/metrics` (plugins repo) | |
 | **MockBridge** | **Done** | Tests without Discord |
 | Migration guides | **Done** | `docs/migration/*` |
@@ -147,32 +150,33 @@ Phases 1–10: see [phases.md](./phases.md). Summary of 11+:
 | 20 Cross-runtime | ✅ | `@stambha/runtime` |
 | 21 Migration docs | ✅ | Public guides + ADRs |
 | 22 Authoring (0.3.4) | ✅ | ReplyPayload, REST resources, mention args |
-| **23 Native routing (0.3.5)** | 🔲 | Options, meta, signals, autocomplete, defer |
+| **23 Native routing (0.3.5)** | ✅ | Options, meta, signals, autocomplete, defer |
+| **24 Docs & 1.0.0** | ✅ | [docs-1.0.0.md](./docs-1.0.0.md), known-gaps, examples — tag pending |
 
 ---
 
 ## 1.0.0 success criteria
 
-Ship **1.0.0** after **0.3.5**, when all of the following are true:
+Ship **1.0.0** after **0.3.5** ✅, when all of the following are true:
 
-| # | Criterion | 0.3.4 status |
-|---|-----------|--------------|
+| # | Criterion | Status |
+|---|-----------|--------|
 | 1 | Production bot on **native transport** (no discord.js) | ✅ monolith + tier split |
-| 2 | **Daily authoring** — prefix, slash *with options*, gates, args, deploy, loader | 🔲 options/meta/signals/autocomplete |
+| 2 | **Daily authoring** — prefix, slash with options, gates, signals, autocomplete, deploy | ✅ code (0.3.5) |
 | 3 | **Ops parity** — split tier, REST queue, sharding path, desired properties | ✅ |
-| 4 | **Originals** documented — Vault, Chron, Sequences (scope honest), Metrics | ✅ (Sequences partial) |
-| 5 | **Known gaps** documented for 1.x/2.0 (levels, declarative gates, Redis, dashboard) | 🔲 publish at 1.0.0 |
+| 4 | **Originals** documented — Vault, Chron, Sequences (scope honest), pipeline pieces | ✅ [docs-1.0.0](./docs-1.0.0.md) |
+| 5 | **Known gaps** public page + 1.x/2.0/plugins backlog | ✅ [known-gaps](/guide/known-gaps) |
 
-**0.3.4 is sufficient** for a *minimal* native bot (ping, echo, prefix, simple slash, embeds, REST helpers). It is **not sufficient** to declare 1.0.0 without 0.3.5.
+**0.3.5 closes the native routing blocker.** **1.0.0** is primarily **docs + semver promise**, not a feature dump.
 
 ---
 
 ## Priority order (for new contributors)
 
 ```text
-Now:     0.3.5 native interaction routing (I1–I6)
-Next:    1.0.0 stable API + docs
-Then:    1.x B1/C1, Redis (A1–A2), help (B3)
+Now:     Tag 1.0.0 (version:bump + release) after merge of release/1.0.0
+Next:    1.x B1/C1, B2 bridge args, plugins pagination (P1)
+Then:    1.x B4–B6 (lifecycle, components, edit tracking)
 Later:   2.0 bus, distributed chron, native runSequence
 ```
 

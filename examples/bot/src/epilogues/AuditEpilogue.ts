@@ -1,4 +1,4 @@
-import { Epilogue, isOk, type EpilogueContext, type Registry } from "@stambha/core";
+import { Epilogue, type EpilogueContext, isOk, type Registry } from "@stambha/core";
 
 export class AuditEpilogue extends Epilogue {
   constructor(registry: Registry<Epilogue>) {

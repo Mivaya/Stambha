@@ -119,6 +119,6 @@ dmPermission: false,
 
 ## See also
 
-- [ARGS.md](./ARGS.md) — option parsing
-- [GATES.md](./GATES.md) — preconditions
+- [Arguments](/features/args) — option parsing
+- [Gates](/features/gates) — preconditions
 - [Plugins](/features/plugins) — lifecycle hooks and container

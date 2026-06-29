@@ -1,4 +1,4 @@
-import { Signal, type Command, type CommandSlashPath, type StambhaClient } from "@stambha/core";
+import { type Command, type CommandSlashPath, Signal, type StambhaClient } from "@stambha/core";
 
 /** Unified interaction kinds (slash autocomplete vs component/modal signals). */
 export type InteractionKind = "autocomplete" | "signal";

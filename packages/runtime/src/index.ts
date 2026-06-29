@@ -1,13 +1,12 @@
+export { randomUUID } from "./crypto.js";
 export {
   detectRuntime,
-  isNode,
   isBun,
   isDeno,
+  isNode,
   type RuntimeKind,
 } from "./detect.js";
-
-export { env, cwd } from "./env.js";
-export { randomUUID } from "./crypto.js";
-export { join, resolve, basename, extname, pathToFileURL } from "./path.js";
-export { readDir, type DirEntry } from "./fs.js";
-export { sleep, delay, cancelDelay, type TimerHandle } from "./timers.js";
+export { cwd, env } from "./env.js";
+export { type DirEntry, readDir } from "./fs.js";
+export { basename, extname, join, pathToFileURL, resolve } from "./path.js";
+export { cancelDelay, delay, sleep, type TimerHandle } from "./timers.js";

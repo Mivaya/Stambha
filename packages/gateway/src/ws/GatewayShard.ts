@@ -1,12 +1,12 @@
 import type { SessionInfo } from "@stambha/transport";
 import type { GatewayEventHub } from "../GatewayEventHub.js";
 import type { IdentifyBudget } from "../reshard/IdentifyBudget.js";
-import type { ShardManager } from "../shard/ShardManager.js";
 import {
   type BuildIdentifyOptions,
   buildIdentifyPayload,
   buildResumePayload,
 } from "../shard/identify.js";
+import type { ShardManager } from "../shard/ShardManager.js";
 import { GatewayOpcode, type GatewayPayload } from "./constants.js";
 import { gatewayEventToHubName, normalizeDispatch } from "./dispatch.js";
 import type { CreateGatewayWebSocket, GatewayWebSocket } from "./socket.js";

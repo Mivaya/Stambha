@@ -1,11 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
 import type { CommandContext } from "@stambha/core";
-import { Permission, combinePermissions, hasPermissions } from "./permissions.js";
-import { permissionsGate, userPermissionsGate } from "./permissionsGate.js";
+import { describe, expect, it, vi } from "vitest";
 import { cooldownGate } from "./cooldownGate.js";
 import { MemoryCooldownStore } from "./cooldownStore.js";
 import { nsfwGate } from "./nsfwGate.js";
-import { guildOnlyGate, runInGate, RunIn } from "./runInGate.js";
+import { combinePermissions, hasPermissions, Permission } from "./permissions.js";
+import { permissionsGate, userPermissionsGate } from "./permissionsGate.js";
+import { guildOnlyGate, RunIn, runInGate } from "./runInGate.js";
 
 function ctx(overrides: Partial<CommandContext> = {}): CommandContext {
   return {
@@ -36,9 +36,7 @@ describe("hasPermissions", () => {
 describe("permissionsGate", () => {
   it("denies when member lacks permissions", async () => {
     const gate = userPermissionsGate(Permission.ManageGuild);
-    const result = await gate.check(
-      ctx({ meta: { memberPermissions: Permission.SendMessages } }),
-    );
+    const result = await gate.check(ctx({ meta: { memberPermissions: Permission.SendMessages } }));
     expect(result.allow).toBe(false);
   });
 

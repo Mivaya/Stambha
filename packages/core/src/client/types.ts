@@ -1,7 +1,6 @@
 import type { Bridge, Tier, WorkerRole } from "../bridge/types.js";
-import type { RestPort } from "../tier/types.js";
-import type { TierBus } from "../tier/types.js";
 import type { StambhaContainerLike } from "../container/types.js";
+import type { RestPort, TierBus } from "../tier/types.js";
 
 export interface StambhaClientOptions {
   tier?: Tier;
@@ -68,17 +67,25 @@ export type StambhaClientEvents = {
       error: unknown;
     },
   ];
-  epilogueError: [{ epilogue: string; error: unknown; ctx: import("../context/types.js").EpilogueContext }];
+  epilogueError: [
+    { epilogue: string; error: unknown; ctx: import("../context/types.js").EpilogueContext },
+  ];
   hookError: [{ hook: string; error: unknown }];
-  signalError: [{ signal: string; error: unknown; ctx: import("../context/SignalContext.js").SignalContext }];
+  signalError: [
+    { signal: string; error: unknown; ctx: import("../context/SignalContext.js").SignalContext },
+  ];
   autocompleteError: [
-    { command: string; error: unknown; ctx: import("../context/autocomplete.js").AutocompleteContext },
+    {
+      command: string;
+      error: unknown;
+      ctx: import("../context/autocomplete.js").AutocompleteContext;
+    },
   ];
   chronError: [{ chron: string; error: unknown }];
 };
 
 export type { Binder } from "../binder/Binder.js";
-export type { StambhaLogger, StambhaContainerLike } from "../container/types.js";
 export { ConsoleLogger } from "../container/ConsoleLogger.js";
 export { DefaultStambhaContainer } from "../container/DefaultStambhaContainer.js";
+export type { StambhaContainerLike, StambhaLogger } from "../container/types.js";
 export type { PluginHookName, PluginLifecycle } from "../plugins/types.js";

@@ -1,7 +1,7 @@
 import type { StambhaClient } from "../client/StambhaClient.js";
 import type { CommandContext, EpilogueContext, ScoutContext } from "../context/types.js";
 import { commandGatesForRun } from "../gates/resolveCommandGates.js";
-import { type Outcome, StambhaError, isOk } from "../outcome/Outcome.js";
+import { isOk, type Outcome, StambhaError } from "../outcome/Outcome.js";
 import type { Command } from "../registries/Command.js";
 
 export interface PipelineRunOptions {
