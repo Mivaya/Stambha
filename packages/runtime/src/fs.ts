@@ -1,8 +1,10 @@
 import { detectRuntime } from "./detect.js";
 
-declare const Deno: {
-  readDir(path: string): AsyncIterable<{ name: string; isDirectory: boolean; isFile: boolean }>;
-} | undefined;
+declare const Deno:
+  | {
+      readDir(path: string): AsyncIterable<{ name: string; isDirectory: boolean; isFile: boolean }>;
+    }
+  | undefined;
 
 export interface DirEntry {
   readonly name: string;

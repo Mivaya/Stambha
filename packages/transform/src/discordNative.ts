@@ -169,7 +169,9 @@ function findFocusedOption(
   return null;
 }
 
-export function metaFromDiscordInteraction(payload: DiscordInteractionPayload): CommandContextMeta | undefined {
+export function metaFromDiscordInteraction(
+  payload: DiscordInteractionPayload,
+): CommandContextMeta | undefined {
   const meta: CommandContextMeta = {};
 
   if (!payload.guild_id) {
@@ -216,7 +218,10 @@ function baseInteraction(
   };
 }
 
-function slashFromDispatch(payload: DiscordInteractionPayload, user: StambhaUser): StambhaSlashInteraction | null {
+function slashFromDispatch(
+  payload: DiscordInteractionPayload,
+  user: StambhaUser,
+): StambhaSlashInteraction | null {
   const rootName = payload.data?.name;
   if (!rootName) return null;
   const { slashPath, slashOptions } = parseSlashTree(rootName, payload.data?.options);

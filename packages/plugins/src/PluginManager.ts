@@ -1,6 +1,6 @@
 import type { PluginHookName, PluginLifecycle, StambhaClient } from "@stambha/core";
-import { ContainerToken, LoggerToken } from "./tokens.js";
 import type { StambhaContainer } from "./StambhaContainer.js";
+import { ContainerToken, LoggerToken } from "./tokens.js";
 import type { StambhaPlugin } from "./types.js";
 
 export interface PluginManagerOptions {

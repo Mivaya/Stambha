@@ -70,6 +70,28 @@ attachGatewayRelay(hub, {
 // hub.emit("messageCreate", { id, content, channelId, guildId, author: { id, bot } });
 ```
 
+## Interaction routing (tier split)
+
+The **bot worker** must receive normalized `interactionCreate` events for anything Stambha routes:
+
+| Event | Bot worker required? | Notes |
+|-------|----------------------|-------|
+| `messageCreate` (prefix) | **Yes** | Parsed by `attachStambhaClient` |
+| Slash `interactionCreate` | **Yes** | Options, meta, `deferReply` |
+| Autocomplete | **Yes** | `Command.autocomplete()` |
+| Buttons / selects / modals (`stambha:`) | **Yes** | `SignalRouter` |
+| Raw gateway events for hooks only | Optional | Can stay on gateway if you forward selectively |
+
+Gateway workers should relay **all** `interactionCreate` dispatches to the bot process — not only slash commands. Component interactions do not go through the REST worker; they still need the bot worker for routing and replies (via `HttpRestPort`).
+
+```text
+Discord → gateway worker → worker bus → bot worker (attachStambhaClient)
+                                              ↓
+                                        REST worker (replies only)
+```
+
+See [Known gaps](/guide/known-gaps) for distributed Chron (**2.0**) — scheduled tasks today assume a single bot process.
+
 ## Example: `examples/bot`
 
 Full piece-based layout plus optional split workers in `src/workers/`.

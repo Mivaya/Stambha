@@ -1,5 +1,5 @@
 import { Args, replyIfArgError, stringArg, unwrapArg } from "@stambha/args";
-import { Command, ok, type CommandContext, type Registry } from "@stambha/core";
+import { Command, type CommandContext, ok, type Registry } from "@stambha/core";
 import { cooldownGate, guildOnlyGate } from "@stambha/gates";
 
 export class EchoCommand extends Command {

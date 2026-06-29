@@ -1,4 +1,8 @@
-export type SaveHandler = (ledger: string, id: string, data: Record<string, unknown>) => Promise<void>;
+export type SaveHandler = (
+  ledger: string,
+  id: string,
+  data: Record<string, unknown>,
+) => Promise<void>;
 
 /** Debounces writes per record id (Klasa RequestHandler-inspired). */
 export class SyncBatcher {

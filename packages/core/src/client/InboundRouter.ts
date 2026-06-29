@@ -1,6 +1,6 @@
-import type { CommandContext, ScoutContext } from "../context/types.js";
-import type { AutocompleteContext } from "../context/autocomplete.js";
 import type { CommandSlashPath } from "../command/slashTypes.js";
+import type { AutocompleteContext } from "../context/autocomplete.js";
+import type { CommandContext, ScoutContext } from "../context/types.js";
 import type { Outcome } from "../outcome/Outcome.js";
 import type { StambhaClient } from "./StambhaClient.js";
 

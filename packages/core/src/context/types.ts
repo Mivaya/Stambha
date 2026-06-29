@@ -1,6 +1,6 @@
-import type { CommandContextMeta } from "./meta.js";
-import type { ArgsText, SlashOption } from "./args.js";
 import type { CommandSlashPath } from "../command/slashTypes.js";
+import type { ArgsText, SlashOption } from "./args.js";
+import type { CommandContextMeta } from "./meta.js";
 import type { ReplyPayload } from "./reply.js";
 
 export type { ReplyPayload } from "./reply.js";

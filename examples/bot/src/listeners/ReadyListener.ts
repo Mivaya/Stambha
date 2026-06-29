@@ -1,6 +1,6 @@
+import type { StambhaLogger } from "@stambha/core";
 import { Hook, type Registry } from "@stambha/core";
 import type { LoaderContext } from "@stambha/loader";
-import type { StambhaLogger } from "@stambha/core";
 
 export class ReadyListener extends Hook {
   static create(ctx: LoaderContext) {

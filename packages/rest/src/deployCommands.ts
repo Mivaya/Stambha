@@ -1,6 +1,6 @@
 import type { Command } from "@stambha/core";
 import { buildApplicationCommands, diffApplicationCommands } from "@stambha/core";
-import { type RestClient, createRestClient } from "./RestClient.js";
+import { createRestClient, type RestClient } from "./RestClient.js";
 
 export interface DeployCommandsOptions {
   token: string;

@@ -1,7 +1,7 @@
 import type { CommandContext, SlashOption } from "@stambha/core";
+import { Args } from "./Args.js";
 import type { ArgResult } from "./errors.js";
 import { argInvalid, argMissing } from "./errors.js";
-import { Args } from "./Args.js";
 
 /**
  * Typed accessors for slash command options on {@link CommandContext.slashOptions}.

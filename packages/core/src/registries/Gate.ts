@@ -1,7 +1,7 @@
-import { type Outcome, ok, err } from "../outcome/Outcome.js";
 import type { CommandContext } from "../context/types.js";
+import { err, type Outcome, ok } from "../outcome/Outcome.js";
+import type { Registry } from "../pieces/Registry.js";
 import { Unit, type UnitOptions } from "../pieces/Unit.js";
-import { Registry } from "../pieces/Registry.js";
 
 export interface GateResult {
   allow: boolean;

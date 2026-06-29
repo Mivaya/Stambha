@@ -1,8 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
-import { RestClient } from "./RestClient.js";
 import { RateLimitQueue } from "./RateLimitQueue.js";
+import { RestClient } from "./RestClient.js";
 
-function jsonResponse(status: number, body: unknown, headers: Record<string, string> = {}): Response {
+function jsonResponse(
+  status: number,
+  body: unknown,
+  headers: Record<string, string> = {},
+): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { "Content-Type": "application/json", ...headers },
@@ -27,10 +31,22 @@ describe("@stambha/rest", () => {
     const fetchImpl = vi
       .fn()
       .mockResolvedValueOnce(
-        jsonResponse(429, { message: "rate limited" }, { "retry-after": "1", "x-ratelimit-limit": "1", "x-ratelimit-remaining": "0" }),
+        jsonResponse(
+          429,
+          { message: "rate limited" },
+          { "retry-after": "1", "x-ratelimit-limit": "1", "x-ratelimit-remaining": "0" },
+        ),
       )
       .mockResolvedValueOnce(
-        jsonResponse(200, { ok: true }, { "x-ratelimit-limit": "5", "x-ratelimit-remaining": "4", "x-ratelimit-reset-after": "1" }),
+        jsonResponse(
+          200,
+          { ok: true },
+          {
+            "x-ratelimit-limit": "5",
+            "x-ratelimit-remaining": "4",
+            "x-ratelimit-reset-after": "1",
+          },
+        ),
       );
 
     const queue = new RateLimitQueue({ sleep: (ms) => new Promise((r) => setTimeout(r, ms)) });
