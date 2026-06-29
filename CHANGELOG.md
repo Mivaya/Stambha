@@ -15,7 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `SignalContext.editReply` on component/modal handlers when `applicationId` is available (pairs with `deferReply`; `@stambha/core`, `@stambha/transform`, `@stambha/gateway`).
 - **Public [Known gaps](https://github.com/mivaya/Stambha/blob/main/docs/guide/known-gaps.md)** — supported native path vs 1.x / 2.0 / plugins backlog.
 - `examples/bot` **demos** — `SayCommand` (slash options), `ConfirmCommand` (signal button), `LockCommand` (permission gate on native `ctx.meta`).
-- **Migration [from Klasa](https://github.com/mivaya/Stambha/blob/main/docs/migration/from-klasa.md)** — piece-store mapping to gates, Vault, and native attach.
 - **[AGENT.md](https://github.com/mivaya/Stambha/blob/main/AGENT.md)** — architecture and coding-agent conventions; [CONTRIBUTING](https://github.com/mivaya/Stambha/blob/main/.github/CONTRIBUTING.md) restyled for contributors.
 
 
@@ -260,7 +259,7 @@ Extensions `@stambha/cache`, `@stambha/metrics`, `@stambha/vault-sql` — see [S
 
 ### Changed (breaking)
 
-- **Package scope:** `@stratum/`* → `@stambha/*` (npm org `[stambha](https://www.npmjs.com/org/stambha)`)
+- **Package scope:** `@stratum/`* → `@stambha/`* (npm org `[stambha](https://www.npmjs.com/org/stambha)`)
 - **Core API:** `StratumClient` → `StambhaClient`, `createStratumBot` → `createStambhaBot`, `DefaultStratumContainer` → `DefaultStambhaContainer`, `StratumContainer` → `StambhaContainer`, `attachStratumClient` → `attachStambhaClient`
 - **Signal custom ids:** prefix `stratum:` → `stambha:` (including `stambha:seq:` for sequences)
 - **GitHub:** repository and docs URLs point to `mivaya/Stambha`; GitHub Pages base path `/Stambha/`
