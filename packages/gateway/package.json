@@ -53,7 +53,7 @@
     "@stambha/core": "workspace:*",
     "@stambha/transform": "workspace:*",
     "@stambha/transport": "workspace:*",
-    "@types/node": "^25.9.3",
+    "@types/node": "^26.0.1",
     "@types/ws": "^8.18.1",
     "tsup": "^8.3.6",
     "typescript": "^6.0.3",
