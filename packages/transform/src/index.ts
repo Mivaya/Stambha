@@ -38,6 +38,20 @@ export { LEGACY_LIBRARY_ADAPTER_REMOVAL } from "./deprecation.js";
 export { interactionFromDispatch, metaFromDiscordInteraction } from "./discordNative.js";
 
 export {
+  buildDispatchCatalog,
+  camelizeDispatch,
+  dispatchCatalogEntry,
+  GATEWAY_DISPATCH_EVENTS,
+  gatewayEventToHubName,
+  messageFromDispatch,
+  normalizeDispatch,
+  readyFromDispatch,
+  type DispatchCatalogEntry,
+  type DispatchNormalizationTier,
+  type GatewayDispatchEventName,
+} from "./dispatch/index.js";
+
+export {
   autocompleteCallbackBody,
   channelMessageBody,
   interactionDeferBody,

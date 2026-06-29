@@ -1,0 +1,139 @@
+/** Discord gateway DISPATCH event names (API v10). */
+export const GATEWAY_DISPATCH_EVENTS = [
+  "READY",
+  "RESUMED",
+  "RATE_LIMITED",
+  "APPLICATION_COMMAND_PERMISSIONS_UPDATE",
+  "AUTO_MODERATION_RULE_CREATE",
+  "AUTO_MODERATION_RULE_UPDATE",
+  "AUTO_MODERATION_RULE_DELETE",
+  "AUTO_MODERATION_ACTION_EXECUTION",
+  "CHANNEL_CREATE",
+  "CHANNEL_UPDATE",
+  "CHANNEL_DELETE",
+  "CHANNEL_PINS_UPDATE",
+  "THREAD_CREATE",
+  "THREAD_UPDATE",
+  "THREAD_DELETE",
+  "THREAD_LIST_SYNC",
+  "THREAD_MEMBER_UPDATE",
+  "THREAD_MEMBERS_UPDATE",
+  "GUILD_AUDIT_LOG_ENTRY_CREATE",
+  "GUILD_CREATE",
+  "GUILD_UPDATE",
+  "GUILD_DELETE",
+  "GUILD_BAN_ADD",
+  "GUILD_BAN_REMOVE",
+  "GUILD_EMOJIS_UPDATE",
+  "GUILD_STICKERS_UPDATE",
+  "GUILD_INTEGRATIONS_UPDATE",
+  "GUILD_MEMBER_ADD",
+  "GUILD_MEMBER_REMOVE",
+  "GUILD_MEMBER_UPDATE",
+  "GUILD_MEMBERS_CHUNK",
+  "GUILD_ROLE_CREATE",
+  "GUILD_ROLE_UPDATE",
+  "GUILD_ROLE_DELETE",
+  "GUILD_SCHEDULED_EVENT_CREATE",
+  "GUILD_SCHEDULED_EVENT_UPDATE",
+  "GUILD_SCHEDULED_EVENT_DELETE",
+  "GUILD_SCHEDULED_EVENT_USER_ADD",
+  "GUILD_SCHEDULED_EVENT_USER_REMOVE",
+  "GUILD_SOUNDBOARD_SOUND_CREATE",
+  "GUILD_SOUNDBOARD_SOUND_UPDATE",
+  "GUILD_SOUNDBOARD_SOUND_DELETE",
+  "GUILD_SOUNDBOARD_SOUNDS_UPDATE",
+  "SOUNDBOARD_SOUNDS",
+  "INTEGRATION_CREATE",
+  "INTEGRATION_UPDATE",
+  "INTEGRATION_DELETE",
+  "INTERACTION_CREATE",
+  "INVITE_CREATE",
+  "INVITE_DELETE",
+  "MESSAGE_CREATE",
+  "MESSAGE_UPDATE",
+  "MESSAGE_DELETE",
+  "MESSAGE_DELETE_BULK",
+  "MESSAGE_REACTION_ADD",
+  "MESSAGE_REACTION_REMOVE",
+  "MESSAGE_REACTION_REMOVE_ALL",
+  "MESSAGE_REACTION_REMOVE_EMOJI",
+  "PRESENCE_UPDATE",
+  "STAGE_INSTANCE_CREATE",
+  "STAGE_INSTANCE_UPDATE",
+  "STAGE_INSTANCE_DELETE",
+  "TYPING_START",
+  "USER_UPDATE",
+  "VOICE_CHANNEL_EFFECT_SEND",
+  "VOICE_STATE_UPDATE",
+  "VOICE_SERVER_UPDATE",
+  "WEBHOOKS_UPDATE",
+  "ENTITLEMENT_CREATE",
+  "ENTITLEMENT_UPDATE",
+  "ENTITLEMENT_DELETE",
+  "SUBSCRIPTION_CREATE",
+  "SUBSCRIPTION_UPDATE",
+  "SUBSCRIPTION_DELETE",
+  "MESSAGE_POLL_VOTE_ADD",
+  "MESSAGE_POLL_VOTE_REMOVE",
+] as const;
+
+export type GatewayDispatchEventName = (typeof GATEWAY_DISPATCH_EVENTS)[number];
+
+export type DispatchNormalizationTier = "routing" | "tier1" | "passthrough";
+
+export interface DispatchCatalogEntry {
+  dispatchName: GatewayDispatchEventName;
+  hubName: string;
+  tier: DispatchNormalizationTier;
+}
+
+/** `MESSAGE_CREATE` → `messageCreate` (discord.js-style hub event names). */
+export function gatewayEventToHubName(dispatchName: string): string {
+  return dispatchName.toLowerCase().replace(/_([a-z])/g, (_, char: string) => char.toUpperCase());
+}
+
+const ROUTING_EVENTS = new Set<string>([
+  "MESSAGE_CREATE",
+  "MESSAGE_UPDATE",
+  "INTERACTION_CREATE",
+  "READY",
+]);
+
+/** Tier 1 semantic normalization targets (G3-p1); spike catalog only. */
+const TIER1_EVENTS = new Set<string>([
+  "MESSAGE_DELETE",
+  "MESSAGE_DELETE_BULK",
+  "MESSAGE_REACTION_ADD",
+  "MESSAGE_REACTION_REMOVE",
+  "MESSAGE_REACTION_REMOVE_ALL",
+  "MESSAGE_REACTION_REMOVE_EMOJI",
+  "PRESENCE_UPDATE",
+  "VOICE_STATE_UPDATE",
+  "GUILD_CREATE",
+  "GUILD_UPDATE",
+  "GUILD_DELETE",
+  "GUILD_MEMBER_ADD",
+  "GUILD_MEMBER_REMOVE",
+  "GUILD_MEMBER_UPDATE",
+]);
+
+function tierFor(dispatchName: string): DispatchNormalizationTier {
+  if (ROUTING_EVENTS.has(dispatchName)) return "routing";
+  if (TIER1_EVENTS.has(dispatchName)) return "tier1";
+  return "passthrough";
+}
+
+/** Lookup catalog metadata for a gateway dispatch name. */
+export function dispatchCatalogEntry(dispatchName: GatewayDispatchEventName): DispatchCatalogEntry {
+  return {
+    dispatchName,
+    hubName: gatewayEventToHubName(dispatchName),
+    tier: tierFor(dispatchName),
+  };
+}
+
+/** Full dispatch catalog for tests and G3 migration planning. */
+export function buildDispatchCatalog(): DispatchCatalogEntry[] {
+  return GATEWAY_DISPATCH_EVENTS.map((name) => dispatchCatalogEntry(name));
+}
