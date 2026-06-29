@@ -2,6 +2,19 @@
 
 `@stambha/gateway` includes capacity planning, identify rate limiting, and operator APIs for production sharding.
 
+## vs Discordeno auto-reshard
+
+[Discordeno](https://discordeno.js.org/) can trigger resharding from gateway metrics automatically. Stambha provides **planning and pacing primitives** (`evaluateReshard`, `ReshardController`, `IdentifyBudget`, HTTP operator API) — you wire them into your gateway workers and run migration deliberately.
+
+| | **Discordeno** | **Stambha (1.0.0)** |
+|---|----------------|---------------------|
+| Threshold detection | Built into gateway | `evaluateReshard()` |
+| Identify pacing | Framework-managed | `IdentifyBudget` + `ReshardController.nextIdentify()` |
+| Live shard reconnect | Integrated | Your WebSocket worker + `createNativeGatewayClient` |
+| Zero-downtime proxy | Gateway proxy plugin | **2.0 G2** — see [Known gaps](/guide/known-gaps) |
+
+Automatic threshold resharding without operator steps is backlog **G1** (1.x). Until then, treat resharding as a **planned maintenance** event using the APIs below.
+
 ## Shard calculator
 
 ```ts

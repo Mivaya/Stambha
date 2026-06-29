@@ -30,6 +30,8 @@ import { loadPieces } from "@stambha/loader";
 await loadPieces(client, { context: { client, vault } });
 ```
 
+`@stambha/loader` loads folders in dependency order — **`gates/` before `commands/`** so `gateNames` resolve when commands register. Barriers, conduits, and epilogues load before commands as well.
+
 ## Piece factories & dependency injection (0.3.x)
 
 `loadPieces` calls `static create(ctx)` when a piece class defines it. The loader builds `ctx` with:

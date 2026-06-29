@@ -1,55 +1,55 @@
-export { RateLimitQueue, toHttpMethod, type RateLimitQueueOptions } from "./RateLimitQueue.js";
-export {
-  RestClient,
-  NativeRestPort,
-  createRestClient,
-  createNativeRestPort,
-  type RestClientOptions,
-  type DiscordApiErrorBody,
-} from "./RestClient.js";
 export {
   createNativeRestWorker,
-  type NativeRestWorkerOptions,
   type NativeRestWorkerHandle,
+  type NativeRestWorkerOptions,
 } from "./createNativeRestWorker.js";
 export {
-  deployCommands,
   type DeployCommandsOptions,
   type DeployCommandsResult,
+  deployCommands,
 } from "./deployCommands.js";
 export {
-  shouldDeploySlashCommands,
-  resolveShardIdFromEnv,
-  formatDeployDiff,
-  deployCommandsIfShardZero,
-  type ShouldDeploySlashOptions,
   type DeployCommandsIfShardZeroOptions,
+  deployCommandsIfShardZero,
+  formatDeployDiff,
+  resolveShardIdFromEnv,
+  type ShouldDeploySlashOptions,
+  shouldDeploySlashCommands,
 } from "./deploySlash.js";
-export type { RestTelemetry, RateLimitQueueListener } from "./telemetry.js";
-export { createRestTelemetryListener } from "./telemetry.js";
+export { RateLimitQueue, type RateLimitQueueOptions, toHttpMethod } from "./RateLimitQueue.js";
 export {
-  fetchUser,
-  fetchGuild,
-  fetchGuildMember,
+  createNativeRestPort,
+  createRestClient,
+  type DiscordApiErrorBody,
+  NativeRestPort,
+  RestClient,
+  type RestClientOptions,
+} from "./RestClient.js";
+export {
+  type ApiUser,
+  addGuildMemberRole,
+  type ChannelMessageBody,
+  type ChannelSummary,
+  ChannelType,
+  deleteChannelMessage,
+  editChannelMessage,
   fetchChannel,
   fetchChannelMessage,
-  sendChannelMessage,
-  editChannelMessage,
-  deleteChannelMessage,
-  fetchGuildRoles,
+  fetchGuild,
   fetchGuildChannels,
-  addGuildMemberRole,
-  timeoutGuildMember,
-  userDisplayName,
-  userAvatarUrl,
+  fetchGuildMember,
+  fetchGuildRoles,
+  fetchUser,
+  type GuildMember,
+  type GuildRole,
+  type GuildSummary,
+  type MessageDetail,
   memberHasPermission,
   PermissionBits,
-  ChannelType,
-  type ApiUser,
-  type GuildSummary,
-  type GuildMember,
-  type ChannelSummary,
-  type MessageDetail,
-  type ChannelMessageBody,
-  type GuildRole,
+  sendChannelMessage,
+  timeoutGuildMember,
+  userAvatarUrl,
+  userDisplayName,
 } from "./resources.js";
+export type { RateLimitQueueListener, RestTelemetry } from "./telemetry.js";
+export { createRestTelemetryListener } from "./telemetry.js";

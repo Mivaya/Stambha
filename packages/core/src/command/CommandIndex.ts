@@ -73,10 +73,7 @@ export class CommandIndex {
     if (path.subcommand || path.group) {
       return this.slashByPath.get(CommandIndex.pathKey(path));
     }
-    return (
-      this.slashByPath.get(CommandIndex.pathKey(path)) ??
-      this.topLevel.get(path.root)
-    );
+    return this.slashByPath.get(CommandIndex.pathKey(path)) ?? this.topLevel.get(path.root);
   }
 
   /** Commands grouped by category for help listings. */

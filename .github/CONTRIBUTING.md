@@ -1,188 +1,200 @@
 # Contributing to Stambha
 
-Thank you for helping make Stambha a stronger framework for advanced Discord bots. This guide covers how to propose changes, open pull requests, and what we look for before merging.
+Thank you for your interest in contributing! Stambha is a community-driven Discord bot framework and all contributions are welcome.
 
-## Ways to contribute
+## Ways to Contribute
 
-- **Bug reports** — reproducible steps, expected vs actual behavior, Node version, and which bridge you use (`discord.js` or Discordeno).
-- **Feature proposals** — open an issue first for non-trivial work so design can be discussed before you invest time in a large PR.
-- **Code** — fixes, tests, docs, examples, new bridges, Vault drivers, or core pipeline improvements.
-- **Examples & docs** — clearer guides, migration notes from Sapphire or Discordeno, or real-world usage patterns.
-
-## Before you start
-
-1. Read the [README](../README.md) and relevant docs under [`docs/`](../docs/).
-2. Search [existing issues](https://github.com/mivaya/Stambha/issues) to avoid duplicate work.
-3. For **large features** (new package, breaking API, new transport), open an issue and wait for alignment before coding.
+- **Bug reports** — open an issue with minimal reproduction, expected vs actual behavior, Node version, and `@stambha/*` package versions
+- **Feature requests** — open an issue for non-trivial work so design can be discussed before a large PR
+- **Pull requests** — bug fixes, tests, docs, examples, native transport improvements, or core pipeline work
+- **Extensions** — cache, metrics, vault drivers, and future plugins belong in [**Stambha-plugins**](https://github.com/Mivaya/Stambha-plugins) (`@stambha/cache`, `@stambha/metrics`, `@stambha/vault-sql`, …)
 
 ### Good first contributions
 
 - Test coverage for edge cases in `@stambha/core`
 - Documentation fixes and typos
 - Example bots or command patterns
-- Driver or metrics work in [**Stambha-plugins**](https://github.com/Mivaya/Stambha-plugins) (`@stambha/vault-sql`, `@stambha/metrics`, `@stambha/cache`)
+- Driver or metrics work in **Stambha-plugins**
 
-### Advanced contributions we welcome
+## Getting Started
 
-- New transport bridges (must stay thin — map events/contexts, do not leak transport types into core)
-- Tier-split and sharding hardening
-- Sequence and Signal UX helpers
-- Performance work with benchmarks
-- Plugin-style extensions that do **not** require core to depend on discord.js or Discordeno
+### Prerequisites
 
-## Releases (publishable package changes)
+- **Node.js 20+** (22.5+ for SQLite in Stambha-plugins `@stambha/vault-sql`)
+- **pnpm 9+** (see root `packageManager` field)
 
-The core monorepo uses **fixed versioning** — all `@stambha/*` packages share one version. Maintainers bump versions, tag, and publish via GitHub Releases (see [.github/PUBLISHING.md](./PUBLISHING.md)). **Do not** bump `package.json` versions in contributor PRs unless asked.
-
-Extensions in [**Stambha-plugins**](https://github.com/Mivaya/Stambha-plugins) use **independent** versioning.
-
-## Development setup
+### Build & Run
 
 ```bash
 git clone https://github.com/mivaya/Stambha.git
 cd Stambha
 pnpm install
 pnpm build
-pnpm test
 pnpm lint
 pnpm typecheck
 ```
 
-Requirements:
-
-- **Node.js 20+** (22.5+ for SQLite in **Stambha-plugins** `@stambha/vault-sql`)
-- **pnpm 9+** (see root `packageManager` field)
-
-Run tests for a single package:
+Local docs preview:
 
 ```bash
-pnpm --filter @stambha/core test
+pnpm docs:dev
 ```
 
-## Branch workflow
-
-1. **Fork** the repository on GitHub.
-2. **Clone** your fork and add upstream:
-   ```bash
-   git remote add upstream https://github.com/mivaya/Stambha.git
-   ```
-3. **Branch** from the latest `main`:
-   ```bash
-   git checkout main
-   git pull upstream main
-   git checkout -b feature/your-short-name
-   ```
-4. Use the naming convention: **`feature/{short-name}`**  
-   Examples: `feature/vault-redis`, `feature/bridge-fix-interactions`, `feature/docs-sequences`
-5. **Commit** in focused steps with clear messages (see below).
-6. **Push** to your fork and open a **Pull Request** against `mivaya/Stambha` → `main`.
-
-Keep your branch up to date:
+### Run Tests
 
 ```bash
-git fetch upstream
-git rebase upstream/main
+pnpm test                                          # all packages
+pnpm --filter @stambha/core test                   # single package
+pnpm --filter @stambha/core test path/to/file.test.ts  # single file (Vitest)
 ```
 
-**Same-repo PRs:** when `main` moves, [update-pr-branches.yml](./.github/workflows/update-pr-branches.yml) automatically merges `main` into open PR branches (enable **Allow updating pull request branches** in repo settings — see [REPOSITORY_SETTINGS.md](./REPOSITORY_SETTINGS.md)). You may see “out of date” for ~1 minute until that workflow finishes.
+Before you start:
 
-**Fork PRs:** Actions cannot push to your fork — rebase locally before review:
+1. Read the [README](../README.md) and relevant docs under [`docs/`](../docs/).
+2. Search [existing issues](https://github.com/mivaya/Stambha/issues) to avoid duplicate work.
+3. For **large features** (new package, breaking API, new transport primitive), open an issue and wait for alignment.
+
+## Branching Model
+
+Stambha uses a **tag-driven release model**. npm and docs are not published on PR merge — only when a maintainer publishes a GitHub Release for a version tag.
+
+| Branch / ref | Purpose | npm / docs published? |
+|---|---|---|
+| `main` | Integration branch — all PRs merge here | No (CI tests only) |
+| `feature/*` | Contributor PR branches | No |
+| `v*` tag + **published** GitHub Release | Production release | Yes — `publish-npm.yml` → npm; `docs.yml` → GitHub Pages |
+
+**Do not** bump `package.json` versions in contributor PRs unless a maintainer asks. The core monorepo uses **fixed versioning** — all `@stambha/*` packages share one version. Extensions in Stambha-plugins use **independent** versioning.
+
+## Commit Message Format
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/). Maintainers group these into `CHANGELOG.md` at release time — commits do **not** auto-bump versions.
+
+| Prefix | When to use | Release notes |
+|--------|-------------|---------------|
+| `feat:` | New user-facing capability | Minor (maintainer groups in CHANGELOG) |
+| `fix:` | Bug fix | Patch |
+| `perf:` | Performance improvement | Patch |
+| `docs:` | Documentation only | None required |
+| `test:` | Tests only | None required |
+| `chore:` | Build, CI, dependencies | None required |
+| `feat!:` or `BREAKING CHANGE:` footer | Incompatible API change | Major (1.0.0+ semver) |
+
+Optional scope: `core`, `rest`, `gateway`, `transform`, `vault`, `loader`, `gates`, `args`, `docs`, `examples`.
+
+Do not include `Co-Authored-By` trailers for AI tools in commit messages. Attribution should be limited to human contributors.
+
+**Examples:**
+
+```
+feat(rest): add fetchChannel helper
+fix(core): handle empty customId in signal router
+docs: clarify tier-split gateway options
+feat(vault)!: change default flush interval
+```
+
+## Architecture
+
+See [AGENT.md](../AGENT.md) for the package layering, command pipeline, native attach model, and conventions for adding packages or piece types.
+
+`AGENT.md` is the canonical agent instructions file for this repository. If your coding agent expects a different filename, create a local symlink:
+
+```bash
+ln -s AGENT.md CLAUDE.md
+ln -s AGENT.md GEMINI.md
+ln -s AGENT.md COPILOT.md
+```
+
+## Adding a New `@stambha/*` Package
+
+1. Create `packages/<name>/` following an existing package layout
+2. Integrate via `@stambha/core` types — **no** discord.js or Discordeno imports in core
+3. Add Vitest tests and package `README.md`
+4. Update public `docs/` if the package is user-facing
+5. Maintainer bumps versions and CHANGELOG at release — not in your feature PR
+
+## Adding a New Piece Type
+
+1. Open an issue — the type must fit the command pipeline (see [AGENT.md](../AGENT.md))
+2. Add base class + registry in `@stambha/core`
+3. Wire `PiecePaths` in `@stambha/loader`
+4. Update [project structure](../docs/guide/project-structure.md) and `examples/bot`
+
+## Pull Request Guidelines
+
+1. Branch off `main`: `git checkout -b feature/my-feature`
+2. Open a PR targeting `main` on `mivaya/Stambha`
+3. CI runs automatically — all checks must pass before merge
+4. Keep PRs focused — one feature or fix per PR when possible
+5. Fill out the [pull request template](pull_request_template.md) completely
+6. Reference related issues in the PR description
+
+**Fork workflow:** add upstream `https://github.com/mivaya/Stambha.git`, rebase onto `main` before review:
 
 ```bash
 git fetch upstream && git rebase upstream/main && git push --force-with-lease
 ```
 
-## Pull request checklist
+**Same-repo PRs:** [update-pr-branches.yml](./workflows/update-pr-branches.yml) can merge `main` into open PR branches (see [REPOSITORY_SETTINGS.md](./REPOSITORY_SETTINGS.md)).
 
-Before requesting review, confirm:
+Merging to `main` does not publish npm packages — that only happens on a published GitHub Release.
 
-- [ ] `pnpm build` passes
-- [ ] `pnpm test` passes (add or update tests when behavior changes)
-- [ ] `pnpm lint` passes (`pnpm lint:fix` for auto-fixes)
-- [ ] `pnpm typecheck` passes
-- [ ] Changes are scoped — one concern per PR when possible
-- [ ] Public API changes are reflected in docs and/or examples
-- [ ] No secrets, tokens, or `.env` files committed
+## Release Process (maintainers)
 
-Fill out the [pull request template](pull_request_template.md) completely.
+Full detail: [PUBLISHING.md](./PUBLISHING.md).
 
-## Commit messages
+```bash
+# 1. Merge feature PRs to main
+# 2. Bump all packages + edit CHANGELOG.md
+pnpm version:bump 1.0.1
+git add -A && git commit -m "chore: release v1.0.1"
 
-Use clear, imperative subject lines:
+# 3. Optional: freeze docs snapshot for version dropdown
+pnpm docs:archive 1.0.1 $(git rev-parse HEAD)
 
-```
-fix(core): handle empty customId in signal router
-feat(vault): add debounce flush on shutdown
-docs: add Discordeno tier-split example
-test(rest): cover deployCommands dry-run
+# 4. Tag and push
+git tag v1.0.1 && git push origin v1.0.1
+
+# 5. Create a published GitHub Release for that tag → npm + docs deploy automatically
 ```
 
-Optional scope: `core`, `rest`, `gateway`, `transform`, `vault`, `loader`, `docs`, `examples`, or open PRs in **Stambha-plugins** for extensions.
+- **Stable** — normal release → npm dist-tag `latest`
+- **Pre-release** — check “pre-release” on GitHub → npm dist-tag `beta`
 
-## Code guidelines
+## Testing Policy for Pull Requests
 
-Stambha is a **transport-agnostic** framework. Keep these principles in mind:
+Stambha accepts pull requests only when test coverage is appropriate for the type of change.
 
-### Core vs bridges
+- PRs that introduce new behavior must include tests that validate that behavior
+- PRs that fix bugs should include a regression test when the bug can be covered realistically
+- PRs that modify runtime logic, pipeline behavior, transport handling, or public API responses are expected to include updated or additional tests (Vitest; `MockBridge` for core)
+- PRs that do not change observable behavior (docs, formatting, comments, dependency housekeeping, low-risk refactors) may not require new tests
+- Even when no new tests are needed, `pnpm build` and `pnpm test` must pass
 
-| Layer | Responsibility |
-|-------|----------------|
-| `@stambha/core` | Routing, pipeline, registries, sequences, chron — **no** discord.js or Discordeno imports |
-| `@stambha/transform` | Normalize Discord payloads ↔ Stambha contexts |
-| `@stambha/vault`, `@stambha/loader`, etc. | Optional packages that integrate via `@stambha/core` types |
+If a PR does not include new tests, explain why in the PR description. Valid reasons include: no functional behavior changed, existing tests already cover the change, or the change is not meaningfully testable in isolation.
 
-Do not import bridge-specific types into core. If core needs a capability, add a small interface in core and implement it in the bridge.
+Maintainers may request additional test coverage before approving.
 
-### Piece model
+## Review Process
 
-Follow existing naming and folder conventions (see [project structure](../docs/guide/project-structure.md)):
+1. A maintainer reviews for design fit, test coverage, and transport separation (core must stay Discord-library-free)
+2. Address feedback with new commits on your branch
+3. Once approved, the PR is merged per maintainer preference
 
-- `Command`, `Hook`, `Scout`, `Barrier`, `Gate`, `Epilogue`, `Conduit`, `Signal`, `Chron`
+Large PRs may be asked to split into smaller reviewable pieces.
 
-New piece types belong in core only when they fit the execution pipeline and benefit most bots.
+## Community Standards
 
-### TypeScript
+- Be respectful and patient in issues and reviews
+- Assume good intent
 
-- Match existing strictness (`exactOptionalPropertyTypes`, ESM).
-- Prefer explicit types on public APIs.
-- Avoid `any`; use narrow types or documented casts at bridge boundaries when Discord libraries limit typings.
+## Reporting Security Issues
 
-### Style
-
-- [Biome](https://biomejs.dev/) is the linter — run `pnpm lint` before pushing.
-- Match surrounding code: minimal abstractions, no drive-by refactors.
-- Comments only for non-obvious behavior.
-
-### Tests
-
-- Use **Vitest** in the package you change.
-- Core logic should be testable with `MockBridge` where possible.
-- Bridge tests may mock Discord payloads; keep fixtures small and readable.
-
-### Breaking changes
-
-The project is pre-`1.0.0`, but breaking changes should still be:
-
-1. Called out clearly in the PR description
-2. Documented in `docs/` or README
-3. Updated in examples if affected
-
-## Review process
-
-1. A maintainer will review for design fit, test coverage, and transport separation.
-2. Address feedback with new commits or fixup commits on your branch.
-3. Once approved, your PR will be squashed or merged per maintainer preference.
-
-We aim to be constructive and timely. If a PR is large, we may ask you to split it into smaller reviewable pieces.
-
-## Community standards
-
-- Be respectful and patient in issues and reviews.
-- Assume good intent.
+Please do **not** open public issues for security vulnerabilities. Report them privately by contacting the maintainer (see `author` in root `package.json`) or using [GitHub private vulnerability reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability).
 
 ## Questions
 
 - **Bugs & features:** [GitHub Issues](https://github.com/mivaya/Stambha/issues)
-- **Security issues:** please do not open a public issue; contact the maintainer privately via the email in `package.json` author field.
+- **Architecture:** [AGENT.md](../AGENT.md)
 
 Thank you for contributing to Stambha.

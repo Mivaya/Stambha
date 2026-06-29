@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { unwrapArg } from "./errors.js";
 import {
   channelMentionArg,
   parseUserMentionId,
@@ -6,7 +7,6 @@ import {
   snowflakeArg,
   userMentionArg,
 } from "./resolvers.js";
-import { unwrapArg } from "./errors.js";
 
 describe("mention resolvers", () => {
   it("parses user mentions and raw ids", () => {

@@ -32,7 +32,11 @@ abstract class FieldBuilder<T extends FieldSchema> {
   }
 }
 
-class StringFieldBuilder extends FieldBuilder<{ type: "string"; default?: string; nullable?: boolean }> {
+class StringFieldBuilder extends FieldBuilder<{
+  type: "string";
+  default?: string;
+  nullable?: boolean;
+}> {
   constructor() {
     super({ type: "string" });
   }
@@ -60,7 +64,11 @@ class NumberFieldBuilder extends FieldBuilder<{
   }
 }
 
-class BooleanFieldBuilder extends FieldBuilder<{ type: "boolean"; default?: boolean; nullable?: boolean }> {
+class BooleanFieldBuilder extends FieldBuilder<{
+  type: "boolean";
+  default?: boolean;
+  nullable?: boolean;
+}> {
   constructor() {
     super({ type: "boolean" });
   }

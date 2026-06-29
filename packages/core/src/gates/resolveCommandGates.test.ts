@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { StambhaClient } from "../client/StambhaClient.js";
-import { Command } from "../registries/Command.js";
-import { Gate, defineGate } from "../registries/Gate.js";
 import type { CommandContext } from "../context/types.js";
 import { ok } from "../outcome/Outcome.js";
+import { Command } from "../registries/Command.js";
+import { defineGate, Gate } from "../registries/Gate.js";
 import { commandGatesForRun } from "./resolveCommandGates.js";
 
 function mockCtx(): CommandContext {

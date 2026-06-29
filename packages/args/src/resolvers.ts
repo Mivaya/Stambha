@@ -40,7 +40,8 @@ export function parseRoleMentionId(parameter: string): ArgResult<string> {
 
 export const snowflakeArg: ArgResolver<string> = (parameter) => parseSnowflake(parameter);
 export const userMentionArg: ArgResolver<string> = (parameter) => parseUserMentionId(parameter);
-export const channelMentionArg: ArgResolver<string> = (parameter) => parseChannelMentionId(parameter);
+export const channelMentionArg: ArgResolver<string> = (parameter) =>
+  parseChannelMentionId(parameter);
 export const roleMentionArg: ArgResolver<string> = (parameter) => parseRoleMentionId(parameter);
 
 export type ArgResolver<T> = (parameter: string) => ArgResult<T>;
@@ -107,6 +108,9 @@ export function defineArgResolver<T>(name: string, resolver: ArgResolver<T>): Ar
   return resolver;
 }
 
-export function resolveBuiltin(name: BuiltinArgType | string, parameter: string): ArgResult<unknown> {
+export function resolveBuiltin(
+  name: BuiltinArgType | string,
+  parameter: string,
+): ArgResult<unknown> {
   return defaultArgRegistry.resolve(name, parameter);
 }

@@ -1,6 +1,6 @@
 import type { CommandContext } from "../context/types.js";
+import type { Registry } from "../pieces/Registry.js";
 import { Unit, type UnitOptions } from "../pieces/Unit.js";
-import { Registry } from "../pieces/Registry.js";
 
 export interface BarrierResult {
   block: boolean;

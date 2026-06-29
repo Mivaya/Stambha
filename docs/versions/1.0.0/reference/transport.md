@@ -1,0 +1,98 @@
+# Transport & package map
+
+Stambha-owned Discord transport primitives — no third-party Discord library required for the **native path**.
+
+---
+
+## When to use which package
+
+| Package | Use when |
+|---------|----------|
+| `@stambha/core` | Always — client, pipeline, registries, `RestPort`, outcomes |
+| `@stambha/loader` | Auto-load `src/commands`, `gates/`, etc. |
+| `@stambha/gateway` | WebSocket shards, `GatewayEventHub`, `attachStambhaClient`, sharding |
+| `@stambha/rest` | Outbound Discord REST, rate-limit queue, slash deploy, REST worker |
+| `@stambha/transform` | Normalize gateway payloads → `StambhaMessage` / `StambhaInteraction`; REST reply bodies |
+| `@stambha/transport` | Session info, route keys, rate-limit bucket model (used by `@stambha/rest`) |
+| `@stambha/gates` | Cooldowns, permissions, channel-type checks |
+| `@stambha/args` | Prefix lexer + slash option accessors |
+| `@stambha/vault` | Typed guild/user/member config (not domain ORM) |
+| `@stambha/plugins` | Plugin lifecycle + DI container |
+| `@stambha/runtime` | Cross-runtime helpers (Node / Bun / Deno) |
+
+**Extensions** ([Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)): `@stambha/metrics`, `@stambha/cache`, `@stambha/vault-sql`, future `@stambha/dashboard`.
+
+### Stack recipes
+
+| Bot shape | Packages |
+|-----------|----------|
+| **Monolith** | `core` + `gateway` + `rest` + `transform` + `loader` |
+| **Tier split** | Above + `HttpRestPort` → REST worker; gateway relay → bot worker |
+| **Tests / unit** | `core` + `MockBridge` or manual `hub.emit` |
+| **Migrating from discord.js / Discordeno** | **Deprecated adapters** — removed **in future release**; ship fully native for 1.0.0 |
+
+New bots: [Getting started](/guide/getting-started). Not supported: discord.js owning the gateway while Stambha owns commands only.
+
+---
+
+## Session (`@stambha/transport`)
+
+```ts
+import { createSession, DISCORD_API_BASE } from "@stambha/transport";
+
+const session = createSession({
+  token: process.env.DISCORD_TOKEN!,
+  applicationId: "123456789012345678",
+});
+// session.apiBaseUrl → https://discord.com/api/v10
+```
+
+---
+
+## Rate-limit buckets
+
+Discord groups REST routes into buckets. Stambha normalizes routes (snowflakes → `:id`) and tracks bucket state from response headers:
+
+```ts
+import { parseRouteKey, RateLimitStore, parseRateLimitHeaders } from "@stambha/transport";
+
+const key = parseRouteKey("/channels/999/messages", "POST");
+// key.route === "/channels/:id/messages"
+
+const store = new RateLimitStore();
+const waitMs = store.waitMs("bucket-id");
+```
+
+`@stambha/rest` wraps this in `RateLimitQueue` — one serialized chain per bucket, automatic 429 retry.
+
+---
+
+## Native REST client
+
+```ts
+import { createNativeRestPort } from "@stambha/rest";
+import { createRestWorkerServer } from "@stambha/core";
+
+const port = createNativeRestPort(process.env.DISCORD_TOKEN!);
+
+const data = await port.request({
+  method: "GET",
+  route: "/users/@me",
+});
+
+// REST worker (split tier)
+const server = await createRestWorkerServer({
+  port: 4000,
+  portImpl: port,
+  secret: process.env.REST_WORKER_SECRET,
+});
+```
+
+---
+
+## Related
+
+- [Tier split](/deployment/tier-split) — gateway / REST / bot workers
+- [Gateway](/deployment/gateway) — `attachStambhaClient`, native WebSocket
+- [Native REST](/deployment/native-rest) — REST worker details
+- [Migration](/migration/) — Sapphire / Discordeno paths

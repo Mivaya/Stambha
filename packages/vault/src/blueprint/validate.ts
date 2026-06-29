@@ -1,5 +1,5 @@
-import type { FieldSchema } from "./field.js";
 import { VaultError } from "../errors.js";
+import type { FieldSchema } from "./field.js";
 
 export function validateData(
   shape: Record<string, FieldSchema>,

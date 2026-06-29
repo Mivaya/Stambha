@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { basename, extname, join, pathToFileURL, resolve } from "./path.js";
 import { randomUUID } from "./crypto.js";
 import { detectRuntime, isNode } from "./detect.js";
+import { basename, extname, join, pathToFileURL, resolve } from "./path.js";
 import { sleep } from "./timers.js";
 
 describe("@stambha/runtime", () => {

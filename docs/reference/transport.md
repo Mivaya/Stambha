@@ -1,21 +1,41 @@
-# Transport foundation
+# Transport & package map
 
-Stambha-owned Discord transport primitives live in `@stambha/transport` and `@stambha/rest` — no third-party Discord library required. New bots should use the native stack (`@stambha/rest`, `@stambha/gateway`, `@stambha/transform`).
-
----
-
-## Packages
-
-| Package | Role |
-|---------|------|
-| `@stambha/transport` | Session info, route normalization, rate-limit bucket model |
-| `@stambha/rest` | Native REST client + centralized queue |
-
-Core still defines {@link RestPort} and tier-split HTTP worker protocol in `@stambha/core`. Native REST implements the same `RestPort` surface.
+Stambha-owned Discord transport primitives — no third-party Discord library required for the **native path**.
 
 ---
 
-## Session
+## When to use which package
+
+| Package | Use when |
+|---------|----------|
+| `@stambha/core` | Always — client, pipeline, registries, `RestPort`, outcomes |
+| `@stambha/loader` | Auto-load `src/commands`, `gates/`, etc. |
+| `@stambha/gateway` | WebSocket shards, `GatewayEventHub`, `attachStambhaClient`, sharding |
+| `@stambha/rest` | Outbound Discord REST, rate-limit queue, slash deploy, REST worker |
+| `@stambha/transform` | Normalize gateway payloads → `StambhaMessage` / `StambhaInteraction`; REST reply bodies |
+| `@stambha/transport` | Session info, route keys, rate-limit bucket model (used by `@stambha/rest`) |
+| `@stambha/gates` | Cooldowns, permissions, channel-type checks |
+| `@stambha/args` | Prefix lexer + slash option accessors |
+| `@stambha/vault` | Typed guild/user/member config (not domain ORM) |
+| `@stambha/plugins` | Plugin lifecycle + DI container |
+| `@stambha/runtime` | Cross-runtime helpers (Node / Bun / Deno) |
+
+**Extensions** ([Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)): `@stambha/metrics`, `@stambha/cache`, `@stambha/vault-sql`, future `@stambha/dashboard`.
+
+### Stack recipes
+
+| Bot shape | Packages |
+|-----------|----------|
+| **Monolith** | `core` + `gateway` + `rest` + `transform` + `loader` |
+| **Tier split** | Above + `HttpRestPort` → REST worker; gateway relay → bot worker |
+| **Tests / unit** | `core` + `MockBridge` or manual `hub.emit` |
+| **Migrating from discord.js / Discordeno** | **Deprecated adapters** — removed **in future release**; ship fully native for 1.0.0 |
+
+New bots: [Getting started](/guide/getting-started). Not supported: discord.js owning the gateway while Stambha owns commands only.
+
+---
+
+## Session (`@stambha/transport`)
 
 ```ts
 import { createSession, DISCORD_API_BASE } from "@stambha/transport";
@@ -60,7 +80,7 @@ const data = await port.request({
   route: "/users/@me",
 });
 
-// REST worker (split tier) — drop-in for DiscordRestPort
+// REST worker (split tier)
 const server = await createRestWorkerServer({
   port: 4000,
   portImpl: port,
@@ -68,31 +88,11 @@ const server = await createRestWorkerServer({
 });
 ```
 
-Gateway workers keep using `HttpRestPort`; the REST process uses `@stambha/rest`.
-
----
-
-## Native stack
-
-| Bot type | Stack |
-|----------|--------|
-| **New bot** | `@stambha/gateway` + `@stambha/rest` + `@stambha/transform` |
-| **Split tier** | `createNativeRestWorker` + `HttpRestPort` + gateway relay |
-| **Tests / minimal** | `MockBridge` + in-memory |
-
-See [migration overview](/migration/).
-
-### REST worker migration
-
-1. Use `createNativeRestWorker` (or `createRestWorkerServer` + `createNativeRestPort`).
-2. Point gateway `HttpRestPort` at the worker URL + secret.
-3. Compare rate-limit behavior under load; tune `RateLimitQueue` `maxRetries` if needed.
-
-Example: `examples/bot/src/workers/rest.ts` (`pnpm split:rest`)
-
 ---
 
 ## Related
 
-- [Tier split](/deployment/tier-split) — gateway / REST worker split
+- [Tier split](/deployment/tier-split) — gateway / REST / bot workers
+- [Gateway](/deployment/gateway) — `attachStambhaClient`, native WebSocket
 - [Native REST](/deployment/native-rest) — REST worker details
+- [Migration](/migration/) — Sapphire / Discordeno paths

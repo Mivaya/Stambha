@@ -1,6 +1,6 @@
 # @stambha/transform
 
-**Payload normalization** — convert gateway events into slim Stambha contexts and build REST request bodies. Discordeno-style desired properties for memory-conscious bots.
+**Payload normalization** — convert gateway events into slim Stambha contexts and build REST request bodies.
 
 Part of the [**@stambha**](https://www.npmjs.com/org/stambha) monorepo · [GitHub](https://github.com/mivaya/Stambha)
 
@@ -12,18 +12,15 @@ Part of the [**@stambha**](https://www.npmjs.com/org/stambha) monorepo · [GitHu
 npm install @stambha/transform @stambha/core
 ```
 
-Requires **Node.js 20+**.
+Requires **Node.js 20+**. **No discord.js or Discordeno dependency.**
 
 ---
 
-## Quick start
-
-### Native shapes (recommended)
-
-Define interactions with transport-neutral types:
+## Quick start (native)
 
 ```ts
 import type { StambhaMessage, StambhaSlashInteraction } from "@stambha/transform";
+import { interactionFromDispatch, interactionReplyBody } from "@stambha/transform";
 
 const message: StambhaMessage = {
   id: "1",
@@ -32,17 +29,11 @@ const message: StambhaMessage = {
   guildId: "g1",
   author: { id: "u1", bot: false },
 };
-```
-
-### Build REST bodies
-
-```ts
-import { channelMessageBody, interactionReplyBody } from "@stambha/transform";
 
 await restPort.request({
   method: "POST",
-  route: `/channels/${channelId}/messages`,
-  body: channelMessageBody({ content: "Hello!" }),
+  route: `/interactions/${id}/${token}/callback`,
+  body: interactionReplyBody("Hello!"),
 });
 ```
 
@@ -55,16 +46,24 @@ import {
 } from "@stambha/transform";
 ```
 
+Use with `createNativeGatewayClient` + `attachStambhaClient` — see [Gateway](../gateway).
+
 ---
 
-## Adapters (optional)
+## Deprecated: library shape adapters (removed v1.5.0)
 
-Migrating from another library? Use adapters — they are **not** required for the native stack.
+Exports such as `messageFromDiscordJs`, `metaFromDiscordJsSlash`, `messageFromDiscordeno`, and `buildDiscordenoDesiredProperties` are **deprecated in 1.0.0** and scheduled for **removal in 1.5.0**.
 
-| Adapter | Exports |
-|---------|---------|
-| discord.js | `messageFromDiscordJs`, `slashInteractionFromDiscordJs`, … |
-| Discordeno | `messageFromDiscordeno`, `defaultDiscordenoDesiredProperties`, … |
+Official migrations require a **fully native** bot (`@stambha/gateway`, `@stambha/rest`, `StambhaMessage` / `interactionFromDispatch`). Adapters emit a one-time runtime warning when called.
+
+Replace with:
+
+| Deprecated | Native replacement |
+|------------|-------------------|
+| `messageFromDiscordJs` | `messageFromDispatch` or manual `StambhaMessage` |
+| `slashInteractionFromDiscordJs` | `interactionFromDispatch` |
+| `metaFromDiscordJs*` / `metaFromDiscordeno*` | `metaFromDiscordInteraction` |
+| `buildDiscordenoDesiredProperties` | `gatesDesiredProperties` on `createStambhaBot` |
 
 ---
 
@@ -72,9 +71,9 @@ Migrating from another library? Use adapters — they are **not** required for t
 
 | Export | Purpose |
 |--------|---------|
-| `StambhaMessage`, `StambhaUser`, `StambhaSlashInteraction` | Core shapes |
+| `StambhaMessage`, `StambhaInteraction`, … | Core shapes |
+| `interactionFromDispatch`, `messageFromDispatch` | Native gateway parsing |
 | `channelMessageBody`, `interactionReplyBody` | REST payloads |
-| `scoutContextFromStambhaMessage` | Scout routing |
 | `commandContextFromStambhaSlashViaRest` | Command routing via `RestPort` |
 
 ---

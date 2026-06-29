@@ -1,4 +1,4 @@
-import { Command, ok, type CommandContext, type Registry } from "@stambha/core";
+import { Command, type CommandContext, ok, type Registry } from "@stambha/core";
 
 export class HelpCommand extends Command {
   constructor(registry: Registry<Command>) {

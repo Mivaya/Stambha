@@ -4,6 +4,7 @@ import { normalizeReplyData } from "@stambha/core";
 export interface MessageBody {
   content?: string;
   embeds?: unknown[];
+  components?: unknown[];
   flags?: number;
 }
 
@@ -29,7 +30,10 @@ export function interactionReplyBody(
   return { type: 4, data: body };
 }
 
-export function interactionDeferBody(ephemeral = false): { type: number; data?: { flags: number } } {
+export function interactionDeferBody(ephemeral = false): {
+  type: number;
+  data?: { flags: number };
+} {
   if (ephemeral) return { type: 5, data: { flags: 64 } };
   return { type: 5 };
 }
@@ -40,8 +44,9 @@ export function webhookMessageBody(payload: ReplyPayload): MessageBody {
 }
 
 /** Autocomplete callback (type 8). */
-export function autocompleteCallbackBody(
-  choices: { name: string; value: string }[],
-): { type: number; data: { choices: { name: string; value: string }[] } } {
+export function autocompleteCallbackBody(choices: { name: string; value: string }[]): {
+  type: number;
+  data: { choices: { name: string; value: string }[] };
+} {
   return { type: 8, data: { choices: choices.slice(0, 25) } };
 }
