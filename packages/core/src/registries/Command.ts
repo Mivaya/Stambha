@@ -1,13 +1,13 @@
-import { type Outcome, ok } from "../outcome/Outcome.js";
-import type { AutocompleteContext } from "../context/autocomplete.js";
-import type { CommandContext, CommandKind } from "../context/types.js";
 import type {
+  SlashOptionDefinition,
   SubcommandDefinition,
   SubcommandGroupDefinition,
-  SlashOptionDefinition,
 } from "../command/slashTypes.js";
+import type { AutocompleteContext } from "../context/autocomplete.js";
+import type { CommandContext, CommandKind } from "../context/types.js";
+import { type Outcome, ok } from "../outcome/Outcome.js";
+import type { Registry } from "../pieces/Registry.js";
 import { Unit, type UnitOptions } from "../pieces/Unit.js";
-import { Registry } from "../pieces/Registry.js";
 import type { GateLike } from "./Gate.js";
 
 export interface CommandOptions extends UnitOptions {

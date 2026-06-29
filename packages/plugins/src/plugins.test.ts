@@ -1,6 +1,12 @@
-import { describe, expect, it, vi } from "vitest";
 import { createStambhaBot, MockBridge } from "@stambha/core";
-import { attachPlugins, ContainerToken, definePlugin, LoggerToken, StambhaContainer } from "./index.js";
+import { describe, expect, it, vi } from "vitest";
+import {
+  attachPlugins,
+  ContainerToken,
+  definePlugin,
+  LoggerToken,
+  StambhaContainer,
+} from "./index.js";
 
 describe("@stambha/plugins", () => {
   it("runs hooks in order", async () => {

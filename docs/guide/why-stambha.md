@@ -67,7 +67,8 @@ src/
 At runtime, inbound events flow through a **single pipeline**:
 
 ```text
-Scout → Conduit → Barrier → Gate → Command → Epilogue
+Scout → InboundRouter → Conduit → Barrier → Gate → Command → Epilogue
+Signals (buttons / selects / modals) route in parallel on interactionCreate
 ```
 
 You get:

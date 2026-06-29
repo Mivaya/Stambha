@@ -1,6 +1,6 @@
 {
   "name": "stambha",
-  "version": "0.3.5",
+  "version": "1.0.0",
   "private": true,
   "description": "Native Discord bot framework for Node.js and TypeScript — Sapphire-style pieces on @stambha/rest + @stambha/gateway; Vault, Sequences, tier split, and metrics built in.",
   "author": "Mivaya",
@@ -45,9 +45,9 @@
     "publish:npm": "pnpm -r publish --access public --no-git-checks --filter './packages/*'"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "typescript": "^5.7.3",
-    "vitest": "^3.2.6"
+    "@biomejs/biome": "^2.4.16",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
   },
   "packageManager": "pnpm@9.15.4",
   "engines": {

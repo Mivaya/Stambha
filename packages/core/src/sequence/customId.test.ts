@@ -9,6 +9,8 @@ describe("sequence customId", () => {
       stepId: "pick",
       part: "yes",
     });
-    expect(parseSequenceCustomId(sequenceCustomId("abc", "note__modal"))?.stepId).toBe("note__modal");
+    expect(parseSequenceCustomId(sequenceCustomId("abc", "note__modal"))?.stepId).toBe(
+      "note__modal",
+    );
   });
 });

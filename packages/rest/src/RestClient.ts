@@ -1,7 +1,6 @@
 import type { RestPort, RestRequest } from "@stambha/core";
-import { createSession, type SessionInfo } from "@stambha/transport";
+import { createSession, parseRouteKey, type SessionInfo } from "@stambha/transport";
 import { RateLimitQueue, toHttpMethod } from "./RateLimitQueue.js";
-import { parseRouteKey } from "@stambha/transport";
 
 import type { RestTelemetry } from "./telemetry.js";
 
@@ -106,6 +105,9 @@ export function createRestClient(options: RestClientOptions): RestClient {
   return new RestClient(options);
 }
 
-export function createNativeRestPort(token: string, options: Omit<RestClientOptions, "token"> = {}): NativeRestPort {
+export function createNativeRestPort(
+  token: string,
+  options: Omit<RestClientOptions, "token"> = {},
+): NativeRestPort {
   return new NativeRestPort(createRestClient({ token, ...options }));
 }

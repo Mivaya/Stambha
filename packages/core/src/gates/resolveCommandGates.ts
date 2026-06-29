@@ -4,9 +4,7 @@ import type { Gate, GateLike } from "../registries/Gate.js";
 
 /** Gates registered with {@link GateOptions.global} run on every command. */
 export function globalGates(client: StambhaClient): Gate[] {
-  return client.registries.gates
-    .sortedByPriority((g) => g.priority)
-    .filter((g) => g.global);
+  return client.registries.gates.sortedByPriority((g) => g.priority).filter((g) => g.global);
 }
 
 /** Resolve {@link CommandOptions.gateNames} against the gate registry. */

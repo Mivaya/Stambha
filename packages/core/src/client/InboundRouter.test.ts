@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { StambhaClient } from "./StambhaClient.js";
 import { Command, ok } from "../index.js";
+import { StambhaClient } from "./StambhaClient.js";
 
 class PingCommand extends Command {
   async execute() {
@@ -24,10 +24,14 @@ describe("InboundRouter.parsePrefixCommand", () => {
     });
     client.register(new PingCommand(client.registries.commands, { name: "ping" }));
 
-    expect(await client.router.parsePrefixCommand("?ping", { userId: "1", guildId: "guild-a" })).toEqual({
+    expect(
+      await client.router.parsePrefixCommand("?ping", { userId: "1", guildId: "guild-a" }),
+    ).toEqual({
       name: "ping",
       args: "",
     });
-    expect(await client.router.parsePrefixCommand("?ping", { userId: "1", guildId: "guild-b" })).toBeNull();
+    expect(
+      await client.router.parsePrefixCommand("?ping", { userId: "1", guildId: "guild-b" }),
+    ).toBeNull();
   });
 });

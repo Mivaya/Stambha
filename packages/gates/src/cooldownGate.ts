@@ -1,4 +1,4 @@
-import { defineGate, type CommandContext, type GateLike } from "@stambha/core";
+import { type CommandContext, defineGate, type GateLike } from "@stambha/core";
 import { type CooldownStore, defaultCooldownStore } from "./cooldownStore.js";
 
 export type CooldownScope = "user" | "guild" | "global" | "userGuild";

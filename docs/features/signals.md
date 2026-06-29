@@ -23,6 +23,8 @@ Signal.parseCustomId("stambha:confirm:delete");
 // → { name: "confirm", suffix: "delete" }
 ```
 
+Sequence steps use `stambha:seq:{sessionId}|{stepId}|{part}` — see [Sequences](/features/sequences).
+
 ## Quick start
 
 ```ts
@@ -44,16 +46,23 @@ export class ConfirmSignal extends Signal {
 }
 ```
 
-Send a button in a command reply (via REST or rich `ReplyPayload`):
+Send a button from a command via `ReplyPayload.components`:
 
 ```ts
+const signal = this.client.registries.signals.get("confirm");
+
 await ctx.reply({
   content: "Are you sure?",
-  embeds: [{
-    // … or use components in REST body via RestPort for full control
+  components: [{
+    type: 1,
+    components: [{
+      type: 2,
+      style: 1,
+      label: "Yes",
+      custom_id: signal!.customId("yes"),
+    }],
   }],
 });
-// components: [{ type: 1, components: [{ type: 2, style: 1, label: "Yes", custom_id: signal.customId("yes") }] }]
 ```
 
 ## SignalContext
@@ -63,8 +72,10 @@ await ctx.reply({
 | `signalName` | Parsed from custom id |
 | `customId` | Full Discord custom id |
 | `userId`, `guildId`, `channelId` | Interaction context |
-| `reply(text)` / `replyEphemeral(text)` | Interaction callback replies |
-| `deferReply?()` | Optional defer helper when wired by your gateway layer |
+| `reply(text \| payload)` | Interaction callback reply |
+| `replyEphemeral(text)` | Ephemeral callback |
+| `deferReply?(ephemeral?)` | Defer before slow work (native attach, 0.3.5+) |
+| `editReply?(payload)` | Edit deferred or follow-up message |
 
 ## Signal types
 
@@ -75,12 +86,34 @@ await ctx.reply({
 | `"modal"` | Modal submit |
 | `"autocomplete"` | Reserved — use `Command.autocomplete()` for slash autocomplete |
 
-## Routing interactions
+## Native attach (0.3.5+)
 
-Resolve which piece should handle an interaction:
+With `createNativeGatewayClient` + `attachStambhaClient`, no manual routing is required:
 
 ```ts
-import { resolveInteractionTarget, resolveSignal } from "@stambha/plugins";
+import { attachStambhaClient, createGatewayEventHub } from "@stambha/gateway";
+
+const hub = createGatewayEventHub();
+attachStambhaClient(hub, client, {
+  applicationId: process.env.DISCORD_APPLICATION_ID,
+  signals: true, // default
+});
+```
+
+The gateway normalizes `INTERACTION_CREATE` into `StambhaInteraction`. Component and modal kinds with `stambha:` ids dispatch to `client.signalRouter`.
+
+Toggle routing:
+
+| Option | Effect |
+|--------|--------|
+| `signals: false` | Ignore button/select/modal interactions |
+| `slashCommands: false` | Ignore slash commands only |
+| `autocomplete: false` | Ignore autocomplete |
+
+## Manual routing (tests / custom workers)
+
+```ts
+import { resolveInteractionTarget } from "@stambha/plugins";
 
 const target = resolveInteractionTarget(client, {
   kind: "signal",
@@ -92,14 +125,9 @@ if (target?.kind === "signal") {
 }
 ```
 
-`SignalRouter.dispatch(ctx, type)` runs the matching signal's `run()` method.
-
-### Native attach (0.3.5+)
-
-`attachStambhaClient` routes slash commands, autocomplete, buttons/selects, and modals when the gateway emits normalized `StambhaInteraction` payloads from `interactionFromDispatch`.
-
 ## Related
 
 - [Sequences](/features/sequences) — multi-step flows using `stambha:seq:` ids
-- [Plugins](/features/plugins) — `resolveInteractionTarget` helper
-- [Command tree](/features/command-tree) — slash autocomplete on commands
+- [Getting started](/guide/getting-started) — confirm button walkthrough
+- [Gateway](/deployment/gateway) — `attachStambhaClient` options
+- [Hooks](/features/hooks) — when to use Hook vs Signal

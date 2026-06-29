@@ -1,9 +1,5 @@
 import { defineGate, type GateLike } from "@stambha/core";
-import {
-  formatMissingPermissions,
-  hasPermissions,
-  type PermissionFlag,
-} from "./permissions.js";
+import { formatMissingPermissions, hasPermissions, type PermissionFlag } from "./permissions.js";
 
 export interface PermissionsGateOptions {
   /** Permissions the invoking member must have. */
@@ -39,9 +35,7 @@ export function permissionsGate(options: PermissionsGateOptions): GateLike {
         const missing = formatMissingPermissions(have, userNeed);
         return {
           allow: false,
-          reason:
-            options.userMessage ??
-            `You need the following permissions: ${missing}.`,
+          reason: options.userMessage ?? `You need the following permissions: ${missing}.`,
         };
       }
     }
@@ -52,9 +46,7 @@ export function permissionsGate(options: PermissionsGateOptions): GateLike {
         const missing = formatMissingPermissions(have, clientNeed);
         return {
           allow: false,
-          reason:
-            options.clientMessage ??
-            `I need the following permissions: ${missing}.`,
+          reason: options.clientMessage ?? `I need the following permissions: ${missing}.`,
         };
       }
     }
