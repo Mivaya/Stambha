@@ -262,8 +262,7 @@ Deploy to GitHub Pages: see [Hosting the docs](docs/guide/hosting-the-docs.md).
 | [Deployment](docs/deployment/overview.md) | Tier split, gateway, metrics |
 | [Migration](docs/migration/) | Guides for moving from other bot stacks |
 
-Contributor planning docs: [`docs/internal/`](docs/internal/).
-
+**Contributing:** [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md) · [AGENT.md](AGENT.md) (architecture & agent conventions)
 ---
 
 ## Status
