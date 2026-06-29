@@ -1,6 +1,6 @@
 import type { SignalContext } from "../context/SignalContext.js";
+import type { Registry } from "../pieces/Registry.js";
 import { Unit, type UnitOptions } from "../pieces/Unit.js";
-import { Registry } from "../pieces/Registry.js";
 
 export type SignalType = "button" | "select" | "modal" | "autocomplete";
 

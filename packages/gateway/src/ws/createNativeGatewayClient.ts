@@ -1,11 +1,11 @@
-import { type SessionInfo, createSession } from "@stambha/transport";
+import { createSession, type SessionInfo } from "@stambha/transport";
 import type { GatewayEventHub } from "../GatewayEventHub.js";
-import { type IdentifyBudget, createIdentifyBudget } from "../reshard/IdentifyBudget.js";
-import { type ShardManager, createShardManager } from "../shard/ShardManager.js";
+import { createIdentifyBudget, type IdentifyBudget } from "../reshard/IdentifyBudget.js";
 import type { BuildIdentifyOptions } from "../shard/identify.js";
-import { GatewayShard, type GatewayShardOptions } from "./GatewayShard.js";
+import { createShardManager, type ShardManager } from "../shard/ShardManager.js";
 import { buildGatewayUrl } from "./constants.js";
 import { fetchGatewayBot } from "./fetchGatewayBot.js";
+import { GatewayShard, type GatewayShardOptions } from "./GatewayShard.js";
 import { type CreateGatewayWebSocket, resolveWebSocketFactory } from "./socket.js";
 
 export interface NativeGatewayClientOptions {

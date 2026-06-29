@@ -1,15 +1,74 @@
-import type { ChannelType, CommandContextMeta } from "@stambha/core";
-import type { SlashOption } from "@stambha/core";
-import {
-  ChannelType as DjsChannelType,
-  type ChatInputCommandInteraction,
-  type GuildChannel,
-  type GuildMember,
-  type Message,
-} from "discord.js";
+import type { ChannelType, CommandContextMeta, SlashOption } from "@stambha/core";
 import type { StambhaMessage, StambhaSlashInteraction, StambhaUser } from "./shapes.js";
+import { warnLegacyLibraryAdapter } from "./deprecation.js";
 
-function mapChannelType(type: DjsChannelType): ChannelType {
+/** @deprecated Removed in v1.5.0 — use {@link StambhaUser} and native gateway dispatch. */
+export interface DiscordJsUserLike {
+  id: string;
+  bot?: boolean;
+  username?: string;
+}
+
+/** @deprecated Removed in v1.5.0 */
+export interface DiscordJsChannelLike {
+  type?: number;
+  nsfw?: boolean;
+  isDMBased?: () => boolean;
+  isTextBased?: () => boolean;
+}
+
+/** @deprecated Removed in v1.5.0 */
+export interface DiscordJsMemberLike {
+  permissions?: { bitfield: bigint };
+  permissionsIn?: (channelId: string) => { bitfield: bigint };
+}
+
+/** @deprecated Removed in v1.5.0 — use {@link StambhaMessage}. */
+export interface DiscordJsMessageLike {
+  id: string;
+  content: string;
+  channelId: string;
+  guildId: string | null;
+  author: DiscordJsUserLike;
+  channel: DiscordJsChannelLike;
+  member?: DiscordJsMemberLike | null;
+  guild?: { members: { me: DiscordJsMemberLike | null } } | null;
+}
+
+/** @deprecated Removed in v1.5.0 — use {@link StambhaSlashInteraction}. */
+export interface DiscordJsSlashInteractionLike {
+  id: string;
+  token: string;
+  applicationId: string;
+  user: DiscordJsUserLike;
+  guildId: string | null;
+  channelId: string;
+  commandName: string;
+  options: {
+    data: readonly { name: string; type: number; value?: unknown }[];
+    getSubcommandGroup: (required?: boolean) => string | null;
+    getSubcommand: (required?: boolean) => string | null;
+  };
+  channel: DiscordJsChannelLike;
+  inGuild: () => boolean;
+  memberPermissions?: { bitfield: bigint };
+  appPermissions?: { bitfield: bigint };
+}
+
+const DjsChannelType = {
+  GuildText: 0,
+  DM: 1,
+  GuildVoice: 2,
+  GroupDM: 3,
+  GuildAnnouncement: 5,
+  AnnouncementThread: 10,
+  PublicThread: 11,
+  PrivateThread: 12,
+  GuildStageVoice: 13,
+  GuildForum: 15,
+} as const;
+
+function mapChannelType(type: number): ChannelType {
   switch (type) {
     case DjsChannelType.DM:
       return "dm";
@@ -36,26 +95,42 @@ function mapChannelType(type: DjsChannelType): ChannelType {
   }
 }
 
-export function userFromDiscordJs(user: { id: string; bot?: boolean; username?: string }): StambhaUser {
+/**
+ * @deprecated Removed in v1.5.0. Use native {@link StambhaUser} from gateway dispatch.
+ */
+export function userFromDiscordJs(user: DiscordJsUserLike): StambhaUser {
+  warnLegacyLibraryAdapter("userFromDiscordJs");
+  return mapUserFromDiscordJs(user);
+}
+
+function mapUserFromDiscordJs(user: DiscordJsUserLike): StambhaUser {
   const out: StambhaUser = { id: user.id };
   if (user.bot !== undefined) (out as { bot?: boolean }).bot = user.bot;
   if (user.username !== undefined) (out as { username?: string }).username = user.username;
   return out;
 }
 
-export function messageFromDiscordJs(message: Message): StambhaMessage {
+/**
+ * @deprecated Removed in v1.5.0. Use {@link StambhaMessage} from `messageFromDispatch` / `hub.emit`.
+ */
+export function messageFromDiscordJs(message: DiscordJsMessageLike): StambhaMessage {
+  warnLegacyLibraryAdapter("messageFromDiscordJs");
   return {
     id: message.id,
     content: message.content,
     channelId: message.channelId,
     guildId: message.guildId,
-    author: userFromDiscordJs(message.author),
+    author: mapUserFromDiscordJs(message.author),
   };
 }
 
+/**
+ * @deprecated Removed in v1.5.0. Use {@link interactionFromDispatch} + {@link StambhaSlashInteraction}.
+ */
 export function slashInteractionFromDiscordJs(
-  interaction: ChatInputCommandInteraction,
+  interaction: DiscordJsSlashInteractionLike,
 ): StambhaSlashInteraction {
+  warnLegacyLibraryAdapter("slashInteractionFromDiscordJs");
   const slashOptions: SlashOption[] = [];
   for (const opt of interaction.options.data) {
     const type = mapDjsOptionType(opt.type);
@@ -77,7 +152,7 @@ export function slashInteractionFromDiscordJs(
     id: interaction.id,
     token: interaction.token,
     applicationId: interaction.applicationId,
-    user: userFromDiscordJs(interaction.user),
+    user: mapUserFromDiscordJs(interaction.user),
     guildId: interaction.guildId,
     channelId: interaction.channelId,
     commandName: interaction.commandName,
@@ -112,36 +187,44 @@ function mapDjsOptionType(type: number): import("@stambha/core").ParsedSlashOpti
   }
 }
 
-function metaFromGuildChannel(channel: GuildChannel): CommandContextMeta {
+function metaFromGuildChannel(channel: DiscordJsChannelLike): CommandContextMeta {
   const meta: CommandContextMeta = {
-    channelType: mapChannelType(channel.type),
+    channelType: mapChannelType(channel.type ?? 0),
   };
-  if ("nsfw" in channel && typeof channel.nsfw === "boolean") {
+  if (typeof channel.nsfw === "boolean") {
     meta.channelNsfw = channel.nsfw;
   }
   return meta;
 }
 
-function memberPermissions(member: GuildMember | null): bigint | undefined {
-  return member?.permissions.bitfield;
+function memberPermissions(member: DiscordJsMemberLike | null | undefined): bigint | undefined {
+  return member?.permissions?.bitfield;
 }
 
-function clientPermissionsInChannel(member: GuildMember | null, channelId: string): bigint | undefined {
-  if (!member) return undefined;
+function clientPermissionsInChannel(
+  member: DiscordJsMemberLike | null | undefined,
+  channelId: string,
+): bigint | undefined {
+  if (!member?.permissionsIn) return undefined;
   return member.permissionsIn(channelId).bitfield;
 }
 
-export function metaFromDiscordJsMessage(message: Message): CommandContextMeta | undefined {
+/**
+ * @deprecated Removed in v1.5.0. Use {@link metaFromDiscordInteraction} on native dispatch.
+ */
+export function metaFromDiscordJsMessage(
+  message: DiscordJsMessageLike,
+): CommandContextMeta | undefined {
+  warnLegacyLibraryAdapter("metaFromDiscordJsMessage");
   const channel = message.channel;
 
-  if (channel.isDMBased()) {
+  if (channel.isDMBased?.()) {
     return { channelType: "dm", channelNsfw: false };
   }
 
-  if (!channel.isTextBased()) return undefined;
+  if (channel.isTextBased && !channel.isTextBased()) return undefined;
 
-  const guildChannel = channel as GuildChannel;
-  const meta = metaFromGuildChannel(guildChannel);
+  const meta = metaFromGuildChannel(channel);
   const memberPerms = memberPermissions(message.member);
   const clientPerms = message.guild
     ? clientPermissionsInChannel(message.guild.members.me, message.channelId)
@@ -152,9 +235,13 @@ export function metaFromDiscordJsMessage(message: Message): CommandContextMeta |
   return meta;
 }
 
+/**
+ * @deprecated Removed in v1.5.0. Use {@link metaFromDiscordInteraction} on native dispatch.
+ */
 export function metaFromDiscordJsSlash(
-  interaction: ChatInputCommandInteraction,
+  interaction: DiscordJsSlashInteractionLike,
 ): CommandContextMeta | undefined {
+  warnLegacyLibraryAdapter("metaFromDiscordJsSlash");
   if (!interaction.inGuild()) {
     return { channelType: "dm", channelNsfw: false };
   }
@@ -162,11 +249,10 @@ export function metaFromDiscordJsSlash(
   const channel = interaction.channel;
   const meta: CommandContextMeta = {};
 
-  if (channel && "type" in channel) {
-    const guildChannel = channel as GuildChannel;
-    meta.channelType = mapChannelType(guildChannel.type);
-    if ("nsfw" in guildChannel && typeof guildChannel.nsfw === "boolean") {
-      meta.channelNsfw = guildChannel.nsfw;
+  if (channel && channel.type !== undefined) {
+    meta.channelType = mapChannelType(channel.type);
+    if (typeof channel.nsfw === "boolean") {
+      meta.channelNsfw = channel.nsfw;
     }
   }
 

@@ -34,7 +34,9 @@ function authorize(req: IncomingMessage, secret?: string): boolean {
   return header === `Bearer ${secret}`;
 }
 
-export function createRestWorkerServer(options: RestWorkerServerOptions): Promise<RestWorkerServerHandle> {
+export function createRestWorkerServer(
+  options: RestWorkerServerOptions,
+): Promise<RestWorkerServerHandle> {
   const host = options.host ?? "127.0.0.1";
 
   const server: Server = createServer(async (req, res) => {
@@ -68,8 +70,7 @@ export function createRestWorkerServer(options: RestWorkerServerOptions): Promis
     server.once("error", reject);
     server.listen(options.port, host, () => {
       const addr = server.address();
-      const actualPort =
-        typeof addr === "object" && addr !== null ? addr.port : options.port;
+      const actualPort = typeof addr === "object" && addr !== null ? addr.port : options.port;
       const url = `http://${host}:${actualPort}`;
       resolve({
         url,

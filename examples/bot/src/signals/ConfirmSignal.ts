@@ -1,4 +1,4 @@
-import { Signal, type Registry, type SignalContext } from "@stambha/core";
+import { type Registry, Signal, type SignalContext } from "@stambha/core";
 
 export class ConfirmSignal extends Signal {
   constructor(registry: Registry<Signal>) {

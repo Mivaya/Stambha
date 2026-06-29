@@ -1,9 +1,9 @@
 import type { Command } from "../registries/Command.js";
 import {
-  SlashOptionType,
   type ApplicationCommandJSON,
   type ApplicationCommandOptionJSON,
   type SlashOptionDefinition,
+  SlashOptionType,
   type SubcommandDefinition,
   type SubcommandGroupDefinition,
 } from "./slashTypes.js";
@@ -53,7 +53,11 @@ interface RootAccumulator {
   groups: Map<string, SubcommandGroupDefinition>;
 }
 
-function getOrCreateRoot(roots: Map<string, RootAccumulator>, name: string, description: string): RootAccumulator {
+function getOrCreateRoot(
+  roots: Map<string, RootAccumulator>,
+  name: string,
+  description: string,
+): RootAccumulator {
   let root = roots.get(name);
   if (!root) {
     root = {
@@ -129,11 +133,7 @@ export function buildApplicationCommands(commands: Iterable<Command>): Applicati
 
     if (command.slashRoot) {
       const rootName = command.slashRoot;
-      const root = getOrCreateRoot(
-        roots,
-        rootName,
-        command.slashRootDescription ?? rootName,
-      );
+      const root = getOrCreateRoot(roots, rootName, command.slashRootDescription ?? rootName);
       if (command.defaultMemberPermissions !== undefined) {
         root.defaultMemberPermissions = command.defaultMemberPermissions;
       }
@@ -187,9 +187,7 @@ export function diffApplicationCommands(
 
   const added = desired.filter((c) => !existingNames.has(c.name)).map((c) => c.name);
   const removed = existing.filter((c) => !desiredNames.has(c.name)).map((c) => c.name);
-  const updated = desired
-    .filter((c) => existingNames.has(c.name))
-    .map((c) => c.name);
+  const updated = desired.filter((c) => existingNames.has(c.name)).map((c) => c.name);
 
   return { added, removed, updated };
 }

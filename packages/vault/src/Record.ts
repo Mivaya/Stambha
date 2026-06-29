@@ -32,7 +32,11 @@ export class VaultRecord<T extends Record<string, unknown> = Record<string, unkn
     const patch = { [key]: value } as Record<string, unknown>;
     this.data = this.ledger.blueprint.patch(this.data as Record<string, unknown>, patch) as T;
     this.dirty = true;
-    this.ledger.vault.batcher.queue(this.ledger.name, this.id, this.data as Record<string, unknown>);
+    this.ledger.vault.batcher.queue(
+      this.ledger.name,
+      this.id,
+      this.data as Record<string, unknown>,
+    );
     return this;
   }
 
@@ -42,7 +46,11 @@ export class VaultRecord<T extends Record<string, unknown> = Record<string, unkn
       partial as Record<string, unknown>,
     ) as T;
     this.dirty = true;
-    this.ledger.vault.batcher.queue(this.ledger.name, this.id, this.data as Record<string, unknown>);
+    this.ledger.vault.batcher.queue(
+      this.ledger.name,
+      this.id,
+      this.data as Record<string, unknown>,
+    );
     return this;
   }
 

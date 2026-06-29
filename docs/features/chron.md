@@ -46,6 +46,14 @@ await loadPieces(client, { context: { client, vault } });
 // loads src/tasks/*.ts into client.registries.chrons
 ```
 
+Chron runs in the **bot process** where `client.start()` is called. In tier split, only the bot worker should start Chron — gateway and REST workers do not load `tasks/` by default.
+
+Distributed Chron across multiple bot replicas is **2.0 D2** — see [Known gaps](/guide/known-gaps). For 1.0.0, use a single bot worker or accept duplicate ticks if you run multiple replicas (not recommended).
+
+### Example
+
+`examples/bot/src/tasks/HeartbeatTask.ts` — logs every 60 seconds in the monolith / bot worker.
+
 ## Related
 
 - [Project structure](/guide/project-structure) — `src/tasks/`

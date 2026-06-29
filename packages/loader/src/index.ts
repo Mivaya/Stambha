@@ -1,4 +1,3 @@
-export { loadPieces } from "./loadPieces.js";
 export {
   applyLoaderBindings,
   buildLoaderContext,
@@ -6,4 +5,5 @@ export {
   type PieceConstructor as LoaderPieceConstructor,
   type PieceFactory,
 } from "./factory.js";
-export type { LoadPiecesOptions, LoadPiecesResult, LoaderContext, PieceKind } from "./types.js";
+export { loadPieces } from "./loadPieces.js";
+export type { LoaderContext, LoadPiecesOptions, LoadPiecesResult, PieceKind } from "./types.js";

@@ -1,17 +1,19 @@
+import type {
+  Barrier,
+  Chron,
+  Command,
+  Conduit,
+  Epilogue,
+  Gate,
+  Hook,
+  Scout,
+  Signal,
+} from "@stambha/core";
 import { PiecePaths, type StambhaClient } from "@stambha/core";
-import type { Command } from "@stambha/core";
-import type { Hook } from "@stambha/core";
-import type { Scout } from "@stambha/core";
-import type { Barrier } from "@stambha/core";
-import type { Gate } from "@stambha/core";
-import type { Epilogue } from "@stambha/core";
-import type { Conduit } from "@stambha/core";
-import type { Signal } from "@stambha/core";
-import type { Chron } from "@stambha/core";
 import { basename, cwd, extname, pathToFileURL, resolve } from "@stambha/runtime";
 import { applyLoaderBindings, buildLoaderContext } from "./factory.js";
 import { scanFiles } from "./scan.js";
-import type { LoadPiecesOptions, LoadPiecesResult, LoaderContext, PieceKind } from "./types.js";
+import type { LoaderContext, LoadPiecesOptions, LoadPiecesResult, PieceKind } from "./types.js";
 
 const DEFAULT_PATHS: Record<PieceKind, string> = {
   commands: PiecePaths.commands,

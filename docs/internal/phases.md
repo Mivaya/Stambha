@@ -2,7 +2,7 @@
 
 Historical index of framework phases. For **current gaps and release sequencing**, see [release-plan.md](./release-plan.md) and [roadmap.md](./roadmap.md).
 
-## Completed (phases 1–22)
+## Completed (phases 1–23)
 
 | Phase | Branch | Package / deliverable |
 |-------|--------|------------------------|
@@ -29,6 +29,7 @@ Historical index of framework phases. For **current gaps and release sequencing*
 | 20 Cross-runtime | `feature/cross-runtime` | `@stambha/runtime` |
 | 21 Migration docs | `feature/migration-docs` | Public migration guides + ADRs |
 | 22 Bot authoring (0.3.4) | `feature/0.3.4` | `ReplyPayload`, REST resources, mention args |
+| 23 Native routing (0.3.5) | `feature/0.3.5` | Options, meta, signals, autocomplete, `deferReply` |
 
 ## Release milestones (semver)
 
@@ -37,16 +38,16 @@ Historical index of framework phases. For **current gaps and release sequencing*
 | **0.2.2** | Per-command gates, prefix resolver, loader order | ✅ Shipped |
 | **0.3.0–0.3.3** | Native WS gateway, loader DI, epilogues, slash deploy | ✅ Shipped |
 | **0.3.4** | Rich replies, REST helpers, mention/snowflake args | ✅ Shipped |
-| **0.3.5** | Native interaction routing (options, meta, signals, autocomplete) | 🔲 Planned |
-| **1.0.0** | Stable API + documented known gaps | 🔲 After 0.3.5 |
-| **1.x** | B1/C1, Redis, help, REST entity args | 🔲 Pipeline |
+| **0.3.5** | Native interaction routing | ✅ Shipped |
+| **1.0.0** | Stable API + [public docs audit](./docs-1.0.0.md) | 🔲 Next |
+| **1.x** | B1–B6, C1, Redis, help, plugins — [ecosystem-survey](./ecosystem-survey.md) | 🔲 Pipeline |
 | **2.0.0** | Bus, distributed chron, native `runSequence` | 🔲 Major |
 
 ## Next phase
 
-**Phase 23 — Native interaction routing (0.3.5)** — see [release-plan.md](./release-plan.md#035-minor--native-interaction-routing).
+**Phase 24 — 1.0.0 docs & stable API** — see [docs-1.0.0.md](./docs-1.0.0.md) and [roadmap.md](./roadmap.md#100-success-criteria).
 
-Framework **pieces** exist for signals, autocomplete, and slash options; **`attachStambhaClient` does not wire them yet**. That gap blocks honest 1.0.0 for production bots.
+Native interaction routing shipped in **0.3.5**. Remaining 1.0.0 work is **public documentation**, `examples/bot` demos, and semver policy — not core routing code.
 
 ## Branch rule
 

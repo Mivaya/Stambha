@@ -4,7 +4,7 @@ Planning doc for maintainers. Captures **semver release lanes** and maps every k
 
 **Migration policy:** [ADR 005](./adr/005-native-only-migration.md) — native stack only; no official hybrid discord.js path.
 
-**Last updated:** 2026-06-15 (post **0.3.4**)
+**Last updated:** 2026-06-16 (post **0.3.5**)
 
 ---
 
@@ -15,8 +15,8 @@ Planning doc for maintainers. Captures **semver release lanes** and maps every k
 | **Patch** | **0.2.2** | Gates, prefix resolver, loader order — ✅ shipped |
 | **Minor** | **0.3.0–0.3.3** | Native WS gateway, loader/DX, epilogues, slash deploy — ✅ shipped |
 | **Minor** | **0.3.4** | Rich replies, REST resource helpers, mention id args — ✅ shipped |
-| **Minor** | **0.3.5** | Native interaction routing — **next** before 1.0.0 |
-| **Minor** | **1.0.0** | Stable API; semver promise; known gaps documented |
+| **Minor** | **0.3.5** | Native interaction routing — ✅ shipped |
+| **Minor** | **1.0.0** | Stable API; semver promise; [public docs audit](./docs-1.0.0.md) |
 | **Minor** | **1.x** | [future-v2.md](./future-v2.md) — B1, C1, Redis, help, B2 entity args |
 | **Plugins repo** | `@stambha/dashboard` etc. | Pillar E — HTTP, OAuth, dashboard routes |
 | **Major** | **2.0** | Bus, distributed chron, native `runSequence`, breaking CommandOptions if needed |
@@ -28,9 +28,9 @@ Planning doc for maintainers. Captures **semver release lanes** and maps every k
 0.3.0  ✅ Bundled gateway WS, native examples, epilogue/DI docs
 0.3.3  ✅ Native gateway polish, deploy helpers, docs cleanup
 0.3.4  ✅ Rich replies, REST helpers, mention/snowflake args
-0.3.5  🔲 Slash options/subcommands, meta, signals, autocomplete on native attach
-1.0.0  🔲 Stable API + honest known-gaps doc
-1.x    🔲 B1 declarative gates, C1 levels, Redis, help, typing, B2 REST resolvers
+0.3.5  ✅ Slash options/subcommands, meta, signals, autocomplete, deferReply
+1.0.0  🔲 Stable API + public docs (ready on release/1.0.0; tag pending)
+1.x    🔲 B1–B6, C1, Redis, help, plugins (see ecosystem-survey.md)
 2.0.0  🔲 A3 bus, distributed chron, native runSequence
 ```
 
@@ -76,9 +76,25 @@ Closes app-layer shims for embed replies, `fetchUser`, and mention parsing. Does
 
 ---
 
-## 0.3.5 (minor) — native interaction routing
+## Shipped: 0.3.5 (minor)
 
-**Blocker for 1.0.0.** Framework APIs exist; `attachStambhaClient` + gateway dispatch do not wire them end-to-end on the native path.
+| ID | Item | Package | Status |
+|----|------|---------|--------|
+| **I1** | `slashOptions` + `slashPath` on slash `CommandContext` | `@stambha/gateway`, `@stambha/transform` | ✅ |
+| **I2** | `CommandContext.meta` from gateway dispatch | `@stambha/gateway`, `@stambha/transform` | ✅ |
+| **I3** | Route component interactions → `SignalRouter` | `@stambha/gateway` | ✅ |
+| **I4** | Route autocomplete → `Command.autocomplete()` | `@stambha/gateway`, `@stambha/core` | ✅ |
+| **I5** | `deferReply` on slash `CommandContext` | `@stambha/core`, `@stambha/transform` | ✅ |
+| **I6** | `SignalContext` rich replies + meta parity | `@stambha/transform` | ✅ |
+
+Closes native attach routing gaps. **1.0.0** is unblocked for code; [docs-1.0.0.md](./docs-1.0.0.md) tracks public documentation work.
+
+---
+
+## 0.3.5 (minor) — native interaction routing _(historical spec)_
+
+<details>
+<summary>Original 0.3.5 ticket spec (shipped)</summary>
 
 | ID | Item | Package | Notes |
 |----|------|---------|-------|
@@ -89,9 +105,9 @@ Closes app-layer shims for embed replies, `fetchUser`, and mention parsing. Does
 | **I5** | `deferReply` on slash `CommandContext` | `@stambha/core`, `@stambha/transform` | Type 5 deferred callback; pairs with existing `editReply` |
 | **I6** | `SignalContext` rich replies + meta parity | `@stambha/transform` | Align with `ReplyPayload` where applicable |
 
-**Explicitly still 1.x (enhancements):** declarative gates (B1), permission levels (C1), dashboard, Redis, built-in help, typing indicator, REST-backed entity resolvers (B2), file attachments on `ReplyPayload`, native `runSequence` (2.0).
+</details>
 
-**Branch:** `feature/0.3.5`
+**Explicitly still 1.x (enhancements):** declarative gates (B1), permission levels (C1), dashboard, Redis, built-in help, typing indicator, REST-backed entity resolvers (B2), bridge commands, piece lifecycle (B4–B6), pagination plugin — see [ecosystem-survey.md](./ecosystem-survey.md).
 
 ---
 
@@ -99,12 +115,12 @@ Closes app-layer shims for embed replies, `fetchUser`, and mention parsing. Does
 
 **Not a feature dump.** Ship when:
 
-1. **0.3.5** is done (native attach covers daily command/interaction flows).
-2. `examples/bot` demonstrates slash options, a signal, and permission gates on native stack.
-3. Public docs distinguish **supported native path** vs **1.x enhancements**.
-4. CHANGELOG + semver policy: breaking changes only in major releases after 1.0.0.
+1. **0.3.5** is done (native attach covers daily command/interaction flows). ✅
+2. `examples/bot` demonstrates slash options, a signal, and permission gates on native stack. ✅
+3. Public docs complete per [docs-1.0.0.md](./docs-1.0.0.md) (including **Known gaps** page). ✅
+4. CHANGELOG + semver policy: breaking changes only in major releases after 1.0.0. ✅ (on `release/1.0.0`; tag pending)
 
-Known gaps documented for 1.x/2.0 (levels, declarative options, Redis, dashboard, distributed chron).
+Known gaps documented for 1.x/2.0/plugins (levels, declarative options, Redis, dashboard, runSequence, pagination).
 
 ---
 
@@ -121,11 +137,18 @@ Every gap from production Sapphire → Stambha migrations is assigned. **Nothing
 | Rich / embed replies | **0.3.4 R1–R2** | ✅ |
 | `fetchUser` / guild REST helpers | **0.3.4 R3** | ✅ |
 | Mention / snowflake id args | **0.3.4 R4** | ✅ |
-| Slash options on native context | **0.3.5 I1** | 🔲 |
-| Gate `meta` on native context | **0.3.5 I2** | 🔲 |
-| Signals (buttons/selects/modals) on native attach | **0.3.5 I3** | 🔲 |
-| Autocomplete on native attach | **0.3.5 I4** | 🔲 |
-| Slash `deferReply` | **0.3.5 I5** | 🔲 |
+| Slash options on native context | **0.3.5 I1** | ✅ |
+| Gate `meta` on native context | **0.3.5 I2** | ✅ |
+| Signals (buttons/selects/modals) on native attach | **0.3.5 I3** | ✅ |
+| Autocomplete on native attach | **0.3.5 I4** | ✅ |
+| Slash `deferReply` | **0.3.5 I5** | ✅ |
+| Bridge / hybrid command DX | **1.x B2** | Planned |
+| Prefix flags + greedy args | **1.x B2** | Planned |
+| Piece lifecycle + command errors | **1.x B4** | Planned |
+| Component menu builder + persistent signals | **1.x B5** | Planned |
+| Prefix edit tracking | **1.x B6** | Planned |
+| Pagination UI | **Plugins P1** | Planned |
+| Automated resharding threshold | **1.x G1** | Planned |
 | Declarative command options → auto-gates | **1.x B1** | Planned |
 | Permission levels | **1.x C1** (`@stambha/levels`) | Planned |
 | REST entity arg resolvers | **1.x B2** | Planned |
@@ -148,7 +171,7 @@ Every gap from production Sapphire → Stambha migrations is assigned. **Nothing
 | Pillar | Source | Deliverables |
 |--------|--------|--------------|
 | **A** | Distributed infra | Redis cache/cooldown, RabbitMQ bus, Influx (**A5 → 0.3.0** ✅) |
-| **B** | Sapphire command options | B1 declarative gates, B2 prefix flags + REST resolvers, B3 help |
+| **B** | Sapphire + ecosystem DX | B1 declarative gates, B2 bridge args, B3 help, B4–B6 from [ecosystem-survey](./ecosystem-survey.md) |
 | **C** | Permission levels | C1 `@stambha/levels`, C2 Vault overrides |
 | **D** | Stambha-only | Native `runSequence`, reshard barriers, distributed chron |
 | **E** | Dashboard | `@stambha/dashboard` in plugins repo (ADR 003) |
@@ -159,6 +182,8 @@ See [future-v2.md](./future-v2.md) for phases, dependency graph, and open questi
 
 ## Related
 
+- [ecosystem-survey.md](./ecosystem-survey.md) — cross-framework adoption backlog
+- [docs-1.0.0.md](./docs-1.0.0.md) — public docs gate for 1.0.0
 - [migration-shims.md](./migration-shims.md) — deprecated app-layer patterns
 - [roadmap.md](./roadmap.md) — feature matrix and 1.0.0 criteria
 - [phases.md](./phases.md) — completed phase index

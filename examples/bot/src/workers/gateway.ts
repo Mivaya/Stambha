@@ -1,10 +1,10 @@
 import {
-  GatewayIntent,
   attachGatewayRelay,
   combineIntents,
   createGatewayEventHub,
   createHttpWorkerClient,
   createNativeGatewayClient,
+  GatewayIntent,
 } from "@stambha/gateway";
 
 const token = process.env.DISCORD_TOKEN;

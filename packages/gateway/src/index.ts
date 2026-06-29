@@ -1,119 +1,103 @@
 export {
-  recommendedShardCount,
-  guildShardId,
-  shardIdsForWorker,
-  guildsPerShardAverage,
-  shardCapacityRatio,
-  guildShardChanged,
-  guildsAffectedByReshard,
-} from "./shard/calculator.js";
-
+  type AttachStambhaClientOptions,
+  attachStambhaClient,
+} from "./attachStambhaClient.js";
 export {
-  ShardManager,
+  createGatewayEventHub,
+  GatewayEventHub,
+  type GatewayEventHubReadyPayload,
+} from "./GatewayEventHub.js";
+export {
+  createReshardServer,
+  type ReshardServerHandle,
+  type ReshardServerOptions,
+} from "./reshard/createReshardServer.js";
+export {
+  createIdentifyBudget,
+  IdentifyBudget,
+  type IdentifyBudgetOptions,
+} from "./reshard/IdentifyBudget.js";
+export {
+  type CreateReshardPlanOptions,
+  createReshardPlan,
+  type ReshardPlan,
+} from "./reshard/plan.js";
+export {
+  evaluateReshard,
+  type ReshardEvaluation,
+  type ReshardPolicyOptions,
+  type ReshardReason,
+} from "./reshard/policy.js";
+export {
+  createReshardController,
+  ReshardController,
+  type ReshardControllerOptions,
+  type ReshardPhase,
+} from "./reshard/ReshardController.js";
+export {
+  guildShardChanged,
+  guildShardId,
+  guildsAffectedByReshard,
+  guildsPerShardAverage,
+  recommendedShardCount,
+  shardCapacityRatio,
+  shardIdsForWorker,
+} from "./shard/calculator.js";
+export {
+  type BuildIdentifyOptions,
+  buildIdentifyPayload,
+  buildResumePayload,
+  combineIntents,
+  type GatewayIdentifyPayload,
+  GatewayIntent,
+  type GatewayResumePayload,
+} from "./shard/identify.js";
+export {
   createShardManager,
+  ShardManager,
   type ShardManagerOptions,
   type ShardRecord,
   type ShardSession,
   type ShardStatus,
 } from "./shard/ShardManager.js";
-
-export {
-  buildIdentifyPayload,
-  buildResumePayload,
-  combineIntents,
-  GatewayIntent,
-  type GatewayIdentifyPayload,
-  type GatewayResumePayload,
-  type BuildIdentifyOptions,
-} from "./shard/identify.js";
-
-export type { WorkerMessage, WorkerMessageHandler, WorkerBus } from "./worker/types.js";
-export { WorkerMessageTypes, createWorkerMessage } from "./worker/types.js";
-export { InMemoryWorkerBus } from "./worker/InMemoryWorkerBus.js";
-export {
-  HttpWorkerClient,
-  createHttpWorkerClient,
-  createWorkerServer,
-  type HttpWorkerClientOptions,
-  type WorkerServerOptions,
-  type WorkerServerHandle,
-} from "./worker/HttpWorkerBus.js";
 export {
   attachGatewayRelay,
   type GatewayRelayOptions,
   type WorkerPublisher,
 } from "./worker/gatewayRelay.js";
-
 export {
-  GatewayEventHub,
-  createGatewayEventHub,
-  type GatewayEventHubReadyPayload,
-} from "./GatewayEventHub.js";
-
+  createHttpWorkerClient,
+  createWorkerServer,
+  HttpWorkerClient,
+  type HttpWorkerClientOptions,
+  type WorkerServerHandle,
+  type WorkerServerOptions,
+} from "./worker/HttpWorkerBus.js";
+export { InMemoryWorkerBus } from "./worker/InMemoryWorkerBus.js";
+export type { WorkerBus, WorkerMessage, WorkerMessageHandler } from "./worker/types.js";
+export { createWorkerMessage, WorkerMessageTypes } from "./worker/types.js";
 export {
-  attachStambhaClient,
-  type AttachStambhaClientOptions,
-} from "./attachStambhaClient.js";
-
-export {
-  GatewayOpcode,
   buildGatewayUrl,
   DISCORD_GATEWAY_BASE,
+  GatewayOpcode,
   type GatewayPayload,
 } from "./ws/constants.js";
-
-export {
-  gatewayEventToHubName,
-  messageFromDispatch,
-  interactionFromDispatch,
-  readyFromDispatch,
-  normalizeDispatch,
-} from "./ws/dispatch.js";
-
-export { fetchGatewayBot, type GatewayBotResponse } from "./ws/fetchGatewayBot.js";
-
 export {
   createNativeGatewayClient,
   type NativeGatewayClient,
   type NativeGatewayClientOptions,
 } from "./ws/createNativeGatewayClient.js";
-
-export { GatewayShard, type GatewayShardOptions } from "./ws/GatewayShard.js";
-
 export {
-  resolveWebSocketFactory,
+  gatewayEventToHubName,
+  interactionFromDispatch,
+  messageFromDispatch,
+  normalizeDispatch,
+  readyFromDispatch,
+} from "./ws/dispatch.js";
+export { fetchGatewayBot, type GatewayBotResponse } from "./ws/fetchGatewayBot.js";
+export { GatewayShard, type GatewayShardOptions } from "./ws/GatewayShard.js";
+export {
   type CreateGatewayWebSocket,
   type GatewayWebSocket,
+  resolveWebSocketFactory,
 } from "./ws/socket.js";
-
-export {
-  evaluateReshard,
-  type ReshardPolicyOptions,
-  type ReshardEvaluation,
-  type ReshardReason,
-} from "./reshard/policy.js";
-
-export {
-  createReshardPlan,
-  type ReshardPlan,
-  type CreateReshardPlanOptions,
-} from "./reshard/plan.js";
-
-export {
-  IdentifyBudget,
-  createIdentifyBudget,
-  type IdentifyBudgetOptions,
-} from "./reshard/IdentifyBudget.js";
-
-export {
-  ReshardController,
-  createReshardController,
-  type ReshardControllerOptions,
-  type ReshardPhase,
-} from "./reshard/ReshardController.js";
-
-export {
-  createReshardServer,
-  type ReshardServerOptions,
-  type ReshardServerHandle,
-} from "./reshard/createReshardServer.js";

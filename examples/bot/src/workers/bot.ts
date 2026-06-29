@@ -1,9 +1,9 @@
 import { HttpRestPort } from "@stambha/core";
-import { WorkerMessageTypes, createWorkerServer } from "@stambha/gateway";
-import { commandContextFromStambhaMessageViaRest } from "@stambha/transform";
+import { createWorkerServer, WorkerMessageTypes } from "@stambha/gateway";
 import type { StambhaMessage } from "@stambha/transform";
-import { setupBot } from "../lib/setup.js";
+import { commandContextFromStambhaMessageViaRest } from "@stambha/transform";
 import { deployExampleSlashCommands } from "../lib/deploySlash.js";
+import { setupBot } from "../lib/setup.js";
 
 const token = process.env.DISCORD_TOKEN;
 const restUrl = process.env.REST_WORKER_URL ?? "http://127.0.0.1:4000";

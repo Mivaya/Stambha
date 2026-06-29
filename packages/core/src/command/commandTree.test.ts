@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { Command } from "../registries/Command.js";
-import { Registry } from "../pieces/Registry.js";
 import { StambhaClient } from "../client/StambhaClient.js";
+import { ok } from "../outcome/Outcome.js";
+import type { Registry } from "../pieces/Registry.js";
+import { Command } from "../registries/Command.js";
 import { buildApplicationCommands } from "./buildSlashPayload.js";
 import { SlashOptionType } from "./slashTypes.js";
-import { ok } from "../outcome/Outcome.js";
 
 class PingCommand extends Command {
   constructor(registry: Registry<Command>) {

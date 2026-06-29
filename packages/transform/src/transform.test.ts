@@ -1,10 +1,28 @@
-import { describe, expect, it } from "vitest";
-import { resolveDesiredProperties, slimCommandContext, slimMeta } from "@stambha/core";
-import { gatesDesiredProperties } from "@stambha/core";
+import {
+  gatesDesiredProperties,
+  resolveDesiredProperties,
+  slimCommandContext,
+  slimMeta,
+} from "@stambha/core";
+import { describe, expect, it, vi } from "vitest";
 import { buildDiscordenoDesiredProperties, metaFromDiscordenoSlash } from "./discordeno.js";
+import { LEGACY_LIBRARY_ADAPTER_REMOVAL } from "./deprecation.js";
 import { interactionReplyBody } from "./rest.js";
 
 describe("@stambha/transform", () => {
+  it("warns once when a deprecated library adapter is used", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    buildDiscordenoDesiredProperties(
+      resolveDesiredProperties({ context: { meta: true }, meta: { memberPermissions: true } }),
+    );
+    buildDiscordenoDesiredProperties(
+      resolveDesiredProperties({ context: { meta: true }, meta: { memberPermissions: true } }),
+    );
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn.mock.calls[0]?.[0]).toContain(LEGACY_LIBRARY_ADAPTER_REMOVAL);
+    warn.mockRestore();
+  });
+
   it("builds discordeno desired properties with member when permissions wanted", () => {
     const resolved = resolveDesiredProperties(gatesDesiredProperties);
     const props = buildDiscordenoDesiredProperties(resolved);
@@ -43,6 +61,10 @@ describe("@stambha/transform", () => {
       desired,
     );
     expect(slim.raw).toBe(null);
-    expect(slimMeta(slim.meta, desired.meta)).toEqual({ channelType: "dm", memberPermissions: 1n, clientPermissions: 2n });
+    expect(slimMeta(slim.meta, desired.meta)).toEqual({
+      channelType: "dm",
+      memberPermissions: 1n,
+      clientPermissions: 2n,
+    });
   });
 });

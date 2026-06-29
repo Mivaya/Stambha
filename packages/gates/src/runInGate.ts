@@ -1,9 +1,4 @@
-import {
-  defineGate,
-  isGuildChannelType,
-  type ChannelType,
-  type GateLike,
-} from "@stambha/core";
+import { type ChannelType, defineGate, type GateLike, isGuildChannelType } from "@stambha/core";
 
 /** Sapphire-style RunIn channel presets. */
 export const RunIn = {
@@ -47,10 +42,7 @@ function matchesRunIn(type: ChannelType, allowed: RunInOption): boolean {
  */
 export function runInGate(...allowed: RunInOption[]): GateLike;
 export function runInGate(options: RunInGateOptions, ...allowed: RunInOption[]): GateLike;
-export function runInGate(
-  first: RunInGateOptions | RunInOption,
-  ...rest: RunInOption[]
-): GateLike {
+export function runInGate(first: RunInGateOptions | RunInOption, ...rest: RunInOption[]): GateLike {
   let options: RunInGateOptions = {};
   let allowed: RunInOption[];
 
@@ -84,7 +76,10 @@ export function runInGate(
 
 /** Convenience: guild-only commands (no DMs). */
 export function guildOnlyGate(message?: string): GateLike {
-  return runInGate({ message: message ?? "This command can only be used in a server." }, RunIn.GuildAny);
+  return runInGate(
+    { message: message ?? "This command can only be used in a server." },
+    RunIn.GuildAny,
+  );
 }
 
 /** Convenience: DM-only commands. */

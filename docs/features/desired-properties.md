@@ -2,7 +2,7 @@
 
 **Context slimming** on `StambhaClient` and **`@stambha/transform`** provide a bidirectional layer between Discord transports and Stambha's transport-agnostic shapes.
 
-Gateway RAM trimming (select which fields to keep on incoming payloads) pairs with Stambha's own `CommandContext` field mask.
+Gateway RAM trimming pairs with Stambha's `CommandContext` field mask on the native stack.
 
 ---
 
@@ -44,31 +44,29 @@ createStambhaBot({
 
 ---
 
-## `@stambha/transform`
-
-Transport adapters live in one package:
+## `@stambha/transform` (native)
 
 ```ts
 import {
-  messageFromDiscordJs,
-  metaFromDiscordJsSlash,
-  buildDiscordenoDesiredProperties,
+  interactionFromDispatch,
+  metaFromDiscordInteraction,
   interactionReplyBody,
+  type StambhaMessage,
 } from "@stambha/transform";
 ```
 
 | Export | Role |
 |--------|------|
-| `StambhaMessage`, `StambhaUser`, … | Slim internal DTOs |
-| `metaFromDiscordJs*` / `metaFromDiscordeno*` | Gate metadata |
-| `buildDiscordenoDesiredProperties` | Gateway trim from client mask |
+| `StambhaMessage`, `StambhaInteraction`, … | Slim internal DTOs |
+| `interactionFromDispatch`, `messageFromDispatch` | Raw Discord dispatch → Stambha shapes |
+| `metaFromDiscordInteraction` | Gate metadata on native attach (0.3.5+) |
 | `interactionReplyBody`, `channelMessageBody` | Native REST payloads |
 
-`@stambha/transform` applies slimming when building contexts. Bot authors usually set `desiredProperties` on the client.
+`createNativeGatewayClient` + `attachStambhaClient` populate `ctx.meta` and slash options automatically — no third-party library adapters.
 
-### Gateway trim helpers
+### Deprecated library adapters
 
-`buildDiscordenoDesiredProperties()` in `@stambha/transform` maps Stambha gate needs to gateway desired-property flags from the client mask.
+`messageFromDiscordJs`, `messageFromDiscordeno`, `buildDiscordenoDesiredProperties`, and related exports are **deprecated in 1.0.0** and **removed in future release**. Migrations must ship fully on the native stack. See [Known gaps](/guide/known-gaps).
 
 ---
 
@@ -78,11 +76,12 @@ import {
 import { slimCommandContext, slimMeta, resolveDesiredProperties } from "@stambha/core";
 ```
 
-Used by `@stambha/transform` after building a full context. Custom gateway workers should follow the same pattern.
+Used by `@stambha/transform` after building a full context.
 
 ---
 
 ## Related
 
 - [Gates](/features/gates) — requires `meta` for permission / NSFW / RunIn checks
-- [Transport](/reference/transport) — native REST (uses transform REST bodies in split tier)
+- [Transport](/reference/transport) — native package map
+- [Gateway](/deployment/gateway) — `attachStambhaClient`

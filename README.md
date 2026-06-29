@@ -262,10 +262,20 @@ Deploy to GitHub Pages: see [Hosting the docs](docs/guide/hosting-the-docs.md).
 | [Deployment](docs/deployment/overview.md) | Tier split, gateway, metrics |
 | [Migration](docs/migration/) | Guides for moving from other bot stacks |
 
-Contributor planning docs: [`docs/internal/`](docs/internal/).
-
+**Contributing:** [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md) · [AGENT.md](AGENT.md) (architecture & agent conventions)
 ---
 
 ## Status
 
-**v0.3.5** — Native interaction routing (slash options, meta, signals, autocomplete, deferReply). See [CHANGELOG.md](CHANGELOG.md).
+**Preparing v1.0.0** on branch `release/1.0.0` — stable semver promise + [public docs audit](docs/internal/docs-1.0.0.md). Latest published: **v0.3.5** (native interaction routing). See [CHANGELOG.md](CHANGELOG.md).
+
+### Semver (from 1.0.0)
+
+| Release | Policy |
+|---------|--------|
+| **1.0.0+** | Breaking changes only in **major** versions |
+| **Minor** | New features, backward compatible |
+| **Patch** | Bug fixes, backward compatible |
+| **0.3.x** (historical) | Additive API changes allowed before stable 1.0 |
+
+Documented gaps for post-1.0 work: [Known gaps](docs/guide/known-gaps.md).
