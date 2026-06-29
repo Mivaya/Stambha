@@ -40,8 +40,6 @@ Use this stack for new bots:
 | **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
 | **G1** | Auto resharding threshold | Manual `ReshardController` APIs exist |
 
-See [future release plan](https://github.com/Mivaya/Stambha/blob/main/docs/internal/future-v2.md) for pillar details.
-
 ---
 
 ## Deferred to plugins ([Stambha-plugins](https://github.com/Mivaya/Stambha-plugins))
@@ -71,7 +69,7 @@ Today, [Sequences](/features/sequences) are built with `sequence()` + manual Sig
 
 ---
 
-## Documentation gaps (Tier 2)
+## Documentation gaps
 
 These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 

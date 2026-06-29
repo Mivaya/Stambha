@@ -1,6 +1,6 @@
 {
   "name": "@stambha/vault",
-  "version": "0.3.5",
+  "version": "1.0.0",
   "description": "Schema-driven persistence for Stambha — Ledger, Blueprint, and Record with typed guild/user settings",
   "author": "Mivaya",
   "license": "MIT",
