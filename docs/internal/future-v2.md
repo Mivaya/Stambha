@@ -4,7 +4,7 @@ Long-term pillars **after** the native stack stabilizes at **1.0.0**. Near-term 
 
 **Scope:** Enhancements and scale — **not** blockers for a basic native bot once **0.3.5** ships.
 
-**Last updated:** 2026-06-16 (post **0.3.5**)
+**Last updated:** 2026-06-18 (post **1.0.0**)
 
 ---
 
@@ -22,9 +22,13 @@ Long-term pillars **after** the native stack stabilizes at **1.0.0**. Near-term 
 ```text
 0.3.4  ✅ Rich replies, REST helpers, mention args
 0.3.5  ✅ Native interaction routing (options, meta, signals, autocomplete, defer)
-1.0.0  🔲 Stable semver API + public docs (deprecate library adapters)
-1.5.0  🔲 Remove discord.js / Discordeno shape adapters from @stambha/transform
-1.x    🔲 B1–B6, C1, A1–A2, B3 help, plugins P1
+1.0.0  ✅ Stable semver API + public docs (deprecate library adapters)
+1.1.x  🔲 B7 mention-as-prefix; G3 spike (dispatch catalog, camelize, consolidate module)
+1.2.0  🔲 G3 phase 1 — reactions, voice, presence, guild/member lifecycle, message delete
+1.3.0  🔲 G3 phase 2 — channels, threads, roles, bans, audit log
+1.4.0  🔲 G3 phase 3 — invites, integrations, stage, scheduled events, typing
+1.5.0  🔲 G3 phase 4 — automod, soundboard, entitlements; remove library adapters
+1.x    🔲 B1–B6, C1, A1–A2, B3 help, G1, G3a typed hub, plugins P1
 2.0.0  🔲 A3 bus, native runSequence, distributed chron/cooldown, G2 gateway proxy
 ```
 
@@ -39,12 +43,14 @@ flowchart TD
   I[0.3.5 native routing] --> V1[1.0.0 stable API]
   V1 --> B1[Declarative gates B1]
   V1 --> C1[Permission levels C1]
+  V1 --> G3[G3 hub dispatch normalize]
   A1[Redis cache A1] --> A3[RabbitMQ bus A3]
   A2[Redis cooldown A2] --> A3
   B1 --> B3[Help system B3]
   C1 --> C2[Vault level overrides]
   A2 --> D2[Distributed Chron]
   B1 --> D1[Native runSequence]
+  G3 --> D1
   C2 --> D3[Vault + Sequences]
 ```
 
@@ -94,6 +100,8 @@ Today: gates work via manual `gateNames` / inline gates. **Declarative options o
 
 **B6** (`feature/edit-tracking`): Prefix command edit → update bot reply (Poise, Akairo).
 
+**B7** (`feature/mention-prefix`): Bot mention as command trigger (`@Bot ping`) — `createMentionPrefixResolver` and/or `mentionCommands` on `attachStambhaClient`. Text prefix via `resolvePrefix` remains; mention parsing is not first-class today.
+
 See [ecosystem-survey.md](./ecosystem-survey.md) for full cross-framework mapping.
 
 ---
@@ -108,6 +116,41 @@ Numeric levels (Everyone → Moderator → Admin → Owner) without discord.js.
 | C2 | `feature/levels-vault` | Guild member level ledger + admin commands |
 
 Vault stores per-guild overrides ([ADR 004](./adr/004-vault-scope-orm-coexistence.md)).
+
+---
+
+## Pillar G — Gateway dispatch normalization
+
+Today: `normalizeDispatch` semantically normalizes **routing-critical** events only (`MESSAGE_*`, `INTERACTION_CREATE`, `READY` → slim **`StambhaMessage`** / **`StambhaInteraction`**). Every other dispatch passes through as **raw snake_case** on a camelCase hub name (`messageReactionAdd`, `guildCreate`, …). App bots (e.g. Vyne) maintain local `rawDispatch` guards.
+
+**Peer comparison:** discord.js / Eris give rich library objects; Discordeno transforms all dispatches into bot types + `desiredProperties`; Sapphire uses discord.js objects or raw `client.ws` + API types. Stambha will **not** build a `Stambha*` type per event — reserve `Stambha*` for the **command routing boundary** only.
+
+### G3 design (all Discord gateway dispatches)
+
+| Layer | Scope | Listener experience |
+|-------|--------|---------------------|
+| **Structural** | Every dispatch | Deep `snake_case` → `camelCase` keys on hub payloads |
+| **Routing DTOs** | Message, interaction, ready | Existing `StambhaMessage` / `StambhaInteraction` (unchanged role) |
+| **Optional typing** | Per-event guards + `Gateway*` types | TypeScript DX for `hub.on` — not required in handler code |
+| **Escape hatch** | `normalize: 'raw'` on gateway client | One minor cycle during migration; prefer structural normalize |
+
+**Package:** consolidate dispatch logic in `@stambha/transform`; `@stambha/gateway` re-exports. Expand `GatewayIntent` with documented full bitfield as phases ship.
+
+### Phased delivery
+
+| Release | Scope |
+|---------|--------|
+| **1.1.x** | Catalog, `camelizeDispatch`, single dispatch module, tests |
+| **1.2.0** | Tier 1 — reactions, voice, presence, guild/member lifecycle, message delete/bulk, poll votes |
+| **1.3.0** | Tier 2 — channels, threads, roles, bans, `GUILD_MEMBERS_CHUNK`, audit log |
+| **1.4.0** | Tier 3 — invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker updates |
+| **1.5.0** | Tier 4 — automod, soundboard, entitlements/subscriptions, app-command permission updates |
+
+**Breaking (1.2.0):** Hub listeners that read `guild_id` must switch to `guildId` (or opt into `normalize: 'raw'` temporarily). Document in CHANGELOG + [gateway deployment](/deployment/gateway).
+
+**G3a** (late 1.x): Typed `GatewayEventMap` on `GatewayEventHub` so `hub.on('messageReactionAdd', …)` is typed without `Stambha*` names.
+
+**G1** / **G2** unchanged — resharding threshold and gateway proxy.
 
 ---
 
@@ -179,6 +222,8 @@ Phases E1–E4: router, OAuth, Vault routes, tier-split mount. Depends on Vault 
 
 | ID | Feature | Inspired by | When |
 |----|---------|-------------|------|
+| **G3** | Normalize all gateway dispatches (camelCase + optional `Gateway*` types) | Discordeno transformers, Sapphire `client.ws` | 1.2–1.5 (phased) |
+| **G3a** | Typed `GatewayEventMap` on hub | discord.js `Client` events | Late 1.x |
 | **G1** | Automated resharding threshold | Discordeno | 1.x `@stambha/gateway` |
 | **G2** | Gateway proxy (zero-downtime deploy) | Discordeno | 2.0 or optional plugin |
 
