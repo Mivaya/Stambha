@@ -88,6 +88,7 @@ export {
   type NativeGatewayClientOptions,
 } from "./ws/createNativeGatewayClient.js";
 export {
+  camelizeDispatch,
   gatewayEventToHubName,
   interactionFromDispatch,
   messageFromDispatch,

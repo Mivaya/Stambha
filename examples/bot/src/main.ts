@@ -24,6 +24,7 @@ const { client } = await setupBot({ demo });
 const hub = createGatewayEventHub();
 attachStambhaClient(hub, client, {
   applicationId: process.env.DISCORD_APPLICATION_ID,
+  mentionCommands: true,
 });
 client.setBridge(hub);
 
@@ -93,6 +94,14 @@ if (demo) {
 
   hub.emit("messageCreate", {
     id: "3",
+    content: `<@${botUserId}> ping`,
+    channelId: "c1",
+    guildId: "g1",
+    author: { id: "u2", bot: false },
+  } satisfies StambhaMessage);
+
+  hub.emit("messageCreate", {
+    id: "3b",
     content: `<@${botUserId}> hey`,
     channelId: "c1",
     guildId: "g1",

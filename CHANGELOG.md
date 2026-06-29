@@ -5,6 +5,30 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-18
+
+**Mention-prefix commands and gateway dispatch foundation.** Additive minor — no breaking hub payload changes.
+
+### Added
+
+- `createMentionPrefixResolver(botUserId, textPrefix?)` in `@stambha/core` — parse `<@id>` / `<@!id>` as prefix alongside text prefix (`@stambha/core`).
+- `mentionCommands: true` on `attachStambhaClient` — wires mention resolver on gateway `ready` (`@stambha/gateway`).
+- `@stambha/transform` **dispatch module** — `camelizeDispatch`, `GATEWAY_DISPATCH_EVENTS` catalog, consolidated `normalizeDispatch` / `messageFromDispatch` / `readyFromDispatch` (`@stambha/transform`, re-exported from `@stambha/gateway`).
+- Catalog completeness test for all gateway dispatch event names; `camelizeDispatch` golden tests.
+
+### Changed
+
+- Dispatch normalization logic lives in `@stambha/transform` (gateway thin re-exports). **Hub emit behavior unchanged** — non-routing events remain raw snake_case until **G3-p1** in 1.2.0.
+- `docs/deployment/gateway.md` — `mentionCommands` option; G3 spike vs upcoming camelCase migration.
+- `docs/guide/known-gaps.md` — B7 shipped; G3 partial (spike in 1.1, Tier 1 breaking migration in 1.2+).
+- `examples/bot` — demo `@Bot ping` with `mentionCommands: true`.
+
+### Packages in this release
+
+| Package                      | Version |
+| ---------------------------- | ------- |
+| All publishable `@stambha/*` | 1.1.0   |
+
 ## [1.0.0] - 2026-06-29
 
 **First production release of the native stack.** v1.0.0 is the milestone where a bot can run end-to-end on `@stambha/gateway`, `@stambha/rest`, and `@stambha/transform` — slash and prefix commands, signals, autocomplete, gates on native `ctx.meta`, and tier split — with public docs, and `examples/bot` demos that match what ships.

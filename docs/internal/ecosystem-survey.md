@@ -6,7 +6,7 @@ Maintainer reference: what other Discord bot ecosystems offer, what Stambha alre
 
 **Surveyed (2026-06):** Akairo, Eris, discord.py, Pycord, Hikari (+ Lightbulb, Tanjun), Serenity (+ Poise), DiscordGo.
 
-**Last updated:** 2026-06-16 (post **0.3.5**)
+**Last updated:** 2026-06-18 (post **1.0.0**)
 
 ---
 
@@ -52,6 +52,8 @@ Sapphire ergonomics  +  Discordeno scale  +  Stambha originals (Vault, Sequences
 | Rich + deferred slash replies | discord.js ecosystem | **✅** 0.3.4–0.3.5 | — | `ReplyPayload`, `deferReply`, `editReply` |
 | REST entity helpers | App shims | **✅** 0.3.4 `@stambha/rest` | — | |
 | Native interaction routing | Discordeno path | **✅** 0.3.5 | — | Options, meta, signals, autocomplete |
+| Hub dispatch normalization | discord.js, Discordeno, Eris | **Partial** — routing only | **1.x G3** | CamelCase all events; `Stambha*` routing boundary only |
+| Mention-as-prefix commands | Poise, Akairo, custom bots | **None** | **1.x B7** | Text `resolvePrefix` only today |
 | Component UI builders | Lightbulb, discord.py Views | **Partial** Signals + Sequences | **1.x B5** | Menu/modal row layout |
 | Collectors (message/reaction/interaction) | discord.js, Serenity, eris-collector | **Partial** Sequences | **2.0 D1** `runSequence` | |
 | Persistent components (survive restart) | discord.py `add_view` | **Partial** Signals + `stambha:` ids | **1.x B5** | `registerPersistentSignals()` |
@@ -81,7 +83,14 @@ Sapphire ergonomics  +  Discordeno scale  +  Stambha originals (Vault, Sequences
 ### Eris (lean Node library)
 
 - **Philosophy:** minimal API surface. Stambha should keep **monolith bootstrap** in `examples/bot` as short as Eris’s CommandClient pattern.
+- **Event payloads:** Eris parses gateway dispatches into lean library objects (camelCase + `ID` suffix). Stambha **G3** targets structural camelCase + optional types — not full Eris-style classes in core.
 - Collectors are community (`eris-collector`); Stambha **Signals/Sequences** are the answer.
+
+### discord.js + Sapphire
+
+- **discord.js:** rich `Client` events (`Message`, `Guild`, …) or raw `client.ws` + `discord-api-types` snake_case `d` for advanced listeners.
+- **Sapphire:** no gateway layer — commands/listeners use discord.js objects; raw gateway via `Listener` + `emitter: client.ws`.
+- Stambha **G3** sits between `@discordjs/core` (API-shaped) and full discord.js objects: camelCase hub payloads, optional `Gateway*` types, no mandatory framework entity per event.
 
 ### discord.py / Pycord (Python)
 
@@ -129,12 +138,15 @@ Sapphire ergonomics  +  Discordeno scale  +  Stambha originals (Vault, Sequences
 | **B4** | Piece lifecycle + command error hooks | discord.py cogs | `@stambha/core`, loader |
 | **B5** | Component menu builder + persistent signals | Lightbulb, discord.py | `@stambha/core` or plugin |
 | **B6** | Prefix edit tracking | Poise, Akairo | `@stambha/gateway` attach |
+| **B7** | Mention-as-prefix command trigger | Poise, Akairo, Vyne | `@stambha/core`, `@stambha/gateway` |
 | **P1** | Pagination plugin | Pycord pages | `@stambha/pagination` (plugins) |
 
 ### Tier B — scale & ops (1.x / 2.0)
 
 | ID | Feature | Inspired by | Lane |
 |----|---------|-------------|------|
+| **G3** | Gateway dispatch normalization (all events, phased) | Discordeno, discord.js `ws` | `@stambha/transform`, `@stambha/gateway` 1.2–1.5 |
+| **G3a** | Typed `GatewayEventMap` on hub | discord.js `Client` | Late 1.x `@stambha/gateway` |
 | **G1** | Automated resharding threshold (e.g. 80% guild cap) | Discordeno | `@stambha/gateway` |
 | **G2** | Gateway proxy for zero-downtime code deploy | Discordeno | 2.0 or optional gateway |
 | **D1** | Native `runSequence` / collectors | discord.js, Serenity | 2.0 |
@@ -150,7 +162,8 @@ Sapphire ergonomics  +  Discordeno scale  +  Stambha originals (Vault, Sequences
 
 ## Explicit non-adoptions
 
-- discord.js / Discordeno **objects in `@stambha/core`**
+- discord.js / Discordeno **rich objects in `@stambha/core`**
+- A parallel **`Stambha*` type for every gateway event** (use camelCase + optional `Gateway*` types instead)
 - Framework-owned SQL ORM (use Vault + Prisma/Drizzle)
 - Mandatory Redis/RabbitMQ for single-process bots
 - Official hybrid discord.js gateway path ([ADR 005](./adr/005-native-only-migration.md))
