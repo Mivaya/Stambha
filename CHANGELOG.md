@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **`ReplyPayload.components`** — buttons and action rows on `CommandContext.reply` (`@stambha/core`, `@stambha/transform`).
+- **`SignalContext.editReply`** on component/modal handlers when `applicationId` is available (pairs with `deferReply`).
 - **Public [Known gaps](/guide/known-gaps)** — honest 1.x / 2.0 / plugins backlog.
 - **`examples/bot` demos** — `SayCommand` (slash options), `ConfirmCommand` (signal button), `LockCommand` (permission gate on native meta).
 
@@ -32,7 +33,7 @@ Native **interaction routing** — closes the 1.0.0 blocker for production bots 
 - **`attachStambhaClient`** routes autocomplete → `Command.autocomplete()`, components/modals → `SignalRouter`, with `signals` / `autocomplete` toggles.
 - **`deferReply`** on slash `CommandContext` (interaction callback type 5).
 - **`autocompleteContextFromStambhaInteraction`**, **`signalContextFromStambhaInteraction`** in `@stambha/transform`.
-- **`SignalContext`** rich replies (`string | ReplyPayload`) and `deferReply`.
+- **`SignalContext.editReply`** on component/modal handlers when `applicationId` is available (pairs with `deferReply`).
 - **`InboundRouter.processAutocomplete`** + `autocompleteError` client event.
 
 ### Changed

@@ -107,16 +107,19 @@ function slashInteractionCallbacks(
 function signalInteractionCallbacks(
   interaction: StambhaInteractionBase,
   restPort: RestPort,
+  options?: ContextBuildOptions,
 ): {
   reply: SignalContext["reply"];
   replyEphemeral: SignalContext["replyEphemeral"];
   deferReply: (ephemeral?: boolean) => Promise<void>;
+  editReply?: SignalContext["editReply"];
 } {
-  const callbacks = slashInteractionCallbacks(interaction, restPort);
+  const callbacks = slashInteractionCallbacks(interaction, restPort, options);
   return {
     reply: callbacks.reply,
     replyEphemeral: callbacks.replyEphemeral,
     deferReply: callbacks.deferReply,
+    ...(callbacks.editReply ? { editReply: callbacks.editReply } : {}),
   };
 }
 
@@ -257,8 +260,9 @@ export function signalContextFromStambhaInteraction(
   interaction: StambhaComponentInteraction | StambhaModalInteraction,
   signalName: string,
   restPort: RestPort,
+  options?: ContextBuildOptions,
 ): SignalContext {
-  const callbacks = signalInteractionCallbacks(interaction, restPort);
+  const callbacks = signalInteractionCallbacks(interaction, restPort, options);
   return {
     signalName,
     userId: interaction.user.id,
@@ -269,6 +273,7 @@ export function signalContextFromStambhaInteraction(
     reply: callbacks.reply,
     replyEphemeral: callbacks.replyEphemeral,
     deferReply: callbacks.deferReply,
+    ...(callbacks.editReply ? { editReply: callbacks.editReply } : {}),
   };
 }
 

@@ -158,6 +158,7 @@ export function attachStambhaClient(
             interaction,
             parsed.name,
             client.restPort,
+            ctxOpts,
           );
           await client.signalRouter.dispatch(signalCtx, signalType);
           return;
