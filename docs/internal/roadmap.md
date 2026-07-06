@@ -6,7 +6,7 @@ This document is the **feature matrix** and **phase history**. Release sequencin
 
 **Branch rule:** `feature/{short-name}`
 
-**Current version:** **0.3.5** published · **1.0.0** docs complete on `release/1.0.0` ([audit](./docs-1.0.0.md))
+**Current version:** **1.0.0** published · post-1.0 backlog in [future-v2.md](./future-v2.md) ([audit](./docs-1.0.0.md))
 
 ---
 
@@ -42,6 +42,8 @@ This document is the **feature matrix** and **phase history**. Release sequencin
 | Rich replies + embeds | ✅ | `ReplyPayload` |
 | Deferred slash + `editReply` | ✅ | `deferReply` + `editReply` |
 | Scouts, hooks, chron, vault | ✅ | Via hub events + loader |
+| Mention-as-prefix commands | ❌ | Text prefix + `resolvePrefix` only → **1.x B7** |
+| Non-routing hub payloads | **Partial** | Raw snake_case `d` on camelCase hub names → **1.x G3** |
 
 ---
 
@@ -60,6 +62,7 @@ Legend: **Done** · **Partial** · **Planned** · **Won't**
 | Slash options / `SlashArgs` | **Done** — native attach 0.3.5 | |
 | Subcommands & groups (deploy + router) | **Done** | |
 | Prefix aliases, categories | **Done** | Maintain |
+| Mention-as-prefix (`@Bot cmd`) | **Planned** — 1.x B7 | Poise, Akairo, custom bots |
 | Autocomplete handlers | **Done** — native attach 0.3.5 | |
 | Component handlers (buttons, …) | **Done** — native attach 0.3.5 | B5 menu builder → 1.x |
 | Slash deploy / diff | **Done** — `@stambha/rest` | Maintain |
@@ -84,7 +87,8 @@ Legend: **Done** · **Partial** · **Planned** · **Won't**
 | Centralized REST rate limits | **Done** — `@stambha/rest` | Maintain |
 | Native WebSocket gateway | **Done** — 0.3.0 `createNativeGatewayClient` | Maintain |
 | desiredProperties / slim context | **Done** | Maintain |
-| Transform layer | **Done** — `@stambha/transform` | Extend in 0.3.5 |
+| Transform layer | **Done** — `@stambha/transform` | Routing shapes ✅; full dispatch → **G3** |
+| Hub dispatch normalization | **Partial** — 3 routing events | **G3** camelCase all dispatches (1.2–1.5) |
 | Sharding + resharding APIs | **Done** — `@stambha/gateway` | Maintain |
 | Custom cache | **Done** — `@stambha/cache` (plugins); Redis → 1.x A1 | — |
 | Cross-runtime (Node, Bun, Deno) | **Done** — `@stambha/runtime` | Maintain |
@@ -151,7 +155,8 @@ Phases 1–10: see [phases.md](./phases.md). Summary of 11+:
 | 21 Migration docs | ✅ | Public guides + ADRs |
 | 22 Authoring (0.3.4) | ✅ | ReplyPayload, REST resources, mention args |
 | **23 Native routing (0.3.5)** | ✅ | Options, meta, signals, autocomplete, defer |
-| **24 Docs & 1.0.0** | ✅ | [docs-1.0.0.md](./docs-1.0.0.md), known-gaps, examples — tag pending |
+| **24 Docs & 1.0.0** | ✅ | [docs-1.0.0.md](./docs-1.0.0.md), known-gaps, examples |
+| **25 Gateway dispatch (G3)** | 🔲 | CamelCase all hub payloads; optional `Gateway*` types — phased 1.2–1.5 |
 
 ---
 
@@ -174,10 +179,10 @@ Ship **1.0.0** after **0.3.5** ✅, when all of the following are true:
 ## Priority order (for new contributors)
 
 ```text
-Now:     Tag 1.0.0 (version:bump + release) after merge of release/1.0.0
-Next:    1.x B1/C1, B2 bridge args, plugins pagination (P1)
+Now:     1.0.0 stable — B1/C1, B2 bridge args, plugins pagination (P1)
+Next:    1.1 B7 mention-as-prefix; 1.2+ G3 gateway dispatch (phased)
 Then:    1.x B4–B6 (lifecycle, components, edit tracking)
-Later:   2.0 bus, distributed chron, native runSequence
+Later:   2.0 bus, distributed chron, native runSequence (D1 builds on G3)
 ```
 
 ---

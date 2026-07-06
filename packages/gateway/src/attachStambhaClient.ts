@@ -1,5 +1,5 @@
 import type { Bridge, PrefixResolver, StambhaClient } from "@stambha/core";
-import { Signal } from "@stambha/core";
+import { createMentionPrefixResolver, Signal } from "@stambha/core";
 import {
   autocompleteContextFromStambhaInteraction,
   commandContextFromStambhaMessageViaRest,
@@ -16,6 +16,12 @@ export interface AttachStambhaClientOptions {
   signals?: boolean;
   autocomplete?: boolean;
   scouts?: boolean;
+  /**
+   * Route `@Bot ping` style messages via {@link createMentionPrefixResolver}.
+   * Wires `client.resolvePrefix` on `ready` using the bot user id (or an existing
+   * {@link StambhaClient.botUserId}). Ignored when `resolvePrefix` is set explicitly.
+   */
+  mentionCommands?: boolean;
   /**
    * Per-guild or dynamic prefix. Sets {@link StambhaClient.resolvePrefix} for the lifetime of the attach.
    * When omitted, uses {@link StambhaClient.prefix}.
@@ -54,12 +60,18 @@ export function attachStambhaClient(
     signals = true,
     autocomplete = true,
     scouts = true,
+    mentionCommands = false,
     resolvePrefix,
     applicationId,
   } = options;
   const previousResolvePrefix = client.resolvePrefix;
   if (resolvePrefix) {
     client.resolvePrefix = resolvePrefix;
+  } else if (mentionCommands) {
+    const wireMentionResolver = (botUserId: string) => {
+      client.resolvePrefix = createMentionPrefixResolver(botUserId, client.prefix);
+    };
+    if (client.botUserId) wireMentionResolver(client.botUserId);
   }
   const unsubs: (() => void)[] = [];
 
@@ -75,7 +87,12 @@ export function attachStambhaClient(
 
   on("ready", (payload) => {
     const user = (payload as { user?: { id: string } })?.user;
-    if (user?.id) client.setBotUserId(user.id);
+    if (user?.id) {
+      client.setBotUserId(user.id);
+      if (mentionCommands && !resolvePrefix) {
+        client.resolvePrefix = createMentionPrefixResolver(user.id, client.prefix);
+      }
+    }
   });
 
   if (scouts) {
@@ -171,7 +188,7 @@ export function attachStambhaClient(
 
   return () => {
     for (const off of unsubs) off();
-    if (resolvePrefix) {
+    if (resolvePrefix || mentionCommands) {
       client.resolvePrefix = previousResolvePrefix;
     }
   };

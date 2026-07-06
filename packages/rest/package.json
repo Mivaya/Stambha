@@ -1,6 +1,6 @@
 {
   "name": "@stambha/rest",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Native Discord REST client, rate-limit queue, REST worker, and slash command deploy",
   "author": "Mivaya",
   "license": "MIT",

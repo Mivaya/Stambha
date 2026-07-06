@@ -9,6 +9,7 @@ export { type ChronErrorHandler, ChronScheduler } from "./chron/ChronScheduler.j
 export { createStambhaBot } from "./client/createStambhaBot.js";
 export { InboundRouter } from "./client/InboundRouter.js";
 export type { PrefixResolveContext, PrefixResolver } from "./client/prefix.js";
+export { createMentionPrefixResolver } from "./client/prefix.js";
 export { SignalRouter } from "./client/SignalRouter.js";
 export { StambhaClient } from "./client/StambhaClient.js";
 export type {
