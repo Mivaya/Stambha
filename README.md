@@ -19,7 +19,7 @@ Connect via `@stambha/rest`, `@stambha/gateway`, and `@stambha/transform`. See [
 
 Piece-based architecture — commands, hooks, middleware, and post-run epilogues in a predictable pipeline.
 
-- **Commands** — slash, prefix, and context menu in one `Command` class
+- **Commands** — slash, prefix, `@mention`, and context menu in one `Command` class
 - **Hooks** — gateway event listeners (`src/listeners/`)
 - **Scouts** — passive message watchers (`src/scouts/`)
 - **Barriers** — global command blockers (`src/barriers/`)
@@ -53,15 +53,15 @@ Centralized REST queue, rate-limit buckets, and split-tier REST worker. No Disco
 
 ### Gateway & sharding (`@stambha/gateway`)
 
-Shard manager, identify/resume payloads, identify budget, resharding policy, gateway↔bot worker bus, and `GatewayEventHub` for native WebSocket workers.
+Shard manager, identify/resume payloads, identify budget, resharding policy, gateway↔bot worker bus, `GatewayEventHub`, and `attachStambhaClient` for native WebSocket workers. **1.1.0:** `mentionCommands` for `@Bot ping` style prefix routing.
+
+### Transform & dispatch (`@stambha/transform`)
+
+Slim command contexts, REST payload builders, and the **dispatch module** — `normalizeDispatch` for routing-critical hub events, `GATEWAY_DISPATCH_EVENTS` catalog, and `camelizeDispatch` (foundation for camelCase hub payloads in 1.2+). Memory-conscious **desired properties** field masks for large bots.
 
 ### Tier split
 
 Run gateway, REST, and bot logic in separate processes — see [docs/deployment/tier-split.md](docs/deployment/tier-split.md) and `examples/bot` (`pnpm split:*`).
-
-### Desired properties (`@stambha/transform`)
-
-Slim command contexts and REST payloads — memory-conscious field masks for large bots.
 
 ### Metrics (`@stambha/metrics`)
 
@@ -84,6 +84,8 @@ Shared abstractions for Node.js, Bun, and Deno (env, fs, paths, timers).
 | Gateway + REST split | **`RestPort` + tier split** |
 | Sharding / resharding | **`@stambha/gateway`** |
 | Multi-step UI | **Sequences** |
+| Mention prefix (`@Bot ping`) | **`mentionCommands` + `createMentionPrefixResolver`** |
+| Gateway dispatch catalog | **`normalizeDispatch` · `camelizeDispatch` (1.1+)** |
 | Observability | **`@stambha/metrics`** |
 
 ---
@@ -97,24 +99,46 @@ flowchart TB
         API["REST API"]
     end
 
-    subgraph Native["Native transport"]
-        GWH["GatewayEventHub"]
-        REST["@stambha/rest"]
-        TR["@stambha/transform"]
+    subgraph GatewayPkg["@stambha/gateway"]
+        Shard["GatewayShard / createNativeGatewayClient"]
+        Hub["GatewayEventHub"]
+        Attach["attachStambhaClient"]
     end
 
-    subgraph Core["@stambha/core"]
+    subgraph TransformPkg["@stambha/transform"]
+        Dispatch["normalizeDispatch"]
+        Shapes["StambhaMessage · StambhaInteraction"]
+        Catalog["dispatch catalog · camelizeDispatch"]
+    end
+
+    subgraph CorePkg["@stambha/core"]
         IR["InboundRouter"]
-        PL["Pipeline"]
+        SR["SignalRouter"]
+        PL["ExecutionPipeline"]
     end
 
-    GW --> GWH
-    API <--> REST
-    GWH --> TR --> IR --> PL
-    REST --> PL
+    subgraph RestPkg["@stambha/rest"]
+        RP["RestPort"]
+    end
+
+    GW --> Shard
+    Shard --> Dispatch
+    Dispatch -->|"routing: MESSAGE · INTERACTION · READY"| Shapes
+    Dispatch -->|"other dispatches: raw snake_case d"| Hub
+    Catalog -.->|"1.2+ hub camelCase"| Dispatch
+    Shapes --> Hub
+    Hub --> Attach
+    Attach -->|"prefix · @mention · slash · autocomplete · scouts"| IR
+    Attach -->|"stambha: components / modals"| SR
+    IR --> PL
+    SR --> PL
+    PL --> RP
+    RP <--> API
 ```
 
-**Inbound:** your shard worker normalizes gateway payloads → `GatewayEventHub.emit` → `attachStambhaClient` → pipeline.
+**Inbound:** `GatewayShard` receives Discord dispatches → `normalizeDispatch` in `@stambha/transform` → `GatewayEventHub.emit` (camelCase event names) → `attachStambhaClient` → `InboundRouter` / `SignalRouter` → pipeline.
+
+**Prefix routing (1.1.0):** set `mentionCommands: true` on `attachStambhaClient`, or `createMentionPrefixResolver(botUserId)` on `client.resolvePrefix`, so `@Bot ping` routes like `!ping`.
 
 **Outbound:** commands reply through `RestPort` (in-process `createNativeRestPort` or split-tier `HttpRestPort`).
 
@@ -174,7 +198,9 @@ const client = createStambhaBot({
 await loadPieces(client);
 
 const hub = createGatewayEventHub();
-attachStambhaClient(hub, client);
+attachStambhaClient(hub, client, {
+  mentionCommands: true, // @Bot ping — uses bot user id from gateway ready
+});
 client.setBridge(hub);
 
 hub.markReady({ user: { id: "YOUR_BOT_USER_ID" } });
@@ -225,7 +251,7 @@ Published under the [**@stambha** npm org](https://www.npmjs.com/org/stambha). E
 | [`@stambha/core`](packages/core) | Client, pipeline, registries, sequences, chron |
 | [`@stambha/rest`](packages/rest) | **Native REST** client + worker |
 | [`@stambha/gateway`](packages/gateway) | **Native gateway** hub, sharding, worker bus |
-| [`@stambha/transform`](packages/transform) | Payload normalization + REST contexts |
+| [`@stambha/transform`](packages/transform) | Dispatch normalization, Stambha shapes, REST contexts |
 | [`@stambha/transport`](packages/transport) | API constants, session, rate-limit routes |
 | [`@stambha/loader`](packages/loader) | Auto-load piece folders |
 | [`@stambha/gates`](packages/gates) | Built-in gates |
@@ -267,7 +293,7 @@ Deploy to GitHub Pages: see [Hosting the docs](docs/guide/hosting-the-docs.md).
 
 ## Status
 
-**Preparing v1.0.0** on branch `release/1.0.0` — stable semver promise + [public docs audit](docs/internal/docs-1.0.0.md). Latest published: **v0.3.5** (native interaction routing). See [CHANGELOG.md](CHANGELOG.md).
+**v1.1.0** — Mention-prefix commands and gateway dispatch foundation ([CHANGELOG](CHANGELOG.md)). Additive minor: `mentionCommands`, `createMentionPrefixResolver`, dispatch catalog + `camelizeDispatch` (hub camelCase migration lands in **1.2.0**).
 
 ### Semver (from 1.0.0)
 
@@ -276,6 +302,5 @@ Deploy to GitHub Pages: see [Hosting the docs](docs/guide/hosting-the-docs.md).
 | **1.0.0+** | Breaking changes only in **major** versions |
 | **Minor** | New features, backward compatible |
 | **Patch** | Bug fixes, backward compatible |
-| **0.3.x** (historical) | Additive API changes allowed before stable 1.0 |
 
-Documented gaps for post-1.0 work: [Known gaps](docs/guide/known-gaps.md).
+Documented gaps and 1.2.0 preview: [Known gaps](docs/guide/known-gaps.md).
