@@ -101,8 +101,8 @@ importers:
         specifier: workspace:*
         version: link:../runtime
       cron-parser:
-        specifier: ^5.0.4
-        version: 5.5.0
+        specifier: ^5.6.0
+        version: 5.6.0
     devDependencies:
       '@types/node':
         specifier: ^25.9.3
@@ -1402,8 +1402,8 @@ packages:
     resolution: {integrity: sha512-7Vv6asjS4gMOuILabD3l739tsaxFQmC+a7pLZm02zyvs8p977bL3zEgq3yDk5rn9B0PbYgIv++jmHcuUab4RhA==}
     engines: {node: '>=18'}
 
-  cron-parser@5.5.0:
-    resolution: {integrity: sha512-oML4lKUXxizYswqmxuOCpgFS8BNUJpIu6k/2HVHyaL8Ynnf3wdf9tkns0yRdJLSIjkJ+b0DXHMZEHGpMwjnPww==}
+  cron-parser@5.6.0:
+    resolution: {integrity: sha512-6159NDv4eDOjXYDmMTkvUtaVcIrNZI779ydTMOfDdi9fSjhPqmySx0icCHX2+nOyXgNSw6sFCsgLKxYs/2KPuQ==}
     engines: {node: '>=18'}
 
   csstype@3.2.3:
@@ -2900,7 +2900,7 @@ snapshots:
     dependencies:
       is-what: 5.5.0
 
-  cron-parser@5.5.0:
+  cron-parser@5.6.0:
     dependencies:
       luxon: 3.7.2
 

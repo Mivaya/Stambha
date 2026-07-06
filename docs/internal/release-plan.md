@@ -4,7 +4,7 @@ Planning doc for maintainers. Captures **semver release lanes** and maps every k
 
 **Migration policy:** [ADR 005](./adr/005-native-only-migration.md) — native stack only; no official hybrid discord.js path.
 
-**Last updated:** 2026-06-16 (post **0.3.5**)
+**Last updated:** 2026-06-18 (post **1.0.0**)
 
 ---
 
@@ -16,8 +16,9 @@ Planning doc for maintainers. Captures **semver release lanes** and maps every k
 | **Minor** | **0.3.0–0.3.3** | Native WS gateway, loader/DX, epilogues, slash deploy — ✅ shipped |
 | **Minor** | **0.3.4** | Rich replies, REST resource helpers, mention id args — ✅ shipped |
 | **Minor** | **0.3.5** | Native interaction routing — ✅ shipped |
-| **Minor** | **1.0.0** | Stable API; semver promise; [public docs audit](./docs-1.0.0.md) |
-| **Minor** | **1.x** | [future-v2.md](./future-v2.md) — B1, C1, Redis, help, B2 entity args |
+| **Minor** | **1.0.0** | Stable API; semver promise; [public docs audit](./docs-1.0.0.md) — ✅ shipped |
+| **Minor** | **1.1–1.5** | G3 gateway dispatch (phased), B7 mention-prefix — see [future-v2.md](./future-v2.md) |
+| **Minor** | **1.x** | B1, C1, Redis, help, B2 entity args, B4–B6 |
 | **Plugins repo** | `@stambha/dashboard` etc. | Pillar E — HTTP, OAuth, dashboard routes |
 | **Major** | **2.0** | Bus, distributed chron, native `runSequence`, breaking CommandOptions if needed |
 
@@ -29,9 +30,11 @@ Planning doc for maintainers. Captures **semver release lanes** and maps every k
 0.3.3  ✅ Native gateway polish, deploy helpers, docs cleanup
 0.3.4  ✅ Rich replies, REST helpers, mention/snowflake args
 0.3.5  ✅ Slash options/subcommands, meta, signals, autocomplete, deferReply
-1.0.0  🔲 Stable API + public docs (ready on release/1.0.0; tag pending)
-1.x    🔲 B1–B6, C1, Redis, help, plugins (see ecosystem-survey.md)
-2.0.0  🔲 A3 bus, distributed chron, native runSequence
+1.0.0  ✅ Stable API + public docs
+1.1.x  🔲 B7 mention-prefix; G3 spike (catalog, camelize)
+1.2–1.5 🔲 G3 phased hub dispatch normalization
+1.x    🔲 B1–B6, C1, Redis, help, G1, G3a, plugins (see ecosystem-survey.md)
+2.0.0  🔲 A3 bus, distributed chron, native runSequence (D1 ← G3)
 ```
 
 ---
