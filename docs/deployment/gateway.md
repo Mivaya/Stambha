@@ -73,16 +73,57 @@ Returns a detach function. Expects normalized `StambhaMessage` / `StambhaInterac
 
 ### Gateway dispatch normalization (G3)
 
-**1.1.0 (G3-spike):** `@stambha/transform` exports `camelizeDispatch`, `GATEWAY_DISPATCH_EVENTS`, and consolidated `normalizeDispatch`. Gateway re-exports the same API. **Hub behavior is unchanged** — only routing events (`messageCreate`, `interactionCreate`, `ready`) use Stambha shapes; other events still pass raw snake_case `d`.
+**1.1.0 (G3-spike):** `@stambha/transform` exports `camelizeDispatch`, `GATEWAY_DISPATCH_EVENTS`, and consolidated `normalizeDispatch`. Catalog + tests only — hub behavior unchanged until 1.2.0.
 
-**1.2.0+ (G3-p1):** Tier 1 events will emit camelCase payloads on the hub (breaking). Import `camelizeDispatch` today to preview shapes; migrate `hub.on` handlers before upgrading to 1.2.
+**1.2.0 (G3-p1):** Tier 1 events emit **camelCase** payloads on the hub. Routing events (`messageCreate`, `interactionCreate`, `ready`) still use `StambhaMessage` / `StambhaInteraction` shapes.
+
+| Tier | Events (examples) | Hub payload |
+|------|-------------------|-------------|
+| Routing | `messageCreate`, `interactionCreate`, `ready` | `StambhaMessage` / `StambhaInteraction` / ready DTO |
+| Tier 1 | `messageReactionAdd`, `guildMemberAdd`, `voiceStateUpdate`, `guildCreate`, `messageDelete`, … | camelCase structural (`guildId`, `userId`, …) |
+| Passthrough | `channelCreate`, `threadCreate`, … until 1.3+ | raw snake_case `d` |
+
+#### Migration from 1.1.x
+
+```ts
+// Before (1.1.x) — snake_case on Tier 1
+hub.on("messageReactionAdd", (payload) => {
+  const guild = payload.guild_id;
+});
+
+// After (1.2.0) — camelCase
+import { isMessageReactionAddPayload } from "@stambha/transform";
+
+hub.on("messageReactionAdd", (payload) => {
+  if (!isMessageReactionAddPayload(payload)) return;
+  const guild = payload.guildId;
+});
+```
+
+**Escape hatch (one minor cycle):** pass `dispatchNormalize: 'raw'` to `createNativeGatewayClient` to keep wire snake_case on Tier 1 while you migrate handlers.
+
+```ts
+const gateway = await createNativeGatewayClient({
+  token: process.env.DISCORD_TOKEN!,
+  hub,
+  intents,
+  dispatchNormalize: "raw", // remove after migrating hub.on handlers
+});
+```
+
+`createNativeGatewayClient` options (G3-related):
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `dispatchNormalize` | `'default'` | `'default'` — Tier 1 camelCase at hub; `'raw'` — skip structural normalize |
 
 `createNativeGatewayClient`:
 
 - Fetches `GET /gateway/bot` for recommended shard count and gateway URL (override with `totalShards` / `gatewayUrl`)
 - Sends identify / resume with heartbeat handling
 - Normalizes `MESSAGE_CREATE`, `INTERACTION_CREATE`, and `READY` into Stambha hub shapes
-- Emits other dispatches as camelCase hub events (`guildCreate`, `messageDelete`, …)
+- Normalizes **Tier 1** dispatches to camelCase at the hub (1.2.0+)
+- Emits other dispatches on camelCase hub names with raw snake_case `d` until G3-p2 (1.3.0+)
 
 Requires Node 22+ global `WebSocket` or the bundled `ws` dependency (installed with `@stambha/gateway`).
 
