@@ -52,9 +52,13 @@ describe("ws/dispatch", () => {
     }
   });
 
-  it("passes through unknown dispatch payloads", () => {
-    const raw = { id: "g1", name: "Guild" };
-    expect(normalizeDispatch("GUILD_CREATE", raw)).toBe(raw);
+  it("camelizes Tier 1 dispatch payloads", () => {
+    const raw = { id: "g1", name: "Guild", owner_id: "u1" };
+    expect(normalizeDispatch("GUILD_CREATE", raw)).toEqual({
+      id: "g1",
+      name: "Guild",
+      ownerId: "u1",
+    });
   });
 });
 

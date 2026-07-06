@@ -41,14 +41,18 @@ export {
   buildDispatchCatalog,
   camelizeDispatch,
   dispatchCatalogEntry,
+  dispatchNormalizationTier,
   GATEWAY_DISPATCH_EVENTS,
   gatewayEventToHubName,
+  isTier1Dispatch,
   messageFromDispatch,
   normalizeDispatch,
   readyFromDispatch,
   type DispatchCatalogEntry,
   type DispatchNormalizationTier,
   type GatewayDispatchEventName,
+  type NormalizeDispatchMode,
+  type NormalizeDispatchOptions,
 } from "./dispatch/index.js";
 
 export {
