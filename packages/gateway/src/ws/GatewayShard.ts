@@ -1,3 +1,4 @@
+import type { NormalizeDispatchMode } from "@stambha/transform";
 import type { SessionInfo } from "@stambha/transport";
 import type { GatewayEventHub } from "../GatewayEventHub.js";
 import type { IdentifyBudget } from "../reshard/IdentifyBudget.js";
@@ -25,6 +26,11 @@ export interface GatewayShardOptions {
   properties?: BuildIdentifyOptions["properties"];
   /** Delay before reconnect after Discord opcode 7. */
   reconnectDelayMs?: number;
+  /**
+   * Gateway dispatch payload normalization (G3-p1).
+   * `default` — Tier 1 camelCase at hub; `raw` — wire snake_case escape hatch.
+   */
+  dispatchNormalize?: NormalizeDispatchMode;
 }
 
 export class GatewayShard {
@@ -191,6 +197,8 @@ export class GatewayShard {
 
   private onDispatch(eventName: string, data: unknown, sequence: number | null): void {
     const { hub, manager, shardId } = this.options;
+    const normalizeOptions =
+      this.options.dispatchNormalize === "raw" ? { mode: "raw" as const } : undefined;
 
     if (eventName === "READY") {
       const ready = data as { session_id?: string };
@@ -205,7 +213,7 @@ export class GatewayShard {
         sequence: this.lastSequence ?? 0,
       });
       if (shardId === 0) {
-        const normalized = normalizeDispatch(eventName, data);
+        const normalized = normalizeDispatch(eventName, data, normalizeOptions);
         hub.markReady(normalized as { user?: { id: string; username?: string } });
         hub.emit("ready", normalized);
       }
@@ -213,7 +221,7 @@ export class GatewayShard {
     }
 
     const hubEvent = gatewayEventToHubName(eventName);
-    hub.emit(hubEvent, normalizeDispatch(eventName, data));
+    hub.emit(hubEvent, normalizeDispatch(eventName, data, normalizeOptions));
   }
 
   private sendHeartbeat(): void {

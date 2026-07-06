@@ -94,6 +94,8 @@ export {
   messageFromDispatch,
   normalizeDispatch,
   readyFromDispatch,
+  type NormalizeDispatchMode,
+  type NormalizeDispatchOptions,
 } from "./ws/dispatch.js";
 export { fetchGatewayBot, type GatewayBotResponse } from "./ws/fetchGatewayBot.js";
 export { GatewayShard, type GatewayShardOptions } from "./ws/GatewayShard.js";

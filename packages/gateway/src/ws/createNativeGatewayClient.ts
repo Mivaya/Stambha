@@ -1,3 +1,4 @@
+import type { NormalizeDispatchMode } from "@stambha/transform";
 import { createSession, type SessionInfo } from "@stambha/transport";
 import type { GatewayEventHub } from "../GatewayEventHub.js";
 import { createIdentifyBudget, type IdentifyBudget } from "../reshard/IdentifyBudget.js";
@@ -34,6 +35,11 @@ export interface NativeGatewayClientOptions {
   reconnectDelayMs?: number;
   /** Custom fetch for `/gateway/bot` (tests). */
   fetch?: typeof fetch;
+  /**
+   * Gateway dispatch payload normalization (G3-p1).
+   * `default` — Tier 1 camelCase at hub; `raw` — wire snake_case escape hatch.
+   */
+  dispatchNormalize?: NormalizeDispatchMode;
 }
 
 export interface NativeGatewayClient {
@@ -93,6 +99,8 @@ export async function createNativeGatewayClient(
     if (options.properties !== undefined) shardOptions.properties = options.properties;
     if (options.reconnectDelayMs !== undefined)
       shardOptions.reconnectDelayMs = options.reconnectDelayMs;
+    if (options.dispatchNormalize !== undefined)
+      shardOptions.dispatchNormalize = options.dispatchNormalize;
     return new GatewayShard(shardOptions);
   });
 
