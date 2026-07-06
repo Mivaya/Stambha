@@ -108,6 +108,14 @@ if (demo) {
     author: { id: "u2", bot: false },
   } satisfies StambhaMessage);
 
+  hub.emit("messageReactionAdd", {
+    userId: "u1",
+    channelId: "c1",
+    messageId: "m1",
+    guildId: "g1",
+    emoji: { id: null, name: "wave" },
+  });
+
   console.log("\n--- end demo ---\n");
 } else if (token) {
   const gatewayOptions = {
