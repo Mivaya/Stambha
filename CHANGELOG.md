@@ -5,6 +5,35 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-06
+
+**Tier 1 gateway dispatch normalization (G3-p1).** First breaking gateway minor after 1.0.0 — custom `hub.on` listeners on Tier 1 events receive camelCase payloads.
+
+### Added
+
+- **G3-p1** — `normalizeDispatch` applies `camelizeDispatch` at hub boundary for Tier 1 events (reactions, voice, presence, guild/member lifecycle, message delete/bulk, poll votes) (`@stambha/transform`, `@stambha/gateway`).
+- `dispatchNormalizationTier`, `isTier1Dispatch` — catalog tier helpers (`@stambha/transform`).
+- `dispatchNormalize: 'default' | 'raw'` on `createNativeGatewayClient` — migration escape hatch (`@stambha/gateway`).
+- Tier 1 **payload types** and **type guards** — `GatewayMessageReactionAdd`, `isMessageReactionAddPayload`, etc. (`@stambha/transform`).
+- `examples/bot` — `ReactionListener` on `messageReactionAdd`; demo emits camelCase reaction payload.
+
+### Changed
+
+- **Breaking:** Tier 1 hub payloads use camelCase keys (`guildId` not `guild_id`). Routing events (`messageCreate`, `interactionCreate`, `ready`) unchanged.
+- `docs/deployment/gateway.md` — G3-p1 migration guide and `dispatchNormalize` option.
+- `docs/guide/known-gaps.md` — G3-p1 shipped; Tier 2 → 1.3.0.
+
+### Migration
+
+- Update custom `hub.on` handlers on Tier 1 events to read camelCase fields.
+- Temporary: `createNativeGatewayClient({ dispatchNormalize: 'raw' })` preserves wire snake_case for one minor cycle.
+
+### Packages in this release
+
+| Package                      | Version |
+| ---------------------------- | ------- |
+| All publishable `@stambha/*` | 1.2.0   |
+
 ## [1.1.0] - 2026-07-06
 
 **Mention-prefix commands and gateway dispatch foundation.** Additive minor — no breaking hub payload changes.

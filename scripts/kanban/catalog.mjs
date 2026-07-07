@@ -632,22 +632,22 @@ export const CARD_CATALOG = {
 
   "G3-p1": {
     title: "G3-p1 — Tier 1 gateway dispatches",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "G",
     release: "1.2",
-    body: ticketBody({
-      summary: "1.2.0 — reactions, voice, presence, guild/member lifecycle, message delete/bulk, poll votes. **Sprint Ready after v1.1.0.**",
-      problem: "Breaking change: hub payloads become camelCase (guildId not guild_id).",
-      acceptance: [
-        "Tier 1 events in normalizeDispatch",
-        "Optional Gateway* types + guards",
-        "CHANGELOG + gateway.md migration",
-        "Worker bus JSON round-trip tested",
+    body: doneBody({
+      summary: "1.2.0 — Tier 1 hub camelCase (G3-p1).",
+      delivered: [
+        "normalizeDispatch camelizes Tier 1 at hub boundary",
+        "dispatchNormalize raw escape hatch",
+        "Tier 1 types + guards; ReactionListener in examples/bot",
+        "gateway.md migration + CHANGELOG breaking note",
+        "Worker bus JSON round-trip tests",
       ],
-      meta: { ID: "G3-p1", Pillar: "G", Release: "1.2", Epic: "EPIC-G" },
-      dependencies: "G3-spike",
+      meta: { ID: "G3-p1", Pillar: "G", Release: "1.2.0", Epic: "EPIC-G" },
+      references: ["Shipped v1.2.0"],
     }),
   },
 
