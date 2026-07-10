@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: Stambha
-  text: Native Discord bot framework
-  tagline: Piece-based command DX. Multi-process scale. No discord.js required.
+  text: Discord bots. Native. Scalable.
+  tagline: Piece-based commands in TypeScript — native gateway and REST, no discord.js required.
   actions:
     - theme: brand
       text: Get started
@@ -17,19 +17,27 @@ hero:
       link: https://github.com/mivaya/Stambha
 
 features:
-  - title: Command pipeline
-    details: Commands, hooks, gates, scouts, barriers, and epilogues — a familiar piece-based mental model.
-  - title: Native REST
-    details: Centralized rate limits and split-tier REST workers via @stambha/rest — no discord.js in your REST process.
-  - title: Gateway & sharding
-    details: GatewayEventHub, worker bus, identify budget, and resharding helpers for large bots.
+  - title: Commands, organized
+    details: Familiar folders — commands, gates, signals, hooks — loaded from disk. Slash, prefix, and @mention in one Command class.
+  - title: Scale on your terms
+    details: One process today. Split gateway, REST, and bot workers tomorrow — same pipeline.
+  - title: Native REST & gateway
+    details: Centralized rate limits and WebSocket shards via @stambha/rest and @stambha/gateway — no discord.js in your hot path.
   - title: Vault
-    details: Typed guild, user, and member config alongside your ORM — no second schema for prefixes, flags, and module toggles.
+    details: Typed guild, user, and member config alongside your ORM — prefixes, flags, and module toggles without a second schema.
   - title: Sequences & signals
     details: Multi-step flows and button/modal/select routing without boilerplate state machines.
-  - title: Tier split
-    details: Run gateway, REST, and bot logic in separate processes when you need large-bot topology.
+  - title: Extensions
+    details: Optional cache, metrics, and Vault SQL drivers ship from Stambha-plugins on their own release cadence.
 ---
+
+## Try it now
+
+```bash
+cd examples/bot && pnpm install && pnpm demo
+```
+
+No Discord token required — starter bot, real pipeline, simulated events. Full walkthrough: [Getting started](/guide/getting-started).
 
 ## Quick install
 
@@ -37,7 +45,7 @@ features:
 pnpm add @stambha/core @stambha/rest @stambha/gateway @stambha/transform @stambha/loader
 ```
 
-Requires **Node.js 20+**.
+Requires **Node.js 20+**. Working sample: [`examples/bot`](https://github.com/mivaya/Stambha/tree/main/examples/bot).
 
 ## Migrating?
 

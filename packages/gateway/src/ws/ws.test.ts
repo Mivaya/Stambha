@@ -52,9 +52,13 @@ describe("ws/dispatch", () => {
     }
   });
 
-  it("passes through unknown dispatch payloads", () => {
-    const raw = { id: "g1", name: "Guild" };
-    expect(normalizeDispatch("GUILD_CREATE", raw)).toBe(raw);
+  it("camelizes Tier 1 dispatch payloads", () => {
+    const raw = { id: "g1", name: "Guild", owner_id: "u1" };
+    expect(normalizeDispatch("GUILD_CREATE", raw)).toEqual({
+      id: "g1",
+      name: "Guild",
+      ownerId: "u1",
+    });
   });
 });
 
@@ -164,6 +168,102 @@ describe("GatewayShard", () => {
       author: { id: "u1", bot: false },
     });
 
+    await shard.disconnect();
+  });
+
+  it("emits camelCase Tier 1 payloads from gateway dispatch", async () => {
+    const hub = createGatewayEventHub();
+    const events: unknown[] = [];
+    hub.on("guildMemberAdd", (payload) => events.push(payload));
+
+    const scripted: GatewayPayload[] = [
+      { op: GatewayOpcode.Hello, d: { heartbeat_interval: 60_000 } },
+      {
+        op: GatewayOpcode.Dispatch,
+        t: "GUILD_MEMBER_ADD",
+        s: 2,
+        d: {
+          user: { id: "u2", username: "bob" },
+          guild_id: "g1",
+          roles: ["r1"],
+        },
+      },
+    ];
+
+    const sockets: MockWebSocket[] = [];
+    const createWebSocket: CreateGatewayWebSocket = () => {
+      const socket = new MockWebSocket(scripted);
+      sockets.push(socket);
+      return socket;
+    };
+
+    const shard = new GatewayShard({
+      session: createSession({ token: "test-token" }),
+      shardId: 0,
+      totalShards: 1,
+      intents: 1,
+      hub,
+      manager: createShardManager({ totalShards: 1 }),
+      gatewayUrl: "wss://gateway.test/?v=10&encoding=json",
+      createWebSocket,
+    });
+
+    const connectPromise = shard.connect();
+    await sockets[0]?.open();
+    await connectPromise;
+
+    sockets[0]?.push(scripted[0]!);
+    await new Promise((resolve) => setImmediate(resolve));
+
+    sockets[0]?.push(scripted[1]!);
+    expect(events[0]).toMatchObject({
+      guildId: "g1",
+      user: { id: "u2", username: "bob" },
+    });
+
+    await shard.disconnect();
+  });
+
+  it("preserves raw snake_case when dispatchNormalize is raw", async () => {
+    const hub = createGatewayEventHub();
+    const events: unknown[] = [];
+    hub.on("guildCreate", (payload) => events.push(payload));
+
+    const rawGuild = { id: "g1", name: "Guild", owner_id: "u1" };
+    const scripted: GatewayPayload[] = [
+      { op: GatewayOpcode.Hello, d: { heartbeat_interval: 60_000 } },
+      { op: GatewayOpcode.Dispatch, t: "GUILD_CREATE", s: 2, d: rawGuild },
+    ];
+
+    const sockets: MockWebSocket[] = [];
+    const createWebSocket: CreateGatewayWebSocket = () => {
+      const socket = new MockWebSocket(scripted);
+      sockets.push(socket);
+      return socket;
+    };
+
+    const shard = new GatewayShard({
+      session: createSession({ token: "test-token" }),
+      shardId: 0,
+      totalShards: 1,
+      intents: 1,
+      hub,
+      manager: createShardManager({ totalShards: 1 }),
+      gatewayUrl: "wss://gateway.test/?v=10&encoding=json",
+      createWebSocket,
+      dispatchNormalize: "raw",
+    });
+
+    const connectPromise = shard.connect();
+    await sockets[0]?.open();
+    await connectPromise;
+
+    sockets[0]?.push(scripted[0]!);
+    await new Promise((resolve) => setImmediate(resolve));
+    sockets[0]?.push(scripted[1]!);
+
+    expect(events[0]).toEqual(rawGuild);
+    expect((events[0] as typeof rawGuild).owner_id).toBe("u1");
     await shard.disconnect();
   });
 });

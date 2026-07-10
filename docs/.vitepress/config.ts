@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import defineVersionedConfig from "vitepress-versioning-plugin";
@@ -6,9 +6,15 @@ import { mainSidebar } from "./sidebar";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-function readMonorepoVersion(): string {
+/** Label for `/` docs. After a release is archived, keep showing "Next" until package.json is bumped. */
+function readLatestVersionLabel(): string {
   const pkgPath = path.resolve(__dirname, "../../package.json");
-  return (JSON.parse(readFileSync(pkgPath, "utf-8")) as { version: string }).version;
+  const version = (JSON.parse(readFileSync(pkgPath, "utf-8")) as { version: string }).version;
+  const archived = path.resolve(__dirname, `../versions/${version}`);
+  if (existsSync(archived)) {
+    return "Next";
+  }
+  return version;
 }
 
 export default defineVersionedConfig(
@@ -23,7 +29,7 @@ export default defineVersionedConfig(
     srcExclude: ["internal/**", "scripts/**"],
 
     versioning: {
-      latestVersion: readMonorepoVersion(),
+      latestVersion: readLatestVersionLabel(),
       sidebars: {
         processSidebarURLs: true,
       },
