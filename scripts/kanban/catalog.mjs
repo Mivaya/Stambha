@@ -200,10 +200,10 @@ export const CARD_CATALOG = {
     track: "stambha",
     type: "Feature",
     pillar: "B",
-    release: "1.2",
+    release: "1.3",
     body: ticketBody({
       userStory: "As a bot author, I want command options to auto-wire gates so I don't repeat `gateNames` on every command.",
-      summary: "Declarative gates on `Command` options — merge with explicit `gates[]` via `resolveCommandGates(command)`. Target **1.2.0** (deferred from 1.1).",
+      summary: "Declarative gates on `Command` options — merge with explicit `gates[]` via `resolveCommandGates(command)`. Target **1.3.0** (out of 1.2.0; pick B1 or C1 with G3-p2).",
       problem: "Today every command manually lists gates; Sapphire maps options → preconditions automatically.",
       inScope: ["resolveCommandGates(command)", "Cooldown, permissions, nsfw, runIn from CommandOptions", "Alias `preconditions` → gates"],
       outOfScope: ["Numeric permission levels (C1)", "Auto-gates for Signals"],
@@ -213,7 +213,7 @@ export const CARD_CATALOG = {
         "Unit tests for merge order",
         "Public docs + CHANGELOG",
       ],
-      meta: { ID: "B1", Pillar: "B", Release: "1.2", Epic: "EPIC-B", Branch: "feature/declarative-gates" },
+      meta: { ID: "B1", Pillar: "B", Release: "1.3", Epic: "EPIC-B", Branch: "feature/declarative-gates" },
       references: ["docs/guide/known-gaps.md — B1"],
     }),
   },
@@ -349,16 +349,16 @@ export const CARD_CATALOG = {
     track: "stambha",
     type: "Feature",
     pillar: "C",
-    release: "1.2",
+    release: "1.3",
     body: ticketBody({
       userStory: "As a bot operator, I want numeric permission levels (Everyone → Mod → Admin) without discord.js.",
-      summary: "`@stambha/levels` + permissionLevelGate — Klasa-style governance. Target **1.2.0** (deferred from 1.1).",
+      summary: "`@stambha/levels` + permissionLevelGate — Klasa-style governance. Target **1.3.0** (out of 1.2.0; pick B1 or C1 with G3-p2).",
       acceptance: [
         "Default level ladder exported",
         "permissionLevelGate integrates with pipeline",
         "Document migration from role-only gates",
       ],
-      meta: { ID: "C1", Pillar: "C", Release: "1.2", Epic: "EPIC-C", Branch: "feature/permission-levels" },
+      meta: { ID: "C1", Pillar: "C", Release: "1.3", Epic: "EPIC-C", Branch: "feature/permission-levels" },
       references: ["docs/guide/known-gaps.md — C1"],
     }),
   },
@@ -384,14 +384,14 @@ export const CARD_CATALOG = {
 
   P1: {
     title: "P1 — Pagination plugin",
-    status: "Sprint Ready",
+    status: "In Progress",
     track: "stambha-plugins",
     type: "Feature",
     pillar: "Plugins",
     release: "1.x",
     body: ticketBody({
       userStory: "As a bot author, I want embed pagination with buttons without hand-rolling Signals.",
-      summary: "`@stambha/pagination` — Pycord ext.pages parity using Signals.",
+      summary: "`@stambha/pagination` — Pycord ext.pages parity using Signals. Parallel track while core ships 1.2.0.",
       acceptance: [
         "Package published from Stambha-plugins",
         "Paginator helper with prev/next/dismiss",
@@ -632,22 +632,22 @@ export const CARD_CATALOG = {
 
   "G3-p1": {
     title: "G3-p1 — Tier 1 gateway dispatches",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "G",
     release: "1.2",
-    body: ticketBody({
-      summary: "1.2.0 — reactions, voice, presence, guild/member lifecycle, message delete/bulk, poll votes. **Sprint Ready after v1.1.0.**",
-      problem: "Breaking change: hub payloads become camelCase (guildId not guild_id).",
-      acceptance: [
-        "Tier 1 events in normalizeDispatch",
-        "Optional Gateway* types + guards",
-        "CHANGELOG + gateway.md migration",
-        "Worker bus JSON round-trip tested",
+    body: doneBody({
+      summary: "1.2.0 — Tier 1 hub camelCase (G3-p1).",
+      delivered: [
+        "normalizeDispatch camelizes Tier 1 at hub boundary",
+        "dispatchNormalize raw escape hatch",
+        "Tier 1 types + guards; ReactionListener in examples/bot",
+        "gateway.md migration + CHANGELOG breaking note",
+        "Worker bus JSON round-trip tests",
       ],
-      meta: { ID: "G3-p1", Pillar: "G", Release: "1.2", Epic: "EPIC-G" },
-      dependencies: "G3-spike",
+      meta: { ID: "G3-p1", Pillar: "G", Release: "1.2.0", Epic: "EPIC-G" },
+      references: ["Shipped v1.2.0"],
     }),
   },
 

@@ -5,6 +5,50 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-10
+
+**CamelCase gateway event payloads** for common hub listeners (reactions, guild/member, voice, message delete, poll votes), plus clearer docs and onboarding. First breaking gateway minor after 1.0.0 — custom `hub.on` handlers for those events receive camelCase fields (`guildId`, not `guild_id`).
+
+### Added
+
+- Hub payloads for reactions, voice, presence, guild/member lifecycle, message delete/bulk, and poll votes are deep-camelCased via `normalizeDispatch` / `camelizeDispatch` (`@stambha/transform`, `@stambha/gateway`).
+- `dispatchNormalize: 'default' | 'raw'` on `createNativeGatewayClient` — temporary escape hatch while migrating listeners (`@stambha/gateway`).
+- Payload types and type guards — e.g. `GatewayMessageReactionAdd`, `isMessageReactionAddPayload` (`@stambha/transform`).
+- Catalog helpers for which events are normalized (`dispatchNormalizationTier`, `isTier1Dispatch`) (`@stambha/transform`).
+- `examples/bot` — `ReactionListener` on `messageReactionAdd`; demo emits a camelCase reaction payload.
+- **Architecture** guide — event-flow diagram and routing table (`docs/guide/architecture.md`).
+
+
+
+### Changed
+
+- **Breaking:** custom `hub.on` handlers for the events above must use camelCase fields (`guildId`, not `guild_id`). Routing events (`messageCreate`, `interactionCreate`, `ready`) are unchanged.
+- `docs/deployment/gateway.md` — migration notes and `dispatchNormalize` option.
+- `docs/guide/known-gaps.md` — camelCase coverage for common events; further events planned for 1.3.0+.
+- **README** — product landing: try-it-first, complete native bootstrap, plain-English benefits.
+- **Getting started** — demo-first path (`examples/bot` + `pnpm demo`); `mentionCommands` in bootstrap sample.
+- **Why Stambha** / docs home — benefits box and aligned hero.
+- **Examples** — starter-bot framing and env var table.
+
+
+
+### Migration
+
+- Update custom `hub.on` handlers to read camelCase fields, or set `dispatchNormalize: 'raw'` briefly.
+- Temporary: `createNativeGatewayClient({ dispatchNormalize: 'raw' })` preserves wire snake_case for one minor cycle.
+
+
+
+### Packages in this release
+
+
+| Package                      | Version |
+| ---------------------------- | ------- |
+| All publishable `@stambha/*` | 1.2.0   |
+
+
+
+
 ## [1.1.0] - 2026-07-06
 
 **Mention-prefix commands and gateway dispatch foundation.** Additive minor — no breaking hub payload changes.
@@ -16,18 +60,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `@stambha/transform` **dispatch module** — `camelizeDispatch`, `GATEWAY_DISPATCH_EVENTS` catalog, consolidated `normalizeDispatch` / `messageFromDispatch` / `readyFromDispatch` (`@stambha/transform`, re-exported from `@stambha/gateway`).
 - Catalog completeness test for all gateway dispatch event names; `camelizeDispatch` golden tests.
 
+
+
 ### Changed
 
-- Dispatch normalization logic lives in `@stambha/transform` (gateway thin re-exports). **Hub emit behavior unchanged** — non-routing events remain raw snake_case until **G3-p1** in 1.2.0.
-- `docs/deployment/gateway.md` — `mentionCommands` option; G3 spike vs upcoming camelCase migration.
-- `docs/guide/known-gaps.md` — B7 shipped; G3 partial (spike in 1.1, Tier 1 breaking migration in 1.2+).
+- Dispatch normalization logic lives in `@stambha/transform` (gateway thin re-exports). **Hub emit behavior unchanged** in 1.1.0 — non-routing events remain raw snake_case until camelCase coverage in 1.2.0.
+- `docs/deployment/gateway.md` — `mentionCommands` option; notes on upcoming camelCase migration.
+- `docs/guide/known-gaps.md` — mention-prefix shipped; gateway camelCase planned for 1.2+.
 - `examples/bot` — demo `@Bot ping` with `mentionCommands: true`.
 
+
+
 ### Packages in this release
+
 
 | Package                      | Version |
 | ---------------------------- | ------- |
 | All publishable `@stambha/*` | 1.1.0   |
+
+
+
 
 ## [1.0.0] - 2026-06-29
 

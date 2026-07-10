@@ -1,10 +1,10 @@
 # Known gaps
 
-Stambha **1.1.0** ships a stable native stack and honest documentation. This page lists what is **supported today** versus what is **planned** for 1.x, plugins, or 2.0.
+Stambha **1.2.0** ships camelCase hub payloads for common gateway events (reactions, guild/member, voice, message delete, poll votes). This page lists what is **supported today** versus what is **planned** for 1.x, plugins, or 2.0. Maintainer IDs (B1, G3-p2, …) match the [project board](https://github.com/orgs/Mivaya/projects/2).
 
 ---
 
-## Supported native path (1.1.0)
+## Supported native path (1.2.0)
 
 Use this stack for new bots:
 
@@ -21,7 +21,7 @@ Use this stack for new bots:
 
 **Mention prefix (1.1.0):** `mentionCommands: true` on `attachStambhaClient` (or `createMentionPrefixResolver` on `client.resolvePrefix`) routes `@Bot ping` like `!ping`.
 
-**Hub events today:** `MESSAGE_CREATE` / `MESSAGE_UPDATE`, `INTERACTION_CREATE`, and `READY` are normalized to slim **`StambhaMessage`** / **`StambhaInteraction`** shapes for routing. All other dispatches are emitted on camelCase hub names (`messageReactionAdd`, `guildCreate`, …) with **raw snake_case** Discord `d` payloads. **`camelizeDispatch`** is exported in 1.1.0 (G3-spike) but not applied at the hub boundary until **G3-p1** in **1.2.0** — plan a migration when upgrading to 1.2.
+**Hub events today:** `MESSAGE_CREATE` / `MESSAGE_UPDATE`, `INTERACTION_CREATE`, and `READY` are normalized to slim **`StambhaMessage`** / **`StambhaInteraction`** shapes for routing. Common events (`messageReactionAdd`, `guildMemberAdd`, `voiceStateUpdate`, `messageDelete`, …) emit **camelCase** structural payloads (**1.2.0**). Remaining dispatches pass through as raw snake_case until further coverage in **1.3.0+**. Use `isTier1Dispatch` / type guards from `@stambha/transform` for listener DX.
 
 **Not supported:** discord.js (or any library) owning the gateway while Stambha owns commands only. Use the [native bootstrap](/guide/getting-started).
 
@@ -35,15 +35,15 @@ Use this stack for new bots:
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **B1** | Declarative gates on `Command` options | Target **1.2.0** — today: `gates: [...]` or `gateNames` |
+| **B1** | Declarative gates on `Command` options | Target **1.3.0** (pick B1 or C1 with G3-p2) — today: `gates: [...]` or `gateNames` |
 | **B2** | Hybrid arg mapping, flags, entity resolvers | Partial `@stambha/args` today |
 | **B4** | Per-piece error hooks | Epilogues cover most cases |
 | **B5** | Component UI builders, persistent views | Signals + manual `stambha:` ids today |
 | **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | — |
-| **C1** | Numeric permission levels (`@stambha/levels`) | Target **1.2.0** — use `userPermissionsGate` + roles today |
+| **C1** | Numeric permission levels (`@stambha/levels`) | Target **1.3.0** (pick B1 or C1 with G3-p2) — use `userPermissionsGate` + roles today |
 | **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
 | **G1** | Auto resharding threshold | Manual `ReshardController` APIs exist |
-| **G3** | Gateway dispatch normalization (all events) | **G3-spike shipped in 1.1.0** — catalog + `camelizeDispatch`; Tier 1 hub camelCase → **1.2.0** (G3-p1) |
+| **G3** | Gateway dispatch normalization (all events) | Common events camelCase in **1.2.0** (G3-p1); G3-p2 → **1.3.0** |
 | **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Late 1.x — hub `on` handlers get per-event types |
 
 ---
@@ -86,20 +86,26 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 | [Tier split](/deployment/tier-split) interactions | Bot worker must receive all `interactionCreate` |
 | [Resharding](/deployment/resharding) | Manual operator APIs; auto threshold → **G1** |
 | [Migration from Klasa](/migration/from-klasa) | Optional page shipped |
-| Versioned doc snapshots | `1.0.0` and `1.1.0` archived; archive again at each release tag |
+| Versioned doc snapshots | `1.0.0` and `1.1.0` archived; archive **1.2.0** at the release tag |
 
 ---
 
-## Planned for 1.2.0
+## Planned for 1.3.0
 
-First **breaking** gateway minor for custom `hub.on` listeners on Tier 1 events:
+Next gateway minor — **G3-p2** (channels, threads, roles, bans, audit log). Breaking for listeners on those hub events.
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **G3-p1** | Reactions, voice, presence, guild/member, message delete | Hub payloads camelCase; migration guide + optional `normalize: 'raw'` for one cycle |
-| **B1** or **C1** | Pick one pillar per release | Do not combine G3-p1 + B1 + C1 unless team accepts large QA surface |
+| **G3-p2** | Tier 2 gateway dispatches | Channels, threads, roles, bans, `GUILD_MEMBERS_CHUNK`, audit log |
+| **B1** or **C1** | Pick one pillar per release | Do not combine G3-p2 + B1 + C1 unless team accepts large QA surface |
 
-**G3-p1 requires G3-spike (1.1.0).** Schedule a B1 vs C1 prioritization before starting 1.2.0 work.
+---
+
+## Shipped in 1.2.0 (reference)
+
+| ID | Feature | Notes |
+|----|---------|-------|
+| **G3-p1** | Common hub events camelCase | Reactions, voice, presence, guild/member, message delete/bulk, poll votes; `dispatchNormalize: 'raw'` escape hatch |
 
 ---
 
