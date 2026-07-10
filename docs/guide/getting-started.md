@@ -1,6 +1,20 @@
 # Getting started
 
-This guide walks you through a minimal Stambha bot using the **native stack** (`@stambha/rest`, `@stambha/gateway`, `@stambha/transform`).
+Build a minimal Stambha bot on the **native stack** (`@stambha/rest`, `@stambha/gateway`, `@stambha/transform`).
+
+## Fastest path — no token
+
+Clone the **starter bot** and run the demo pipeline:
+
+```bash
+cd examples/bot
+pnpm install
+pnpm demo
+```
+
+No Discord token required. You’ll see prefix commands, a confirm button signal, and mention routing against the real stack. Details: [examples/bot](https://github.com/mivaya/Stambha/tree/main/examples/bot) (full piece layout — use this as your first clone target).
+
+When you’re ready for a live bot, continue below.
 
 ## Prerequisites
 
@@ -67,6 +81,7 @@ await loadPieces(client);
 const hub = createGatewayEventHub();
 attachStambhaClient(hub, client, {
   applicationId: process.env.DISCORD_APPLICATION_ID,
+  mentionCommands: true, // @Bot ping
 });
 client.setBridge(hub);
 
@@ -165,25 +180,20 @@ await deployCommands({
 
 For guild-scoped testing, pass `guildId`. In sharded bots, deploy from shard 0 only — see [Slash deploy](/deployment/slash-deploy).
 
-## 6. Run the example
+## 6. Run the starter example against Discord
 
 ```bash
 cd examples/bot
-cp .env.example .env   # optional for pnpm demo
+cp .env.example .env   # set DISCORD_TOKEN and DISCORD_APPLICATION_ID
 pnpm install
-pnpm demo              # simulates prefix, signal button, mention scout
-```
-
-With a token:
-
-```bash
-DISCORD_TOKEN=… DISCORD_APPLICATION_ID=… pnpm start
+pnpm start
 ```
 
 The example demonstrates slash options (`/say`), a confirm button (`/confirm` → `ConfirmSignal`), and permission gates (`/lock`).
 
 ## Next steps
 
+- [Architecture](/guide/architecture) — how events flow through the native stack
 - [Project structure](/guide/project-structure) — folder layout
 - [Pieces & pipeline](/guide/pieces) — scouts, conduits, barriers, gates, epilogues
 - [Known gaps](/guide/known-gaps) — what is planned for 1.x / 2.0

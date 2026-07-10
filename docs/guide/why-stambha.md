@@ -1,5 +1,16 @@
 # Why Stambha
 
+## Benefits in plain English
+
+| You want… | Stambha gives you… |
+|-----------|-------------------|
+| Familiar command folders without discord.js in every process | Piece layout (`commands/`, `gates/`, …) on a **native** gateway + REST stack |
+| To test without spinning up Discord | `hub.emit`, `MockBridge`, and `examples/bot` `pnpm demo` |
+| To grow from one process to many | Same pipeline in one process or split across gateway / REST / bot workers |
+| Guild settings without inventing a schema | **Vault** for prefix/flags/modules — keep Prisma/SQL for domain data |
+
+---
+
 ## The problem
 
 Building a serious Discord bot today usually means picking a lane:
@@ -10,13 +21,13 @@ Building a serious Discord bot today usually means picking a lane:
 | **Native transport stack** | Sharding, REST proxy patterns, worker-friendly layout | A different command model; more wiring for piece-based ergonomics |
 | **discord.js alone** | Full API surface | No opinion on structure, gates, deploy, or multi-process layout |
 
-Teams coming from piece-based layouts want to **keep familiar folders** (`commands/`, `listeners/`, `gates/`). Teams scaling across processes want **first-class tier split** without bolting e.g. discord.js onto every worker.
+Teams coming from piece-based layouts want to **keep familiar folders** (`commands/`, `listeners/`, `gates/`). Teams scaling across processes want **first-class process split** without bolting e.g. discord.js onto every worker.
 
-Git commits are a poor place to capture *why* you chose a transport shape or where guild config should live. Those decisions belong in docs and code you can reason about when you onboard the next maintainer.
+Git commits are a poor place to capture *why* you chose a connectivity shape or where guild config should live. Those decisions belong in docs and code you can reason about when you onboard the next maintainer.
 
 ## The solution
 
-Stambha is a **transport-agnostic** bot framework with a **native stack** as the default path:
+Stambha ships a **native stack by default** — your bot logic is not coupled to a third-party Discord client library. Official connectivity is `@stambha/gateway` + `@stambha/rest`, not a hybrid where discord.js owns the WebSocket:
 
 ```text
 @stambha/gateway  →  events, sharding, worker bus
@@ -73,9 +84,9 @@ Signals (buttons / selects / modals) route in parallel on interactionCreate
 
 You get:
 
-1. **One transport story** — native REST and gateway; no official hybrid path that keeps e.g. discord.js for gateway and Stambha for commands only
-2. **Predictable scaling** — promote from monolith → tier split when rate limits or shard count demand it
-3. **Migration guides** — [piece-based layouts and native transport stacks](/migration/) without renaming your entire tree
+1. **One connectivity story** — native REST and gateway; no official hybrid path that keeps e.g. discord.js for gateway and Stambha for commands only
+2. **Predictable scaling** — start in one process; split gateway / REST / bot workers when rate limits or shard count demand it
+3. **Migration guides** — [piece-based layouts and native stacks](/migration/) without renaming your entire tree
 4. **Room to grow** — sequences, signals, chron, desired properties, and vault-backed config without forking the framework
 
 ## Who Stambha is for
@@ -83,7 +94,7 @@ You get:
 **Good fit**
 
 - Teams moving from a piece-based bot to a native stack while keeping folder structure
-- New bots that want tier split from day one without discord.js in every process
+- New bots that want process split from day one without discord.js in every process
 - Bots that need typed guild config *and* a real database for domain data
 
 **Less ideal**
@@ -94,6 +105,7 @@ You get:
 
 ## Next steps
 
-- [Getting started](/guide/getting-started) — minimal native bot
+- [Getting started](/guide/getting-started) — minimal native bot (or `pnpm demo` in `examples/bot`)
+- [Architecture](/guide/architecture) — event flow through the native stack
 - [Project structure](/guide/project-structure) — folders and `PiecePaths`
 - [Pieces & pipeline](/guide/pieces) — how registries and the pipeline fit together
