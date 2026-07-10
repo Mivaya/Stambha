@@ -100,7 +100,7 @@ const ROUTING_EVENTS = new Set<string>([
   "READY",
 ]);
 
-/** Tier 1 semantic normalization targets (G3-p1); spike catalog only. */
+/** Tier 1 structural normalization (G3-p1) — camelCase at hub boundary. */
 const TIER1_EVENTS = new Set<string>([
   "MESSAGE_DELETE",
   "MESSAGE_DELETE_BULK",
@@ -108,8 +108,11 @@ const TIER1_EVENTS = new Set<string>([
   "MESSAGE_REACTION_REMOVE",
   "MESSAGE_REACTION_REMOVE_ALL",
   "MESSAGE_REACTION_REMOVE_EMOJI",
+  "MESSAGE_POLL_VOTE_ADD",
+  "MESSAGE_POLL_VOTE_REMOVE",
   "PRESENCE_UPDATE",
   "VOICE_STATE_UPDATE",
+  "VOICE_SERVER_UPDATE",
   "GUILD_CREATE",
   "GUILD_UPDATE",
   "GUILD_DELETE",
@@ -122,6 +125,16 @@ function tierFor(dispatchName: string): DispatchNormalizationTier {
   if (ROUTING_EVENTS.has(dispatchName)) return "routing";
   if (TIER1_EVENTS.has(dispatchName)) return "tier1";
   return "passthrough";
+}
+
+/** Normalization tier for a gateway dispatch name (routing | tier1 | passthrough). */
+export function dispatchNormalizationTier(dispatchName: string): DispatchNormalizationTier {
+  return tierFor(dispatchName);
+}
+
+/** True when G3-p1 applies structural camelCase at the hub boundary. */
+export function isTier1Dispatch(dispatchName: string): boolean {
+  return tierFor(dispatchName) === "tier1";
 }
 
 /** Lookup catalog metadata for a gateway dispatch name. */
