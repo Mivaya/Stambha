@@ -9,6 +9,8 @@ pnpm docs:archive 0.2.1
 pnpm docs:archive 0.2.1 v0.2.1
 ```
 
-Also add or update `docs/.vitepress/sidebars/versioned/<semver>.json`. Commit the archive with the release PR.
+Also add or update `docs/.vitepress/sidebars/versioned/<semver>.json`. Commit the archive with the **core** release PR — do not edit old version folders after ship.
 
-See [hosting-the-docs.md](../guide/hosting-the-docs.md#versioned-documentation).
+**Deploy (GitHub Pages):** latest docs redeploy from `docs.yml` on core release, `docs/**` pushes to `main`, manual **workflow_dispatch**, or `repository_dispatch` (`docs-redeploy`) from Stambha-plugins. Plugin/extension pages belong in latest; deep package API can stay on package READMEs.
+
+See [`.github/workflows/docs.yml`](../../.github/workflows/docs.yml) and [`.github/PUBLISHING.md`](../../.github/PUBLISHING.md).
