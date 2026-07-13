@@ -1,9 +1,23 @@
 name: Docs
 
+# Latest docs (GitHub Pages) redeploy independently of core npm releases.
+# - release published → snapshot after a core release (same as before)
+# - push to main under docs/** → extension / guide updates without a version bump
+# - workflow_dispatch → manual redeploy
+# - repository_dispatch (docs-redeploy) → Stambha-plugins CI after a plugin release
 on:
   release:
     types: [published]
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - ".github/workflows/docs.yml"
+      - "pnpm-lock.yaml"
+      - "package.json"
+  repository_dispatch:
+    types: [docs-redeploy]
 
 permissions:
   contents: read
@@ -23,7 +37,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.release.tag_name || github.ref }}
+          # Release → tag; repository_dispatch → main tip; push / workflow_dispatch → triggering ref.
+          ref: ${{ github.event_name == 'repository_dispatch' && 'refs/heads/main' || github.event.release.tag_name || github.ref }}
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
