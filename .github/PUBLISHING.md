@@ -19,7 +19,7 @@ Merge feature PRs to main
        ↓
 Bump versions + CHANGELOG.md on main (PR or direct commit)
        ↓
-pnpm docs:archive <semver> $(git rev-parse HEAD)   # optional frozen docs snapshot
+pnpm docs:archive <semver> $(git rev-parse HEAD)   # frozen dropdown snapshot (core release only)
        ↓
 git tag v<semver> && git push origin v<semver>
        ↓
@@ -27,7 +27,20 @@ GitHub Release (published)  →  publish-npm.yml  →  npm (latest or beta)
                           →  docs.yml          →  GitHub Pages
 ```
 
-Workflow: [`.github/workflows/publish-npm.yml`](./workflows/publish-npm.yml)
+**Docs without a core npm release:** latest Pages (`docs/` tip) also redeploys when `docs/**` lands on `main`, via Actions → **Docs** → Run workflow, or `repository_dispatch` type `docs-redeploy` (e.g. after a Stambha-plugins release). Archived snapshots under `docs/versions/<semver>/` are still created only at core release archive time.
+
+Example from Stambha-plugins CI (needs a PAT/GitHub App with `actions: write` on this repo):
+
+```yaml
+- name: Redeploy Stambha docs
+  env:
+    GH_TOKEN: ${{ secrets.STAMBHA_DOCS_DISPATCH_TOKEN }}
+  run: |
+    gh api repos/mivaya/Stambha/dispatches \
+      -f event_type=docs-redeploy
+```
+
+Workflow: [`.github/workflows/publish-npm.yml`](./workflows/publish-npm.yml) · [`.github/workflows/docs.yml`](./workflows/docs.yml)
 
 - **Stable release** — normal GitHub Release → npm dist-tag `latest`
 - **Pre-release** — check “pre-release” on GitHub → npm dist-tag `beta`
