@@ -50,13 +50,25 @@ Use this stack for new bots:
 
 ## Deferred to plugins ([Stambha-plugins](https://github.com/Mivaya/Stambha-plugins))
 
+Official extensions at **1.0.0** — product guides:
+
+| Package | Guide |
+|---------|--------|
+| `@stambha/pagination` | [Pagination](/extensions/pagination) |
+| `@stambha/api` | [HTTP API](/extensions/api) |
+| `@stambha/cache` | [Cache](/extensions/cache) |
+| `@stambha/metrics` | [Metrics](/extensions/metrics) |
+| `@stambha/vault-sql` | [Vault — SQL drivers](/features/vault#sql-drivers) |
+
+Hub: [Extensions](/extensions/).
+
+Still planned in that repo (not core):
+
 | Area | Package (planned) |
 |------|-------------------|
-| Pagination helpers | `@stambha/pagination` |
-| Prometheus metrics | `@stambha/metrics` |
-| Vault SQL drivers | `@stambha/vault-sql` |
-| Admin dashboard | `@stambha/dashboard` |
+| Admin dashboard **UI** (hosted SPA) | Separate product / `@stambha/dashboard` — OAuth + Vault settings HTTP already in [`@stambha/api`](/extensions/api) |
 | Hot reload | `@stambha/dev-reload` |
+| Redis cache / cooldown drivers | — |
 
 Core stays transport-agnostic; plugins ship on independent semver.
 
@@ -82,11 +94,12 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 | Topic | 1.0.0 status |
 |-------|----------------|
 | [Chron](/features/chron) tier-split | Single-process documented; distributed → **2.0 D2** |
-| [Vault](/features/vault) dashboard CRUD | Cross-link `@stambha/dashboard` (plugins) |
+| [Vault](/features/vault) dashboard CRUD | [`@stambha/api`](/extensions/api) OAuth + `/guilds/…/settings`; hosted UI still planned |
 | [Tier split](/deployment/tier-split) interactions | Bot worker must receive all `interactionCreate` |
 | [Resharding](/deployment/resharding) | Manual operator APIs; auto threshold → **G1** |
 | [Migration from Klasa](/migration/from-klasa) | Optional page shipped |
-| Versioned doc snapshots | `1.0.0` and `1.1.0` archived; archive **1.2.0** at the release tag |
+| Versioned doc snapshots | `1.0.0` and `1.1.0` archived; archive **1.2.0** at the next docs/archive step if missing |
+| [Extensions](/extensions/) hub | Keep feature pages in sync when Stambha-plugins ships |
 
 ---
 

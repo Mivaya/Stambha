@@ -11,7 +11,7 @@ Many production bots already use **Prisma, Drizzle, or SQL** for economy, quests
 | ------------------------------------------------ | ----------------------------------------------- | ------------------------------------------------- |
 | Guild prefix, module toggles, log channels       | Custom `GuildConfig` table + validation + cache | Blueprint + `record.get` / `set`                  |
 | Per-guild settings (`prefix`, channels, toggles) | Custom tables + validation + cache              | Ledgers + drivers                                 |
-| Dashboard editing config                         | Ad-hoc JSON routes                              | Typed blueprints + `@stambha/dashboard` (plugins) |
+| Dashboard editing config                         | Ad-hoc JSON routes                              | Typed blueprints + [`@stambha/api`](/extensions/api) OAuth settings routes (bring your own UI) |
 | Permission level overrides per guild             | Hardcoded or extra SQL columns                  | Guild blueprint + `@stambha/levels`               |
 | Tests without Postgres                           | Mock Prisma or spin up DB                       | `MemoryDriver`                                    |
 | Split-tier workers sharing config                | In-memory Maps or custom Redis glue             | Shared Vault driver (SQL / Redis)                 |
@@ -157,9 +157,33 @@ vault.on("recordDelete", ({ ledger, id }) => {});
 - [ ] Array update ops (`add` / `remove` / `overwrite` / index) for settings arrays
 - [ ] Guild settings attach ergonomics (`ctx` / client integration)
 - [ ] 1.x — `@stambha/levels` + guild blueprint overrides
-- [ ] Plugins — `@stambha/dashboard` Vault CRUD routes; optional `vault-redis` for split tier
+- [ ] Plugins — hosted dashboard UI on top of [`@stambha/api`](/extensions/api); optional `vault-redis` for split tier
+- [x] Plugins — [`@stambha/api`](/extensions/api) Discord OAuth + `/guilds/…/settings`
 
 **Not planned:** Vault as a general-purpose ORM or Prisma replacement.
+
+---
+
+## SQL drivers
+
+Persist Vault ledgers with SQLite or PostgreSQL via [`@stambha/vault-sql`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/vault-sql) (Stambha-plugins **1.0.0**, peer `@stambha/vault@^1.2.0`).
+
+```bash
+pnpm add @stambha/vault-sql @stambha/vault
+```
+
+SQLite needs **Node.js 22.5+** (`node:sqlite`). Postgres works on Node 20+.
+
+```ts
+import { Vault } from "@stambha/vault";
+import { SQLiteDriver } from "@stambha/vault-sql";
+// or: import { PostgresDriver } from "@stambha/vault-sql";
+
+const driver = new SQLiteDriver({ path: "./data/vault.sqlite" });
+const vault = new Vault({ driver });
+```
+
+Full driver options: [package README](https://github.com/Mivaya/Stambha-plugins/blob/main/packages/vault-sql/README.md).
 
 ---
 
@@ -167,5 +191,6 @@ vault.on("recordDelete", ({ ledger, id }) => {});
 
 - [Getting started](/guide/getting-started) — Vault is optional at install time
 - [Migration guides](/migration/) — when to add Vault (settings & config)
-- [@stambha/vault-sql](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/vault-sql) — SQL persistence driver (plugins repo)
+- [Extensions](/extensions/) — other Stambha-plugins packages
+- [HTTP API](/extensions/api) — OAuth + guild settings routes for your admin frontend
 

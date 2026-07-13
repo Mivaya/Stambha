@@ -27,7 +27,7 @@ When you’re ready for a live bot, continue below.
 pnpm add @stambha/core @stambha/rest @stambha/gateway @stambha/transform @stambha/loader @stambha/gates @stambha/args
 ```
 
-Optional: `@stambha/vault` for typed guild config, `@stambha/metrics` for observability. See [Vault](/features/vault).
+Optional: `@stambha/vault` for typed guild config; extensions from [Stambha-plugins](https://github.com/Mivaya/Stambha-plugins) — start at [Extensions](/extensions/) ([Pagination](/extensions/pagination), [Metrics](/extensions/metrics), …).
 
 > **CommonJS:** Pin `@stambha/*@0.2.1` or newer for `require()`. ESM projects can use current versions.
 

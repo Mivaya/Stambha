@@ -157,18 +157,19 @@ On the **native** path, `attachStambhaClient` auto-routes slash, autocomplete, a
 
 ## Official extensions (separate repo)
 
-**`@stambha/plugins` is the host** — hooks and DI only. Optional add-ons (dashboard HTTP, i18n, cron, etc.) live in a **separate monorepo**:
+**`@stambha/plugins` is the host** — hooks and DI only. Optional add-ons live in **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)** with independent semver (current line **1.0.0**, peers on core `^1.2.0` where applicable).
 
-- Planned org/repo: **`stambhadev/plugins`**
-- Package names describe **capability** (e.g. `@stambha/dashboard`), not a generic `plugin-*` prefix
+| Extension | Guide |
+|-----------|--------|
+| Pagination | [Pagination](/extensions/pagination) |
+| HTTP API | [HTTP API](/extensions/api) — router, Discord OAuth, Vault settings |
+| Cache | [Cache](/extensions/cache) |
+| Metrics | [Metrics](/extensions/metrics) |
+| Vault SQL | [Vault — SQL drivers](/features/vault#sql-drivers) |
 
-| Extension | Package |
-|-----------|---------|
-| Dashboard / OAuth / Vault HTTP | `@stambha/dashboard` |
-| Translations | `@stambha/i18n` |
-| Scheduled tasks | `@stambha/cron` |
+Start at the [Extensions](/extensions/) hub. Package names describe **capability** (not a `plugin-*` prefix).
 
-Install from npm, register with `attachPlugins()` like any local plugin.
+Install from npm and wire with `attachPlugins()` / helpers as shown in each guide.
 
 ---
 

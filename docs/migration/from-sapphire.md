@@ -30,7 +30,7 @@ You do **not** need to rename folders for most Sapphire projects.
 | `@sapphire/utilities` Result | `ok()` / `err()` from `@stambha/core` | Pipeline outcomes |
 | `@sapphire/decorators` | Class-based pieces (same pattern) | No decorator required |
 | `@sapphire/plugin-subcommands` | Built-in command tree | See [Command tree](/features/command-tree) |
-| `@sapphire/plugin-api` | `@stambha/dashboard` (plugins repo) or BYO HTTP | [ADR 003](/internal/adr/003-plugins-monorepo) — not `@stambha/plugin-api` |
+| `@sapphire/plugin-api` | [`@stambha/api`](/extensions/api) (Stambha-plugins) — router + Discord OAuth + Vault settings; bring your own UI | [ADR 003](/internal/adr/003-plugins-monorepo) — not `@stambha/plugin-api` |
 | `@sapphire/plugin-hmr` | Not bundled | Use your bundler |
 
 Folder aliases in `PiecePaths`: `preconditions` → `src/gates`.

@@ -50,7 +50,7 @@ Checklist of **public documentation** work required before declaring **1.0.0**. 
 | **[Hooks](/features/hooks.md)** | ✅ Hook vs Scout vs Signal tree |
 | **[Tier split](/deployment/tier-split.md)** | ✅ interaction routing table |
 | **[Resharding](/deployment/resharding.md)** | ✅ vs Discordeno + G1 |
-| **[Metrics](/deployment/metrics.md)** | ✅ Stambha-plugins install |
+| **[Metrics](/extensions/metrics)** | ✅ Stambha-plugins install |
 | **[Reference / Transport](/reference/transport.md)** | ✅ package map |
 | **Migration from Klasa** | ✅ [from-klasa.md](/migration/from-klasa) |
 | **Versioned snapshots** | ✅ `docs/versions/0.3.5/` (archive at tag) |

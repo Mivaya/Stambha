@@ -2,7 +2,7 @@
 
 All publishable `@stambha/*` packages in this repo share **one version** (fixed versioning). Releases are **tag-driven** — same model as before Changesets, similar to [Sapphire’s `publish.yml`](https://github.com/sapphiredev/framework/blob/main/.github/workflows/publish.yml) (manual bump + publish, no version-bot PRs).
 
-**Official extensions** (`@stambha/cache`, `@stambha/vault-sql`, `@stambha/metrics`, …) publish from [**Stambha-plugins**](https://github.com/Mivaya/Stambha-plugins) with **independent** versions.
+**Official extensions** (`@stambha/api`, `@stambha/pagination`, `@stambha/cache`, `@stambha/vault-sql`, `@stambha/metrics`, …) publish from [**Stambha-plugins**](https://github.com/Mivaya/Stambha-plugins) with **independent** versions (current line **1.0.0**).
 
 ---
 
