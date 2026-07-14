@@ -33,6 +33,16 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
     ],
   },
   {
+    text: "Extensions",
+    items: [
+      { text: "Overview", link: "/extensions/" },
+      { text: "Pagination", link: "/extensions/pagination" },
+      { text: "HTTP API", link: "/extensions/api" },
+      { text: "Cache", link: "/extensions/cache" },
+      { text: "Metrics", link: "/extensions/metrics" },
+    ],
+  },
+  {
     text: "Deployment",
     items: [
       { text: "Overview", link: "/deployment/overview" },
@@ -41,7 +51,6 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
       { text: "Gateway", link: "/deployment/gateway" },
       { text: "Slash deploy", link: "/deployment/slash-deploy" },
       { text: "Resharding", link: "/deployment/resharding" },
-      { text: "Metrics", link: "/deployment/metrics" },
       { text: "Cross-runtime", link: "/deployment/cross-runtime" },
     ],
   },
@@ -55,7 +64,6 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
       { text: "Overview", link: "/migration/" },
       { text: "Piece-based framework", link: "/migration/from-sapphire" },
       { text: "Native transport stack", link: "/migration/from-discordeno" },
-      { text: "From Klasa", link: "/migration/from-klasa" },
     ],
   },
 ];

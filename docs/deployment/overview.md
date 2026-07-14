@@ -31,4 +31,4 @@ Example: `examples/bot` (`pnpm split:*` for three-process layout).
 
 ## Large bots
 
-Add [Gateway](/deployment/gateway) worker bus, [resharding](/deployment/resharding), [desired properties](/features/desired-properties), and [metrics](/deployment/metrics).
+Add [Gateway](/deployment/gateway) worker bus, [resharding](/deployment/resharding), [desired properties](/features/desired-properties), and [metrics](/extensions/metrics).

@@ -7,7 +7,7 @@ Thank you for your interest in contributing! Stambha is a community-driven Disco
 - **Bug reports** — open an issue with minimal reproduction, expected vs actual behavior, Node version, and `@stambha/*` package versions
 - **Feature requests** — open an issue for non-trivial work so design can be discussed before a large PR
 - **Pull requests** — bug fixes, tests, docs, examples, native transport improvements, or core pipeline work
-- **Extensions** — cache, metrics, vault drivers, and future plugins belong in [**Stambha-plugins**](https://github.com/Mivaya/Stambha-plugins) (`@stambha/cache`, `@stambha/metrics`, `@stambha/vault-sql`, …)
+- **Extensions** — pagination, HTTP API, cache, metrics, vault drivers, and future plugins belong in [**Stambha-plugins**](https://github.com/Mivaya/Stambha-plugins) (`@stambha/pagination`, `@stambha/api`, `@stambha/cache`, …)
 
 ### Good first contributions
 

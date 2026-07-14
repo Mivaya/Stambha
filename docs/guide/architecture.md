@@ -98,4 +98,5 @@ Same pieces and pipeline in both shapes. See [Tier split](/deployment/tier-split
 
 - [Deployment overview](/deployment/overview)
 - [Gateway](/deployment/gateway) — attach options and dispatch normalization
+- [Extensions](/extensions/) — Stambha-plugins packages
 - [Transport reference](/reference/transport)

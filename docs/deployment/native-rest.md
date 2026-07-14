@@ -64,7 +64,7 @@ Or monolith: `pnpm start` / `pnpm demo`.
 | `stambha_rest_rate_limits_total` | Counter | `bucket` |
 | `stambha_rest_wait_duration_seconds` | Histogram | `bucket` |
 
-Wire via `restMetricsToTelemetry(collector)` passed to `createNativeRestWorker({ telemetry })`. See [Metrics](/deployment/metrics).
+Wire via `restMetricsToTelemetry(collector)` passed to `createNativeRestWorker({ telemetry })`. See [Metrics](/extensions/metrics).
 
 ---
 

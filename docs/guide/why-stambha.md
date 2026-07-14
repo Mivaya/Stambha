@@ -61,7 +61,7 @@ You write **pieces** (commands, hooks, gates, scouts, …) against Stambha APIs.
 **Extensions stay optional**
 
 - Core repo ships the framework
-- [`Stambha-plugins`](https://github.com/Mivaya/Stambha-plugins) ships `@stambha/cache`, `@stambha/metrics`, `@stambha/vault-sql`, and future dashboard/i18n packages on their own release cadence
+- [`Stambha-plugins`](https://github.com/Mivaya/Stambha-plugins) ships optional add-ons on their own **1.0.0** line — see [Extensions](/extensions/)
 
 ## The result
 

@@ -26,6 +26,9 @@ importers:
       vitepress-versioning-plugin:
         specifier: ^1.3.0
         version: 1.3.0(@algolia/client-search@5.53.0)(@types/node@25.9.3)(postcss@8.5.15)(search-insights@2.17.3)(typescript@6.0.3)
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.35(typescript@6.0.3)
 
   examples/bot:
     dependencies:

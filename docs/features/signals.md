@@ -128,6 +128,8 @@ if (target?.kind === "signal") {
 ## Related
 
 - [Sequences](/features/sequences) — multi-step flows using `stambha:seq:` ids
+- [Extensions](/extensions/) — `@stambha/pagination` for embed pages
+- [Pagination](/extensions/pagination) — prev / next / dismiss helper
 - [Getting started](/guide/getting-started) — confirm button walkthrough
 - [Gateway](/deployment/gateway) — `attachStambhaClient` options
 - [Hooks](/features/hooks) — when to use Hook vs Signal

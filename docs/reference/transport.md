@@ -20,7 +20,7 @@ Stambha-owned Discord transport primitives — no third-party Discord library re
 | `@stambha/plugins` | Plugin lifecycle + DI container |
 | `@stambha/runtime` | Cross-runtime helpers (Node / Bun / Deno) |
 
-**Extensions** ([Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)): `@stambha/metrics`, `@stambha/cache`, `@stambha/vault-sql`, future `@stambha/dashboard`.
+**Extensions** ([Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)): `@stambha/api` (HTTP + OAuth), `@stambha/metrics`, `@stambha/cache`, `@stambha/vault-sql`, `@stambha/pagination`.
 
 ### Stack recipes
 
