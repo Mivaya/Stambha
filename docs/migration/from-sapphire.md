@@ -30,10 +30,10 @@ You do **not** need to rename folders for most Sapphire projects.
 | `@sapphire/utilities` Result | `ok()` / `err()` from `@stambha/core` | Pipeline outcomes |
 | `@sapphire/decorators` | Class-based pieces (same pattern) | No decorator required |
 | `@sapphire/plugin-subcommands` | Built-in command tree | See [Command tree](/features/command-tree) |
-| `@sapphire/plugin-api` | [`@stambha/api`](/extensions/api) (Stambha-plugins) — router + Discord OAuth + Vault settings; bring your own UI | [ADR 003](/internal/adr/003-plugins-monorepo) — not `@stambha/plugin-api` |
+| `@sapphire/plugin-api` | [`@stambha/api`](/extensions/api) (Stambha-plugins) — router + Discord OAuth + Vault settings + **`src/routes/`** file loader (1.2.0+); bring your own UI | [ADR 003](/decisions/003-plugins-monorepo) — not `@stambha/plugin-api` |
 | `@sapphire/plugin-hmr` | Not bundled | Use your bundler |
 
-Folder aliases in `PiecePaths`: `preconditions` → `src/gates`.
+Folder aliases in `PiecePaths`: `preconditions` → `src/gates`. Conventional HTTP routes folder: `PiecePaths.routes` → `src/routes` (loaded by `@stambha/api`, not `loadPieces`).
 
 ---
 
@@ -211,8 +211,9 @@ Global gates: register on `client.registries.gates` or use conduits/barriers for
 | `@sapphire/plugin-*` | `@stambha/plugins` |
 | `container` | `client.container` |
 | `preStart`, `postLoad` hooks | `pluginLifecycle` on `createStambhaBot` |
+| `@sapphire/plugin-api` `src/routes/` + `loadRoutes` | [`@stambha/api`](/extensions/api) `src/routes/` + `loadRoutes` / `routesDir` (1.2.0+) — `name.method.ts` files; `Route` class or default handler export |
 
-See [Plugins](/features/plugins).
+See [Plugins](/features/plugins) and [HTTP API](/extensions/api).
 
 ---
 

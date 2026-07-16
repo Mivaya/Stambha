@@ -21,7 +21,7 @@ Vault and Prisma solve **different** problems:
 await loadPieces(client, { context: { vault, prisma } });
 ```
 
-Vault is **not** a full ORM replacement. See [ADR 004](https://github.com/mivaya/Stambha/blob/main/docs/internal/adr/004-vault-scope-orm-coexistence.md).
+Vault is **not** a full ORM replacement. See [ADR 004](https://github.com/mivaya/Stambha/blob/main/docs/decisions/004-vault-scope-orm-coexistence.md).
 
 ---
 

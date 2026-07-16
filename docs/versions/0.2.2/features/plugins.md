@@ -134,7 +134,7 @@ resolveInteractionTarget(client, { kind: "signal", customId: "stambha:confirm:ab
 | Translations | `@stambha/i18n` |
 | Scheduled tasks | `@stambha/cron` |
 
-Install from npm, register with `attachPlugins()` like any local plugin. See [ADR 003](/internal/adr/003-plugins-monorepo) (internal).
+Install from npm, register with `attachPlugins()` like any local plugin. See [ADR 003](/decisions/003-plugins-monorepo) .
 
 ---
 
