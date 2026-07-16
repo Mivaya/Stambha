@@ -50,14 +50,14 @@ Use this stack for new bots:
 
 ## Deferred to plugins ([Stambha-plugins](https://github.com/Mivaya/Stambha-plugins))
 
-Official extensions at **1.0.0** — product guides:
+Official extensions — product guides (packages ship independently; **`@stambha/api@1.2.0`**, others typically **1.0.0**):
 
 | Package | Guide |
 |---------|--------|
 | `@stambha/pagination` | [Pagination](/extensions/pagination) |
-| `@stambha/api` | [HTTP API](/extensions/api) |
-| `@stambha/cache` | [Cache](/extensions/cache) |
+| `@stambha/api` | [HTTP API](/extensions/api) — OAuth, Vault settings, **`src/routes/`** loader (1.2.0) |
 | `@stambha/metrics` | [Metrics](/extensions/metrics) |
+| `@stambha/cache` | [Cache](/extensions/cache) |
 | `@stambha/vault-sql` | [Vault — SQL drivers](/features/vault#sql-drivers) |
 
 Hub: [Extensions](/extensions/).

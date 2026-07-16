@@ -162,7 +162,7 @@ On the **native** path, `attachStambhaClient` auto-routes slash, autocomplete, a
 | Extension | Guide |
 |-----------|--------|
 | Pagination | [Pagination](/extensions/pagination) |
-| HTTP API | [HTTP API](/extensions/api) — router, Discord OAuth, Vault settings |
+| HTTP API | [HTTP API](/extensions/api) — router, Discord OAuth, Vault settings, `src/routes/` loader (1.2.0+) |
 | Cache | [Cache](/extensions/cache) |
 | Metrics | [Metrics](/extensions/metrics) |
 | Vault SQL | [Vault — SQL drivers](/features/vault#sql-drivers) |

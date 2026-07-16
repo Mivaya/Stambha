@@ -61,6 +61,26 @@ export const CARD_CATALOG = {
     }),
   },
 
+  "PHASE-25": {
+    title: "Phase 25 — 1.1.0 prep",
+    status: "Done",
+    track: "stambha",
+    type: "Task",
+    pillar: "Docs",
+    release: "1.1.0",
+    body: doneBody({
+      summary: "1.1.0 minor prep — G3 dispatch foundation and mention-prefix (B7) docs/examples.",
+      delivered: [
+        "G3-spike: dispatch module in @stambha/transform (camelizeDispatch, event catalog)",
+        "B7: createMentionPrefixResolver + mentionCommands on attachStambhaClient",
+        "examples/bot @Bot ping demo",
+        "gateway.md + known-gaps updated for 1.1.0",
+      ],
+      meta: { ID: "PHASE-25", Release: "1.1.0", Epic: "EPIC-G" },
+      references: ["Shipped v1.1.0", "PR #54"],
+    }),
+  },
+
   "EXT-0.2.2": {
     title: "Extensions v0.2.2+",
     status: "Done",
@@ -77,120 +97,278 @@ export const CARD_CATALOG = {
 
   "REL-1.0.0-tag": {
     title: "1.0.0-tag",
-    status: "In Progress",
+    status: "Done",
     track: "stambha",
     type: "Task",
     pillar: "Ops",
     release: "1.0.0",
-    body: ticketBody({
-      summary: "Create and push git tag `v1.0.0` after version bump on release branch.",
-      problem: "Tag marks the commit; GitHub Release triggers publish workflows.",
-      acceptance: [
-        "All packages at 1.0.0 in package.json files",
-        "`pnpm build` and `pnpm test` pass",
-        "Tag `v1.0.0` pushed to origin",
-      ],
-      definitionOfDone: ["Tag exists on GitHub", "Release notes drafted for REL-1.0.0-release"],
-      meta: { ID: "REL-1.0.0-tag", Release: "1.0.0", Epic: "REL-1.0.0" },
-      dependencies: "Phase 24 complete",
-      references: [".github/PUBLISHING.md"],
+    body: doneBody({
+      summary: "Git tag `v1.0.0` — first production native stack release.",
+      delivered: ["Tag `v1.0.0` on GitHub", "All core packages at 1.0.0"],
+      meta: { ID: "REL-1.0.0-tag", Release: "1.0.0" },
+      references: ["Shipped 2026-06-29"],
     }),
   },
 
   "REL-1.0.0-release": {
     title: "1.0.0-github-release",
-    status: "In Progress",
+    status: "Done",
     track: "stambha",
     type: "Task",
     pillar: "Ops",
     release: "1.0.0",
-    body: ticketBody({
-      summary: "Publish GitHub Release for v1.0.0 — triggers npm and docs CI (tag-only push is insufficient).",
-      problem: "Workflows listen for `release: published`, not tag push.",
-      acceptance: [
-        "GitHub Release published with release notes",
-        "publish-npm.yml succeeds — @stambha/*@1.0.0 on npm",
-        "docs.yml succeeds — site updated",
+    body: doneBody({
+      summary: "GitHub Release v1.0.0 — npm publish + docs CI.",
+      delivered: [
+        "GitHub Release published",
+        "@stambha/*@1.0.0 on npm",
+        "Docs site updated",
       ],
       meta: { ID: "REL-1.0.0-release", Release: "1.0.0" },
-      dependencies: "REL-1.0.0-tag",
-      references: [".github/PUBLISHING.md", ".github/workflows/publish-npm.yml"],
+      references: ["https://github.com/mivaya/Stambha/releases/tag/v1.0.0"],
     }),
   },
 
   "REL-1.0.0-merge": {
     title: "1.0.0-merge",
-    status: "In Progress",
+    status: "Done",
     track: "stambha",
     type: "Task",
     pillar: "Ops",
     release: "1.0.0",
-    body: ticketBody({
-      summary: "Merge `release/1.0.0` into `main` after tag and published release.",
-      acceptance: [
-        "PR from release/1.0.0 → main merged",
-        "main reflects 1.0.0 package versions",
-        "No open blockers on release branch",
-      ],
+    body: doneBody({
+      summary: "Release branch merged to `main` after v1.0.0 publish.",
+      delivered: ["main at 1.0.0+", "Release train unblocked for 1.1.x"],
       meta: { ID: "REL-1.0.0-merge", Release: "1.0.0" },
-      dependencies: "REL-1.0.0-release",
     }),
   },
 
   "REL-1.0.0-archive": {
     title: "1.0.0-archive",
-    status: "In Progress",
+    status: "Done",
     track: "stambha",
     type: "Task",
     pillar: "Docs",
     release: "1.0.0",
-    body: ticketBody({
-      summary: "Freeze public docs snapshot under docs/versions/1.0.0 for readers pinning to stable API.",
-      acceptance: [
-        "`pnpm docs:archive` (or equivalent) run for 1.0.0",
-        "Sidebar links valid for archived snapshot",
-        "Live docs on main point to current version",
+    body: doneBody({
+      summary: "Public docs snapshot `docs/versions/1.0.0/`.",
+      delivered: [
+        "Archived snapshot under docs/versions/1.0.0",
+        "Version switcher includes 1.0.0",
       ],
       meta: { ID: "REL-1.0.0-archive", Release: "1.0.0" },
-      dependencies: "REL-1.0.0-tag",
+    }),
+  },
+
+  "REL-1.1.0-tag": {
+    title: "1.1.0-tag",
+    status: "Done",
+    track: "stambha",
+    type: "Task",
+    pillar: "Ops",
+    release: "1.1.0",
+    body: doneBody({
+      summary: "Git tag `v1.1.0` — mention-prefix + gateway dispatch foundation.",
+      delivered: ["Tag `v1.1.0` on GitHub", "All core packages at 1.1.0"],
+      meta: { ID: "REL-1.1.0-tag", Release: "1.1.0" },
+      references: ["Shipped 2026-07-06"],
+    }),
+  },
+
+  "REL-1.1.0-release": {
+    title: "1.1.0-github-release",
+    status: "Done",
+    track: "stambha",
+    type: "Task",
+    pillar: "Ops",
+    release: "1.1.0",
+    body: doneBody({
+      summary: "GitHub Release v1.1.0 — npm publish + docs CI.",
+      delivered: [
+        "GitHub Release published",
+        "@stambha/*@1.1.0 on npm",
+        "Additive minor — no breaking hub payload changes",
+      ],
+      meta: { ID: "REL-1.1.0-release", Release: "1.1.0" },
+      references: ["https://github.com/mivaya/Stambha/releases/tag/v1.1.0"],
+    }),
+  },
+
+  "REL-1.1.0-archive": {
+    title: "1.1.0-archive",
+    status: "Done",
+    track: "stambha",
+    type: "Task",
+    pillar: "Docs",
+    release: "1.1.0",
+    body: doneBody({
+      summary: "Public docs snapshot `docs/versions/1.1.0/`.",
+      delivered: [
+        "Archived snapshot under docs/versions/1.1.0",
+        "Version switcher includes 1.1.0",
+      ],
+      meta: { ID: "REL-1.1.0-archive", Release: "1.1.0" },
+    }),
+  },
+
+  "REL-1.2.0-branch": {
+    title: "1.2.0-release-branch",
+    status: "Done",
+    track: "stambha",
+    type: "Task",
+    pillar: "Ops",
+    release: "1.2.0",
+    body: doneBody({
+      summary: "Release branch `feature/v1.2.0-phase1-transform` merged — G3-p1 + product docs.",
+      delivered: [
+        "PR #59 merged to main",
+        "Tier 1 hub camelCase payloads (G3-p1)",
+        "dispatchNormalize escape hatch",
+        "Architecture guide + onboarding docs",
+      ],
+      meta: { ID: "REL-1.2.0-branch", Release: "1.2.0", Epic: "EPIC-G", Branch: "feature/v1.2.0-phase1-transform" },
+      dependencies: "PHASE-25, G3-spike",
+      references: ["https://github.com/mivaya/Stambha/pull/59"],
+    }),
+  },
+
+  "REL-1.2.0": {
+    title: "1.2.0-release",
+    status: "Done",
+    track: "stambha",
+    type: "Release",
+    pillar: "G",
+    release: "1.2.0",
+    body: doneBody({
+      summary: "v1.2.0 — CamelCase gateway event payloads & product docs onboarding.",
+      delivered: [
+        "G3-p1 Tier 1 hub camelCase (reactions, guild/member, voice, message delete, poll votes)",
+        "dispatchNormalize raw escape hatch",
+        "Architecture guide + examples/bot ReactionListener",
+        "GitHub Release v1.2.0 + npm @stambha/*@1.2.0",
+      ],
+      meta: { ID: "REL-1.2.0", Release: "1.2.0", Epic: "EPIC-G" },
+      references: [
+        "https://github.com/mivaya/Stambha/releases/tag/v1.2.0",
+        "docs/guide/known-gaps.md",
+      ],
+    }),
+  },
+
+  "REL-1.2.0-archive": {
+    title: "1.2.0-archive",
+    status: "Backlog",
+    track: "stambha",
+    type: "Task",
+    pillar: "Docs",
+    release: "1.2.0",
+    lane: "Tech debt",
+    priority: "low",
+    body: ticketBody({
+      summary: "Freeze public docs snapshot under docs/versions/1.2.0.",
+      acceptance: [
+        "`pnpm docs:archive` run for 1.2.0",
+        "Sidebar valid for archived snapshot",
+        "Live docs label latest as Next when snapshot exists",
+      ],
+      meta: { ID: "REL-1.2.0-archive", Release: "1.2.0", Epic: "EPIC-DOCS" },
+      dependencies: "REL-1.2.0",
     }),
   },
 
   "PLUGINS-1.0.0": {
     title: "plugins-1.0.0",
-    status: "In Progress",
+    status: "Done",
     track: "stambha-plugins",
     type: "Task",
     pillar: "Plugins",
     release: "1.0.0",
-    body: ticketBody({
-      summary: "Align Stambha-plugins package versions and peer deps with @stambha/core@1.0.0.",
-      acceptance: [
-        "Extension packages declare compatible peer range for core 1.0.0",
-        "CI passes on Stambha-plugins main",
-        "Published extension versions documented",
+    body: doneBody({
+      summary: "Stambha-plugins 1.0.0 line — peers @stambha/core@^1.2.0.",
+      delivered: [
+        "@stambha/api, @stambha/pagination @1.0.0",
+        "@stambha/cache, @stambha/metrics, @stambha/vault-sql @1.0.0",
+        "GitHub Release v1.0.0 + npm publish",
       ],
       meta: { ID: "PLUGINS-1.0.0", Track: "stambha-plugins", Release: "1.0.0" },
-      dependencies: "REL-1.0.0-release",
-      references: ["https://github.com/Mivaya/Stambha-plugins"],
+      references: ["https://github.com/Mivaya/Stambha-plugins/releases/tag/v1.0.0"],
     }),
   },
 
   "PLUGINS-README": {
     title: "plugins-readme",
-    status: "In Progress",
+    status: "Done",
     track: "stambha-plugins",
     type: "Task",
     pillar: "Plugins",
     release: "1.0.0",
-    body: ticketBody({
-      summary: "Document which extension package versions pair with which @stambha/core semver.",
-      acceptance: [
-        "Compatibility matrix in Stambha-plugins README",
-        "Link from core README Contributing / plugins section",
+    body: doneBody({
+      summary: "Stambha-plugins README package matrix + core cross-links.",
+      delivered: [
+        "Package table in Stambha-plugins README",
+        "Core README / CONTRIBUTING link to extensions",
       ],
       meta: { ID: "PLUGINS-README", Track: "stambha-plugins" },
-      dependencies: "PLUGINS-1.0.0",
+    }),
+  },
+
+  "PLUGINS-API-1.1.0": {
+    title: "api-1.1.0-release",
+    status: "Done",
+    track: "stambha-plugins",
+    type: "Release",
+    pillar: "E",
+    release: "1.1.0",
+    body: doneBody({
+      summary: "@stambha/api 1.1.0 — Discord OAuth, sessions, Vault guild settings.",
+      delivered: [
+        "OAuth PKCE + state, server-side sessions, CSRF, auth rate limit",
+        "GET /guilds, channels/roles helpers",
+        "Vault guild settings + schema routes",
+        "listenWhen / STAMBHA_API_LISTEN deploy controls",
+        "GitHub Release vapi-1.1.0 + npm @stambha/api@1.1.0",
+      ],
+      meta: { ID: "PLUGINS-API-1.1.0", Track: "stambha-plugins", Release: "1.1.0", Epic: "EPIC-E" },
+      references: ["https://github.com/Mivaya/Stambha-plugins/releases/tag/vapi-1.1.0"],
+    }),
+  },
+
+  "PLUGINS-API-1.2.0": {
+    title: "api-1.2.0-release",
+    status: "Done",
+    track: "stambha-plugins",
+    type: "Release",
+    pillar: "E",
+    release: "1.2",
+    body: doneBody({
+      summary: "@stambha/api 1.2.0 — file-based routes (`src/routes/`, loadRoutes, routesDir).",
+      delivered: [
+        "loadRoutes + Route class + name.method.ts convention",
+        "createApiServerAsync / routesDir on createApiPlugin",
+        "GitHub Release vapi-1.2.0 + npm @stambha/api@1.2.0",
+        "Core docs updated (extensions/api, project-structure, Sapphire migration)",
+      ],
+      meta: { ID: "PLUGINS-API-1.2.0", Track: "stambha-plugins", Release: "1.2", Epic: "EPIC-E" },
+      references: ["https://github.com/Mivaya/Stambha-plugins/releases/tag/vapi-1.2.0"],
+    }),
+  },
+
+  "DOCS-EXTENSIONS": {
+    title: "Extensions docs hub",
+    status: "Done",
+    track: "stambha",
+    type: "Task",
+    pillar: "Docs",
+    release: "1.2.0",
+    body: doneBody({
+      summary: "Product docs for Stambha-plugins under /extensions/*.",
+      delivered: [
+        "Extensions sidebar (pagination, HTTP API, cache, metrics)",
+        "Self-contained guides with full API surface",
+        "Cross-links from README, Vault, known-gaps, migration",
+      ],
+      meta: { ID: "DOCS-EXTENSIONS", Pillar: "Docs", Release: "1.2.0", Epic: "EPIC-DOCS" },
+      references: ["docs/extensions/", "PR #61"],
     }),
   },
 
@@ -201,10 +379,25 @@ export const CARD_CATALOG = {
     type: "Feature",
     pillar: "B",
     release: "1.3",
+    lane: "Standard",
+    priority: "high",
     body: ticketBody({
       userStory: "As a bot author, I want command options to auto-wire gates so I don't repeat `gateNames` on every command.",
-      summary: "Declarative gates on `Command` options — merge with explicit `gates[]` via `resolveCommandGates(command)`. Target **1.3.0** (out of 1.2.0; pick B1 or C1 with G3-p2).",
+      summary: "Declarative gates on `Command` options — merge with explicit `gates[]` via `resolveCommandGates(command)`. Target **1.3.0**.",
       problem: "Today every command manually lists gates; Sapphire maps options → preconditions automatically.",
+      developerSyntax: `\`\`\`ts
+export class PingCommand extends Command {
+  constructor(registry: Registry<Command>) {
+    super(registry, {
+      name: "ping",
+      kinds: ["slash", "prefix"],
+      cooldown: 5,
+      runIn: "guild",
+      // gates applied automatically — no gateNames array
+    });
+  }
+}
+\`\`\``,
       inScope: ["resolveCommandGates(command)", "Cooldown, permissions, nsfw, runIn from CommandOptions", "Alias `preconditions` → gates"],
       outOfScope: ["Numeric permission levels (C1)", "Auto-gates for Signals"],
       acceptance: [
@@ -384,58 +577,84 @@ export const CARD_CATALOG = {
 
   P1: {
     title: "P1 — Pagination plugin",
-    status: "In Progress",
+    status: "Done",
     track: "stambha-plugins",
     type: "Feature",
     pillar: "Plugins",
-    release: "1.x",
-    body: ticketBody({
-      userStory: "As a bot author, I want embed pagination with buttons without hand-rolling Signals.",
-      summary: "`@stambha/pagination` — Pycord ext.pages parity using Signals. Parallel track while core ships 1.2.0.",
-      acceptance: [
-        "Package published from Stambha-plugins",
-        "Paginator helper with prev/next/dismiss",
-        "README with Stambha native example",
+    release: "1.0.0",
+    body: doneBody({
+      summary: "`@stambha/pagination` — embed pagination via Signals.",
+      delivered: [
+        "createPaginator + PaginationSignal (stambha:pagination:…)",
+        "Published @stambha/pagination@1.0.0",
+        "Product guide at docs/extensions/pagination",
       ],
-      meta: { ID: "P1", Pillar: "Plugins", Epic: "EPIC-B", Track: "stambha-plugins" },
-      references: ["https://github.com/Mivaya/Stambha-plugins"],
+      meta: { ID: "P1", Pillar: "Plugins", Epic: "EPIC-B", Track: "stambha-plugins", Release: "1.0.0" },
+      references: ["https://github.com/Mivaya/Stambha-plugins/releases/tag/v1.0.0"],
     }),
   },
 
   E1: {
     title: "E1 — Dashboard HTTP router",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha-plugins",
     type: "Feature",
     pillar: "E",
-    release: "1.x",
-    body: ticketBody({
-      summary: "HTTP router skeleton for `@stambha/dashboard` — user-built admin frontends.",
-      acceptance: [
-        "Mountable HTTP router in plugins package",
-        "Health + version routes",
-        "Tier-split deployment doc stub",
+    release: "1.0.0",
+    body: doneBody({
+      summary: "`@stambha/api` HTTP router — mountable admin API host.",
+      delivered: [
+        "createApiServer / createApiPlugin",
+        "GET /health + GET /version",
+        "CORS, body limit, request-id middleware",
+        "Tier-split deployment doc",
       ],
-      meta: { ID: "E1", Pillar: "E", Epic: "EPIC-E", Track: "stambha-plugins" },
+      meta: { ID: "E1", Pillar: "E", Epic: "EPIC-E", Track: "stambha-plugins", Release: "1.0.0" },
+      references: ["docs/extensions/api"],
     }),
   },
 
   "E2-E4": {
     title: "E2–E4 — Dashboard OAuth, Vault routes, tier mount",
-    status: "Backlog",
+    status: "Done",
     track: "stambha-plugins",
     type: "Feature",
     pillar: "E",
-    release: "1.x",
-    body: ticketBody({
-      summary: "Phases E2–E4: Discord OAuth, Vault CRUD routes, tier-split mount for dashboard.",
-      acceptance: [
-        "E2: OAuth flow documented and implemented",
-        "E3: Vault CRUD routes with auth",
-        "E4: Mount pattern for split tier",
+    release: "1.1.0",
+    body: doneBody({
+      summary: "OAuth, Vault CRUD routes, tier-split listen controls — shipped in @stambha/api 1.1.0.",
+      delivered: [
+        "E2: Discord OAuth (PKCE), sessions, CSRF",
+        "E3: Vault guild settings + schema routes",
+        "E4: listenWhen / STAMBHA_API_LISTEN / bot-worker mount pattern",
       ],
-      meta: { ID: "E2-E4", Pillar: "E", Epic: "EPIC-E" },
-      dependencies: "E1, C1 for admin route locking",
+      meta: { ID: "E2-E4", Pillar: "E", Epic: "EPIC-E", Release: "1.1.0" },
+      references: ["https://github.com/Mivaya/Stambha-plugins/releases/tag/vapi-1.1.0", "docs/extensions/api"],
+    }),
+  },
+
+  E5: {
+    title: "E5 — File-based API routes (src/routes loader)",
+    status: "Done",
+    track: "stambha-plugins",
+    type: "Feature",
+    pillar: "E",
+    release: "1.2",
+    body: doneBody({
+      summary:
+        "`@stambha/api` 1.2.0 — `loadRoutes`, `Route` class, `routesDir` / `createApiServerAsync` for Sapphire-style `src/routes/` files.",
+      delivered: [
+        "loadRoutes + parseRouteFilename (`name.method.ts`)",
+        "Route base class with optional static create(ctx)",
+        "routesDir on createApiPlugin / createApiServerAsync",
+        "GitHub Release vapi-1.2.0 + npm @stambha/api@1.2.0",
+        "Core docs: PiecePaths.routes, project-structure, Sapphire migration",
+      ],
+      meta: { ID: "E5", Pillar: "E", Epic: "EPIC-E", Track: "stambha-plugins", Release: "1.2" },
+      references: [
+        "https://github.com/Mivaya/Stambha-plugins/releases/tag/vapi-1.2.0",
+        "docs/extensions/api",
+      ],
     }),
   },
 
@@ -446,6 +665,8 @@ export const CARD_CATALOG = {
     type: "Feature",
     pillar: "A",
     release: "1.x",
+    lane: "Standard",
+    priority: "medium",
     body: ticketBody({
       userStory: "As a split-tier bot operator, I want shared cache across gateway/bot workers.",
       summary: "`@stambha/cache-redis` implementing core Cache interface.",
@@ -658,6 +879,8 @@ export const CARD_CATALOG = {
     type: "Feature",
     pillar: "G",
     release: "1.3",
+    lane: "Standard",
+    priority: "high",
     body: ticketBody({
       summary: "Channels, threads, roles, bans, GUILD_MEMBERS_CHUNK, audit log.",
       acceptance: ["Tier 2 complete with golden fixture tests per event group"],
@@ -749,7 +972,7 @@ export const CARD_CATALOG = {
       ],
       meta: { ID: "ADAPTERS-1.5", Release: "1.5" },
       dependencies: "G3-p4 optional but same release train",
-      references: ["docs/guide/known-gaps.md", "ADR 005"],
+      references: ["docs/guide/known-gaps.md", "docs/decisions/005-native-only-migration.md"],
     }),
   },
 
@@ -1033,12 +1256,41 @@ export const CARD_CATALOG = {
     type: "Epic",
     pillar: "B",
     release: "1.x",
+    lane: "Standard",
     body: epicBody({
-      vision: "Sapphire-style command ergonomics on the native stack.",
-      outcomes: ["Declarative gates", "Bridge/hybrid args", "Help", "Lifecycle hooks", "Components", "Edit-tracking", "Mention-prefix"],
-      childFeatures: ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "TYPING"],
+      objective:
+        "Sapphire-style command ergonomics on the native stack — declarative gates, hybrid args, help, lifecycle hooks, and component UX without discord.js.",
+      architecture: [
+        "`@stambha/core` — Command, CommandOptions, InboundRouter",
+        "`@stambha/gates` + `@stambha/args` — preconditions and parsing",
+        "`@stambha/loader` — piece discovery",
+      ],
+      outcomes: [
+        "Declarative gates (B1)",
+        "Bridge/hybrid args + REST resolvers (B2)",
+        "Built-in help (B3)",
+        "Piece lifecycle hooks (B4)",
+        "Component builders + persistent signals (B5)",
+        "Prefix edit-tracking (B6)",
+      ],
+      childTickets: [
+        { id: "B7", title: "Mention-as-prefix", shipped: true },
+        { id: "B1", title: "Declarative gates", shipped: false },
+        { id: "B2", title: "Bridge args, flags, entity resolvers", shipped: false },
+        { id: "B3", title: "Help system", shipped: false },
+        { id: "B4", title: "Piece lifecycle + error hooks", shipped: false },
+        { id: "B5", title: "Component builder + persistent signals", shipped: false },
+        { id: "B6", title: "Prefix edit-tracking", shipped: false },
+        { id: "TYPING", title: "Typing indicator", shipped: false },
+        { id: "P1", title: "Pagination plugin (@stambha/pagination)", shipped: true },
+      ],
+      successCriteria: [
+        "B1 or next scheduled B-pillar feature ships in a tagged core release",
+        "Each child has acceptance criteria in catalog + known-gaps cross-link",
+        "No discord.js in core hot path",
+      ],
       meta: { ID: "EPIC-B", Pillar: "B", Release: "1.x" },
-      references: ["docs/guide/known-gaps.md"],
+      references: ["docs/guide/known-gaps.md", "docs/decisions/003-plugins-monorepo.md"],
     }),
   },
 
@@ -1049,12 +1301,39 @@ export const CARD_CATALOG = {
     type: "Epic",
     pillar: "G",
     release: "1.x",
+    lane: "Standard",
     body: epicBody({
-      vision: "Gateway dispatch normalization and ops at Discordeno scale.",
-      outcomes: ["G3 camelCase all dispatches", "G1 auto resharding", "G2 proxy (2.0)"],
-      childFeatures: ["G3-spike", "G3-p1", "G3-p2", "G3-p3", "G3-p4", "G3a", "G1", "G2"],
-      meta: { ID: "EPIC-G", Pillar: "G" },
-      references: ["docs/deployment/gateway.md"],
+      objective:
+        "Normalize gateway dispatches to camelCase at the hub boundary and provide Discordeno-scale ops (resharding, optional proxy) on `@stambha/gateway` + `@stambha/transform`.",
+      architecture: [
+        "`@stambha/gateway` — WebSocket shards, `attachStambhaClient`, worker bus",
+        "`@stambha/transform` — `normalizeDispatch`, payload types, guards",
+        "`@stambha/rest` — outbound API + rate-limit queue telemetry",
+      ],
+      outcomes: [
+        "G3 all tiers camelCase (p1–p4)",
+        "Typed GatewayEventMap (G3a)",
+        "Auto resharding threshold (G1)",
+        "Gateway proxy (G2, 2.0)",
+      ],
+      childTickets: [
+        { id: "G3-spike", title: "Dispatch catalog & camelize", shipped: true },
+        { id: "G3-p1", title: "Tier 1 gateway dispatches", shipped: true },
+        { id: "G3-p2", title: "Tier 2 gateway dispatches", shipped: false },
+        { id: "G3-p3", title: "Tier 3 gateway dispatches", shipped: false },
+        { id: "G3-p4", title: "Tier 4 gateway dispatches", shipped: false },
+        { id: "G3a", title: "Typed GatewayEventMap", shipped: false },
+        { id: "G1", title: "Auto resharding threshold", shipped: false },
+        { id: "G2", title: "Gateway proxy (2.0)", shipped: false },
+        { id: "REST-app", title: "fetchApplication + owner team", shipped: false },
+      ],
+      successCriteria: [
+        "G3-p2 ships as breaking minor 1.3.0 with migration notes",
+        "`dispatchNormalize: 'raw'` escape hatch documented until tiers complete",
+        "Golden fixture tests per event group",
+      ],
+      meta: { ID: "EPIC-G", Pillar: "G", Release: "1.x" },
+      references: ["docs/deployment/gateway.md", "docs/guide/known-gaps.md — G3"],
     }),
   },
 
@@ -1088,15 +1367,34 @@ export const CARD_CATALOG = {
 
   "EPIC-E": {
     title: "EPIC-E — Pillar E: Dashboard HTTP API",
-    status: "Backlog",
+    status: "Done",
     track: "stambha-plugins",
     type: "Epic",
     pillar: "E",
-    release: "1.x",
+    release: "1.1.0",
+    lane: "Standard",
     body: epicBody({
-      vision: "@stambha/dashboard — HTTP + OAuth + Vault CRUD for user-built admin UIs.",
-      childFeatures: ["E1", "E2-E4"],
-      meta: { ID: "EPIC-E", Pillar: "E", Track: "stambha-plugins" },
+      objective:
+        "`@stambha/api` — HTTP host with Discord OAuth and Vault guild settings for operator-built admin panels (no hosted UI).",
+      architecture: [
+        "`@stambha/api` — router, auth, sessions, Vault settings routes",
+        "`@stambha/plugins` — `createApiPlugin` lifecycle on bot worker",
+        "Optional `@stambha/vault` peer for `/guilds/:id/settings`",
+      ],
+      childTickets: [
+        { id: "E1", title: "HTTP router + health/version", shipped: true },
+        { id: "E2-E4", title: "OAuth, Vault routes, tier mount", shipped: true },
+        { id: "E5", title: "File-based routes (src/routes loader)", shipped: true },
+        { id: "HOSTED-UI", title: "Hosted dashboard UI product", shipped: false },
+        { id: "SSO", title: "Enterprise SSO", shipped: false },
+      ],
+      successCriteria: [
+        "@stambha/api@1.2.0 on npm with OAuth, settings routes, and src/routes/ loader",
+        "Product guide at docs/extensions/api",
+        "API runs on bot worker only — not gateway shards",
+      ],
+      meta: { ID: "EPIC-E", Pillar: "E", Track: "stambha-plugins", Release: "1.2" },
+      references: ["docs/extensions/api", "docs/decisions/003-plugins-monorepo.md"],
     }),
   },
 
@@ -1152,7 +1450,7 @@ export const CARD_CATALOG = {
       decision: "Won't support discord.js or Discordeno as official transport.",
       rationale: "ADR 005 — native stack only for official migrations.",
       meta: { ADR: "005" },
-      references: [".cursor/rules/stambha.mdc", "docs/guide/known-gaps.md"],
+      references: [".cursor/rules/stambha.mdc", "docs/guide/known-gaps.md", "docs/decisions/005-native-only-migration.md"],
     }),
   },
 
@@ -1164,6 +1462,7 @@ export const CARD_CATALOG = {
       decision: "Won't re-introduce bridge packages.",
       rationale: "ADR 002 — removed; use @stambha/transform native shapes.",
       meta: { ADR: "002" },
+      references: ["docs/decisions/002-bridge-deprecation.md"],
     }),
   },
 
@@ -1196,6 +1495,7 @@ export const CARD_CATALOG = {
       decision: "Won't expand Vault into full ORM.",
       rationale: "ADR 004 — use Prisma/Drizzle for domain data.",
       meta: { ADR: "004" },
+      references: ["docs/decisions/004-vault-scope-orm-coexistence.md"],
     }),
   },
 
@@ -1247,6 +1547,7 @@ export const CARD_CATALOG = {
       decision: "Won't move @stambha/plugins host to plugins repo.",
       rationale: "ADR 003 — host stays in core; extensions in plugins repo.",
       meta: { ADR: "003" },
+      references: ["docs/decisions/003-plugins-monorepo.md"],
     }),
   },
 
@@ -1277,13 +1578,23 @@ export const TITLE_TO_ID = {
   "0.2.1–0.3.5 releases": "REL-0.3",
   "Phases 1–23 (core)": "PHASES-1-23",
   "Phase 24 — 1.0.0 prep": "PHASE-24",
+  "Phase 25 — 1.1.0 prep": "PHASE-25",
   "Extensions v0.2.2+": "EXT-0.2.2",
   "1.0.0-tag": "REL-1.0.0-tag",
   "1.0.0-github-release": "REL-1.0.0-release",
   "1.0.0-merge": "REL-1.0.0-merge",
   "1.0.0-archive": "REL-1.0.0-archive",
+  "1.1.0-tag": "REL-1.1.0-tag",
+  "1.1.0-github-release": "REL-1.1.0-release",
+  "1.1.0-archive": "REL-1.1.0-archive",
+  "1.2.0-release-branch": "REL-1.2.0-branch",
+  "1.2.0-release": "REL-1.2.0",
+  "1.2.0-archive": "REL-1.2.0-archive",
   "plugins-1.0.0": "PLUGINS-1.0.0",
   "plugins-readme": "PLUGINS-README",
+  "api-1.1.0-release": "PLUGINS-API-1.1.0",
+  "api-1.2.0-release": "PLUGINS-API-1.2.0",
+  "Extensions docs hub": "DOCS-EXTENSIONS",
   B1: "B1",
   "B1 — Declarative gates": "B1",
   B2: "B2",
@@ -1307,6 +1618,8 @@ export const TITLE_TO_ID = {
   "E1 — Dashboard HTTP router": "E1",
   "E2–E4": "E2-E4",
   "E2–E4 — Dashboard OAuth, Vault routes, tier mount": "E2-E4",
+  E5: "E5",
+  "E5 — File-based API routes (src/routes loader)": "E5",
   A1: "A1",
   "A1 — Redis cache driver": "A1",
   "A1-core: Redis cache driver coordination": "A1-core",

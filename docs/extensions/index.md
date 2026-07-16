@@ -4,14 +4,14 @@ Optional packages ship from **[Stambha-plugins](https://github.com/Mivaya/Stambh
 
 The plugin **host** (`definePlugin`, lifecycle, container) stays in core: [Plugins & container](/features/plugins).
 
-Current plugins line: **1.0.0** (peers on Stambha core **^1.2.0** where applicable).
+Current plugins line: packages ship independently. **`@stambha/api` is at 1.2.0** (file-based `src/routes/`); other packages remain on **1.0.0** unless noted. Peers on Stambha core **^1.2.0** where applicable.
 
 ## Guides
 
 | You need… | Guide |
 |-----------|--------|
 | Paginated embeds (prev / next / dismiss) | [Pagination](/extensions/pagination) |
-| HTTP routes / Discord OAuth admin API | [HTTP API](/extensions/api) |
+| HTTP routes / Discord OAuth admin API (`src/routes/` in 1.2.0+) | [HTTP API](/extensions/api) |
 | Prometheus scrape endpoint | [Metrics](/extensions/metrics) |
 | In-process guild/entity cache | [Cache](/extensions/cache) |
 | Persist Vault to SQLite / Postgres | [Vault — SQL drivers](/features/vault#sql-drivers) |

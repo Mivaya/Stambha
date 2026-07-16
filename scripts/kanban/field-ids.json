@@ -2,10 +2,11 @@
   "Status": {
     "id": "PVTSSF_lADOEUrQYs4Ba7UFzhVvZ9U",
     "options": {
-      "Done": "d44b819e",
-      "In Progress": "a935317a",
-      "Sprint Ready": "5dfdda1c",
       "Backlog": "5c8f2b73",
+      "Sprint Ready": "5dfdda1c",
+      "In Progress": "a935317a",
+      "Review": "f53a566b",
+      "Done": "d44b819e",
       "Icebox": "32739817",
       "Won't": "0742b589"
     }
@@ -53,6 +54,23 @@
       "1.5": "598b693e",
       "1.x": "b6e815eb",
       "2.0": "eab48a48"
+    }
+  },
+  "Priority": {
+    "id": "PVTSSF_lADOEUrQYs4Ba7UFzhYEJ5I",
+    "options": {
+      "blocker": "611d9c15",
+      "high": "cc2bd1b6",
+      "medium": "979cf133",
+      "low": "bd10e356"
+    }
+  },
+  "Lane": {
+    "id": "PVTSSF_lADOEUrQYs4Ba7UFzhYEJ60",
+    "options": {
+      "Expedite": "d4fb9add",
+      "Standard": "7194c62c",
+      "Tech debt": "ad0e3b04"
     }
   }
 }

@@ -5,6 +5,16 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `PiecePaths.routes` (`"src/routes"`) — conventional folder for `@stambha/api` file-based routes (not scanned by `@stambha/loader`).
+
+### Changed
+
+- Docs for **`@stambha/api@1.2.0`**: `loadRoutes` / `routesDir` / `createApiServerAsync`, project-structure + Sapphire migration for `src/routes/`.
+
 ## [1.2.0] - 2026-07-10
 
 **CamelCase gateway event payloads** for common hub listeners (reactions, guild/member, voice, message delete, poll votes), plus clearer docs and onboarding. First breaking gateway minor after 1.0.0 — custom `hub.on` handlers for those events receive camelCase fields (`guildId`, not `guild_id`).
@@ -433,7 +443,7 @@ First public release of the **native Stambha stack** — a transport-agnostic Di
 - `examples/bot` — full Sapphire-style bot with tier-split scripts (`pnpm split:*`)
 - `examples/minimal` — MockBridge smoke example
 - VitePress docs site under `docs/` with migration guides (Sapphire, Discordeno, Klasa)
-- Internal roadmap, ADRs, and v2 planning (`docs/internal/`)
+- Program board (`scripts/kanban/catalog.mjs`) and architecture decisions (`docs/decisions/`)
 
 
 
@@ -455,7 +465,7 @@ First public release of the **native Stambha stack** — a transport-agnostic Di
 
 ### Removed
 
-- `@stambha/bridge-discordjs` and `@stambha/bridge-discordeno` — see [ADR 002](docs/internal/adr/002-bridge-deprecation.md)
+- `@stambha/bridge-discordjs` and `@stambha/bridge-discordeno` — see [ADR 002](docs/decisions/002-bridge-deprecation.md)
 - Deprecated examples (`discord-bot`, `discordeno-bot`, `tier-split`, `split-native`) replaced by `examples/bot` and `examples/minimal`
 
 
