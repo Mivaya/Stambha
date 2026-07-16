@@ -26,11 +26,13 @@ const STATUS_FIELD_ID = "PVTSSF_lADOEUrQYs4Ba7UFzhVvZ9U";
 const TRACK_FIELD_ID = "PVTSSF_lADOEUrQYs4Ba7UFzhVvbJw";
 const FIELD_IDS_PATH = join(__dirname, "kanban", "field-ids.json");
 
-const STATUS_IDS = {
-  Done: "d44b819e",
-  "In Progress": "a935317a",
-  "Sprint Ready": "5dfdda1c",
+/** Fallback IDs — refreshed from GitHub after --setup-fields. */
+const STATUS_IDS_FALLBACK = {
   Backlog: "5c8f2b73",
+  "Sprint Ready": "5dfdda1c",
+  "In Progress": "a935317a",
+  Review: null,
+  Done: "d44b819e",
   Icebox: "32739817",
   "Won't": "0742b589",
 };
@@ -39,6 +41,23 @@ const TRACK_IDS = {
   stambha: "cc14f4e2",
   "stambha-plugins": "633eb0b6",
 };
+
+let statusIds = { ...STATUS_IDS_FALLBACK };
+
+function loadStatusIds() {
+  if (!existsSync(FIELD_IDS_PATH)) return statusIds;
+  try {
+    const cache = JSON.parse(readFileSync(FIELD_IDS_PATH, "utf8"));
+    if (cache.Status?.options) {
+      statusIds = { ...STATUS_IDS_FALLBACK, ...cache.Status.options };
+    }
+  } catch {
+    /* use fallback */
+  }
+  return statusIds;
+}
+
+loadStatusIds();
 
 const args = new Set(process.argv.slice(2));
 const runSetup = args.has("--setup-fields") || args.has("--all");
@@ -64,7 +83,7 @@ function listFields() {
     `query($org: String!, $n: Int!) {
       organization(login: $org) {
         projectV2(number: $n) {
-          fields(first: 40) {
+          fields(first: 50) {
             nodes {
               ... on ProjectV2Field { id name }
               ... on ProjectV2SingleSelectField { id name options { id name } }
@@ -110,14 +129,24 @@ function listProjectItemsGraphql() {
 }
 
 function setupStatusNames() {
+  const fields = listFields();
+  const statusField = fields.find((f) => f.id === STATUS_FIELD_ID);
+  const existing = Object.fromEntries((statusField?.options ?? []).map((o) => [o.name, o.id]));
+
+  const reviewId = existing.Review ?? statusIds.Review;
+
   const options = [
-    { id: STATUS_IDS.Done, name: "Done", color: "GREEN", description: "" },
-    { id: STATUS_IDS["In Progress"], name: "In Progress", color: "YELLOW", description: "" },
-    { id: STATUS_IDS["Sprint Ready"], name: "Sprint Ready", color: "BLUE", description: "" },
-    { id: STATUS_IDS.Backlog, name: "Backlog", color: "GRAY", description: "" },
-    { id: STATUS_IDS.Icebox, name: "Icebox", color: "PURPLE", description: "" },
-    { id: STATUS_IDS["Won't"], name: "Won't", color: "RED", description: "" },
+    { id: existing.Backlog ?? statusIds.Backlog, name: "Backlog", color: "GRAY", description: "Prioritized; not sprint-ready" },
+    { id: existing["Sprint Ready"] ?? statusIds["Sprint Ready"], name: "Sprint Ready", color: "BLUE", description: "Refined; WIP ≤ 5" },
+    { id: existing["In Progress"] ?? statusIds["In Progress"], name: "In Progress", color: "YELLOW", description: "Active coding" },
+    reviewId
+      ? { id: reviewId, name: "Review", color: "ORANGE", description: "PR open; peer review" }
+      : { name: "Review", color: "ORANGE", description: "PR open; peer review" },
+    { id: existing.Done ?? statusIds.Done, name: "Done", color: "GREEN", description: "Shipped or decided" },
+    { id: existing.Icebox ?? statusIds.Icebox, name: "Icebox", color: "PURPLE", description: "2.0+ / no commitment" },
+    { id: existing["Won't"] ?? statusIds["Won't"], name: "Won't", color: "RED", description: "ADR decisions" },
   ];
+
   graphqlMutation(
     `mutation($input: UpdateProjectV2FieldInput!) {
       updateProjectV2Field(input: $input) {
@@ -126,7 +155,7 @@ function setupStatusNames() {
     }`,
     { input: { fieldId: STATUS_FIELD_ID, singleSelectOptions: options } },
   );
-  console.log("✓ Status columns OK");
+  console.log("✓ Status columns OK (incl. Review)");
 }
 
 function ensureSelectField(name, options) {
@@ -163,7 +192,20 @@ function setupCustomFields() {
   setupStatusNames();
   ensureSelectField("Work type", ["Epic", "Feature", "Task", "Release", "Decision"]);
   ensureSelectField("Pillar", ["A", "B", "C", "D", "E", "G", "Vault", "Docs", "Ops", "Plugins"]);
-  ensureSelectField("Release", ["1.0.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.x", "2.0"]);
+  ensureSelectField("Priority", ["blocker", "high", "medium", "low"]);
+  ensureSelectField("Lane", ["Expedite", "Standard", "Tech debt"]);
+  ensureSelectField("Release", [
+    "1.0.0",
+    "1.1.0",
+    "1.1",
+    "1.2.0",
+    "1.2",
+    "1.3",
+    "1.4",
+    "1.5",
+    "1.x",
+    "2.0",
+  ]);
   const fields = listFields();
   const cache = {};
   for (const f of fields) {
@@ -176,11 +218,13 @@ function setupCustomFields() {
   }
   writeFileSync(FIELD_IDS_PATH, JSON.stringify(cache, null, 2) + "\n");
   console.log(`✓ Wrote ${FIELD_IDS_PATH}`);
+  loadStatusIds();
   return cache;
 }
 
 function loadFieldCache() {
   if (!existsSync(FIELD_IDS_PATH)) return setupCustomFields();
+  loadStatusIds();
   return JSON.parse(readFileSync(FIELD_IDS_PATH, "utf8"));
 }
 
@@ -208,8 +252,8 @@ function setField(itemId, fieldId, { optionId }) {
 }
 
 function applyCardFields(itemId, card, fieldCache) {
-  if (card.status && STATUS_IDS[card.status]) {
-    setField(itemId, STATUS_FIELD_ID, { optionId: STATUS_IDS[card.status] });
+  if (card.status && statusIds[card.status]) {
+    setField(itemId, STATUS_FIELD_ID, { optionId: statusIds[card.status] });
   }
   if (card.track && TRACK_IDS[card.track]) {
     setField(itemId, TRACK_FIELD_ID, { optionId: TRACK_IDS[card.track] });
@@ -224,6 +268,12 @@ function applyCardFields(itemId, card, fieldCache) {
   }
   if (card.release && fieldCache.Release?.options[card.release]) {
     setField(itemId, fieldCache.Release.id, { optionId: fieldCache.Release.options[card.release] });
+  }
+  if (card.priority && fieldCache.Priority?.options[card.priority]) {
+    setField(itemId, fieldCache.Priority.id, { optionId: fieldCache.Priority.options[card.priority] });
+  }
+  if (card.lane && fieldCache.Lane?.options[card.lane]) {
+    setField(itemId, fieldCache.Lane.id, { optionId: fieldCache.Lane.options[card.lane] });
   }
 }
 
@@ -303,10 +353,11 @@ function enrichBodies() {
     const card = CARD_CATALOG[cardId];
     const needsUpdate =
       content.title !== card.title ||
+      content.body !== card.body ||
       !content.body?.includes("## Definition of done") ||
-      content.body.length < card.body.length * 0.8;
+      (card.type === "Epic" && !content.body?.includes("## Objective"));
 
-    if (!needsUpdate && content.body === card.body) {
+    if (!needsUpdate) {
       skipped++;
       continue;
     }
@@ -356,7 +407,7 @@ function updateProjectReadme() {
         "--owner",
         OWNER,
         "--description",
-        "Stambha program board. Source: scripts/kanban/catalog.mjs + .github/kanban/README.md. Columns: Done | In Progress | Sprint Ready | Backlog | Icebox | Won't.",
+        "Stambha program board. Source: scripts/kanban/catalog.mjs. Columns: Backlog → Sprint Ready → In Progress → Review → Done | Icebox | Won't. Views: Sprint (hide Done), Plugins track, Epics.",
       ],
       { stdio: "pipe" },
     );

@@ -117,7 +117,8 @@ Config: `docs/.vitepress/config.ts` (`defineVersionedConfig`, `versioning.latest
 
 Contributor-only material is **excluded from the public site build** (`srcExclude` in `.vitepress/config.ts`) and from the sidebar:
 
-- `/docs/internal/` — roadmap, phases, ADRs
+- `/docs/decisions/` — architecture decisions (ADR)
+- Program board — [GitHub Project #2](https://github.com/orgs/Mivaya/projects/2) (`scripts/kanban/catalog.mjs`)
 - `/docs/guide/hosting-the-docs.md` — this file (Pages deploy notes)
 
 Keep secrets and private URLs out of all docs folders.

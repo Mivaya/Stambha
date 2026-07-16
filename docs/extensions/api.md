@@ -4,7 +4,7 @@ HTTP endpoint for your bot so external services (admin SPA, ops tools) can talk 
 
 Ships as [`@stambha/api`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/api) from **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)**. Optional wiring through core [`@stambha/plugins`](/features/plugins) and [`@stambha/vault`](/features/vault).
 
-Peers: `@stambha/core@^1.2.0`, optional `@stambha/plugins@^1.2.0`, optional `@stambha/vault@^1.2.0`.
+Current line: **`@stambha/api@1.2.0`**. Peers: `@stambha/core@^1.2.0`, optional `@stambha/plugins@^1.2.0`, optional `@stambha/vault@^1.2.0`.
 
 This package does **not** ship a hosted UI. Bring your own frontend.
 
@@ -20,7 +20,7 @@ This package does **not** ship a hosted UI. Bring your own frontend.
 ## Install
 
 ```bash
-pnpm add @stambha/api @stambha/core @stambha/plugins
+pnpm add @stambha/api@1.2.0 @stambha/core @stambha/plugins
 # for guild settings routes:
 pnpm add @stambha/vault
 ```
@@ -60,19 +60,84 @@ Always available under `prefix`:
 | `GET` | `/health` | `{ ok: true, … }` — tier / worker role when a client is attached |
 | `GET` | `/version` | `{ name, version }` |
 
+### File-based routes (`src/routes/`) — 1.2.0
+
+Prefer one file per route under a directory (commonly `src/routes/`), Sapphire-style `name.method.ts` naming:
+
+| File | Route |
+|------|--------|
+| `hello-world.get.ts` | `GET /hello-world` |
+| `guilds/[id].get.ts` | `GET /guilds/[id]` |
+| `users/profile.post.ts` | `POST /users/profile` |
+| `index.get.ts` | `GET /` |
+
+```ts
+// src/routes/hello-world.get.ts
+import type { RouteHandler } from "@stambha/api";
+
+const run: RouteHandler = async (_req, res) => {
+  res.json({ hello: "stambha" });
+};
+export default run;
+```
+
+Or extend `Route` (optional `static create(ctx)` for DI):
+
+```ts
+import { Route, type ApiRequest, type ApiResponse } from "@stambha/api";
+
+export default class HelloRoute extends Route {
+  run(_req: ApiRequest, res: ApiResponse) {
+    res.json({ hello: "stambha" });
+  }
+}
+```
+
+Load with **`routesDir`** (async server or plugin) — merges with explicit `routes: […]`:
+
+```ts
+import { createApiServerAsync, createApiPlugin } from "@stambha/api";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+
+const routesDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "routes");
+
+// Standalone: sync createApiServer rejects routesDir — use async
+const server = await createApiServerAsync({
+  prefix: "/api",
+  routesDir,
+  routes: [/* optional extras */],
+});
+
+// Plugin: loads on postStart
+const api = createApiPlugin({
+  routesDir,
+  auth: { /* … */ },
+});
+```
+
+You can still call `loadRoutes(routesDir)` yourself and pass the result as `routes`. File-based loading is **not** part of `@stambha/loader` `loadPieces` — it lives in `@stambha/api`.
+
+See [Project structure](/guide/project-structure) for the recommended `src/routes/` folder.
+
 ### Dashboard auth + guild settings (plugin)
 
 ```ts
 import { createStambhaBot } from "@stambha/core";
 import { attachPlugins } from "@stambha/plugins";
 import { createApiPlugin } from "@stambha/api";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const client = createStambhaBot({ /* restPort, … */ });
 // vault from @stambha/vault — optional but enables settings routes
 
+const routesDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "routes");
+
 const api = createApiPlugin({
   listenOptions: { port: 4000 },
   origin: "https://panel.example.com",
+  routesDir, // optional — auto-load src/routes
   auth: {
     clientId: process.env.DISCORD_CLIENT_ID!,
     clientSecret: process.env.DISCORD_CLIENT_SECRET!,
@@ -166,6 +231,8 @@ Env: **`STAMBHA_API_LISTEN=0`** skips binding in any process.
 
 Paths are relative to `prefix`. Dynamic segments use `[param]` (e.g. `/guilds/[id]`).
 
+Prefer [file-based routes](#file-based-routes-srcroutes--120) under `src/routes/`. You can also register inline definitions:
+
 ```ts
 import type { RouteDefinition } from "@stambha/api";
 
@@ -185,6 +252,8 @@ const route: RouteDefinition = {
 | `path` | Relative to `prefix`; `[id]` for params |
 | `run` | `(req, res) => void \| Promise<void>` |
 | `name` | Optional debug label |
+
+`loadRoutes(dir)` accepts modules that export a `RouteDefinition`, a class extending `Route`, or a default/`run` handler (method + path from the filename).
 
 ### Request (`ApiRequest`)
 
@@ -310,7 +379,8 @@ See [Tier split](/deployment/tier-split).
 
 | Export | Purpose |
 |--------|---------|
-| `createApiServer` / `createApiPlugin` | Host + plugin lifecycle |
+| `createApiServer` / `createApiServerAsync` / `createApiPlugin` | Host + lifecycle (`routesDir` on async/plugin) |
+| `loadRoutes` / `parseRouteFilename` / `Route` | File-based route discovery (1.2.0) |
 | `createDashboardPlugin` / `createDashboardServer` | Aliases (`createDashboardServer` deprecated) |
 | `MemorySessionStore` / `MemoryOAuthStateStore` | Default stores |
 | `createAuthRoutes` / `createGuildRoutes` / `createSettingsRoutes` | Built-in route factories |
@@ -318,7 +388,7 @@ See [Tier split](/deployment/tier-split).
 | `buildAuthorizeUrl`, `exchangeAuthorizationCode`, `fetchOAuthUser`, `fetchOAuthGuilds`, `guildIsManageable`, … | Discord OAuth helpers |
 | `Router`, `RouteStore`, `MiddlewareStore` | Extension points |
 | `shouldListen`, `createAuthRuntime` | Deploy / auth wiring |
-| Types | `ApiServerOptions`, `ApiAuthOptions`, `ApiSession`, `SessionStore`, `VaultLike`, `RouteDefinition`, … |
+| Types | `ApiServerOptions`, `ApiAuthOptions`, `ApiSession`, `SessionStore`, `VaultLike`, `RouteDefinition`, `RouteHandler`, … |
 
 ## Related
 

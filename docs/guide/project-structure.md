@@ -19,6 +19,8 @@ src/
   signals/            # buttons, modals, selects
   tasks/              # Chron scheduled jobs
   schemas/            # Vault blueprints
+  routes/             # HTTP API handlers (@stambha/api 1.2.0+)
+    hello-world.get.ts
   main.ts
 ```
 
@@ -97,8 +99,9 @@ See [Epilogues](/features/epilogues) for post-command hooks (prefer over `client
 | `signals/` | `Signal` | [Signals](/features/signals) |
 | `tasks/` | `Chron` | [Chron](/features/chron) |
 | `schemas/` | Vault blueprints | [Vault](/features/vault) |
+| `routes/` | `@stambha/api` route files | [HTTP API](/extensions/api) — **not** loaded by `loadPieces` |
 
-`PiecePaths` in `@stambha/core` lists default paths (`PiecePaths.commands === "src/commands"`, `PiecePaths.preconditions === "src/gates"`, etc.).
+`PiecePaths` in `@stambha/core` lists default piece paths (`PiecePaths.commands === "src/commands"`, `PiecePaths.preconditions === "src/gates"`, etc.). HTTP routes use `PiecePaths.routes` (`"src/routes"`) as the conventional folder for `@stambha/api` `routesDir` / `loadRoutes` — they are **not** scanned by `@stambha/loader`.
 
 Migrating from another stack? See [migration guides](/migration/) for piece-name mappings.
 

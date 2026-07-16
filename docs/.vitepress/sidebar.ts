@@ -56,7 +56,10 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
   },
   {
     text: "Reference",
-    items: [{ text: "Transport", link: "/reference/transport" }],
+    items: [
+      { text: "Transport", link: "/reference/transport" },
+      { text: "Decisions (ADR)", link: "/decisions/" },
+    ],
   },
   {
     text: "Migration",

@@ -1,4 +1,4 @@
-/** Industry-standard ticket body templates for GitHub Project #2. */
+/** Ticket body templates for GitHub Project #2. */
 
 const DEFAULT_DOD = [
   "Code reviewed and merged to `main` (or release branch)",
@@ -10,6 +10,7 @@ export function ticketBody({
   userStory,
   summary,
   problem,
+  developerSyntax,
   inScope = [],
   outOfScope = [],
   acceptance = [],
@@ -24,6 +25,7 @@ export function ticketBody({
   if (userStory) sections.push(`## User story\n${userStory}`);
   sections.push(`## Summary\n${summary}`);
   if (problem) sections.push(`## Problem / context\n${problem}`);
+  if (developerSyntax) sections.push(`## Developer syntax\n${developerSyntax}`);
 
   if (inScope.length || outOfScope.length) {
     let scope = "## Scope\n";
@@ -55,29 +57,73 @@ export function ticketBody({
   return sections.join("\n\n");
 }
 
+function formatChildTickets(childTickets, childFeatures) {
+  if (childTickets.length) {
+    return childTickets
+      .map((t) => `- [${t.shipped ? "x" : " "}] **${t.id}** — ${t.title}`)
+      .join("\n");
+  }
+  if (childFeatures.length) {
+    return childFeatures.map((id) => `- [ ] **${id}**`).join("\n");
+  }
+  return "_No child tickets linked yet._";
+}
+
 export function epicBody({
   vision,
+  objective,
+  architecture = [],
   outcomes = [],
+  childTickets = [],
   childFeatures = [],
+  successCriteria = [],
   acceptance = [],
   meta = {},
-  dependencies = "1.0.0 stable release",
+  dependencies = "None",
   references = [],
 }) {
-  return ticketBody({
-    summary: vision,
-    problem: "Epic — groups related Features. Keep in **Backlog** until children are Sprint Ready.",
-    inScope: outcomes,
-    outOfScope: ["Implementation detail belongs on child Feature cards"],
-    acceptance: acceptance.length
-      ? acceptance
-      : ["All child Features ticketed with acceptance criteria", "Epic closed when children ship or defer to Icebox"],
-    definitionOfDone: ["Child Features meet their Definition of done", "Epic outcomes verified in release notes"],
-    meta: { ...meta, "Work type": "Epic" },
-    dependencies,
-    technicalNotes: childFeatures.length ? [`**Child features:** ${childFeatures.join(", ")}`] : [],
-    references,
-  });
+  const obj = objective ?? vision ?? "";
+  const sections = [
+    `## Objective\n${obj}`,
+  ];
+
+  if (architecture.length) {
+    sections.push(`## Architecture\n${architecture.map((a) => `- ${a}`).join("\n")}`);
+  }
+
+  if (outcomes.length) {
+    sections.push(`## Outcomes\n${outcomes.map((o) => `- ${o}`).join("\n")}`);
+  }
+
+  sections.push(`## Child tickets\n${formatChildTickets(childTickets, childFeatures)}`);
+
+  const criteria =
+    successCriteria.length > 0
+      ? successCriteria
+      : acceptance.length > 0
+        ? acceptance
+        : [
+            "All child Features meet their Definition of done",
+            "Epic outcomes verified in release notes / CHANGELOG",
+          ];
+
+  sections.push(`## Success criteria\n${criteria.map((c) => `- [ ] ${c}`).join("\n")}`);
+
+  sections.push(
+    `## Metadata\n| Field | Value |\n|-------|-------|\n${Object.entries({
+      ...meta,
+      "Work type": "Epic",
+    })
+      .map(([k, v]) => `| ${k} | ${v} |`)
+      .join("\n")}`,
+    `## Dependencies\n${dependencies}`,
+  );
+
+  if (references.length) {
+    sections.push(`## References\n${references.map((r) => `- ${r}`).join("\n")}`);
+  }
+
+  return sections.join("\n\n");
 }
 
 export function decisionBody({ decision, rationale, alternatives = [], meta = {}, references = [] }) {

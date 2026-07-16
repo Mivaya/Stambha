@@ -25,8 +25,8 @@ export default defineVersionedConfig(
     cleanUrls: true,
     lastUpdated: true,
 
-    /** Contributor-only — not published to GitHub Pages. */
-    srcExclude: ["internal/**", "scripts/**"],
+    /** Not published to GitHub Pages. */
+    srcExclude: ["scripts/**", "decisions/**"],
 
     versioning: {
       latestVersion: readLatestVersionLabel(),

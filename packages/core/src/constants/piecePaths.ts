@@ -29,6 +29,11 @@ export const PiecePaths = {
   tasks: "src/tasks",
   /** Vault blueprints / ledger schemas */
   schemas: "src/schemas",
+  /**
+   * Conventional folder for `@stambha/api` file-based routes (`loadRoutes` / `routesDir`).
+   * Not scanned by `@stambha/loader` — pass as `routesDir` to createApiPlugin / createApiServerAsync.
+   */
+  routes: "src/routes",
 } as const;
 
 export type PiecePathKey = keyof typeof PiecePaths;
