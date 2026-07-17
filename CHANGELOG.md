@@ -5,15 +5,32 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.1] - 2026-07-17
+
+**Patch release** — dependency refresh, the `PiecePaths.routes` convention constant, and expanded extensions/decisions documentation. No gateway behavior or breaking API changes.
 
 ### Added
 
-- `PiecePaths.routes` (`"src/routes"`) — conventional folder for `@stambha/api` file-based routes (not scanned by `@stambha/loader`).
+- `PiecePaths.routes` (`"src/routes"`) — conventional folder for `@stambha/api` file-based routes (`loadRoutes` / `routesDir`); **not** scanned by `@stambha/loader` (`@stambha/core`).
+
+
 
 ### Changed
 
-- Docs for **`@stambha/api@1.2.0`**: `loadRoutes` / `routesDir` / `createApiServerAsync`, project-structure + Sapphire migration for `src/routes/`.
+- **Dependencies:** `cron-parser` `^5.6.0` → `^5.6.1` (`@stambha/core`). Dev tooling refreshed via Dependabot: `@biomejs/biome` 2.5.3, `vitest` 4.1.10, `@types/node` 26.1.1, `tsx` 4.23.1, `vue` 3.5.39, and CI `actions/setup-node@v6`.
+- **Docs — Extensions:** new [Extensions](/extensions/) hub with self-contained per-package guides (Pagination, HTTP API, Cache, Metrics); documented `@stambha/api@1.2.0` file-based routes (`loadRoutes` / `routesDir` / `createApiServerAsync`) and the `src/routes/` layout in project-structure and the Sapphire migration guide.
+
+
+
+### Packages in this release
+
+
+| Package                      | Version |
+| ---------------------------- | ------- |
+| All publishable `@stambha/*` | 1.2.1   |
+
+
+
 
 ## [1.2.0] - 2026-07-10
 
