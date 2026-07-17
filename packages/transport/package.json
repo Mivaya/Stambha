@@ -1,6 +1,6 @@
 {
   "name": "@stambha/transport",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Stambha Discord transport primitives — session info, route keys, rate-limit buckets",
   "author": "Mivaya",
   "license": "MIT",

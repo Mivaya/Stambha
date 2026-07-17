@@ -1,6 +1,6 @@
 {
   "name": "@stambha/gates",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Built-in Stambha gates — cooldown, permissions, NSFW, and RunIn (Sapphire preconditions parity)",
   "author": "Mivaya",
   "license": "MIT",
