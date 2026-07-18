@@ -40,6 +40,11 @@ export interface NativeGatewayClientOptions {
    * `default` — Tier 1 camelCase at hub; `raw` — wire snake_case escape hatch.
    */
   dispatchNormalize?: NormalizeDispatchMode;
+  /**
+   * When true, defer hub `ready` (shard 0) until all READY guild stubs have
+   * arrived as `GUILD_CREATE` / `guildAvailable` (discord.js-style).
+   */
+  waitForGuilds?: boolean;
 }
 
 export interface NativeGatewayClient {
@@ -101,6 +106,7 @@ export async function createNativeGatewayClient(
       shardOptions.reconnectDelayMs = options.reconnectDelayMs;
     if (options.dispatchNormalize !== undefined)
       shardOptions.dispatchNormalize = options.dispatchNormalize;
+    if (options.waitForGuilds !== undefined) shardOptions.waitForGuilds = options.waitForGuilds;
     return new GatewayShard(shardOptions);
   });
 

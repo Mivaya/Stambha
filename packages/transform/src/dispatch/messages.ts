@@ -18,6 +18,8 @@ interface DiscordReadyPayload {
   user?: DiscordUserPayload;
   session_id?: string;
   shard?: [number, number];
+  /** Unavailable guild stubs present on READY. */
+  guilds?: readonly { id?: string; unavailable?: boolean }[];
 }
 
 function userFromDiscord(user: DiscordUserPayload | undefined) {
@@ -42,16 +44,31 @@ export function messageFromDispatch(data: unknown): StambhaMessage | null {
   };
 }
 
+/** Extract guild ids from a READY `guilds` array (unavailable stubs). */
+export function guildIdsFromReady(data: unknown): string[] {
+  const guilds = (data as DiscordReadyPayload)?.guilds;
+  if (!Array.isArray(guilds)) return [];
+  const ids: string[] = [];
+  for (const g of guilds) {
+    if (g && typeof g.id === "string" && g.id.length > 0) ids.push(g.id);
+  }
+  return ids;
+}
+
 export function readyFromDispatch(data: unknown): {
   user?: { id: string; username?: string };
   sessionId?: string;
   shard?: [number, number];
+  /** Guild ids from READY unavailable stubs (startup backfill set). */
+  guildIds?: string[];
 } {
   const r = data as DiscordReadyPayload;
   const user = userFromDiscord(r.user);
+  const guildIds = guildIdsFromReady(data);
   return {
     ...(user ? { user } : {}),
     ...(r.session_id !== undefined ? { sessionId: r.session_id } : {}),
     ...(r.shard !== undefined ? { shard: r.shard } : {}),
+    ...(guildIds.length > 0 ? { guildIds } : {}),
   };
 }

@@ -1,4 +1,5 @@
 import type { NormalizeDispatchMode } from "@stambha/transform";
+import { guildIdsFromReady } from "@stambha/transform";
 import type { SessionInfo } from "@stambha/transport";
 import type { GatewayEventHub } from "../GatewayEventHub.js";
 import type { IdentifyBudget } from "../reshard/IdentifyBudget.js";
@@ -31,6 +32,25 @@ export interface GatewayShardOptions {
    * `default` — Tier 1 camelCase at hub; `raw` — wire snake_case escape hatch.
    */
   dispatchNormalize?: NormalizeDispatchMode;
+  /**
+   * When true, defer hub `ready` (shard 0) until all READY guild stubs have
+   * arrived as `GUILD_CREATE` / `guildAvailable` (discord.js-style).
+   */
+  waitForGuilds?: boolean;
+}
+
+function payloadGuildId(data: unknown): string | null {
+  if (data && typeof data === "object" && "id" in data) {
+    const id = (data as { id: unknown }).id;
+    return typeof id === "string" && id.length > 0 ? id : null;
+  }
+  return null;
+}
+
+function isUnavailableGuildDelete(data: unknown): boolean {
+  return Boolean(
+    data && typeof data === "object" && (data as { unavailable?: unknown }).unavailable === true,
+  );
 }
 
 export class GatewayShard {
@@ -42,6 +62,12 @@ export class GatewayShard {
   private heartbeatAck = true;
   private closed = false;
   private connectPromise: Promise<void> | null = null;
+  /** Guild ids from the last READY (startup backfill set). */
+  private startupGuildIds = new Set<string>();
+  /** READY guilds still waiting for their initial GUILD_CREATE. */
+  private pendingGuildIds = new Set<string>();
+  private readyEmitted = false;
+  private pendingReadyPayload: unknown = null;
 
   constructor(options: GatewayShardOptions) {
     this.options = options;
@@ -208,20 +234,71 @@ export class GatewayShard {
       if (sequence !== null) {
         this.lastSequence = sequence;
       }
+
+      const guildIds = guildIdsFromReady(data);
+      this.startupGuildIds = new Set(guildIds);
+      this.pendingGuildIds = new Set(guildIds);
+      this.readyEmitted = false;
+
       manager.markReady(shardId, {
         sessionId: this.sessionId ?? "",
         sequence: this.lastSequence ?? 0,
       });
+
+      const normalized = normalizeDispatch(eventName, data, normalizeOptions);
       if (shardId === 0) {
-        const normalized = normalizeDispatch(eventName, data, normalizeOptions);
-        hub.markReady(normalized as { user?: { id: string; username?: string } });
-        hub.emit("ready", normalized);
+        this.pendingReadyPayload = normalized;
+        if (!this.options.waitForGuilds || this.pendingGuildIds.size === 0) {
+          this.emitReady();
+        }
       }
+      return;
+    }
+
+    if (eventName === "GUILD_CREATE") {
+      const normalized = normalizeDispatch(eventName, data, normalizeOptions);
+      const guildId = payloadGuildId(data);
+      if (guildId && this.startupGuildIds.has(guildId)) {
+        this.pendingGuildIds.delete(guildId);
+        hub.emit("guildAvailable", normalized);
+        if (shardId === 0 && this.options.waitForGuilds) {
+          this.emitReady();
+        }
+        return;
+      }
+      hub.emit("guildCreate", normalized);
+      return;
+    }
+
+    if (eventName === "GUILD_DELETE") {
+      const normalized = normalizeDispatch(eventName, data, normalizeOptions);
+      const guildId = payloadGuildId(data);
+      if (isUnavailableGuildDelete(data)) {
+        hub.emit("guildUnavailable", normalized);
+        return;
+      }
+      if (guildId) {
+        this.startupGuildIds.delete(guildId);
+        this.pendingGuildIds.delete(guildId);
+      }
+      hub.emit("guildDelete", normalized);
       return;
     }
 
     const hubEvent = gatewayEventToHubName(eventName);
     hub.emit(hubEvent, normalizeDispatch(eventName, data, normalizeOptions));
+  }
+
+  private emitReady(): void {
+    if (this.readyEmitted || this.options.shardId !== 0) return;
+    if (this.options.waitForGuilds && this.pendingGuildIds.size > 0) return;
+    const payload = this.pendingReadyPayload;
+    if (payload === null) return;
+    this.readyEmitted = true;
+    this.pendingReadyPayload = null;
+    const { hub } = this.options;
+    hub.markReady(payload as { user?: { id: string; username?: string } });
+    hub.emit("ready", payload);
   }
 
   private sendHeartbeat(): void {

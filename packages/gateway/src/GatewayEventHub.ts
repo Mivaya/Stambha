@@ -2,6 +2,9 @@ import type { Bridge, BridgeEventHandler } from "@stambha/core";
 
 export interface GatewayEventHubReadyPayload {
   user?: { id: string; username?: string };
+  sessionId?: string;
+  shard?: [number, number];
+  guildIds?: string[];
 }
 
 /**

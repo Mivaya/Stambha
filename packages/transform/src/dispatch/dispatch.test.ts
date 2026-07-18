@@ -8,7 +8,7 @@ import {
   isTier1Dispatch,
 } from "./catalog.js";
 import { TIER1_FIXTURES } from "./fixtures/tier1.js";
-import { messageFromDispatch } from "./messages.js";
+import { messageFromDispatch, readyFromDispatch } from "./messages.js";
 import { normalizeDispatch } from "./normalize.js";
 
 const TIER1_DISPATCH_NAMES = GATEWAY_DISPATCH_EVENTS.filter(
@@ -80,6 +80,20 @@ describe("dispatch/normalize", () => {
       channelId: "c1",
       guildId: "g1",
       author: { id: "u1", bot: false, username: "alice" },
+    });
+  });
+
+  it("includes guildIds from READY stubs", () => {
+    expect(
+      readyFromDispatch({
+        session_id: "sess",
+        user: { id: "bot", username: "bot" },
+        guilds: [{ id: "g1", unavailable: true }, { id: "g2", unavailable: true }],
+      }),
+    ).toEqual({
+      user: { id: "bot", username: "bot" },
+      sessionId: "sess",
+      guildIds: ["g1", "g2"],
     });
   });
 
