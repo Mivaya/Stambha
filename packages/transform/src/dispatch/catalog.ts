@@ -80,7 +80,7 @@ export const GATEWAY_DISPATCH_EVENTS = [
 
 export type GatewayDispatchEventName = (typeof GATEWAY_DISPATCH_EVENTS)[number];
 
-export type DispatchNormalizationTier = "routing" | "tier1" | "passthrough";
+export type DispatchNormalizationTier = "routing" | "tier1" | "tier2" | "passthrough";
 
 export interface DispatchCatalogEntry {
   dispatchName: GatewayDispatchEventName;
@@ -121,13 +121,35 @@ const TIER1_EVENTS = new Set<string>([
   "GUILD_MEMBER_UPDATE",
 ]);
 
+/** Tier 2 structural normalization (G3-p2) — camelCase at hub boundary. */
+const TIER2_EVENTS = new Set<string>([
+  "CHANNEL_CREATE",
+  "CHANNEL_UPDATE",
+  "CHANNEL_DELETE",
+  "CHANNEL_PINS_UPDATE",
+  "THREAD_CREATE",
+  "THREAD_UPDATE",
+  "THREAD_DELETE",
+  "THREAD_LIST_SYNC",
+  "THREAD_MEMBER_UPDATE",
+  "THREAD_MEMBERS_UPDATE",
+  "GUILD_ROLE_CREATE",
+  "GUILD_ROLE_UPDATE",
+  "GUILD_ROLE_DELETE",
+  "GUILD_BAN_ADD",
+  "GUILD_BAN_REMOVE",
+  "GUILD_MEMBERS_CHUNK",
+  "GUILD_AUDIT_LOG_ENTRY_CREATE",
+]);
+
 function tierFor(dispatchName: string): DispatchNormalizationTier {
   if (ROUTING_EVENTS.has(dispatchName)) return "routing";
   if (TIER1_EVENTS.has(dispatchName)) return "tier1";
+  if (TIER2_EVENTS.has(dispatchName)) return "tier2";
   return "passthrough";
 }
 
-/** Normalization tier for a gateway dispatch name (routing | tier1 | passthrough). */
+/** Normalization tier for a gateway dispatch name. */
 export function dispatchNormalizationTier(dispatchName: string): DispatchNormalizationTier {
   return tierFor(dispatchName);
 }
@@ -135,6 +157,17 @@ export function dispatchNormalizationTier(dispatchName: string): DispatchNormali
 /** True when G3-p1 applies structural camelCase at the hub boundary. */
 export function isTier1Dispatch(dispatchName: string): boolean {
   return tierFor(dispatchName) === "tier1";
+}
+
+/** True when G3-p2 applies structural camelCase at the hub boundary. */
+export function isTier2Dispatch(dispatchName: string): boolean {
+  return tierFor(dispatchName) === "tier2";
+}
+
+/** True when Tier 1 or Tier 2 structural camelCase applies. */
+export function isStructuralDispatch(dispatchName: string): boolean {
+  const tier = tierFor(dispatchName);
+  return tier === "tier1" || tier === "tier2";
 }
 
 /** Lookup catalog metadata for a gateway dispatch name. */
