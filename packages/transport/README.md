@@ -31,7 +31,8 @@ import {
 const session = await createSession({ token: process.env.DISCORD_TOKEN! });
 console.log(session.userId, session.shardCount);
 
-const route = normalizeRoute("GET", `/channels/${channelId}/messages`);
+const route = normalizeRoute(`/channels/${channelId}/messages`);
+// → "/channels/<channelId>/messages" (major param kept)
 ```
 
 ---
@@ -42,7 +43,7 @@ const route = normalizeRoute("GET", `/channels/${channelId}/messages`);
 |--------|---------|
 | `DISCORD_API_BASE`, `DISCORD_API_VERSION` | API URL constants |
 | `createSession`, `SessionInfo` | Bot user + shard metadata |
-| `normalizeRoute`, `parseRouteKey` | Rate-limit bucket route keys |
+| `normalizeRoute`, `parseRouteKey` | Rate-limit keys (keep guild/channel/webhook ids) |
 | `RateLimitBucket`, `RateLimitStore`, `GlobalRateLimit` | Bucket state, global 50 req/s, headers |
 | `Snowflake` | ID type alias |
 

@@ -51,19 +51,19 @@ const session = createSession({
 
 ## Rate-limit buckets
 
-Discord groups REST routes into buckets. Stambha normalizes routes (snowflakes → `:id`) and tracks bucket state from response headers:
+Discord groups REST routes into buckets. Stambha normalizes routes for local bucketing — **major parameters** (`guilds`, `channels`, `webhooks` ids) are kept; other snowflakes become `:id`. Once Discord sends `X-RateLimit-Bucket`, that header is authoritative:
 
 ```ts
 import { parseRouteKey, RateLimitStore, parseRateLimitHeaders } from "@stambha/transport";
 
 const key = parseRouteKey("/channels/999/messages", "POST");
-// key.route === "/channels/:id/messages"
+// key.route === "/channels/999/messages"  (channel id kept)
 
-const store = new RateLimitStore();
-const waitMs = store.waitMs("bucket-id");
+const other = parseRouteKey("/guilds/1/members/2", "GET");
+// other.route === "/guilds/1/members/:id"
 ```
 
-`@stambha/rest` wraps this in `RateLimitQueue` — one serialized chain per bucket, automatic 429 retry.
+`@stambha/rest` wraps this in `RateLimitQueue` — one serialized chain per bucket, automatic 429 retry, plus a global 50 req/s budget.
 
 ---
 
