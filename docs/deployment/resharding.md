@@ -49,20 +49,25 @@ if (evaluation.needed && evaluation.reason === "scale_up") {
 
 ## Identify budget
 
-Discord limits identify frequency (~1 per 5 seconds per bot token). `IdentifyBudget` queues identify starts:
+Discord limits identify frequency using **concurrency buckets** (`shard_id % max_concurrency` from `GET /gateway/bot`). Each bucket allows one identify every ~5 seconds; different buckets may identify in parallel:
 
 ```ts
 import { createIdentifyBudget } from "@stambha/gateway";
 
-const budget = createIdentifyBudget({ minIntervalMs: 5500, maxConcurrent: 1 });
+const budget = createIdentifyBudget({
+  maxConcurrency: 16, // from session_start_limit.max_concurrency
+  minIntervalMs: 5500,
+});
 
-await budget.acquire();
+await budget.acquire(shardId);
 try {
   // send gateway identify (opcode 2)
 } finally {
-  budget.release();
+  budget.release(shardId);
 }
 ```
+
+`createNativeGatewayClient` builds this budget automatically from `/gateway/bot` (override with `identifyBudget` or `maxConcurrency`).
 
 ## Reshard controller
 

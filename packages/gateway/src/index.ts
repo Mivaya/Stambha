@@ -16,6 +16,7 @@ export {
   createIdentifyBudget,
   IdentifyBudget,
   type IdentifyBudgetOptions,
+  type SessionStartLimit,
 } from "./reshard/IdentifyBudget.js";
 export {
   type CreateReshardPlanOptions,
