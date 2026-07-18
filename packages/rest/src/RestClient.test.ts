@@ -69,4 +69,15 @@ describe("@stambha/rest", () => {
       "Discord REST 403: Missing Access",
     );
   });
+
+  it("records 403 toward the invalid-request guard", async () => {
+    const fetchImpl = vi.fn(async () => jsonResponse(403, { message: "Missing Access" }));
+    const queue = new RateLimitQueue({
+      invalidRequestGuard: { softLimit: 100, hardLimit: 200, windowMs: 60_000 },
+    });
+    const client = new RestClient({ token: "t", fetchImpl, queue });
+
+    await expect(client.request({ method: "GET", route: "/channels/1" })).rejects.toThrow();
+    expect(queue.invalidRequestGuard?.count).toBe(1);
+  });
 });

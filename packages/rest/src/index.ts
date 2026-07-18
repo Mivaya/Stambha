@@ -18,6 +18,16 @@ export {
 } from "./deploySlash.js";
 export { RateLimitQueue, type RateLimitQueueOptions, toHttpMethod } from "./RateLimitQueue.js";
 export {
+  DEFAULT_INVALID_REQUEST_HARD_LIMIT,
+  DEFAULT_INVALID_REQUEST_SOFT_LIMIT,
+  DEFAULT_INVALID_REQUEST_WINDOW_MS,
+  InvalidRequestGuard,
+  type InvalidRequestGuardOptions,
+  type InvalidRequestThresholdInfo,
+  INVALID_REQUEST_STATUSES,
+  isInvalidRequestStatus,
+} from "./InvalidRequestGuard.js";
+export {
   createNativeRestPort,
   createRestClient,
   type DiscordApiErrorBody,
