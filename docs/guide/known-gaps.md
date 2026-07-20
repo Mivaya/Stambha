@@ -35,16 +35,18 @@ Use this stack for new bots:
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **B1** | Declarative gates on `Command` options | Target **1.3.0** (pick B1 or C1 with G3-p2) — today: `gates: [...]` or `gateNames` |
+| **B1** | Declarative gates on `Command` options | **In progress** (`feature/declarative-gates`) — `cooldown` / `runIn` / `nsfw` / permissions; today also: `gates: [...]` or `gateNames` |
 | **B2** | Hybrid arg mapping, flags, entity resolvers | Partial `@stambha/args` today |
 | **B4** | Per-piece error hooks | Epilogues cover most cases |
 | **B5** | Component UI builders, persistent views | Signals + manual `stambha:` ids today |
 | **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | — |
-| **C1** | Numeric permission levels (`@stambha/levels`) | Target **1.3.0** (pick B1 or C1 with G3-p2) — use `userPermissionsGate` + roles today |
+| **C1** | Numeric permission levels (`@stambha/levels`) | Use `userPermissionsGate` + roles today |
+| **C2** | Vault level overrides | Needs C1 |
 | **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
 | **G1** | Auto resharding threshold | Manual `ReshardController` APIs exist |
-| **G3** | Gateway dispatch normalization (all events) | Tier 1 camelCase in **1.2.0** (G3-p1); Tier 2 → **1.3.0** (G3-p2); Tier 3 → **1.4.0** |
+| **G3** | Gateway dispatch normalization (all events) | Tier 1 **1.2.0**; Tier 2 **1.3.0** (on main); Tier 3 → **1.4.0**; Tier 4 → **1.5.0** |
 | **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Late 1.x — hub `on` handlers get per-event types |
+| **Collectors** | Message/reaction/interaction collectors | discord.js collectors parity on G3 events |
 
 ---
 
@@ -103,16 +105,32 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ---
 
-## Planned for 1.3.0
+## Planned next (after 1.3.0 train)
 
-Next gateway minor — **G3-p2** (channels, threads, roles, bans, audit log) plus gateway hardening (H tickets). Breaking for listeners on Tier 2 hub events.
+Path: **B1** → **G3-p3** → **G3-p4** → **ADAPTERS-1.5** → **G3a** → **G1** → **B2–B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **G3-p2** | Tier 2 gateway dispatches | Channels, threads, roles, bans, `GUILD_MEMBERS_CHUNK`, audit log — camelCase at hub |
-| **B1** or **C1** | Pick one pillar per release | Do not combine G3-p2 + B1 + C1 unless team accepts large QA surface |
+| **B1** | Declarative gates | `cooldown` / `runIn` / `nsfw` / permissions on `Command` options |
+| **G3-p3** | Tier 3 camelCase | Invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker |
+| **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, app-command permissions |
+| **ADAPTERS-1.5** | Remove legacy adapters | After G3 coverage |
+| **G3a** | Typed `GatewayEventMap` | Hub listener DX |
+| **G1** | Auto reshard threshold | — |
+| **B2–B6** | Args, help, lifecycle, components, edit-tracking | — |
+| **C1** / **C2** | Permission levels + vault overrides | — |
+| **A1–A2** | Redis / shared cooldowns | Often plugins |
+| **Collectors** | Interaction/message collectors | — |
 
-Use `dispatchNormalize: 'raw'` for one cycle while migrating Tier 2 handlers. Type guards: `isChannelCreatePayload`, `isThreadCreatePayload`, `isGuildRoleCreatePayload`, `isGuildBanAddPayload`, `isGuildMembersChunkPayload`, `isGuildAuditLogEntryCreatePayload`.
+## Shipped in 1.3.0 train (on main; release cut pending)
+
+| ID | Feature | Notes |
+|----|---------|-------|
+| **H6–H7** | REST invalid-request + global RL + major params | — |
+| **H1 / H2 / H4** | Resume/close, identify concurrency, guild backfill | — |
+| **G3-p2** | Tier 2 camelCase | Channels, threads, roles, bans, chunks, audit log |
+
+Use `dispatchNormalize: 'raw'` for one cycle while migrating Tier 2 handlers.
 
 ---
 

@@ -4,22 +4,61 @@ import type {
   SubcommandGroupDefinition,
 } from "../command/slashTypes.js";
 import type { AutocompleteContext } from "../context/autocomplete.js";
+import type { ChannelType } from "../context/meta.js";
 import type { CommandContext, CommandKind } from "../context/types.js";
 import { type Outcome, ok } from "../outcome/Outcome.js";
 import type { Registry } from "../pieces/Registry.js";
 import { Unit, type UnitOptions } from "../pieces/Unit.js";
 import type { GateLike } from "./Gate.js";
 
+/** Sapphire-style cooldown: seconds delay (limit 1) or full options bag. */
+export type CommandCooldownOption =
+  | number
+  | {
+      /** Window length in seconds (when `delayMs` omitted). */
+      delay?: number;
+      /** Window length in milliseconds. */
+      delayMs?: number;
+      /** Max invocations per window (default 1). */
+      limit?: number;
+      scope?: "user" | "guild" | "global" | "userGuild";
+    };
+
+/** Where a command may run — `'guild'` / `'dm'` shortcuts or channel-type list. */
+export type CommandRunInOption = "guild" | "dm" | ChannelType | readonly (ChannelType | "guild_any")[];
+
 export interface CommandOptions extends UnitOptions {
   description?: string;
   kinds?: CommandKind[];
-  /** Inline gates (factory helpers, ad-hoc checks). */
+  /** Inline gates (factory helpers, ad-hoc checks). Applied after declarative options. */
   gates?: GateLike[];
   /**
    * Names of {@link Gate} pieces in `client.registries.gates` (Sapphire preconditions).
    * Only listed gates run — registry gates are not applied to every command unless {@link GateOptions.global}.
+   * Alias: {@link CommandOptions.preconditions}.
    */
   gateNames?: readonly string[];
+  /**
+   * Sapphire-style alias for {@link CommandOptions.gateNames}.
+   * When both are set, values are concatenated (`gateNames` first).
+   */
+  preconditions?: readonly string[];
+  /**
+   * Declarative cooldown (B1). Requires `@stambha/gates` to be imported so the
+   * declarative gate resolver is registered. Number = seconds delay, limit 1.
+   */
+  cooldown?: CommandCooldownOption;
+  /**
+   * Declarative channel restriction (B1). `'guild'` → guild-only; `'dm'` → DMs only;
+   * or one/more channel types. Requires `@stambha/gates`.
+   */
+  runIn?: CommandRunInOption;
+  /** When true, require an NSFW channel (B1). Requires `@stambha/gates`. */
+  nsfw?: boolean;
+  /** Member permission bitfield / flags (B1). Requires `@stambha/gates`. */
+  userPermissions?: bigint | number | readonly bigint[] | readonly number[];
+  /** Bot permission bitfield / flags (B1). Requires `@stambha/gates`. */
+  clientPermissions?: bigint | number | readonly bigint[] | readonly number[];
   /** Prefix aliases (e.g. `p` for `ping`). */
   aliases?: readonly string[];
   /** Help / grouping (Sapphire-style). */
@@ -46,6 +85,11 @@ export abstract class Command extends Unit<CommandOptions> {
   readonly kinds: CommandKind[];
   readonly gates: GateLike[];
   readonly gateNames: readonly string[];
+  readonly cooldown?: CommandCooldownOption;
+  readonly runIn?: CommandRunInOption;
+  readonly nsfw: boolean;
+  readonly userPermissions?: bigint | number | readonly bigint[] | readonly number[];
+  readonly clientPermissions?: bigint | number | readonly bigint[] | readonly number[];
   readonly aliases: readonly string[];
   readonly category: string;
   readonly subCategory: string;
@@ -65,7 +109,15 @@ export abstract class Command extends Unit<CommandOptions> {
     this.description = options.description ?? "";
     this.kinds = options.kinds ?? ["slash"];
     this.gates = options.gates ?? [];
-    this.gateNames = options.gateNames ?? [];
+    const names = [...(options.gateNames ?? []), ...(options.preconditions ?? [])];
+    this.gateNames = names;
+    if (options.cooldown !== undefined) this.cooldown = options.cooldown;
+    if (options.runIn !== undefined) this.runIn = options.runIn;
+    this.nsfw = options.nsfw === true;
+    if (options.userPermissions !== undefined) this.userPermissions = options.userPermissions;
+    if (options.clientPermissions !== undefined) {
+      this.clientPermissions = options.clientPermissions;
+    }
     this.aliases = options.aliases ?? [];
     this.category = options.category ?? "General";
     this.subCategory = options.subCategory ?? "";

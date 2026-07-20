@@ -27,7 +27,7 @@ GitHub Release (published)  →  publish-npm.yml  →  npm (latest or beta)
                           →  docs.yml          →  GitHub Pages
 ```
 
-**Docs without a core npm release:** latest Pages (`docs/` tip) also redeploys when `docs/**` lands on `main`, via Actions → **Docs** → Run workflow, or `repository_dispatch` type `docs-redeploy` (e.g. after a Stambha-plugins release). Archived snapshots under `docs/versions/<semver>/` are still created only at core release archive time.
+**Docs without a core npm release:** latest Pages redeploy via Actions → **Docs** → Run workflow (`workflow_dispatch`), or `repository_dispatch` type `docs-redeploy` (e.g. after a Stambha-plugins release). Pushes to `main` under `docs/**` do **not** auto-deploy. Archived snapshots under `docs/versions/<semver>/` are still created only at core release archive time.
 
 Example from Stambha-plugins CI (needs a PAT/GitHub App with `actions: write` on this repo):
 

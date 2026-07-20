@@ -56,13 +56,14 @@ Before you start:
 
 ## Branching Model
 
-Stambha uses a **tag-driven release model** for **npm**. Docs on GitHub Pages can redeploy without a core release (docs path pushes, manual dispatch, or plugin `repository_dispatch`).
+Stambha uses a **tag-driven release model** for **npm**. Docs on GitHub Pages redeploy on **published releases**, **manual** `workflow_dispatch`, or plugin `repository_dispatch` — not on every docs push to `main`.
 
 | Branch / ref | Purpose | Published? |
 |---|---|---|
-| `main` | Integration branch — all PRs merge here | CI tests; **docs** redeploy if `docs/**` (or related paths) change |
+| `main` | Integration branch — all PRs merge here | CI tests; docs do **not** auto-redeploy on push |
 | `feature/*` | Contributor PR branches | No |
 | `v*` tag + **published** GitHub Release | Production npm release | `publish-npm.yml` → npm; `docs.yml` → GitHub Pages (also archives via release flow) |
+| Docs workflow (`workflow_dispatch`) | On-demand GitHub Pages redeploy | Pages only |
 
 **Do not** bump `package.json` versions in contributor PRs unless a maintainer asks. The core monorepo uses **fixed versioning** — all `@stambha/*` packages share one version. Extensions in Stambha-plugins use **independent** versioning.
 

@@ -2,6 +2,24 @@ import type { StambhaClient } from "../client/StambhaClient.js";
 import type { Command } from "../registries/Command.js";
 import type { Gate, GateLike } from "../registries/Gate.js";
 
+/**
+ * Optional hook used by `@stambha/gates` to turn declarative Command options
+ * (`cooldown`, `runIn`, `nsfw`, permissions) into inline {@link GateLike}s (B1).
+ */
+export type DeclarativeGatesResolver = (command: Command) => GateLike[];
+
+let declarativeGatesResolver: DeclarativeGatesResolver | undefined;
+
+/** Register the B1 declarative options → gates builder (called by `@stambha/gates`). */
+export function registerDeclarativeGatesResolver(resolver: DeclarativeGatesResolver): void {
+  declarativeGatesResolver = resolver;
+}
+
+/** Clear the declarative resolver (tests). */
+export function clearDeclarativeGatesResolver(): void {
+  declarativeGatesResolver = undefined;
+}
+
 /** Gates registered with {@link GateOptions.global} run on every command. */
 export function globalGates(client: StambhaClient): Gate[] {
   return client.registries.gates.sortedByPriority((g) => g.priority).filter((g) => g.global);
@@ -26,9 +44,18 @@ export function resolveNamedGates(client: StambhaClient, command: Command): Gate
   return resolved;
 }
 
-/** Ordered gates for a command: global registry → named registry → inline. */
+/**
+ * Ordered gates for a command:
+ * global registry → `gateNames` / `preconditions` → declarative options → inline `gates[]`.
+ */
 export function commandGatesForRun(client: StambhaClient, command: Command): GateLike[] {
-  return [...globalGates(client), ...resolveNamedGates(client, command), ...command.gates];
+  const declarative = declarativeGatesResolver?.(command) ?? [];
+  return [
+    ...globalGates(client),
+    ...resolveNamedGates(client, command),
+    ...declarative,
+    ...command.gates,
+  ];
 }
 
 /** Validate every command's {@link CommandOptions.gateNames} after pieces load. */
