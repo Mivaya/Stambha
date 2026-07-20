@@ -16,6 +16,7 @@ export {
   createIdentifyBudget,
   IdentifyBudget,
   type IdentifyBudgetOptions,
+  type SessionStartLimit,
 } from "./reshard/IdentifyBudget.js";
 export {
   type CreateReshardPlanOptions,
@@ -78,9 +79,13 @@ export type { WorkerBus, WorkerMessage, WorkerMessageHandler } from "./worker/ty
 export { createWorkerMessage, WorkerMessageTypes } from "./worker/types.js";
 export {
   buildGatewayUrl,
+  classifyCloseCode,
   DISCORD_GATEWAY_BASE,
+  GatewayCloseCode,
   GatewayOpcode,
+  type GatewayCloseAction,
   type GatewayPayload,
+  type GatewayShardFatalError,
 } from "./ws/constants.js";
 export {
   createNativeGatewayClient,

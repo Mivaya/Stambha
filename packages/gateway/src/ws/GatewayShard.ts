@@ -9,7 +9,13 @@ import {
   buildResumePayload,
 } from "../shard/identify.js";
 import type { ShardManager } from "../shard/ShardManager.js";
-import { GatewayOpcode, type GatewayPayload } from "./constants.js";
+import {
+  buildGatewayUrl,
+  classifyCloseCode,
+  GatewayOpcode,
+  type GatewayPayload,
+  type GatewayShardFatalError,
+} from "./constants.js";
 import { gatewayEventToHubName, normalizeDispatch } from "./dispatch.js";
 import type { CreateGatewayWebSocket, GatewayWebSocket } from "./socket.js";
 import { WS_OPEN } from "./socket.js";
@@ -25,8 +31,13 @@ export interface GatewayShardOptions {
   identifyBudget?: IdentifyBudget;
   createWebSocket: CreateGatewayWebSocket;
   properties?: BuildIdentifyOptions["properties"];
-  /** Delay before reconnect after Discord opcode 7. */
+  /**
+   * Base delay (ms) for exponential reconnect backoff (default 1000).
+   * Legacy fixed-delay name — still accepted as the backoff base.
+   */
   reconnectDelayMs?: number;
+  /** Cap for reconnect backoff (default 60_000). */
+  reconnectMaxDelayMs?: number;
   /**
    * Gateway dispatch payload normalization (G3-p1).
    * `default` — Tier 1 camelCase at hub; `raw` — wire snake_case escape hatch.
@@ -59,9 +70,16 @@ export class GatewayShard {
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
   private lastSequence: number | null = null;
   private sessionId: string | null = null;
+  /** From READY `resume_gateway_url` — used for resume reconnects. */
+  private resumeGatewayUrl: string | null = null;
   private heartbeatAck = true;
   private closed = false;
   private connectPromise: Promise<void> | null = null;
+  private reconnectAttempt = 0;
+  /** Skip `onClose` while we intentionally tear down for reconnect. */
+  private ignoreClose = false;
+  /** URL used for the most recent socket open (tests / diagnostics). */
+  private lastConnectUrl: string | null = null;
   /** Guild ids from the last READY (startup backfill set). */
   private startupGuildIds = new Set<string>();
   /** READY guilds still waiting for their initial GUILD_CREATE. */
@@ -80,6 +98,11 @@ export class GatewayShard {
 
   get id(): number {
     return this.options.shardId;
+  }
+
+  /** Most recent WebSocket URL this shard connected to. */
+  get connectUrl(): string | null {
+    return this.lastConnectUrl;
   }
 
   async connect(): Promise<void> {
@@ -101,9 +124,23 @@ export class GatewayShard {
     this.options.manager.markDisconnected(this.options.shardId);
   }
 
+  private resolveConnectUrl(): string {
+    if (
+      this.sessionId &&
+      this.resumeGatewayUrl &&
+      this.lastSequence !== null &&
+      this.options.manager.canResume(this.options.shardId)
+    ) {
+      return buildGatewayUrl(this.resumeGatewayUrl);
+    }
+    return this.options.gatewayUrl;
+  }
+
   private async openSocket(): Promise<void> {
-    const { createWebSocket, gatewayUrl } = this.options;
-    const socket = createWebSocket(gatewayUrl);
+    const { createWebSocket } = this.options;
+    const url = this.resolveConnectUrl();
+    this.lastConnectUrl = url;
+    const socket = createWebSocket(url);
 
     await new Promise<void>((resolve, reject) => {
       const onOpen = () => {
@@ -124,7 +161,7 @@ export class GatewayShard {
 
     this.socket = socket;
     socket.addEventListener("message", (event) => this.onMessage(event));
-    socket.addEventListener("close", () => this.onClose());
+    socket.addEventListener("close", (event) => this.onClose(event));
   }
 
   private onMessage(event: unknown): void {
@@ -153,7 +190,7 @@ export class GatewayShard {
         this.sendHeartbeat();
         break;
       case GatewayOpcode.Reconnect:
-        this.reconnect();
+        void this.reconnect();
         break;
       case GatewayOpcode.InvalidSession:
         this.onInvalidSession(Boolean(payload.d));
@@ -169,7 +206,7 @@ export class GatewayShard {
     const interval = data.heartbeat_interval;
     this.heartbeatTimer = setInterval(() => {
       if (!this.heartbeatAck) {
-        this.reconnect();
+        void this.reconnect();
         return;
       }
       this.heartbeatAck = false;
@@ -191,12 +228,13 @@ export class GatewayShard {
 
   private async identify(): Promise<void> {
     const budget = this.options.identifyBudget;
-    if (budget) await budget.acquire();
+    const shardId = this.options.shardId;
+    if (budget) await budget.acquire(shardId);
     try {
-      this.options.manager.markIdentifying(this.options.shardId);
+      this.options.manager.markIdentifying(shardId);
       const identifyOptions: BuildIdentifyOptions = {
         session: this.options.session,
-        shardId: this.options.shardId,
+        shardId,
         totalShards: this.options.totalShards,
         intents: this.options.intents,
       };
@@ -206,18 +244,19 @@ export class GatewayShard {
       const identify = buildIdentifyPayload(identifyOptions);
       this.send(identify);
     } finally {
-      budget?.release();
+      budget?.release(shardId);
     }
   }
 
   private onInvalidSession(resumable: boolean): void {
     this.sessionId = null;
     this.lastSequence = null;
+    this.resumeGatewayUrl = null;
     this.options.manager.markDisconnected(this.options.shardId);
     if (resumable) {
       void this.identify();
     } else {
-      void this.reconnect();
+      void this.reconnect({ resetSession: true });
     }
   }
 
@@ -227,9 +266,12 @@ export class GatewayShard {
       this.options.dispatchNormalize === "raw" ? { mode: "raw" as const } : undefined;
 
     if (eventName === "READY") {
-      const ready = data as { session_id?: string };
+      const ready = data as { session_id?: string; resume_gateway_url?: string };
       if (ready.session_id) {
         this.sessionId = ready.session_id;
+      }
+      if (typeof ready.resume_gateway_url === "string" && ready.resume_gateway_url.length > 0) {
+        this.resumeGatewayUrl = ready.resume_gateway_url;
       }
       if (sequence !== null) {
         this.lastSequence = sequence;
@@ -239,6 +281,7 @@ export class GatewayShard {
       this.startupGuildIds = new Set(guildIds);
       this.pendingGuildIds = new Set(guildIds);
       this.readyEmitted = false;
+      this.reconnectAttempt = 0;
 
       manager.markReady(shardId, {
         sessionId: this.sessionId ?? "",
@@ -253,6 +296,10 @@ export class GatewayShard {
         }
       }
       return;
+    }
+
+    if (eventName === "RESUMED") {
+      this.reconnectAttempt = 0;
     }
 
     if (eventName === "GUILD_CREATE") {
@@ -317,21 +364,75 @@ export class GatewayShard {
     }
   }
 
-  private async reconnect(): Promise<void> {
+  private nextBackoffMs(): number {
+    const base = this.options.reconnectDelayMs ?? 1000;
+    const max = this.options.reconnectMaxDelayMs ?? 60_000;
+    const exp = Math.min(max, base * 2 ** this.reconnectAttempt);
+    // Full jitter: random in [0, exp]
+    return Math.floor(Math.random() * exp);
+  }
+
+  private async reconnect(options?: { resetSession?: boolean }): Promise<void> {
     if (this.closed) return;
     this.clearHeartbeat();
-    this.socket?.close();
-    this.socket = null;
-    const delay = this.options.reconnectDelayMs ?? 5000;
+    this.ignoreClose = true;
+    try {
+      this.socket?.close();
+    } finally {
+      this.ignoreClose = false;
+      this.socket = null;
+    }
+
+    if (options?.resetSession) {
+      this.sessionId = null;
+      this.lastSequence = null;
+      this.resumeGatewayUrl = null;
+      this.options.manager.markDisconnected(this.options.shardId);
+    }
+
+    const delay = this.nextBackoffMs();
+    this.reconnectAttempt += 1;
     await new Promise((r) => setTimeout(r, delay));
     if (!this.closed) {
       await this.openSocket();
     }
   }
 
-  private onClose(): void {
-    if (!this.closed) {
-      void this.reconnect();
+  private onClose(event: unknown): void {
+    if (this.closed || this.ignoreClose) return;
+
+    const code =
+      typeof event === "object" && event !== null && "code" in event
+        ? Number((event as { code: unknown }).code)
+        : 1006;
+    const reason =
+      typeof event === "object" && event !== null && "reason" in event
+        ? String((event as { reason: unknown }).reason ?? "")
+        : "";
+
+    const action = classifyCloseCode(Number.isFinite(code) ? code : 1006);
+
+    if (action === "fatal") {
+      this.closed = true;
+      this.clearHeartbeat();
+      this.socket = null;
+      this.options.manager.markDisconnected(this.options.shardId);
+      const error: GatewayShardFatalError = {
+        type: "fatal_close",
+        shardId: this.options.shardId,
+        code,
+        reason,
+        message: `Gateway shard ${this.options.shardId} stopped: fatal close code ${code}`,
+      };
+      this.options.hub.emit("error", error);
+      return;
     }
+
+    if (action === "reidentify") {
+      void this.reconnect({ resetSession: true });
+      return;
+    }
+
+    void this.reconnect();
   }
 }

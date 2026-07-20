@@ -145,8 +145,10 @@ const gateway = await createNativeGatewayClient({
 
 `createNativeGatewayClient`:
 
-- Fetches `GET /gateway/bot` for recommended shard count and gateway URL (override with `totalShards` / `gatewayUrl`)
-- Sends identify / resume with heartbeat handling
+- Fetches `GET /gateway/bot` for recommended shard count, gateway URL, and `session_start_limit.max_concurrency` (override with `totalShards` / `gatewayUrl` / `maxConcurrency`)
+- Sends identify / resume with heartbeat handling; identifies use concurrency buckets (`shard_id % max_concurrency`)
+- Reconnects with exponential backoff; uses READY `resume_gateway_url` when resuming
+- Stops and emits hub `error` (`fatal_close`) on fatal close codes (4004, 4010–4014) instead of looping
 - Normalizes `MESSAGE_CREATE`, `INTERACTION_CREATE`, and `READY` into Stambha hub shapes
 - Normalizes common dispatches (reactions, guild/member, voice, …) to camelCase at the hub (1.2.0+)
 - Emits other dispatches on camelCase hub names with raw snake_case `d` until further coverage in 1.3.0+

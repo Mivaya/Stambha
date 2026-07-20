@@ -1,8 +1,8 @@
 import { createSession } from "@stambha/transport";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createGatewayEventHub } from "../GatewayEventHub.js";
 import { createShardManager } from "../shard/ShardManager.js";
-import { GatewayOpcode } from "./constants.js";
+import { buildGatewayUrl, classifyCloseCode, GatewayCloseCode, GatewayOpcode } from "./constants.js";
 import {
   gatewayEventToHubName,
   interactionFromDispatch,
@@ -66,15 +66,32 @@ class MockWebSocket implements GatewayWebSocket {
   readyState = 0;
   private listeners = new Map<string, Set<(event: unknown) => void>>();
   readonly sent: string[] = [];
+  readonly url: string;
 
-  constructor(private readonly scripted: GatewayPayload[]) {}
+  constructor(
+    private readonly scripted: GatewayPayload[],
+    url = "wss://gateway.test/",
+  ) {
+    this.url = url;
+  }
 
   send(data: string): void {
     this.sent.push(data);
   }
 
-  close(): void {
+  close(code = 1000, reason = ""): void {
     this.readyState = 3;
+    for (const fn of this.listeners.get("close") ?? []) {
+      fn({ code, reason });
+    }
+  }
+
+  /** Simulate a remote close without calling `close()`. */
+  emitClose(code: number, reason = ""): void {
+    this.readyState = 3;
+    for (const fn of this.listeners.get("close") ?? []) {
+      fn({ code, reason });
+    }
   }
 
   addEventListener(
@@ -134,8 +151,8 @@ describe("GatewayShard", () => {
     ];
 
     const sockets: MockWebSocket[] = [];
-    const createWebSocket: CreateGatewayWebSocket = () => {
-      const socket = new MockWebSocket(scripted);
+    const createWebSocket: CreateGatewayWebSocket = (url) => {
+      const socket = new MockWebSocket(scripted, url);
       sockets.push(socket);
       return socket;
     };
@@ -191,8 +208,8 @@ describe("GatewayShard", () => {
     ];
 
     const sockets: MockWebSocket[] = [];
-    const createWebSocket: CreateGatewayWebSocket = () => {
-      const socket = new MockWebSocket(scripted);
+    const createWebSocket: CreateGatewayWebSocket = (url) => {
+      const socket = new MockWebSocket(scripted, url);
       sockets.push(socket);
       return socket;
     };
@@ -236,8 +253,8 @@ describe("GatewayShard", () => {
     ];
 
     const sockets: MockWebSocket[] = [];
-    const createWebSocket: CreateGatewayWebSocket = () => {
-      const socket = new MockWebSocket(scripted);
+    const createWebSocket: CreateGatewayWebSocket = (url) => {
+      const socket = new MockWebSocket(scripted, url);
       sockets.push(socket);
       return socket;
     };
@@ -265,6 +282,114 @@ describe("GatewayShard", () => {
     expect(events[0]).toEqual(rawGuild);
     expect((events[0] as typeof rawGuild).owner_id).toBe("u1");
     await shard.disconnect();
+  });
+
+  it("classifies fatal and reidentify close codes", () => {
+    expect(classifyCloseCode(GatewayCloseCode.AuthenticationFailed)).toBe("fatal");
+    expect(classifyCloseCode(GatewayCloseCode.DisallowedIntents)).toBe("fatal");
+    expect(classifyCloseCode(4007)).toBe("reidentify");
+    expect(classifyCloseCode(1000)).toBe("resume");
+  });
+
+  it("stops reconnecting and emits error on fatal close code", async () => {
+    const hub = createGatewayEventHub();
+    const errors: unknown[] = [];
+    hub.on("error", (payload) => errors.push(payload));
+
+    const sockets: MockWebSocket[] = [];
+    const createWebSocket: CreateGatewayWebSocket = (url) => {
+      const socket = new MockWebSocket([], url);
+      sockets.push(socket);
+      return socket;
+    };
+
+    const shard = new GatewayShard({
+      session: createSession({ token: "test-token" }),
+      shardId: 0,
+      totalShards: 1,
+      intents: 1,
+      hub,
+      manager: createShardManager({ totalShards: 1 }),
+      gatewayUrl: "wss://gateway.test/?v=10&encoding=json",
+      createWebSocket,
+      reconnectDelayMs: 10,
+    });
+
+    const connectPromise = shard.connect();
+    await sockets[0]?.open();
+    await connectPromise;
+
+    sockets[0]?.emitClose(4004, "Authentication failed");
+    await new Promise((resolve) => setImmediate(resolve));
+
+    expect(errors[0]).toMatchObject({
+      type: "fatal_close",
+      code: 4004,
+      shardId: 0,
+    });
+    expect(sockets).toHaveLength(1);
+  });
+
+  it("reconnects using resume_gateway_url from READY", async () => {
+    vi.useFakeTimers();
+    vi.spyOn(Math, "random").mockReturnValue(0);
+
+    const hub = createGatewayEventHub();
+    const manager = createShardManager({ totalShards: 1 });
+    const sockets: MockWebSocket[] = [];
+    const urls: string[] = [];
+
+    const createWebSocket: CreateGatewayWebSocket = (url) => {
+      urls.push(url);
+      const socket = new MockWebSocket([], url);
+      sockets.push(socket);
+      return socket;
+    };
+
+    const shard = new GatewayShard({
+      session: createSession({ token: "test-token" }),
+      shardId: 0,
+      totalShards: 1,
+      intents: 1,
+      hub,
+      manager,
+      gatewayUrl: "wss://gateway.test/?v=10&encoding=json",
+      createWebSocket,
+      reconnectDelayMs: 50,
+      reconnectMaxDelayMs: 50,
+    });
+
+    const connectPromise = shard.connect();
+    await sockets[0]?.open();
+    await connectPromise;
+    expect(urls[0]).toBe("wss://gateway.test/?v=10&encoding=json");
+
+    sockets[0]?.push({
+      op: GatewayOpcode.Dispatch,
+      t: "READY",
+      s: 1,
+      d: {
+        session_id: "sess-1",
+        resume_gateway_url: "wss://resume.discord.test",
+        user: { id: "u1", username: "bot" },
+      },
+    });
+
+    expect(manager.get(0)?.status).toBe("ready");
+    expect(manager.canResume(0)).toBe(true);
+
+    sockets[0]?.emitClose(1001, "going away");
+    await vi.advanceTimersByTimeAsync(50);
+
+    expect(sockets.length).toBe(2);
+    expect(urls[1]).toBe(buildGatewayUrl("wss://resume.discord.test"));
+
+    await sockets[1]?.open();
+    expect(shard.connectUrl).toBe(buildGatewayUrl("wss://resume.discord.test"));
+
+    await shard.disconnect();
+    vi.spyOn(Math, "random").mockRestore();
+    vi.useRealTimers();
   });
 
   it("emits guildAvailable for READY backfill GUILD_CREATE", async () => {
