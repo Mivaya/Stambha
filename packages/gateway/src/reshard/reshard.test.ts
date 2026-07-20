@@ -55,7 +55,7 @@ describe("@stambha/gateway resharding", () => {
 
     const budget = createIdentifyBudget({
       minIntervalMs: 5500,
-      maxConcurrent: 1,
+      maxConcurrency: 1,
       now: () => time,
       sleep,
     });
@@ -67,6 +67,62 @@ describe("@stambha/gateway resharding", () => {
     await budget.acquire();
 
     expect(sleep).toHaveBeenCalledWith(5400);
+  });
+
+  it("allows concurrent identifies across max_concurrency buckets", async () => {
+    let time = 0;
+    const sleep = vi.fn((ms: number) => {
+      time += ms;
+      return Promise.resolve();
+    });
+
+    const budget = createIdentifyBudget({
+      minIntervalMs: 5500,
+      maxConcurrency: 2,
+      now: () => time,
+      sleep,
+    });
+
+    // shard 0 → bucket 0, shard 1 → bucket 1 — parallel
+    await Promise.all([budget.acquire(0), budget.acquire(1)]);
+    expect(budget.inFlightCount()).toBe(2);
+    expect(sleep).not.toHaveBeenCalled();
+
+    budget.release(0);
+    budget.release(1);
+
+    // shard 2 shares bucket 0 with shard 0 — waits for interval
+    time = 100;
+    await budget.acquire(2);
+    expect(sleep).toHaveBeenCalledWith(5400);
+    budget.release(2);
+  });
+
+  it("waits when session_start_limit remaining is exhausted", async () => {
+    let time = 0;
+    const sleep = vi.fn((ms: number) => {
+      time += ms;
+      return Promise.resolve();
+    });
+
+    const budget = createIdentifyBudget({
+      minIntervalMs: 0,
+      maxConcurrency: 16,
+      now: () => time,
+      sleep,
+      sessionStartLimit: { remaining: 1, resetAfter: 2000, total: 1000 },
+    });
+
+    await budget.acquire(0);
+    budget.release(0);
+    expect(budget.sessionRemainingCount()).toBe(0);
+
+    const pending = budget.acquire(1);
+    await Promise.resolve();
+    expect(sleep).toHaveBeenCalledWith(2000);
+    time = 2000;
+    await pending;
+    budget.release(1);
   });
 
   it("runs controller identify flow and completes reshard", async () => {
