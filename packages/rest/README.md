@@ -96,6 +96,7 @@ Use with `defineArgResolver` from `@stambha/args` when you need REST-backed enti
 | `createNativeRestPort` | `RestPort` for in-process REST |
 | `RestClient`, `createRestClient` | Low-level Discord API client |
 | `RateLimitQueue` | Per-route bucket queue |
+| `InvalidRequestGuard` | Cloudflare invalid-request soft cap (401/403/429 → 10k/10min) |
 | `createNativeRestWorker` | HTTP REST worker process |
 | `deployCommands` | Register application commands |
 | `deployCommandsIfShardZero` | Deploy only on shard 0 |

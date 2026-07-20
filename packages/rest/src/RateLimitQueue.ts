@@ -8,6 +8,7 @@ import {
   retryAfterMs,
 } from "@stambha/transport";
 
+import { InvalidRequestGuard, type InvalidRequestGuardOptions } from "./InvalidRequestGuard.js";
 import type { RateLimitQueueListener } from "./telemetry.js";
 
 export interface RateLimitQueueOptions {
@@ -16,6 +17,11 @@ export interface RateLimitQueueOptions {
   maxRetries?: number;
   sleep?: (ms: number) => Promise<void>;
   listener?: RateLimitQueueListener;
+  /**
+   * Cloudflare invalid-request guard (401/403/429 toward 10k/10min ban).
+   * Pass `false` to disable; omit for defaults; or pass options / an instance.
+   */
+  invalidRequestGuard?: InvalidRequestGuard | InvalidRequestGuardOptions | false;
 }
 
 const defaultSleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -26,6 +32,7 @@ const defaultSleep = (ms: number) => new Promise<void>((resolve) => setTimeout(r
  */
 export class RateLimitQueue {
   readonly store: RateLimitStore;
+  readonly invalidRequestGuard: InvalidRequestGuard | null;
   private readonly maxRetries: number;
   private readonly sleep: (ms: number) => Promise<void>;
   private readonly listener: RateLimitQueueListener | undefined;
@@ -36,6 +43,7 @@ export class RateLimitQueue {
     this.maxRetries = options.maxRetries ?? 3;
     this.sleep = options.sleep ?? defaultSleep;
     this.listener = options.listener;
+    this.invalidRequestGuard = resolveInvalidRequestGuard(options.invalidRequestGuard, options.listener);
   }
 
   /** Run `fn` when the bucket for `routeKey` allows it; retries on 429. */
@@ -59,6 +67,12 @@ export class RateLimitQueue {
     fn: () => Promise<Response>,
   ): Promise<Response> {
     for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
+      const invalidWait = this.invalidRequestGuard?.waitMs() ?? 0;
+      if (invalidWait > 0) {
+        this.listener?.onWait?.("invalid-request", invalidWait);
+        await this.sleep(invalidWait);
+      }
+
       const wait = this.store.waitMs(bucketId);
       if (wait > 0) {
         this.listener?.onWait?.(bucketId, wait);
@@ -66,6 +80,8 @@ export class RateLimitQueue {
       }
 
       const response = await fn();
+      this.invalidRequestGuard?.record(response.status);
+
       const headers = headersFromFetch(response.headers);
       const snapshot = parseRateLimitHeaders(headers, routeKey);
       if (snapshot) this.store.update(snapshot);
@@ -80,6 +96,23 @@ export class RateLimitQueue {
 
     throw new Error("RateLimitQueue: exhausted retries");
   }
+}
+
+function resolveInvalidRequestGuard(
+  value: RateLimitQueueOptions["invalidRequestGuard"],
+  listener: RateLimitQueueListener | undefined,
+): InvalidRequestGuard | null {
+  if (value === false) return null;
+  if (value instanceof InvalidRequestGuard) return value;
+
+  const userOnThreshold = value?.onThreshold;
+  return new InvalidRequestGuard({
+    ...(value ?? {}),
+    onThreshold: (info) => {
+      userOnThreshold?.(info);
+      listener?.onInvalidRequestThreshold?.(info);
+    },
+  });
 }
 
 /** Map core {@link RestMethod} to transport {@link HttpMethod}. */
