@@ -202,12 +202,13 @@ export class GatewayShard {
 
   private async identify(): Promise<void> {
     const budget = this.options.identifyBudget;
-    if (budget) await budget.acquire();
+    const shardId = this.options.shardId;
+    if (budget) await budget.acquire(shardId);
     try {
-      this.options.manager.markIdentifying(this.options.shardId);
+      this.options.manager.markIdentifying(shardId);
       const identifyOptions: BuildIdentifyOptions = {
         session: this.options.session,
-        shardId: this.options.shardId,
+        shardId,
         totalShards: this.options.totalShards,
         intents: this.options.intents,
       };
@@ -217,7 +218,7 @@ export class GatewayShard {
       const identify = buildIdentifyPayload(identifyOptions);
       this.send(identify);
     } finally {
-      budget?.release();
+      budget?.release(shardId);
     }
   }
 

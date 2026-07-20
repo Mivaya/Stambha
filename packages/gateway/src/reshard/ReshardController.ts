@@ -91,8 +91,8 @@ export class ReshardController {
       return null;
     }
 
-    await this.budget.acquire();
     const shardId = plan.identifyOrder[this.identifyCursor]!;
+    await this.budget.acquire(shardId);
     this.identifyCursor++;
     this.manager.markIdentifying(shardId);
     return shardId;
@@ -100,7 +100,7 @@ export class ReshardController {
 
   /** Call after a shard finishes identify (success or failure). */
   markIdentifyComplete(shardId: number, session?: { sessionId: string; sequence: number }): void {
-    this.budget.release();
+    this.budget.release(shardId);
     if (session) {
       this.manager.markReady(shardId, session);
     } else {

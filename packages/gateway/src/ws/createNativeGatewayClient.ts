@@ -1,11 +1,15 @@
 import type { NormalizeDispatchMode } from "@stambha/transform";
 import { createSession, type SessionInfo } from "@stambha/transport";
 import type { GatewayEventHub } from "../GatewayEventHub.js";
-import { createIdentifyBudget, type IdentifyBudget } from "../reshard/IdentifyBudget.js";
+import {
+  createIdentifyBudget,
+  type IdentifyBudget,
+  type SessionStartLimit,
+} from "../reshard/IdentifyBudget.js";
 import type { BuildIdentifyOptions } from "../shard/identify.js";
 import { createShardManager, type ShardManager } from "../shard/ShardManager.js";
 import { buildGatewayUrl } from "./constants.js";
-import { fetchGatewayBot } from "./fetchGatewayBot.js";
+import { fetchGatewayBot, type GatewayBotResponse } from "./fetchGatewayBot.js";
 import { GatewayShard, type GatewayShardOptions } from "./GatewayShard.js";
 import { type CreateGatewayWebSocket, resolveWebSocketFactory } from "./socket.js";
 
@@ -29,6 +33,11 @@ export interface NativeGatewayClientOptions {
   shardManager?: ShardManager;
   /** Rate-limit identify calls across shards. */
   identifyBudget?: IdentifyBudget;
+  /**
+   * Override `session_start_limit.max_concurrency` when building the default budget.
+   * Ignored when `identifyBudget` is provided.
+   */
+  maxConcurrency?: number;
   /** Inject WebSocket factory (tests). */
   createWebSocket?: CreateGatewayWebSocket;
   properties?: BuildIdentifyOptions["properties"];
@@ -48,6 +57,8 @@ export interface NativeGatewayClient {
   readonly session: SessionInfo;
   readonly shardManager: ShardManager;
   readonly shards: readonly GatewayShard[];
+  /** Identify budget used by shards (exposed for operators / tests). */
+  readonly identifyBudget: IdentifyBudget;
   connect(): Promise<void>;
   disconnect(): Promise<void>;
 }
@@ -64,10 +75,11 @@ export async function createNativeGatewayClient(
 
   let gatewayBaseUrl = options.gatewayUrl;
   let totalShards = options.totalShards;
+  let bot: GatewayBotResponse | undefined;
 
-  if (totalShards === undefined || gatewayBaseUrl === undefined) {
+  if (totalShards === undefined || gatewayBaseUrl === undefined || !options.identifyBudget) {
     try {
-      const bot = await fetchGatewayBot(options.token, fetchFn);
+      bot = await fetchGatewayBot(options.token, fetchFn);
       totalShards ??= bot.shards;
       gatewayBaseUrl ??= bot.url;
     } catch (error) {
@@ -81,7 +93,19 @@ export async function createNativeGatewayClient(
   totalShards ??= 1;
   const gatewayUrl = buildGatewayUrl(gatewayBaseUrl);
   const shardManager = options.shardManager ?? createShardManager({ totalShards });
-  const identifyBudget = options.identifyBudget ?? createIdentifyBudget();
+
+  const identifyBudget =
+    options.identifyBudget ??
+    createIdentifyBudget({
+      maxConcurrency:
+        options.maxConcurrency ?? bot?.session_start_limit?.max_concurrency ?? 1,
+      ...(bot?.session_start_limit
+        ? {
+            sessionStartLimit: sessionStartLimitFromBot(bot.session_start_limit),
+          }
+        : {}),
+    });
+
   const createWebSocket = options.createWebSocket ?? (await resolveWebSocketFactory());
 
   const shardIds = options.shardIds ?? Array.from({ length: totalShards }, (_, i) => i);
@@ -112,6 +136,7 @@ export async function createNativeGatewayClient(
     session,
     shardManager,
     shards,
+    identifyBudget,
     async connect() {
       await options.hub.connect();
       for (const shard of shards) {
@@ -122,5 +147,13 @@ export async function createNativeGatewayClient(
       await Promise.all(shards.map((s) => s.disconnect()));
       await options.hub.disconnect();
     },
+  };
+}
+
+function sessionStartLimitFromBot(limit: NonNullable<GatewayBotResponse["session_start_limit"]>): SessionStartLimit {
+  return {
+    remaining: limit.remaining,
+    resetAfter: limit.reset_after,
+    total: limit.total,
   };
 }
