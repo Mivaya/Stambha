@@ -54,7 +54,7 @@ Stambha is a **native-first** Discord bot framework for Node.js 20+ and TypeScri
 
 **Rule:** Do not import Discord library types into `@stambha/core`. If core needs a capability, add a small interface in core and implement it in transform, rest, or gateway.
 
-**Deprecated (1.0.0):** `@stambha/transform` discord.js / Discordeno shape adapters — removal planned in **1.5.0**. New code must use native shapes only.
+**Native only:** `@stambha/transform` ships native shapes (`StambhaMessage`, `interactionFromDispatch`, `metaFromDiscordInteraction`). discord.js / Discordeno shape adapters were removed in **1.5.0** (deprecated since 1.0.0).
 
 ---
 

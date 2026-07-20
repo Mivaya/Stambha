@@ -27,7 +27,7 @@ Production experience showed hybrid stacks duplicate transport concerns (discord
 - `examples/hybrid-discordjs`
 - Keeping discord.js for gateway + Stambha for commands only
 
-`@stambha/transform` **deprecated** optional discord.js / Discordeno shape helpers in **1.0.0**; they are **removed in 1.5.0**. Official migrations require a fully native bot before release.
+`@stambha/transform` **deprecated** optional discord.js / Discordeno shape helpers in **1.0.0**; they are **removed** (ships with **1.5.0**). Official migrations require a fully native bot before release.
 
 **0.3.0 blocker:** bundled native WebSocket gateway client (formerly future-v2 **A5**, pulled forward from 2.0). Until it ships, adopters wire their own shard WebSocket into `GatewayEventHub` (see `examples/bot`).
 

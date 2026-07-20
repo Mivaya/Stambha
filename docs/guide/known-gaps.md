@@ -21,13 +21,9 @@ Use this stack for new bots:
 
 **Mention prefix (1.1.0):** `mentionCommands: true` on `attachStambhaClient` (or `createMentionPrefixResolver` on `client.resolvePrefix`) routes `@Bot ping` like `!ping`.
 
-**Hub events today:** `MESSAGE_CREATE` / `MESSAGE_UPDATE`, `INTERACTION_CREATE`, and `READY` are normalized to slim **`StambhaMessage`** / **`StambhaInteraction`** shapes for routing. Tier 1 events (`messageReactionAdd`, `guildMemberAdd`, `voiceStateUpdate`, `messageDelete`, …) emit **camelCase** structural payloads (**1.2.0**). Tier 2 events (channels, threads, roles, bans, member chunks, audit log) emit **camelCase** in **1.3.0**. Remaining dispatches pass through as raw snake_case until **1.4.0+**. Use `isTier1Dispatch` / `isTier2Dispatch` / type guards from `@stambha/transform` for listener DX.
+**Hub events today:** `MESSAGE_CREATE` / `MESSAGE_UPDATE`, `INTERACTION_CREATE`, and `READY` are normalized to slim **`StambhaMessage`** / **`StambhaInteraction`** shapes for routing. Tier 1–4 structural dispatches emit **camelCase** (Tier 1 in **1.2.0**, Tier 2 in **1.3.0**, Tier 3–4 with **1.4.0** / **1.5.0**). Use `isTier*Dispatch` / type guards from `@stambha/transform` for listener DX.
 
 **Not supported:** discord.js (or any library) owning the gateway while Stambha owns commands only. Use the [native bootstrap](/guide/getting-started).
-
-### Deprecated library adapters
-
-`@stambha/transform` still exports discord.js / Discordeno **shape converters** for transitional code, but they are **deprecated in 1.0.0** and **removed in future release**. New migrations and releases must use native shapes only (`StambhaMessage`, `interactionFromDispatch`, `attachStambhaClient`).
 
 ---
 
@@ -44,7 +40,7 @@ Use this stack for new bots:
 | **C2** | Vault level overrides | Needs C1 |
 | **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
 | **G1** | Auto resharding threshold | Manual `ReshardController` APIs exist |
-| **G3** | Gateway dispatch normalization (all events) | Tier 1–2 on main; G3-p3 → **1.4.0**; **G3-p4** (Tier 4) in progress → **1.5.0** (catalog complete) |
+| **G3** | Gateway dispatch normalization (all events) | Tier 1–2 on main; G3-p3/p4 → **1.4.0** / **1.5.0** (catalog complete; PRs pending merge) |
 | **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Late 1.x — hub `on` handlers get per-event types |
 | **Collectors** | Message/reaction/interaction collectors | discord.js collectors parity on G3 events |
 
@@ -107,12 +103,11 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ## Planned next (after 1.3.0 train)
 
-Path: **G3-p4** (in progress) → **ADAPTERS-1.5** → **G3a** → **G1** → **B2–B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
+Path: **ADAPTERS-1.5** (in progress) → **G3a** → **G1** → **B2–B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **G3-p4** | Tier 4 camelCase | **In progress** — automod, soundboard, entitlements, subscriptions, app-command permissions, user update, … → **1.5.0** (G3 complete) |
-| **ADAPTERS-1.5** | Remove legacy adapters | After G3 coverage |
+| **ADAPTERS-1.5** | Remove legacy adapters | **In progress** — drop discord.js / Discordeno shape converters from `@stambha/transform` |
 | **G3a** | Typed `GatewayEventMap` | Hub listener DX |
 | **G1** | Auto reshard threshold | — |
 | **B2–B6** | Args, help, lifecycle, components, edit-tracking | — |
@@ -126,6 +121,7 @@ Path: **G3-p4** (in progress) → **ADAPTERS-1.5** → **G3a** → **G1** → **
 |----|---------|-------|
 | **B1** | Declarative gates | `cooldown` / `runIn` / `nsfw` / permissions on `Command` (#74) |
 | **G3-p3** | Tier 3 camelCase | Invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker → **1.4.0** (PR pending merge) |
+| **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, subscriptions, … → **1.5.0** (G3 complete; PR pending merge) |
 
 ## Shipped in 1.3.0 train (on main; release cut pending)
 

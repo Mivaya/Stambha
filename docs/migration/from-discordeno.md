@@ -17,7 +17,7 @@ This guide helps [Discordeno](https://discordeno.deno.dev/) “big bot” setups
 
 Stambha's **native transport** replaces Discordeno library coupling while keeping big-bot topology (split REST, sharding, desired properties).
 
-> **Release policy (1.0.0+):** Do not ship with Discordeno adapters (`messageFromDiscordeno`, `buildDiscordenoDesiredProperties`). Use `gatesDesiredProperties` and native dispatch — adapters **deprecated in 1.0.0**, **removed in future release**.
+> **Release policy (1.0.0+):** Do not ship with Discordeno adapters (`messageFromDiscordeno`, `buildDiscordenoDesiredProperties`). Use `gatesDesiredProperties` and native dispatch — adapters were **removed in 1.5.0**.
 
 ---
 
