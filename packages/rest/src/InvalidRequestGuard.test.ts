@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
+import { parseRouteKey, RateLimitStore } from "@stambha/transport";
 import {
   InvalidRequestGuard,
   isInvalidRequestStatus,
 } from "./InvalidRequestGuard.js";
 import { RateLimitQueue } from "./RateLimitQueue.js";
-import { parseRouteKey } from "@stambha/transport";
 
 describe("InvalidRequestGuard", () => {
   it("classifies 401/403/429 as invalid", () => {
@@ -126,5 +126,71 @@ describe("RateLimitQueue + InvalidRequestGuard", () => {
     // Would have blocked at soft limit 2 if enabled; without guard, continues.
     const response = await queue.run(key, () => Promise.resolve(new Response("{}", { status: 200 })));
     expect(response.status).toBe(200);
+  });
+});
+
+describe("RateLimitQueue + global rate limit", () => {
+  it("pauses all traffic on a global 429", async () => {
+    vi.useFakeTimers();
+    const onRateLimited = vi.fn();
+    const sleep = vi.fn((ms: number) => new Promise<void>((r) => setTimeout(r, ms)));
+    const queue = new RateLimitQueue({
+      sleep,
+      maxRetries: 0,
+      listener: { onRateLimited },
+      invalidRequestGuard: false,
+      store: new RateLimitStore({
+        global: { limit: 50, intervalMs: 1_000 },
+      }),
+    });
+
+    const key = parseRouteKey("/users/@me", "GET");
+    const global429 = () =>
+      Promise.resolve(
+        new Response("{}", {
+          status: 429,
+          headers: {
+            "retry-after": "1",
+            "x-ratelimit-global": "true",
+            "x-ratelimit-scope": "global",
+          },
+        }),
+      );
+    const ok = () => Promise.resolve(new Response("{}", { status: 200 }));
+
+    const first = await queue.run(key, global429);
+    expect(first.status).toBe(429);
+    expect(onRateLimited).toHaveBeenCalledWith("global", 1000);
+
+    const pending = queue.run(key, ok);
+    await vi.advanceTimersByTimeAsync(1000);
+    const second = await pending;
+    expect(second.status).toBe(200);
+    expect(sleep).toHaveBeenCalled();
+
+    vi.useRealTimers();
+  });
+
+  it("throttles when the proactive global budget is exhausted", async () => {
+    vi.useFakeTimers();
+    const sleep = vi.fn((ms: number) => new Promise<void>((r) => setTimeout(r, ms)));
+    const queue = new RateLimitQueue({
+      sleep,
+      invalidRequestGuard: false,
+      store: new RateLimitStore({ global: { limit: 2, intervalMs: 1_000 } }),
+    });
+
+    const key = parseRouteKey("/gateway/bot", "GET");
+    const ok = () => Promise.resolve(new Response("{}", { status: 200 }));
+
+    await queue.run(key, ok);
+    await queue.run(key, ok);
+    const pending = queue.run(key, ok);
+    await vi.advanceTimersByTimeAsync(1_000);
+    const response = await pending;
+    expect(response.status).toBe(200);
+    expect(sleep.mock.calls.some(([ms]) => (ms as number) > 0)).toBe(true);
+
+    vi.useRealTimers();
   });
 });
