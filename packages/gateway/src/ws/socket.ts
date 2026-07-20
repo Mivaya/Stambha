@@ -42,7 +42,9 @@ function wrapNodeWs(socket: {
               : String(data);
         event = { data: text };
       } else if (type === "close") {
-        event = { code: (args[0] as { code?: number })?.code ?? 1000, reason: "" };
+        const code = typeof args[0] === "number" ? args[0] : 1000;
+        const reason = typeof args[1] === "string" ? args[1] : "";
+        event = { code, reason };
       } else {
         event = args[0];
       }
