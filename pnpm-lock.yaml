@@ -22,10 +22,10 @@ importers:
     devDependencies:
       vitepress:
         specifier: ^1.6.3
-        version: 1.6.4(@algolia/client-search@5.53.0)(@types/node@26.1.1)(postcss@8.5.19)(search-insights@2.17.3)(typescript@7.0.2)
+        version: 1.6.4(@algolia/client-search@5.53.0)(@types/node@26.1.1)(postcss@8.5.20)(search-insights@2.17.3)(typescript@7.0.2)
       vitepress-versioning-plugin:
         specifier: ^1.3.0
-        version: 1.3.0(@algolia/client-search@5.53.0)(@types/node@26.1.1)(postcss@8.5.19)(search-insights@2.17.3)(typescript@7.0.2)
+        version: 1.3.0(@algolia/client-search@5.53.0)(@types/node@26.1.1)(postcss@8.5.20)(search-insights@2.17.3)(typescript@7.0.2)
       vue:
         specifier: ^3.5.39
         version: 3.5.39(typescript@7.0.2)
@@ -90,7 +90,7 @@ importers:
         version: 26.1.1
       tsup:
         specifier: ^8.3.6
-        version: 8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)
+        version: 8.5.1(postcss@8.5.20)(tsx@4.23.1)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -112,7 +112,7 @@ importers:
         version: 26.1.1
       tsup:
         specifier: ^8.3.6
-        version: 8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)
+        version: 8.5.1(postcss@8.5.20)(tsx@4.23.1)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -130,7 +130,7 @@ importers:
         version: 26.1.1
       tsup:
         specifier: ^8.3.6
-        version: 8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)
+        version: 8.5.1(postcss@8.5.20)(tsx@4.23.1)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -144,8 +144,8 @@ importers:
         specifier: workspace:*
         version: link:../transform
       ws:
-        specifier: ^8.18.3
-        version: 8.21.0
+        specifier: ^8.21.1
+        version: 8.21.1
     devDependencies:
       '@stambha/core':
         specifier: workspace:*
@@ -161,7 +161,7 @@ importers:
         version: 8.18.1
       tsup:
         specifier: ^8.3.6
-        version: 8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)
+        version: 8.5.1(postcss@8.5.20)(tsx@4.23.1)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -183,7 +183,7 @@ importers:
         version: 26.1.1
       tsup:
         specifier: ^8.3.6
-        version: 8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)
+        version: 8.5.1(postcss@8.5.20)(tsx@4.23.1)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -201,7 +201,7 @@ importers:
         version: 26.1.1
       tsup:
         specifier: ^8.3.6
-        version: 8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)
+        version: 8.5.1(postcss@8.5.20)(tsx@4.23.1)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -222,7 +222,7 @@ importers:
         version: 26.1.1
       tsup:
         specifier: ^8.3.6
-        version: 8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)
+        version: 8.5.1(postcss@8.5.20)(tsx@4.23.1)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -237,7 +237,7 @@ importers:
         version: 26.1.1
       tsup:
         specifier: ^8.3.6
-        version: 8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)
+        version: 8.5.1(postcss@8.5.20)(tsx@4.23.1)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -255,7 +255,7 @@ importers:
         version: 26.1.1
       tsup:
         specifier: ^8.3.6
-        version: 8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)
+        version: 8.5.1(postcss@8.5.20)(tsx@4.23.1)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -270,7 +270,7 @@ importers:
         version: 26.1.1
       tsup:
         specifier: ^8.3.6
-        version: 8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)
+        version: 8.5.1(postcss@8.5.20)(tsx@4.23.1)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -288,7 +288,7 @@ importers:
         version: 26.1.1
       tsup:
         specifier: ^8.3.6
-        version: 8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)
+        version: 8.5.1(postcss@8.5.20)(tsx@4.23.1)(typescript@6.0.3)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1924,6 +1924,10 @@ packages:
     resolution: {integrity: sha512-Mz8SaolMd8nB+G13WkORcxQKHZ/NE4xXevtkJHVuG+guo9/wYKlIMTKAqGdEmYOXR2ijPjTYNHssizdaVSUNdQ==}
     engines: {node: ^10 || ^12 || >=14}
 
+  postcss@8.5.20:
+    resolution: {integrity: sha512-lW616l85ucIQL+FocMmL7pQFPqBmwejrCMg+iPxyImlrANNJG9NHq/RkyCZopDhd8C3LA03PHRJDjkbGu8vvug==}
+    engines: {node: ^10 || ^12 || >=14}
+
   preact@10.29.2:
     resolution: {integrity: sha512-7tNmwg/7mzzAoB/8kSg6Hl37JraAZw3Z3A0JSY7VXlZwo82Xn0G7wKbNNs2qoF4ZEEsQGTwDAroNdqKs1ofJxQ==}
 
@@ -2284,8 +2288,8 @@ packages:
     engines: {node: '>=8'}
     hasBin: true
 
-  ws@8.21.0:
-    resolution: {integrity: sha512-Vsp28b7DRcimFQvrqu2Wek3z1iYxDCWqHYB8Qsnk/S4RfaCQzPGPyBNuVjJV3cd6UiKtUtp6sNM77gWvzcCH+g==}
+  ws@8.21.1:
+    resolution: {integrity: sha512-+0NTnW77fFN/DjQi6k/Sq/Yvk4Sgajw7urW8V+asjXnRgDs9gyGkdb7EzgfhA4goXsRIZKE28fzIXBHEzhuiWw==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -3635,11 +3639,11 @@ snapshots:
       mlly: 1.8.2
       pathe: 2.0.3
 
-  postcss-load-config@6.0.1(postcss@8.5.19)(tsx@4.23.1):
+  postcss-load-config@6.0.1(postcss@8.5.20)(tsx@4.23.1):
     dependencies:
       lilconfig: 3.1.3
     optionalDependencies:
-      postcss: 8.5.19
+      postcss: 8.5.20
       tsx: 4.23.1
 
   postcss@8.5.15:
@@ -3649,6 +3653,12 @@ snapshots:
       source-map-js: 1.2.1
 
   postcss@8.5.19:
+    dependencies:
+      nanoid: 3.3.16
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
+
+  postcss@8.5.20:
     dependencies:
       nanoid: 3.3.16
       picocolors: 1.1.1
@@ -3841,7 +3851,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  tsup@8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3):
+  tsup@8.5.1(postcss@8.5.20)(tsx@4.23.1)(typescript@6.0.3):
     dependencies:
       bundle-require: 5.1.0(esbuild@0.27.7)
       cac: 6.7.14
@@ -3852,7 +3862,7 @@ snapshots:
       fix-dts-default-cjs-exports: 1.0.1
       joycon: 3.1.1
       picocolors: 1.1.1
-      postcss-load-config: 6.0.1(postcss@8.5.19)(tsx@4.23.1)
+      postcss-load-config: 6.0.1(postcss@8.5.20)(tsx@4.23.1)
       resolve-from: 5.0.0
       rollup: 4.60.4
       source-map: 0.7.6
@@ -3861,7 +3871,7 @@ snapshots:
       tinyglobby: 0.2.16
       tree-kill: 1.2.2
     optionalDependencies:
-      postcss: 8.5.19
+      postcss: 8.5.20
       typescript: 6.0.3
     transitivePeerDependencies:
       - jiti
@@ -3954,7 +3964,7 @@ snapshots:
       esbuild: 0.27.7
       fdir: 6.5.0(picomatch@4.0.5)
       picomatch: 4.0.5
-      postcss: 8.5.19
+      postcss: 8.5.20
       rollup: 4.62.2
       tinyglobby: 0.2.17
     optionalDependencies:
@@ -3962,14 +3972,14 @@ snapshots:
       fsevents: 2.3.3
       tsx: 4.23.1
 
-  vitepress-versioning-plugin@1.3.0(@algolia/client-search@5.53.0)(@types/node@26.1.1)(postcss@8.5.19)(search-insights@2.17.3)(typescript@7.0.2):
+  vitepress-versioning-plugin@1.3.0(@algolia/client-search@5.53.0)(@types/node@26.1.1)(postcss@8.5.20)(search-insights@2.17.3)(typescript@7.0.2):
     dependencies:
       '@types/lodash': 4.17.24
       cli-color: 2.0.4
       json5: 2.2.3
       lodash: 4.18.1
       vite: 5.4.21(@types/node@26.1.1)
-      vitepress: 1.5.0(@algolia/client-search@5.53.0)(@types/node@26.1.1)(postcss@8.5.19)(search-insights@2.17.3)(typescript@7.0.2)
+      vitepress: 1.5.0(@algolia/client-search@5.53.0)(@types/node@26.1.1)(postcss@8.5.20)(search-insights@2.17.3)(typescript@7.0.2)
       vitepress-versioning-plugin: '@stambha/docs@file:docs'
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -4001,7 +4011,7 @@ snapshots:
       - typescript
       - universal-cookie
 
-  vitepress@1.5.0(@algolia/client-search@5.53.0)(@types/node@26.1.1)(postcss@8.5.19)(search-insights@2.17.3)(typescript@7.0.2):
+  vitepress@1.5.0(@algolia/client-search@5.53.0)(@types/node@26.1.1)(postcss@8.5.20)(search-insights@2.17.3)(typescript@7.0.2):
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.53.0)(search-insights@2.17.3)
@@ -4022,7 +4032,7 @@ snapshots:
       vite: 5.4.21(@types/node@26.1.1)
       vue: 3.5.39(typescript@7.0.2)
     optionalDependencies:
-      postcss: 8.5.19
+      postcss: 8.5.20
     transitivePeerDependencies:
       - '@algolia/client-search'
       - '@types/node'
@@ -4051,7 +4061,7 @@ snapshots:
       - typescript
       - universal-cookie
 
-  vitepress@1.6.4(@algolia/client-search@5.53.0)(@types/node@26.1.1)(postcss@8.5.19)(search-insights@2.17.3)(typescript@7.0.2):
+  vitepress@1.6.4(@algolia/client-search@5.53.0)(@types/node@26.1.1)(postcss@8.5.20)(search-insights@2.17.3)(typescript@7.0.2):
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.53.0)(search-insights@2.17.3)
@@ -4072,7 +4082,7 @@ snapshots:
       vite: 5.4.21(@types/node@26.1.1)
       vue: 3.5.39(typescript@7.0.2)
     optionalDependencies:
-      postcss: 8.5.19
+      postcss: 8.5.20
     transitivePeerDependencies:
       - '@algolia/client-search'
       - '@types/node'
@@ -4146,6 +4156,6 @@ snapshots:
       siginfo: 2.0.0
       stackback: 0.0.2
 
-  ws@8.21.0: {}
+  ws@8.21.1: {}
 
   zwitch@2.0.4: {}
