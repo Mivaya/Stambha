@@ -4,12 +4,19 @@ export {
   isGuildAuditLogEntryCreatePayload,
   isGuildBanAddPayload,
   isGuildCreatePayload,
+  isGuildEmojisUpdatePayload,
   isGuildMemberAddPayload,
   isGuildMembersChunkPayload,
   isGuildRoleCreatePayload,
+  isGuildScheduledEventCreatePayload,
+  isIntegrationCreatePayload,
+  isInviteCreatePayload,
   isMessageReactionAddPayload,
+  isStageInstanceCreatePayload,
   isThreadCreatePayload,
+  isTypingStartPayload,
   isVoiceStateUpdatePayload,
+  isWebhooksUpdatePayload,
 } from "./guards.js";
 export {
   buildDispatchCatalog,
@@ -20,6 +27,7 @@ export {
   isStructuralDispatch,
   isTier1Dispatch,
   isTier2Dispatch,
+  isTier3Dispatch,
   type DispatchCatalogEntry,
   type DispatchNormalizationTier,
   type GatewayDispatchEventName,
@@ -41,6 +49,15 @@ export {
   type GatewayGuildRoleCreate,
   type GatewayThreadCreate,
 } from "./tier2Types.js";
+export {
+  type GatewayGuildEmojisUpdate,
+  type GatewayGuildScheduledEventCreate,
+  type GatewayIntegrationCreate,
+  type GatewayInviteCreate,
+  type GatewayStageInstanceCreate,
+  type GatewayTypingStart,
+  type GatewayWebhooksUpdate,
+} from "./tier3Types.js";
 export {
   normalizeDispatch,
   type NormalizeDispatchMode,
