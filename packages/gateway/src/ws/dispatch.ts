@@ -1,6 +1,7 @@
 export {
   camelizeDispatch,
   gatewayEventToHubName,
+  guildIdsFromReady,
   interactionFromDispatch,
   messageFromDispatch,
   normalizeDispatch,
