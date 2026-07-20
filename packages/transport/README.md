@@ -43,7 +43,7 @@ const route = normalizeRoute("GET", `/channels/${channelId}/messages`);
 | `DISCORD_API_BASE`, `DISCORD_API_VERSION` | API URL constants |
 | `createSession`, `SessionInfo` | Bot user + shard metadata |
 | `normalizeRoute`, `parseRouteKey` | Rate-limit bucket route keys |
-| `RateLimitBucket`, `RateLimitStore` | Bucket state and headers |
+| `RateLimitBucket`, `RateLimitStore`, `GlobalRateLimit` | Bucket state, global 50 req/s, headers |
 | `Snowflake` | ID type alias |
 
 ---
