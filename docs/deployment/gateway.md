@@ -116,6 +116,32 @@ const gateway = await createNativeGatewayClient({
 | Option | Default | Description |
 |--------|---------|-------------|
 | `dispatchNormalize` | `'default'` | `'default'` — camelCase common events at hub; `'raw'` — skip structural normalize |
+| `waitForGuilds` | `false` | Defer hub `ready` (shard 0) until READY guild stubs arrive as `guildAvailable` |
+
+### Guild availability (startup backfill)
+
+Discord sends unavailable guild stubs on `READY`, then full guild bodies as `GUILD_CREATE`. Stambha mirrors discord.js:
+
+| Wire | Hub event | When |
+|------|-----------|------|
+| `READY` guild stubs | (tracked internally) | Seed startup / pending guild ids |
+| `GUILD_CREATE` for a READY stub | `guildAvailable` | Startup backfill (not a join) |
+| `GUILD_CREATE` for an unknown guild | `guildCreate` | Bot joined a guild after ready |
+| `GUILD_DELETE` with `unavailable: true` | `guildUnavailable` | Outage / disconnect |
+| `GUILD_DELETE` otherwise | `guildDelete` | Bot removed / left |
+
+By default, hub `ready` still fires as soon as `READY` arrives (shard 0). Set `waitForGuilds: true` to wait until pending stubs are cleared:
+
+```ts
+const gateway = await createNativeGatewayClient({
+  token: process.env.DISCORD_TOKEN!,
+  hub,
+  intents,
+  waitForGuilds: true,
+});
+```
+
+`readyFromDispatch` / hub ready payloads may include `guildIds` from the READY stubs. Worker relay defaults forward `guildAvailable` and `guildUnavailable` alongside `guildCreate` / `guildDelete`.
 
 `createNativeGatewayClient`:
 

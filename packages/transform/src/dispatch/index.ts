@@ -16,7 +16,7 @@ export {
   type DispatchNormalizationTier,
   type GatewayDispatchEventName,
 } from "./catalog.js";
-export { messageFromDispatch, readyFromDispatch } from "./messages.js";
+export { guildIdsFromReady, messageFromDispatch, readyFromDispatch } from "./messages.js";
 export {
   type GatewayEmoji,
   type GatewayGuildCreate,

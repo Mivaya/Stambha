@@ -51,6 +51,7 @@ export {
   isVoiceStateUpdatePayload,
   messageFromDispatch,
   normalizeDispatch,
+  guildIdsFromReady,
   readyFromDispatch,
   type DispatchCatalogEntry,
   type DispatchNormalizationTier,

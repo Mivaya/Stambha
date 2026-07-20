@@ -13,7 +13,9 @@ const DEFAULT_EVENTS = [
   "interactionCreate",
   "ready",
   "guildCreate",
+  "guildAvailable",
   "guildDelete",
+  "guildUnavailable",
 ] as const;
 
 export interface GatewayRelayOptions {
