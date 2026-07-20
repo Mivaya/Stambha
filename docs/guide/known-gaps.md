@@ -43,7 +43,7 @@ Use this stack for new bots:
 | **C1** | Numeric permission levels (`@stambha/levels`) | Use `userPermissionsGate` + roles today |
 | **C2** | Vault level overrides | Needs C1 |
 | **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
-| **G1** | Auto resharding threshold | Manual `ReshardController` APIs exist |
+| **G1** | Auto resharding threshold | **In progress** — `ReshardController.check` / `createAutoReshardMonitor` (80% policy) |
 | **G3** | Gateway dispatch normalization (all events) | Tier 1 **1.2.0**; Tier 2 **1.3.0** (on main); Tier 3 → **1.4.0**; Tier 4 → **1.5.0** |
 | **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Late 1.x — hub `on` handlers get per-event types |
 | **Collectors** | Message/reaction/interaction collectors | discord.js collectors parity on G3 events |
@@ -98,7 +98,7 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 | [Chron](/features/chron) tier-split | Single-process documented; distributed → **2.0 D2** |
 | [Vault](/features/vault) dashboard CRUD | [`@stambha/api`](/extensions/api) OAuth + `/guilds/…/settings`; hosted UI still planned |
 | [Tier split](/deployment/tier-split) interactions | Bot worker must receive all `interactionCreate` |
-| [Resharding](/deployment/resharding) | Manual operator APIs; auto threshold → **G1** |
+| [Resharding](/deployment/resharding) | Auto threshold plan via `controller.check` / monitor (**G1**); live reconnect still your worker loop |
 | [Migration from Klasa](/migration/from-klasa) | Optional page shipped |
 | Versioned doc snapshots | `1.0.0` and `1.1.0` archived; archive **1.2.0** at the next docs/archive step if missing |
 | [Extensions](/extensions/) hub | Keep feature pages in sync when Stambha-plugins ships |
@@ -116,7 +116,7 @@ Path: **B1** → **G3-p3** → **G3-p4** → **ADAPTERS-1.5** → **G3a** → **
 | **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, app-command permissions |
 | **ADAPTERS-1.5** | Remove legacy adapters | After G3 coverage |
 | **G3a** | Typed `GatewayEventMap` | Hub listener DX |
-| **G1** | Auto reshard threshold | — |
+| **G1** | Auto reshard threshold | **In progress** — `controller.check` / `createAutoReshardMonitor` |
 | **B2–B6** | Args, help, lifecycle, components, edit-tracking | — |
 | **C1** / **C2** | Permission levels + vault overrides | — |
 | **A1–A2** | Redis / shared cooldowns | Often plugins |
