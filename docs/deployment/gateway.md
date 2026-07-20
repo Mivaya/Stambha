@@ -139,6 +139,8 @@ const gateway = await createNativeGatewayClient({
 
 - Fetches `GET /gateway/bot` for recommended shard count and gateway URL (override with `totalShards` / `gatewayUrl`)
 - Sends identify / resume with heartbeat handling
+- Reconnects with exponential backoff; uses READY `resume_gateway_url` when resuming
+- Stops and emits hub `error` (`fatal_close`) on fatal close codes (4004, 4010–4014) instead of looping
 - Normalizes `MESSAGE_CREATE`, `INTERACTION_CREATE`, and `READY` into Stambha hub shapes
 - Normalizes Tier 1 dispatches (reactions, guild/member, voice, …) to camelCase at the hub (1.2.0+)
 - Normalizes Tier 2 dispatches (channels, threads, roles, bans, member chunks, audit log) to camelCase (1.3.0+)
