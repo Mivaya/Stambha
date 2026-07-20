@@ -42,6 +42,8 @@ export interface NativeGatewayClientOptions {
   createWebSocket?: CreateGatewayWebSocket;
   properties?: BuildIdentifyOptions["properties"];
   reconnectDelayMs?: number;
+  /** Cap for exponential reconnect backoff (default 60_000). */
+  reconnectMaxDelayMs?: number;
   /** Custom fetch for `/gateway/bot` (tests). */
   fetch?: typeof fetch;
   /**
@@ -123,6 +125,8 @@ export async function createNativeGatewayClient(
     if (options.properties !== undefined) shardOptions.properties = options.properties;
     if (options.reconnectDelayMs !== undefined)
       shardOptions.reconnectDelayMs = options.reconnectDelayMs;
+    if (options.reconnectMaxDelayMs !== undefined)
+      shardOptions.reconnectMaxDelayMs = options.reconnectMaxDelayMs;
     if (options.dispatchNormalize !== undefined)
       shardOptions.dispatchNormalize = options.dispatchNormalize;
     return new GatewayShard(shardOptions);
