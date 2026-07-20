@@ -21,7 +21,7 @@ Use this stack for new bots:
 
 **Mention prefix (1.1.0):** `mentionCommands: true` on `attachStambhaClient` (or `createMentionPrefixResolver` on `client.resolvePrefix`) routes `@Bot ping` like `!ping`.
 
-**Hub events today:** `MESSAGE_CREATE` / `MESSAGE_UPDATE`, `INTERACTION_CREATE`, and `READY` are normalized to slim **`StambhaMessage`** / **`StambhaInteraction`** shapes for routing. Common events (`messageReactionAdd`, `guildMemberAdd`, `voiceStateUpdate`, `messageDelete`, …) emit **camelCase** structural payloads (**1.2.0**). Remaining dispatches pass through as raw snake_case until further coverage in **1.3.0+**. Use `isTier1Dispatch` / type guards from `@stambha/transform` for listener DX.
+**Hub events today:** `MESSAGE_CREATE` / `MESSAGE_UPDATE`, `INTERACTION_CREATE`, and `READY` are normalized to slim **`StambhaMessage`** / **`StambhaInteraction`** shapes for routing. Tier 1 events (`messageReactionAdd`, `guildMemberAdd`, `voiceStateUpdate`, `messageDelete`, …) emit **camelCase** structural payloads (**1.2.0**). Tier 2 events (channels, threads, roles, bans, member chunks, audit log) emit **camelCase** in **1.3.0**. Remaining dispatches pass through as raw snake_case until **1.4.0+**. Use `isTier1Dispatch` / `isTier2Dispatch` / type guards from `@stambha/transform` for listener DX.
 
 **Not supported:** discord.js (or any library) owning the gateway while Stambha owns commands only. Use the [native bootstrap](/guide/getting-started).
 
@@ -43,7 +43,7 @@ Use this stack for new bots:
 | **C1** | Numeric permission levels (`@stambha/levels`) | Target **1.3.0** (pick B1 or C1 with G3-p2) — use `userPermissionsGate` + roles today |
 | **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
 | **G1** | Auto resharding threshold | Manual `ReshardController` APIs exist |
-| **G3** | Gateway dispatch normalization (all events) | Common events camelCase in **1.2.0** (G3-p1); G3-p2 → **1.3.0** |
+| **G3** | Gateway dispatch normalization (all events) | Tier 1 camelCase in **1.2.0** (G3-p1); Tier 2 → **1.3.0** (G3-p2); Tier 3 → **1.4.0** |
 | **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Late 1.x — hub `on` handlers get per-event types |
 
 ---
@@ -105,12 +105,14 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ## Planned for 1.3.0
 
-Next gateway minor — **G3-p2** (channels, threads, roles, bans, audit log). Breaking for listeners on those hub events.
+Next gateway minor — **G3-p2** (channels, threads, roles, bans, audit log) plus gateway hardening (H tickets). Breaking for listeners on Tier 2 hub events.
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **G3-p2** | Tier 2 gateway dispatches | Channels, threads, roles, bans, `GUILD_MEMBERS_CHUNK`, audit log |
+| **G3-p2** | Tier 2 gateway dispatches | Channels, threads, roles, bans, `GUILD_MEMBERS_CHUNK`, audit log — camelCase at hub |
 | **B1** or **C1** | Pick one pillar per release | Do not combine G3-p2 + B1 + C1 unless team accepts large QA surface |
+
+Use `dispatchNormalize: 'raw'` for one cycle while migrating Tier 2 handlers. Type guards: `isChannelCreatePayload`, `isThreadCreatePayload`, `isGuildRoleCreatePayload`, `isGuildBanAddPayload`, `isGuildMembersChunkPayload`, `isGuildAuditLogEntryCreatePayload`.
 
 ---
 

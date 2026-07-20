@@ -1,18 +1,18 @@
 import { interactionFromDispatch } from "../discordNative.js";
-import { isTier1Dispatch } from "./catalog.js";
+import { isStructuralDispatch } from "./catalog.js";
 import { camelizeDispatch } from "./camelize.js";
 import { messageFromDispatch, readyFromDispatch } from "./messages.js";
 
 export type NormalizeDispatchMode = "default" | "raw";
 
 export interface NormalizeDispatchOptions {
-  /** When `'raw'`, skip Tier 1 structural camelCase (G3 migration escape hatch). */
+  /** When `'raw'`, skip Tier 1/2 structural camelCase (G3 migration escape hatch). */
   mode?: NormalizeDispatchMode;
 }
 
 /**
  * Normalize a gateway DISPATCH payload for hub emit.
- * Routing-critical events use Stambha shapes; Tier 1 events use camelCase; others pass through raw `d`.
+ * Routing-critical events use Stambha shapes; Tier 1–2 events use camelCase; others pass through raw `d`.
  */
 export function normalizeDispatch(
   dispatchName: string,
@@ -29,7 +29,7 @@ export function normalizeDispatch(
       return readyFromDispatch(data);
     default:
       if (options?.mode === "raw") return data;
-      if (isTier1Dispatch(dispatchName)) return camelizeDispatch(data);
+      if (isStructuralDispatch(dispatchName)) return camelizeDispatch(data);
       return data;
   }
 }

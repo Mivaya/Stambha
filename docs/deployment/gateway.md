@@ -77,13 +77,16 @@ Returns a detach function. Expects normalized `StambhaMessage` / `StambhaInterac
 
 **1.2.0:** Common hub events emit **camelCase** payloads. Routing events (`messageCreate`, `interactionCreate`, `ready`) still use `StambhaMessage` / `StambhaInteraction` shapes.
 
+**1.3.0:** Tier 2 hub events (channels, threads, roles, bans, member chunks, audit log) also emit **camelCase**.
+
 | Group | Events (examples) | Hub payload |
 |-------|-------------------|-------------|
 | Routing | `messageCreate`, `interactionCreate`, `ready` | `StambhaMessage` / `StambhaInteraction` / ready DTO |
-| Common | `messageReactionAdd`, `guildMemberAdd`, `voiceStateUpdate`, `guildCreate`, `messageDelete`, … | camelCase structural (`guildId`, `userId`, …) |
-| Passthrough | `channelCreate`, `threadCreate`, … until 1.3+ | raw snake_case `d` |
+| Tier 1 | `messageReactionAdd`, `guildMemberAdd`, `voiceStateUpdate`, `guildCreate`, `messageDelete`, … | camelCase structural (`guildId`, `userId`, …) |
+| Tier 2 | `channelCreate`, `threadCreate`, `guildRoleCreate`, `guildBanAdd`, `guildMembersChunk`, `guildAuditLogEntryCreate`, … | camelCase structural |
+| Passthrough | invites, integrations, stage, … until 1.4+ | raw snake_case `d` |
 
-#### Migration from 1.1.x
+#### Migration from 1.1.x / 1.2.x
 
 ```ts
 // Before (1.1.x) — snake_case on common events
@@ -91,7 +94,7 @@ hub.on("messageReactionAdd", (payload) => {
   const guild = payload.guild_id;
 });
 
-// After (1.2.0) — camelCase
+// After (1.2.0+) — camelCase
 import { isMessageReactionAddPayload } from "@stambha/transform";
 
 hub.on("messageReactionAdd", (payload) => {
@@ -100,7 +103,22 @@ hub.on("messageReactionAdd", (payload) => {
 });
 ```
 
-**Escape hatch (one minor cycle):** pass `dispatchNormalize: 'raw'` to `createNativeGatewayClient` to keep wire snake_case on those common events while you migrate handlers.
+```ts
+// Before (1.2.x) — snake_case on Tier 2 events
+hub.on("channelCreate", (payload) => {
+  const guild = payload.guild_id;
+});
+
+// After (1.3.0) — camelCase
+import { isChannelCreatePayload } from "@stambha/transform";
+
+hub.on("channelCreate", (payload) => {
+  if (!isChannelCreatePayload(payload)) return;
+  const guild = payload.guildId;
+});
+```
+
+**Escape hatch (one minor cycle):** pass `dispatchNormalize: 'raw'` to `createNativeGatewayClient` to keep wire snake_case on Tier 1/2 events while you migrate handlers.
 
 ```ts
 const gateway = await createNativeGatewayClient({
@@ -115,7 +133,7 @@ const gateway = await createNativeGatewayClient({
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `dispatchNormalize` | `'default'` | `'default'` — camelCase common events at hub; `'raw'` — skip structural normalize |
+| `dispatchNormalize` | `'default'` | `'default'` — camelCase Tier 1/2 events at hub; `'raw'` — skip structural normalize |
 | `waitForGuilds` | `false` | Defer hub `ready` (shard 0) until READY guild stubs arrive as `guildAvailable` |
 
 ### Guild availability (startup backfill)
@@ -150,8 +168,9 @@ const gateway = await createNativeGatewayClient({
 - Reconnects with exponential backoff; uses READY `resume_gateway_url` when resuming
 - Stops and emits hub `error` (`fatal_close`) on fatal close codes (4004, 4010–4014) instead of looping
 - Normalizes `MESSAGE_CREATE`, `INTERACTION_CREATE`, and `READY` into Stambha hub shapes
-- Normalizes common dispatches (reactions, guild/member, voice, …) to camelCase at the hub (1.2.0+)
-- Emits other dispatches on camelCase hub names with raw snake_case `d` until further coverage in 1.3.0+
+- Normalizes Tier 1 dispatches (reactions, guild/member, voice, …) to camelCase at the hub (1.2.0+)
+- Normalizes Tier 2 dispatches (channels, threads, roles, bans, member chunks, audit log) to camelCase (1.3.0+)
+- Emits remaining dispatches on camelCase hub names with raw snake_case `d` until further coverage in 1.4.0+
 
 Requires Node 22+ global `WebSocket` or the bundled `ws` dependency (installed with `@stambha/gateway`).
 

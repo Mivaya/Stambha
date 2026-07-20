@@ -1,8 +1,14 @@
 export { camelizeDispatch } from "./camelize.js";
 export {
+  isChannelCreatePayload,
+  isGuildAuditLogEntryCreatePayload,
+  isGuildBanAddPayload,
   isGuildCreatePayload,
   isGuildMemberAddPayload,
+  isGuildMembersChunkPayload,
+  isGuildRoleCreatePayload,
   isMessageReactionAddPayload,
+  isThreadCreatePayload,
   isVoiceStateUpdatePayload,
 } from "./guards.js";
 export {
@@ -11,7 +17,9 @@ export {
   dispatchNormalizationTier,
   GATEWAY_DISPATCH_EVENTS,
   gatewayEventToHubName,
+  isStructuralDispatch,
   isTier1Dispatch,
+  isTier2Dispatch,
   type DispatchCatalogEntry,
   type DispatchNormalizationTier,
   type GatewayDispatchEventName,
@@ -25,6 +33,14 @@ export {
   type GatewaySnowflakeUser,
   type GatewayVoiceStateUpdate,
 } from "./tier1Types.js";
+export {
+  type GatewayChannelCreate,
+  type GatewayGuildAuditLogEntryCreate,
+  type GatewayGuildBanAdd,
+  type GatewayGuildMembersChunk,
+  type GatewayGuildRoleCreate,
+  type GatewayThreadCreate,
+} from "./tier2Types.js";
 export {
   normalizeDispatch,
   type NormalizeDispatchMode,
