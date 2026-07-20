@@ -101,4 +101,19 @@ describe("resolveCommandGates", () => {
     const names = commandGatesForRun(client, ping).map((g) => g.name);
     expect(names).toEqual(["global", "mod-only", "inline"]);
   });
+
+  it("accepts preconditions as an alias for gateNames", () => {
+    const client = new StambhaClient();
+    const namedGate = new ModOnlyGate(client.registries.gates, { name: "mod-only" });
+    client.registries.gates.register(namedGate);
+
+    const ping = new PingCommand(client.registries.commands, {
+      name: "ping",
+      preconditions: ["mod-only"],
+    });
+    client.register(ping);
+
+    expect(ping.gateNames).toEqual(["mod-only"]);
+    expect(commandGatesForRun(client, ping).map((g) => g.name)).toEqual(["mod-only"]);
+  });
 });

@@ -13,6 +13,10 @@ export {
   defaultCooldownStore,
   MemoryCooldownStore,
 } from "./cooldownStore.js";
+export {
+  enableDeclarativeCommandGates,
+  resolveCommandGates,
+} from "./declarativeGates.js";
 export { type NsfwGateOptions, nsfwGate } from "./nsfwGate.js";
 export {
   combinePermissions,
@@ -36,3 +40,6 @@ export {
   type RunInOption,
   runInGate,
 } from "./runInGate.js";
+
+// Register B1 declarative Command options → gates on package import.
+import "./declarativeGates.js";

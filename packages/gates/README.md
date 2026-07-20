@@ -18,7 +18,29 @@ Requires **Node.js 20+**.
 
 ## Quick start
 
-### Attach to a command
+### Declarative options (B1)
+
+```ts
+import { Command, ok, type CommandContext, type Registry } from "@stambha/core";
+import "@stambha/gates"; // registers cooldown / runIn / nsfw / permissions options
+
+export class PingCommand extends Command {
+  constructor(registry: Registry<Command>) {
+    super(registry, {
+      name: "ping",
+      cooldown: 5,
+      runIn: "guild",
+    });
+  }
+
+  async execute(ctx: CommandContext) {
+    await ctx.reply("Pong!");
+    return ok(undefined);
+  }
+}
+```
+
+### Attach inline gates
 
 ```ts
 import { Command, ok, type CommandContext, type Registry } from "@stambha/core";
@@ -77,6 +99,7 @@ Combine custom gates in `@stambha/core` with `gateAnd()` / `gateOr()`.
 | `permissionsGate`, `Permission` | Discord permission math |
 | `nsfwGate` | Age-restricted channels |
 | `guildOnlyGate`, `dmOnlyGate`, `runInGate` | Where commands may run |
+| `resolveCommandGates` | B1: build gates from Command options |
 | `attachGateDeniedReply` | User-facing denial messages |
 
 ---

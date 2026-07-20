@@ -74,10 +74,13 @@ export {
 } from "./epilogues/commandLifecycle.js";
 // Gates resolution
 export {
+  clearDeclarativeGatesResolver,
   commandGatesForRun,
   globalGates,
+  registerDeclarativeGatesResolver,
   resolveCommandGates,
   resolveNamedGates,
+  type DeclarativeGatesResolver,
 } from "./gates/resolveCommandGates.js";
 // Outcome
 export {
@@ -103,8 +106,10 @@ export { Chron, type ChronOptions, type ChronSchedule } from "./registries/Chron
 export {
   Command,
   Command as Directive,
+  type CommandCooldownOption,
   type CommandOptions,
   type CommandOptions as DirectiveOptions,
+  type CommandRunInOption,
 } from "./registries/Command.js";
 export { Conduit, type ConduitOptions } from "./registries/Conduit.js";
 export { Epilogue, type EpilogueOptions, type EpilogueRunOn } from "./registries/Epilogue.js";

@@ -1,6 +1,6 @@
 # Built-in gates (`@stambha/gates`)
 
-**Gates** are per-command checks — inline on commands, via `gateNames`, or `global: true` on gate pieces.
+**Gates** are per-command checks — declarative Command options (B1), inline `gates: [...]`, `gateNames` / `preconditions`, or `global: true` on gate pieces.
 
 ## Installation
 
@@ -8,9 +8,50 @@
 pnpm add @stambha/gates
 ```
 
-Requires `@stambha/core`. Gateway workers should populate `CommandContext.meta` for permission and channel checks.
+Requires `@stambha/core`. Gateway workers should populate `CommandContext.meta` for permission and channel checks. Importing `@stambha/gates` registers the declarative options resolver.
 
 ## Quick start
+
+### Declarative options (B1)
+
+```ts
+import { Command, ok, type CommandContext, type Registry } from "@stambha/core";
+import "@stambha/gates"; // enables cooldown / runIn / nsfw / permissions options
+import { attachGateDeniedReply, Permission } from "@stambha/gates";
+
+attachGateDeniedReply(client);
+
+export class PingCommand extends Command {
+  constructor(registry: Registry<Command>) {
+    super(registry, {
+      name: "ping",
+      kinds: ["slash", "prefix"],
+      cooldown: 5, // seconds, limit 1 — no gateNames / gates[] required
+      runIn: "guild",
+      // userPermissions: Permission.ManageGuild,
+    });
+  }
+
+  async execute(ctx: CommandContext) {
+    await ctx.reply("Pong!");
+    return ok(undefined);
+  }
+}
+```
+
+| Option | Effect |
+|--------|--------|
+| `cooldown: 5` | 5s delay, limit 1 (`userGuild` scope) |
+| `cooldown: { delay, limit, scope }` | Seconds (`delay`) or `delayMs` + limit/scope |
+| `runIn: "guild"` / `"dm"` | Guild-only or DM-only |
+| `runIn: "guild_text"` or `["guild_text", …]` | Channel-type allow-list |
+| `nsfw: true` | NSFW channel required |
+| `userPermissions` / `clientPermissions` | Bitfields / `Permission` flags |
+| `preconditions: ["mod-only"]` | Alias for `gateNames` |
+
+**Merge order:** global registry gates → `gateNames` / `preconditions` → declarative options → inline `gates[]`.
+
+### Inline gates
 
 ```ts
 import { Command, ok, type CommandContext, type Registry } from "@stambha/core";
@@ -58,6 +99,7 @@ export class BanCommand extends Command {
 | `runInGate()` | Channel type allow-list |
 | `guildOnlyGate()` | No DMs |
 | `dmOnlyGate()` | DMs only |
+| `resolveCommandGates(command)` | Build declarative gates from Command options (B1) |
 
 Compose with core helpers: `gateAnd()`, `gateOr()`, `defineGate()`.
 
