@@ -141,6 +141,15 @@ export abstract class Command extends Unit<CommandOptions> {
 
   abstract execute(ctx: CommandContext): Promise<Outcome<unknown>>;
 
+  /**
+   * Called when {@link execute} returns `err()` or throws (B4).
+   * Default logs via `client.container.logger`. Override to customize or no-op.
+   */
+  async onCommandError(error: unknown, _ctx: CommandContext): Promise<void> {
+    const message = error instanceof Error ? error.message : String(error);
+    this.client.container.logger.error(`Command "${this.name}" failed: ${message}`, error);
+  }
+
   /** Optional slash autocomplete handler for this command. */
   autocomplete?(_ctx: AutocompleteContext): Promise<void>;
 
