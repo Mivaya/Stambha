@@ -13,7 +13,7 @@ Sapphire is excellent on **discord.js**. Stambha gives you the same piece model 
 
 You do **not** need to rename folders for most Sapphire projects.
 
-> **Release policy (1.0.0+):** Take time to migrate in development, but **ship fully native** — `@stambha/gateway`, `@stambha/rest`, and `StambhaMessage` / `interactionFromDispatch`. Library adapters (`messageFromDiscordJs`, etc.) are **deprecated in 1.0.0** and **removed in future release**.
+> **Release policy (1.0.0+):** Take time to migrate in development, but **ship fully native** — `@stambha/gateway`, `@stambha/rest`, and `StambhaMessage` / `interactionFromDispatch`. Library adapters (`messageFromDiscordJs`, etc.) were **removed in 1.5.0**.
 
 ---
 

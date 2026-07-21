@@ -6,6 +6,8 @@ export {
   createGatewayEventHub,
   GatewayEventHub,
   type GatewayEventHubReadyPayload,
+  type GatewayEventMap,
+  type GatewayEventName,
 } from "./GatewayEventHub.js";
 export {
   createReshardServer,

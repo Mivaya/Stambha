@@ -17,7 +17,7 @@ Onboarding paths from **Sapphire** and **Discordeno** to Stambha's native transp
 
 Legacy `@stambha/bridge-*` packages were **removed** — use the table above.
 
-**Release policy:** migrations may take time in development, but **production releases must be fully native** — no discord.js/Discordeno adapters at runtime after **1.5.0** (deprecated in 1.0.0).
+**Release policy:** migrations may take time in development, but **production releases must be fully native**. discord.js / Discordeno shape adapters were **removed in 1.5.0** (deprecated in 1.0.0).
 
 ## Related
 
