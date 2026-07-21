@@ -39,9 +39,9 @@ Use this stack for new bots:
 | **C1** | Numeric permission levels (`@stambha/levels`) | Use `userPermissionsGate` + roles today |
 | **C2** | Vault level overrides | Needs C1 |
 | **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
-| **G1** | Auto resharding threshold | Manual `ReshardController` APIs exist |
-| **G3** | Gateway dispatch normalization (all events) | Tier 1–2 on main; G3-p3/p4 → **1.4.0** / **1.5.0** (catalog complete; PRs pending merge) |
-| **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | **In progress** — typed `hub.on` overloads |
+| **G1** | Auto resharding threshold | **In progress** — `ReshardController.check` / `createAutoReshardMonitor` (80% policy) |
+| **G3** | Gateway dispatch normalization (all events) | Tier 1–4 on main → **1.4.0** / **1.5.0** (catalog complete) |
+| **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Shipped (#81) — typed `hub.on` / `once` / `off` |
 | **Collectors** | Message/reaction/interaction collectors | discord.js collectors parity on G3 events |
 
 ---
@@ -94,7 +94,7 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 | [Chron](/features/chron) tier-split | Single-process documented; distributed → **2.0 D2** |
 | [Vault](/features/vault) dashboard CRUD | [`@stambha/api`](/extensions/api) OAuth + `/guilds/…/settings`; hosted UI still planned |
 | [Tier split](/deployment/tier-split) interactions | Bot worker must receive all `interactionCreate` |
-| [Resharding](/deployment/resharding) | Manual operator APIs; auto threshold → **G1** |
+| [Resharding](/deployment/resharding) | Auto threshold plan via `controller.check` / monitor (**G1**); live reconnect still your worker loop |
 | [Migration from Klasa](/migration/from-klasa) | Optional page shipped |
 | Versioned doc snapshots | `1.0.0` and `1.1.0` archived; archive **1.2.0** at the next docs/archive step if missing |
 | [Extensions](/extensions/) hub | Keep feature pages in sync when Stambha-plugins ships |
@@ -103,12 +103,11 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ## Planned next (after 1.3.0 train)
 
-Path: **G3a** (in progress) → **G1** → **B2–B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
+Path: **G1** (in progress) → **B2–B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **G3a** | Typed `GatewayEventMap` | **In progress** — typed `hub.on` / `once` / `off` via event → payload map |
-| **G1** | Auto reshard threshold | — |
+| **G1** | Auto reshard threshold | **In progress** — `controller.check` / `createAutoReshardMonitor` |
 | **B2–B6** | Args, help, lifecycle, components, edit-tracking | — |
 | **C1** / **C2** | Permission levels + vault overrides | — |
 | **A1–A2** | Redis / shared cooldowns | Often plugins |
@@ -119,9 +118,10 @@ Path: **G3a** (in progress) → **G1** → **B2–B6** → **C1** → **C2** →
 | ID | Feature | Notes |
 |----|---------|-------|
 | **B1** | Declarative gates | `cooldown` / `runIn` / `nsfw` / permissions on `Command` (#74) |
-| **G3-p3** | Tier 3 camelCase | Invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker → **1.4.0** (PR pending merge) |
-| **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, subscriptions, … → **1.5.0** (G3 complete; PR pending merge) |
-| **ADAPTERS-1.5** | Remove legacy adapters | discord.js / Discordeno shape converters removed (PR pending merge) |
+| **G3-p3** | Tier 3 camelCase | Invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker → **1.4.0** (#78) |
+| **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, subscriptions, … → **1.5.0** (#79) |
+| **ADAPTERS-1.5** | Remove legacy adapters | discord.js / Discordeno shape converters removed (#80) |
+| **G3a** | Typed `GatewayEventMap` | Typed `hub.on` / `once` / `off` (#81) |
 
 ## Shipped in 1.3.0 train (on main; release cut pending)
 

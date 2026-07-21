@@ -26,6 +26,15 @@ export {
   type ReshardPlan,
 } from "./reshard/plan.js";
 export {
+  checkAutoReshard,
+  createAutoReshardMonitor,
+  type AutoReshardCheckOptions,
+  type AutoReshardCheckResult,
+  type AutoReshardMonitor,
+  type AutoReshardMonitorOptions,
+  type AutoReshardSkipReason,
+} from "./reshard/autoReshard.js";
+export {
   evaluateReshard,
   type ReshardEvaluation,
   type ReshardPolicyOptions,

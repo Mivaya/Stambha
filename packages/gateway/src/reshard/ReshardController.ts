@@ -1,6 +1,11 @@
 import type { ShardManager } from "../shard/ShardManager.js";
 import type { IdentifyBudget } from "./IdentifyBudget.js";
 import { createIdentifyBudget } from "./IdentifyBudget.js";
+import {
+  checkAutoReshard,
+  type AutoReshardCheckOptions,
+  type AutoReshardCheckResult,
+} from "./autoReshard.js";
 import { createReshardPlan, type ReshardPlan } from "./plan.js";
 import { evaluateReshard, type ReshardEvaluation, type ReshardPolicyOptions } from "./policy.js";
 
@@ -16,6 +21,7 @@ export interface ReshardControllerOptions {
 
 /**
  * Operator-facing resharding state machine — plan, stagger identifies, resize shards.
+ * Use {@link check} / {@link checkAutoReshard} for automatic threshold planning (G1).
  */
 export class ReshardController {
   private readonly manager: ShardManager;
@@ -26,6 +32,7 @@ export class ReshardController {
   private phase: ReshardPhase = "idle";
   private activePlan: ReshardPlan | null = null;
   private identifyCursor = 0;
+  private readonly autoState = { lastPlanAt: 0 };
 
   constructor(options: ReshardControllerOptions) {
     this.manager = options.manager;
@@ -49,6 +56,14 @@ export class ReshardController {
   /** Automated threshold check (does not start migration). */
   evaluate(guildCount: number): ReshardEvaluation {
     return evaluateReshard(guildCount, this.manager.totalShards, this.policy);
+  }
+
+  /**
+   * G1: evaluate capacity and auto-plan (optionally start) when over threshold.
+   * Skips when busy or within cooldown after a prior auto plan.
+   */
+  check(guildCount: number, options?: AutoReshardCheckOptions): AutoReshardCheckResult {
+    return checkAutoReshard(this, guildCount, options, this.autoState);
   }
 
   /** Build a migration plan without starting it. */
