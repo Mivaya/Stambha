@@ -81,13 +81,15 @@ Returns a detach function. Expects normalized `StambhaMessage` / `StambhaInterac
 
 **1.4.0:** Tier 3 hub events (invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker) emit **camelCase**.
 
+**1.5.0:** Tier 4 hub events (automod, soundboard, entitlements, subscriptions, app-command permissions, user update, …) emit **camelCase** — G3 catalog complete.
+
 | Group | Events (examples) | Hub payload |
 |-------|-------------------|-------------|
 | Routing | `messageCreate`, `interactionCreate`, `ready` | `StambhaMessage` / `StambhaInteraction` / ready DTO |
 | Tier 1 | `messageReactionAdd`, `guildMemberAdd`, `voiceStateUpdate`, `guildCreate`, `messageDelete`, … | camelCase structural (`guildId`, `userId`, …) |
 | Tier 2 | `channelCreate`, `threadCreate`, `guildRoleCreate`, `guildBanAdd`, `guildMembersChunk`, `guildAuditLogEntryCreate`, … | camelCase structural |
 | Tier 3 | `inviteCreate`, `integrationCreate`, `stageInstanceCreate`, `guildScheduledEventCreate`, `typingStart`, `webhooksUpdate`, `guildEmojisUpdate`, … | camelCase structural |
-| Passthrough | automod, soundboard, entitlements, … until 1.5+ | raw snake_case `d` |
+| Tier 4 | `autoModerationRuleCreate`, `guildSoundboardSoundCreate`, `entitlementCreate`, `subscriptionCreate`, `applicationCommandPermissionsUpdate`, `userUpdate`, … | camelCase structural |
 
 #### Migration from 1.1.x / 1.2.x
 
@@ -136,7 +138,22 @@ hub.on("inviteCreate", (payload) => {
 });
 ```
 
-**Escape hatch (one minor cycle):** pass `dispatchNormalize: 'raw'` to `createNativeGatewayClient` to keep wire snake_case on Tier 1–3 events while you migrate handlers.
+```ts
+// Before (1.4.x) — snake_case on Tier 4 events
+hub.on("entitlementCreate", (payload) => {
+  const sku = payload.sku_id;
+});
+
+// After (1.5.0) — camelCase
+import { isEntitlementCreatePayload } from "@stambha/transform";
+
+hub.on("entitlementCreate", (payload) => {
+  if (!isEntitlementCreatePayload(payload)) return;
+  const sku = payload.skuId;
+});
+```
+
+**Escape hatch (one minor cycle):** pass `dispatchNormalize: 'raw'` to `createNativeGatewayClient` to keep wire snake_case on Tier 1–4 events while you migrate handlers.
 
 ```ts
 const gateway = await createNativeGatewayClient({
@@ -151,7 +168,7 @@ const gateway = await createNativeGatewayClient({
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `dispatchNormalize` | `'default'` | `'default'` — camelCase Tier 1–3 events at hub; `'raw'` — skip structural normalize |
+| `dispatchNormalize` | `'default'` | `'default'` — camelCase Tier 1–4 events at hub; `'raw'` — skip structural normalize |
 | `waitForGuilds` | `false` | Defer hub `ready` (shard 0) until READY guild stubs arrive as `guildAvailable` |
 
 ### Guild availability (startup backfill)
@@ -189,7 +206,7 @@ const gateway = await createNativeGatewayClient({
 - Normalizes Tier 1 dispatches (reactions, guild/member, voice, …) to camelCase at the hub (1.2.0+)
 - Normalizes Tier 2 dispatches (channels, threads, roles, bans, member chunks, audit log) to camelCase (1.3.0+)
 - Normalizes Tier 3 dispatches (invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker) to camelCase (1.4.0+)
-- Emits remaining dispatches on camelCase hub names with raw snake_case `d` until further coverage in 1.5.0+
+- Normalizes Tier 4 dispatches (automod, soundboard, entitlements, subscriptions, app-command permissions, user update, …) to camelCase (1.5.0+) — full catalog coverage
 
 Requires Node 22+ global `WebSocket` or the bundled `ws` dependency (installed with `@stambha/gateway`).
 

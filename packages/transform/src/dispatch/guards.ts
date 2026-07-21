@@ -21,6 +21,16 @@ import type {
   GatewayTypingStart,
   GatewayWebhooksUpdate,
 } from "./tier3Types.js";
+import type {
+  GatewayApplicationCommandPermissionsUpdate,
+  GatewayAutoModerationActionExecution,
+  GatewayAutoModerationRuleCreate,
+  GatewayEntitlementCreate,
+  GatewayGuildSoundboardSoundCreate,
+  GatewaySubscriptionCreate,
+  GatewayUserUpdate,
+  GatewayVoiceChannelEffectSend,
+} from "./tier4Types.js";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -165,4 +175,76 @@ export function isGuildEmojisUpdatePayload(value: unknown): value is GatewayGuil
   if (!isRecord(value)) return false;
   if (typeof value.guildId !== "string" || !Array.isArray(value.emojis)) return false;
   return !("guild_id" in value);
+}
+
+/** Type guard for `applicationCommandPermissionsUpdate` hub payloads (G3-p4 camelCase). */
+export function isApplicationCommandPermissionsUpdatePayload(
+  value: unknown,
+): value is GatewayApplicationCommandPermissionsUpdate {
+  if (!isRecord(value)) return false;
+  if (typeof value.id !== "string" || typeof value.applicationId !== "string") return false;
+  if (typeof value.guildId !== "string" || !Array.isArray(value.permissions)) return false;
+  return !("application_id" in value || "guild_id" in value);
+}
+
+/** Type guard for `autoModerationRuleCreate` hub payloads (G3-p4 camelCase). */
+export function isAutoModerationRuleCreatePayload(
+  value: unknown,
+): value is GatewayAutoModerationRuleCreate {
+  if (!isRecord(value)) return false;
+  if (typeof value.id !== "string" || typeof value.name !== "string") return false;
+  if (typeof value.guildId !== "string") return false;
+  return !("guild_id" in value || "creator_id" in value || "event_type" in value);
+}
+
+/** Type guard for `autoModerationActionExecution` hub payloads (G3-p4 camelCase). */
+export function isAutoModerationActionExecutionPayload(
+  value: unknown,
+): value is GatewayAutoModerationActionExecution {
+  if (!isRecord(value)) return false;
+  if (typeof value.guildId !== "string" || typeof value.userId !== "string") return false;
+  if (typeof value.ruleId !== "string" || !isRecord(value.action)) return false;
+  return !("guild_id" in value || "user_id" in value || "rule_id" in value);
+}
+
+/** Type guard for `guildSoundboardSoundCreate` hub payloads (G3-p4 camelCase). */
+export function isGuildSoundboardSoundCreatePayload(
+  value: unknown,
+): value is GatewayGuildSoundboardSoundCreate {
+  if (!isRecord(value)) return false;
+  if (typeof value.name !== "string" || typeof value.soundId !== "string") return false;
+  return !("sound_id" in value || "guild_id" in value || "emoji_id" in value);
+}
+
+/** Type guard for `entitlementCreate` hub payloads (G3-p4 camelCase). */
+export function isEntitlementCreatePayload(value: unknown): value is GatewayEntitlementCreate {
+  if (!isRecord(value)) return false;
+  if (typeof value.id !== "string" || typeof value.skuId !== "string") return false;
+  if (typeof value.applicationId !== "string" || typeof value.type !== "number") return false;
+  return !("sku_id" in value || "application_id" in value || "user_id" in value);
+}
+
+/** Type guard for `subscriptionCreate` hub payloads (G3-p4 camelCase). */
+export function isSubscriptionCreatePayload(value: unknown): value is GatewaySubscriptionCreate {
+  if (!isRecord(value)) return false;
+  if (typeof value.id !== "string" || typeof value.userId !== "string") return false;
+  if (!Array.isArray(value.skuIds)) return false;
+  return !("user_id" in value || "sku_ids" in value || "entitlement_ids" in value);
+}
+
+/** Type guard for `userUpdate` hub payloads (G3-p4 camelCase). */
+export function isUserUpdatePayload(value: unknown): value is GatewayUserUpdate {
+  if (!isRecord(value)) return false;
+  if (typeof value.id !== "string" || typeof value.username !== "string") return false;
+  return !("global_name" in value);
+}
+
+/** Type guard for `voiceChannelEffectSend` hub payloads (G3-p4 camelCase). */
+export function isVoiceChannelEffectSendPayload(
+  value: unknown,
+): value is GatewayVoiceChannelEffectSend {
+  if (!isRecord(value)) return false;
+  if (typeof value.channelId !== "string" || typeof value.guildId !== "string") return false;
+  if (typeof value.userId !== "string") return false;
+  return !("channel_id" in value || "guild_id" in value || "user_id" in value);
 }

@@ -6,13 +6,13 @@ import { messageFromDispatch, readyFromDispatch } from "./messages.js";
 export type NormalizeDispatchMode = "default" | "raw";
 
 export interface NormalizeDispatchOptions {
-  /** When `'raw'`, skip Tier 1–3 structural camelCase (G3 migration escape hatch). */
+  /** When `'raw'`, skip Tier 1–4 structural camelCase (G3 migration escape hatch). */
   mode?: NormalizeDispatchMode;
 }
 
 /**
  * Normalize a gateway DISPATCH payload for hub emit.
- * Routing-critical events use Stambha shapes; Tier 1–3 events use camelCase; others pass through raw `d`.
+ * Routing-critical events use Stambha shapes; Tier 1–4 events use camelCase; others pass through raw `d`.
  */
 export function normalizeDispatch(
   dispatchName: string,
