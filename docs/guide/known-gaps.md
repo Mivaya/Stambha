@@ -44,7 +44,7 @@ Use this stack for new bots:
 | **C2** | Vault level overrides | Needs C1 |
 | **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
 | **G1** | Auto resharding threshold | Manual `ReshardController` APIs exist |
-| **G3** | Gateway dispatch normalization (all events) | Tier 1–2 on main; **G3-p3** (Tier 3) in progress → **1.4.0**; Tier 4 → **1.5.0** |
+| **G3** | Gateway dispatch normalization (all events) | Tier 1–2 on main; G3-p3 → **1.4.0**; **G3-p4** (Tier 4) in progress → **1.5.0** (catalog complete) |
 | **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Late 1.x — hub `on` handlers get per-event types |
 | **Collectors** | Message/reaction/interaction collectors | discord.js collectors parity on G3 events |
 
@@ -107,12 +107,11 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ## Planned next (after 1.3.0 train)
 
-Path: **G3-p3** (in progress) → **G3-p4** → **ADAPTERS-1.5** → **G3a** → **G1** → **B2–B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
+Path: **G3-p4** (in progress) → **ADAPTERS-1.5** → **G3a** → **G1** → **B2–B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **G3-p3** | Tier 3 camelCase | **In progress** — invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker → **1.4.0** |
-| **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, app-command permissions → **1.5.0** |
+| **G3-p4** | Tier 4 camelCase | **In progress** — automod, soundboard, entitlements, subscriptions, app-command permissions, user update, … → **1.5.0** (G3 complete) |
 | **ADAPTERS-1.5** | Remove legacy adapters | After G3 coverage |
 | **G3a** | Typed `GatewayEventMap` | Hub listener DX |
 | **G1** | Auto reshard threshold | — |
@@ -126,6 +125,7 @@ Path: **G3-p3** (in progress) → **G3-p4** → **ADAPTERS-1.5** → **G3a** →
 | ID | Feature | Notes |
 |----|---------|-------|
 | **B1** | Declarative gates | `cooldown` / `runIn` / `nsfw` / permissions on `Command` (#74) |
+| **G3-p3** | Tier 3 camelCase | Invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker → **1.4.0** (PR pending merge) |
 
 ## Shipped in 1.3.0 train (on main; release cut pending)
 
@@ -135,7 +135,7 @@ Path: **G3-p3** (in progress) → **G3-p4** → **ADAPTERS-1.5** → **G3a** →
 | **H1 / H2 / H4** | Resume/close, identify concurrency, guild backfill | — |
 | **G3-p2** | Tier 2 camelCase | Channels, threads, roles, bans, chunks, audit log |
 
-Use `dispatchNormalize: 'raw'` for one cycle while migrating Tier 2/3 handlers.
+Use `dispatchNormalize: 'raw'` for one cycle while migrating Tier 2–4 handlers.
 
 ---
 

@@ -1,6 +1,10 @@
 export { camelizeDispatch } from "./camelize.js";
 export {
+  isApplicationCommandPermissionsUpdatePayload,
+  isAutoModerationActionExecutionPayload,
+  isAutoModerationRuleCreatePayload,
   isChannelCreatePayload,
+  isEntitlementCreatePayload,
   isGuildAuditLogEntryCreatePayload,
   isGuildBanAddPayload,
   isGuildCreatePayload,
@@ -9,12 +13,16 @@ export {
   isGuildMembersChunkPayload,
   isGuildRoleCreatePayload,
   isGuildScheduledEventCreatePayload,
+  isGuildSoundboardSoundCreatePayload,
   isIntegrationCreatePayload,
   isInviteCreatePayload,
   isMessageReactionAddPayload,
   isStageInstanceCreatePayload,
+  isSubscriptionCreatePayload,
   isThreadCreatePayload,
   isTypingStartPayload,
+  isUserUpdatePayload,
+  isVoiceChannelEffectSendPayload,
   isVoiceStateUpdatePayload,
   isWebhooksUpdatePayload,
 } from "./guards.js";
@@ -28,6 +36,7 @@ export {
   isTier1Dispatch,
   isTier2Dispatch,
   isTier3Dispatch,
+  isTier4Dispatch,
   type DispatchCatalogEntry,
   type DispatchNormalizationTier,
   type GatewayDispatchEventName,
@@ -58,6 +67,16 @@ export {
   type GatewayTypingStart,
   type GatewayWebhooksUpdate,
 } from "./tier3Types.js";
+export {
+  type GatewayApplicationCommandPermissionsUpdate,
+  type GatewayAutoModerationActionExecution,
+  type GatewayAutoModerationRuleCreate,
+  type GatewayEntitlementCreate,
+  type GatewayGuildSoundboardSoundCreate,
+  type GatewaySubscriptionCreate,
+  type GatewayUserUpdate,
+  type GatewayVoiceChannelEffectSend,
+} from "./tier4Types.js";
 export {
   normalizeDispatch,
   type NormalizeDispatchMode,
