@@ -92,7 +92,7 @@ export function slashArgsFromContext(ctx: CommandContext): SlashArgs {
   return SlashArgs.fromContext(ctx);
 }
 
-/** Prefix {@link Args} or slash {@link SlashArgs} based on command kind. */
+/** Prefix {@link Args}, slash {@link SlashArgs}, or prefer {@link HybridArgs} for shared names. */
 export function argsForContext(ctx: CommandContext): Args | SlashArgs {
   if (ctx.kind === "slash") return SlashArgs.fromContext(ctx);
   return Args.fromContext(ctx);
