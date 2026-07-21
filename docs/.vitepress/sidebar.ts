@@ -23,6 +23,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
       { text: "Gates", link: "/features/gates" },
       { text: "Epilogues", link: "/features/epilogues" },
       { text: "Signals", link: "/features/signals" },
+      { text: "Components", link: "/features/components" },
       { text: "Arguments", link: "/features/args" },
       { text: "Command tree", link: "/features/command-tree" },
       { text: "Plugins", link: "/features/plugins" },
