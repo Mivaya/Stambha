@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import type { RestPort, RestRequest, StambhaClient } from "@stambha/core";
 import { createStambhaBot, HttpRestPort } from "@stambha/core";
 import { attachGateDeniedReply } from "@stambha/gates";
-import { configurePermissionLevels } from "@stambha/levels";
+import { attachVaultLevelOverrides } from "@stambha/levels";
 import { loadPieces } from "@stambha/loader";
 import { attachPlugins } from "@stambha/plugins";
 import { createNativeRestPort } from "@stambha/rest";
@@ -71,9 +71,11 @@ export async function setupBot(options: BotSetupOptions = {}): Promise<BotSetupR
   attachGateDeniedReply(client);
 
   const owners = process.env.BOT_OWNER_ID ? [process.env.BOT_OWNER_ID] : [];
-  configurePermissionLevels({
-    botOwners: owners,
-    // moderatorRoleIds / administratorRoleIds — set for your guilds
+  attachVaultLevelOverrides(vault, {
+    levels: {
+      botOwners: owners,
+      // moderatorRoleIds / administratorRoleIds — set for your guilds
+    },
   });
 
   const projectRoot = nodeResolve(dirname(fileURLToPath(import.meta.url)), "../..");

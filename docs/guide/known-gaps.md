@@ -37,8 +37,8 @@ Use this stack for new bots:
 | **B4** | Per-piece error hooks | Epilogues cover most cases |
 | **B5** | Component UI builders, persistent views | Signals + manual `stambha:` ids today |
 | **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | — |
-| **C1** | Numeric permission levels (`@stambha/levels`) | **In progress** — ladder + `permissionLevelGate` |
-| **C2** | Vault level overrides | Needs C1 |
+| **C1** | Numeric permission levels (`@stambha/levels`) | Shipped on branch — ladder + `permissionLevelGate` |
+| **C2** | Vault level overrides | **In progress** — `permissionLevels` field + `attachVaultLevelOverrides` |
 | **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
 | **G1** | Auto resharding threshold | Shipped (#82) — `ReshardController.check` / `createAutoReshardMonitor` |
 | **G3** | Gateway dispatch normalization (all events) | Tier 1–4 on main → **1.4.0** / **1.5.0** (catalog complete) |
@@ -104,12 +104,11 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ## Planned next (after 1.3.0 train)
 
-Path: **C1** (in progress) → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
+Path: **C2** (in progress) → **A1–A2** → collectors. Branch from `main` (after C1) per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **C1** | Permission levels | **In progress** — `@stambha/levels` + `permissionLevelGate` |
-| **C2** | Vault level overrides | Needs C1 |
+| **C2** | Vault level overrides | **In progress** — guild `permissionLevels` + admin `setlevel` |
 | **A1–A2** | Redis / shared cooldowns | Often plugins |
 | **Collectors** | Interaction/message collectors | — |
 
