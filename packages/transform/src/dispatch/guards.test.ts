@@ -3,8 +3,13 @@ import { camelizeDispatch } from "./camelize.js";
 import { TIER1_FIXTURES } from "./fixtures/tier1.js";
 import { TIER2_FIXTURES } from "./fixtures/tier2.js";
 import { TIER3_FIXTURES } from "./fixtures/tier3.js";
+import { TIER4_FIXTURES } from "./fixtures/tier4.js";
 import {
+  isApplicationCommandPermissionsUpdatePayload,
+  isAutoModerationActionExecutionPayload,
+  isAutoModerationRuleCreatePayload,
   isChannelCreatePayload,
+  isEntitlementCreatePayload,
   isGuildAuditLogEntryCreatePayload,
   isGuildBanAddPayload,
   isGuildCreatePayload,
@@ -13,12 +18,16 @@ import {
   isGuildMembersChunkPayload,
   isGuildRoleCreatePayload,
   isGuildScheduledEventCreatePayload,
+  isGuildSoundboardSoundCreatePayload,
   isIntegrationCreatePayload,
   isInviteCreatePayload,
   isMessageReactionAddPayload,
   isStageInstanceCreatePayload,
+  isSubscriptionCreatePayload,
   isThreadCreatePayload,
   isTypingStartPayload,
+  isUserUpdatePayload,
+  isVoiceChannelEffectSendPayload,
   isVoiceStateUpdatePayload,
   isWebhooksUpdatePayload,
 } from "./guards.js";
@@ -91,5 +100,40 @@ describe("dispatch/guards", () => {
 
   it("rejects raw snake_case Tier 3 invite payloads", () => {
     expect(isInviteCreatePayload(TIER3_FIXTURES.INVITE_CREATE)).toBe(false);
+  });
+
+  it("recognizes camelized Tier 4 payloads per event group", () => {
+    expect(
+      isApplicationCommandPermissionsUpdatePayload(
+        camelizeDispatch(TIER4_FIXTURES.APPLICATION_COMMAND_PERMISSIONS_UPDATE),
+      ),
+    ).toBe(true);
+    expect(
+      isAutoModerationRuleCreatePayload(camelizeDispatch(TIER4_FIXTURES.AUTO_MODERATION_RULE_CREATE)),
+    ).toBe(true);
+    expect(
+      isAutoModerationActionExecutionPayload(
+        camelizeDispatch(TIER4_FIXTURES.AUTO_MODERATION_ACTION_EXECUTION),
+      ),
+    ).toBe(true);
+    expect(
+      isGuildSoundboardSoundCreatePayload(
+        camelizeDispatch(TIER4_FIXTURES.GUILD_SOUNDBOARD_SOUND_CREATE),
+      ),
+    ).toBe(true);
+    expect(isEntitlementCreatePayload(camelizeDispatch(TIER4_FIXTURES.ENTITLEMENT_CREATE))).toBe(
+      true,
+    );
+    expect(isSubscriptionCreatePayload(camelizeDispatch(TIER4_FIXTURES.SUBSCRIPTION_CREATE))).toBe(
+      true,
+    );
+    expect(isUserUpdatePayload(camelizeDispatch(TIER4_FIXTURES.USER_UPDATE))).toBe(true);
+    expect(
+      isVoiceChannelEffectSendPayload(camelizeDispatch(TIER4_FIXTURES.VOICE_CHANNEL_EFFECT_SEND)),
+    ).toBe(true);
+  });
+
+  it("rejects raw snake_case Tier 4 entitlement payloads", () => {
+    expect(isEntitlementCreatePayload(TIER4_FIXTURES.ENTITLEMENT_CREATE)).toBe(false);
   });
 });
