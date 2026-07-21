@@ -39,7 +39,7 @@ Tier-split vars (`REST_WORKER_URL`, `BOT_WORKER_URL`, …) are documented in `.e
 ```text
 src/
   commands/General/     Ping, say, confirm, echo, help, config
-  commands/Admin/       Setup (sequence builder), lock (permission gate demo)
+  commands/Admin/       Setup, lock (bitfield), purge (permission levels)
   listeners/            Ready hook
   scouts/               Mention logger
   barriers/             Maintenance mode

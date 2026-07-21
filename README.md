@@ -156,7 +156,7 @@ Published under [@stambha on npm](https://www.npmjs.com/org/stambha).
 | [`@stambha/transform`](packages/transform) | Dispatch shapes & REST contexts |
 | [`@stambha/loader`](packages/loader) | Auto-load piece folders |
 | [`@stambha/vault`](packages/vault) | Typed settings |
-| [`@stambha/gates`](packages/gates) · [`@stambha/args`](packages/args) | Checks & parsing |
+| [`@stambha/gates`](packages/gates) · [`@stambha/levels`](packages/levels) · [`@stambha/args`](packages/args) | Checks, levels & parsing |
 | [`@stambha/plugins`](packages/plugins) · [`@stambha/runtime`](packages/runtime) · [`@stambha/transport`](packages/transport) | Host, cross-runtime, API constants |
 
 Optional extensions ([`Stambha-plugins`](https://github.com/Mivaya/Stambha-plugins) **1.0.0**): [pagination](docs/extensions/pagination.md), [HTTP API](docs/extensions/api.md), [cache](docs/extensions/cache.md), [metrics](docs/extensions/metrics.md), vault-sql. Hub: [Extensions](docs/extensions/index.md).

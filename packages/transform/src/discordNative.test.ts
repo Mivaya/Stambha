@@ -11,7 +11,7 @@ describe("interactionFromDispatch", () => {
       guild_id: "g1",
       channel_id: "c1",
       channel: { type: 0, nsfw: false },
-      member: { permissions: "8", user: { id: "u1" } },
+      member: { permissions: "8", roles: ["r-mod", "r-other"], user: { id: "u1" } },
       app_permissions: "2147483647",
       data: {
         name: "mod",
@@ -32,6 +32,7 @@ describe("interactionFromDispatch", () => {
     expect(interaction.slashPath).toEqual({ root: "mod", subcommand: "action" });
     expect(interaction.slashOptions).toEqual([{ name: "target", type: "user", value: "999" }]);
     expect(interaction.meta?.memberPermissions).toBe(8n);
+    expect(interaction.meta?.memberRoleIds).toEqual(["r-mod", "r-other"]);
     expect(interaction.meta?.channelType).toBe("guild_text");
   });
 

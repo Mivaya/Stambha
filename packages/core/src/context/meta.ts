@@ -13,8 +13,8 @@ export type ChannelType =
   | "unknown";
 
 /**
- * Optional metadata bridges attach for built-in gates (`@stambha/gates`).
- * When absent, gates that need metadata typically allow the command (graceful degradation).
+ * Optional metadata bridges attach for built-in gates (`@stambha/gates`, `@stambha/levels`).
+ * When absent, gates that need metadata typically allow or degrade gracefully per gate docs.
  */
 export interface CommandContextMeta {
   channelType?: ChannelType;
@@ -23,6 +23,13 @@ export interface CommandContextMeta {
   memberPermissions?: bigint;
   /** Bot permissions in the current channel. */
   clientPermissions?: bigint;
+  /** Guild member role ids (for `@stambha/levels` role → level mapping). */
+  memberRoleIds?: readonly string[];
+  /**
+   * Guild owner user id when known (gateway/REST enrichment).
+   * Interactions do not include this — set via worker or leave unset and use {@link LevelsConfig}.
+   */
+  guildOwnerId?: string;
 }
 
 /** Returns true when the channel type is any guild channel (not DM / group DM). */
