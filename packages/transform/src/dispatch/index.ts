@@ -82,3 +82,22 @@ export {
   type NormalizeDispatchMode,
   type NormalizeDispatchOptions,
 } from "./normalize.js";
+export type {
+  GatewayChannelPinsUpdate,
+  GatewayEventMap,
+  GatewayEventName,
+  GatewayGuildIntegrationsUpdate,
+  GatewayGuildRoleDelete,
+  GatewayGuildScheduledEventUser,
+  GatewayGuildStickersUpdate,
+  GatewayIntegrationDelete,
+  GatewayInviteDelete,
+  GatewayMessageDelete,
+  GatewayMessageDeleteBulk,
+  GatewayMessagePollVote,
+  GatewayPresenceUpdate,
+  GatewayReadyPayload,
+  GatewayThreadListSync,
+  GatewayThreadMemberUpdate,
+  GatewayVoiceServerUpdate,
+} from "./GatewayEventMap.js";
