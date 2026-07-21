@@ -50,23 +50,6 @@ Use with `createNativeGatewayClient` + `attachStambhaClient` — see [Gateway](.
 
 ---
 
-## Deprecated: library shape adapters (removed v1.5.0)
-
-Exports such as `messageFromDiscordJs`, `metaFromDiscordJsSlash`, `messageFromDiscordeno`, and `buildDiscordenoDesiredProperties` are **deprecated in 1.0.0** and scheduled for **removal in 1.5.0**.
-
-Official migrations require a **fully native** bot (`@stambha/gateway`, `@stambha/rest`, `StambhaMessage` / `interactionFromDispatch`). Adapters emit a one-time runtime warning when called.
-
-Replace with:
-
-| Deprecated | Native replacement |
-|------------|-------------------|
-| `messageFromDiscordJs` | `messageFromDispatch` or manual `StambhaMessage` |
-| `slashInteractionFromDiscordJs` | `interactionFromDispatch` |
-| `metaFromDiscordJs*` / `metaFromDiscordeno*` | `metaFromDiscordInteraction` |
-| `buildDiscordenoDesiredProperties` | `gatesDesiredProperties` on `createStambhaBot` |
-
----
-
 ## Key exports
 
 | Export | Purpose |
