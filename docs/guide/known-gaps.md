@@ -41,7 +41,7 @@ Use this stack for new bots:
 | **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
 | **G1** | Auto resharding threshold | Manual `ReshardController` APIs exist |
 | **G3** | Gateway dispatch normalization (all events) | Tier 1–2 on main; G3-p3/p4 → **1.4.0** / **1.5.0** (catalog complete; PRs pending merge) |
-| **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Late 1.x — hub `on` handlers get per-event types |
+| **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | **In progress** — typed `hub.on` overloads |
 | **Collectors** | Message/reaction/interaction collectors | discord.js collectors parity on G3 events |
 
 ---
@@ -103,12 +103,11 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ## Planned next (after 1.3.0 train)
 
-Path: **ADAPTERS-1.5** (in progress) → **G3a** → **G1** → **B2–B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
+Path: **G3a** (in progress) → **G1** → **B2–B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **ADAPTERS-1.5** | Remove legacy adapters | **In progress** — drop discord.js / Discordeno shape converters from `@stambha/transform` |
-| **G3a** | Typed `GatewayEventMap` | Hub listener DX |
+| **G3a** | Typed `GatewayEventMap` | **In progress** — typed `hub.on` / `once` / `off` via event → payload map |
 | **G1** | Auto reshard threshold | — |
 | **B2–B6** | Args, help, lifecycle, components, edit-tracking | — |
 | **C1** / **C2** | Permission levels + vault overrides | — |
@@ -122,6 +121,7 @@ Path: **ADAPTERS-1.5** (in progress) → **G3a** → **G1** → **B2–B6** → 
 | **B1** | Declarative gates | `cooldown` / `runIn` / `nsfw` / permissions on `Command` (#74) |
 | **G3-p3** | Tier 3 camelCase | Invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker → **1.4.0** (PR pending merge) |
 | **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, subscriptions, … → **1.5.0** (G3 complete; PR pending merge) |
+| **ADAPTERS-1.5** | Remove legacy adapters | discord.js / Discordeno shape converters removed (PR pending merge) |
 
 ## Shipped in 1.3.0 train (on main; release cut pending)
 
