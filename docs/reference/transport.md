@@ -29,7 +29,7 @@ Stambha-owned Discord transport primitives — no third-party Discord library re
 | **Monolith** | `core` + `gateway` + `rest` + `transform` + `loader` |
 | **Tier split** | Above + `HttpRestPort` → REST worker; gateway relay → bot worker |
 | **Tests / unit** | `core` + `MockBridge` or manual `hub.emit` |
-| **Migrating from discord.js / Discordeno** | **Deprecated adapters** — removed **in future release**; ship fully native for 1.0.0 |
+| **Migrating from discord.js / Discordeno** | Native stack only — library shape adapters removed in **1.5.0**; see [migration guides](/migration/) |
 
 New bots: [Getting started](/guide/getting-started). Not supported: discord.js owning the gateway while Stambha owns commands only.
 
