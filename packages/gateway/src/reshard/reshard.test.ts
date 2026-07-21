@@ -158,6 +158,88 @@ describe("@stambha/gateway resharding", () => {
     vi.useRealTimers();
   });
 
+  it("auto-plans scale-up when over threshold (G1)", () => {
+    const manager = createShardManager({ totalShards: 2 });
+    const controller = createReshardController({ manager });
+    const onPlan = vi.fn();
+
+    const result = controller.check(2500, { onPlan });
+    expect(result.evaluation.needed).toBe(true);
+    expect(result.planned).toBe(true);
+    expect(result.started).toBe(false);
+    expect(result.plan?.toTotal).toBe(3);
+    expect(controller.status).toBe("planned");
+    expect(onPlan).toHaveBeenCalledOnce();
+  });
+
+  it("auto-starts when autoStart is set", () => {
+    const manager = createShardManager({ totalShards: 2 });
+    const controller = createReshardController({ manager });
+
+    const result = controller.check(2500, { autoStart: true });
+    expect(result.started).toBe(true);
+    expect(controller.status).toBe("identifying");
+    expect(manager.totalShards).toBe(3);
+  });
+
+  it("skips auto plan when under threshold", () => {
+    const manager = createShardManager({ totalShards: 2 });
+    const controller = createReshardController({ manager });
+
+    const result = controller.check(1500);
+    expect(result.planned).toBe(false);
+    expect(result.skippedReason).toBe("not_needed");
+    expect(controller.status).toBe("idle");
+  });
+
+  it("skips auto plan while migration is in flight", () => {
+    const manager = createShardManager({ totalShards: 2 });
+    const controller = createReshardController({ manager });
+    controller.planManual(3);
+
+    const result = controller.check(2500);
+    expect(result.planned).toBe(false);
+    expect(result.skippedReason).toBe("busy");
+  });
+
+  it("respects auto-plan cooldown", () => {
+    let now = 1_000;
+    const manager = createShardManager({ totalShards: 2 });
+    const controller = createReshardController({ manager });
+
+    const first = controller.check(2500, { now: () => now, cooldownMs: 60_000 });
+    expect(first.planned).toBe(true);
+
+    controller.reset();
+    now = 30_000;
+    const second = controller.check(2500, { now: () => now, cooldownMs: 60_000 });
+    expect(second.planned).toBe(false);
+    expect(second.skippedReason).toBe("cooldown");
+
+    now = 70_000;
+    const third = controller.check(2500, { now: () => now, cooldownMs: 60_000 });
+    expect(third.planned).toBe(true);
+  });
+
+  it("createAutoReshardMonitor runs check on demand", async () => {
+    const { createAutoReshardMonitor } = await import("./autoReshard.js");
+    const manager = createShardManager({ totalShards: 2 });
+    const controller = createReshardController({ manager });
+    const monitor = createAutoReshardMonitor({
+      controller,
+      getGuildCount: () => 2500,
+      cooldownMs: 0,
+    });
+
+    const result = monitor.check();
+    expect(result.planned).toBe(true);
+    expect(monitor.running).toBe(false);
+    monitor.start();
+    expect(monitor.running).toBe(true);
+    monitor.stop();
+    expect(monitor.running).toBe(false);
+  });
+
   it("resizes shard manager down", () => {
     const manager = createShardManager({ totalShards: 4 });
     manager.markReady(3, { sessionId: "x", sequence: 1 });
