@@ -64,10 +64,6 @@ import {
 
 `createNativeGatewayClient` + `attachStambhaClient` populate `ctx.meta` and slash options automatically — no third-party library adapters.
 
-### Deprecated library adapters
-
-`messageFromDiscordJs`, `messageFromDiscordeno`, `buildDiscordenoDesiredProperties`, and related exports are **deprecated in 1.0.0** and **removed in future release**. Migrations must ship fully on the native stack. See [Known gaps](/guide/known-gaps).
-
 ---
 
 ## API helpers (core)
