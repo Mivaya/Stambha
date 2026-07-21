@@ -80,7 +80,7 @@ export const GATEWAY_DISPATCH_EVENTS = [
 
 export type GatewayDispatchEventName = (typeof GATEWAY_DISPATCH_EVENTS)[number];
 
-export type DispatchNormalizationTier = "routing" | "tier1" | "tier2" | "passthrough";
+export type DispatchNormalizationTier = "routing" | "tier1" | "tier2" | "tier3" | "passthrough";
 
 export interface DispatchCatalogEntry {
   dispatchName: GatewayDispatchEventName;
@@ -142,10 +142,33 @@ const TIER2_EVENTS = new Set<string>([
   "GUILD_AUDIT_LOG_ENTRY_CREATE",
 ]);
 
+/** Tier 3 structural normalization (G3-p3) — camelCase at hub boundary. */
+const TIER3_EVENTS = new Set<string>([
+  "INVITE_CREATE",
+  "INVITE_DELETE",
+  "INTEGRATION_CREATE",
+  "INTEGRATION_UPDATE",
+  "INTEGRATION_DELETE",
+  "GUILD_INTEGRATIONS_UPDATE",
+  "STAGE_INSTANCE_CREATE",
+  "STAGE_INSTANCE_UPDATE",
+  "STAGE_INSTANCE_DELETE",
+  "GUILD_SCHEDULED_EVENT_CREATE",
+  "GUILD_SCHEDULED_EVENT_UPDATE",
+  "GUILD_SCHEDULED_EVENT_DELETE",
+  "GUILD_SCHEDULED_EVENT_USER_ADD",
+  "GUILD_SCHEDULED_EVENT_USER_REMOVE",
+  "TYPING_START",
+  "WEBHOOKS_UPDATE",
+  "GUILD_EMOJIS_UPDATE",
+  "GUILD_STICKERS_UPDATE",
+]);
+
 function tierFor(dispatchName: string): DispatchNormalizationTier {
   if (ROUTING_EVENTS.has(dispatchName)) return "routing";
   if (TIER1_EVENTS.has(dispatchName)) return "tier1";
   if (TIER2_EVENTS.has(dispatchName)) return "tier2";
+  if (TIER3_EVENTS.has(dispatchName)) return "tier3";
   return "passthrough";
 }
 
@@ -164,10 +187,15 @@ export function isTier2Dispatch(dispatchName: string): boolean {
   return tierFor(dispatchName) === "tier2";
 }
 
-/** True when Tier 1 or Tier 2 structural camelCase applies. */
+/** True when G3-p3 applies structural camelCase at the hub boundary. */
+export function isTier3Dispatch(dispatchName: string): boolean {
+  return tierFor(dispatchName) === "tier3";
+}
+
+/** True when Tier 1–3 structural camelCase applies. */
 export function isStructuralDispatch(dispatchName: string): boolean {
   const tier = tierFor(dispatchName);
-  return tier === "tier1" || tier === "tier2";
+  return tier === "tier1" || tier === "tier2" || tier === "tier3";
 }
 
 /** Lookup catalog metadata for a gateway dispatch name. */

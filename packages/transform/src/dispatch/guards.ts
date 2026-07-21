@@ -12,6 +12,15 @@ import type {
   GatewayGuildRoleCreate,
   GatewayThreadCreate,
 } from "./tier2Types.js";
+import type {
+  GatewayGuildEmojisUpdate,
+  GatewayGuildScheduledEventCreate,
+  GatewayIntegrationCreate,
+  GatewayInviteCreate,
+  GatewayStageInstanceCreate,
+  GatewayTypingStart,
+  GatewayWebhooksUpdate,
+} from "./tier3Types.js";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -97,4 +106,63 @@ export function isGuildAuditLogEntryCreatePayload(
 ): value is GatewayGuildAuditLogEntryCreate {
   if (!isRecord(value)) return false;
   return typeof value.id === "string" && typeof value.actionType === "number";
+}
+
+/** Type guard for `inviteCreate` hub payloads (G3-p3 camelCase). */
+export function isInviteCreatePayload(value: unknown): value is GatewayInviteCreate {
+  if (!isRecord(value)) return false;
+  if (typeof value.code !== "string" || typeof value.channelId !== "string") return false;
+  if ("guild_id" in value || "channel_id" in value || "max_age" in value) return false;
+  return true;
+}
+
+/** Type guard for `integrationCreate` hub payloads (G3-p3 camelCase). */
+export function isIntegrationCreatePayload(value: unknown): value is GatewayIntegrationCreate {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.id === "string" &&
+    typeof value.name === "string" &&
+    typeof value.type === "string" &&
+    !("guild_id" in value)
+  );
+}
+
+/** Type guard for `stageInstanceCreate` hub payloads (G3-p3 camelCase). */
+export function isStageInstanceCreatePayload(value: unknown): value is GatewayStageInstanceCreate {
+  if (!isRecord(value)) return false;
+  if (typeof value.id !== "string" || typeof value.topic !== "string") return false;
+  if (typeof value.guildId !== "string" || typeof value.channelId !== "string") return false;
+  return !("guild_id" in value || "channel_id" in value || "privacy_level" in value);
+}
+
+/** Type guard for `guildScheduledEventCreate` hub payloads (G3-p3 camelCase). */
+export function isGuildScheduledEventCreatePayload(
+  value: unknown,
+): value is GatewayGuildScheduledEventCreate {
+  if (!isRecord(value)) return false;
+  if (typeof value.id !== "string" || typeof value.name !== "string") return false;
+  if (typeof value.guildId !== "string") return false;
+  return !("guild_id" in value || "scheduled_start_time" in value);
+}
+
+/** Type guard for `typingStart` hub payloads (G3-p3 camelCase). */
+export function isTypingStartPayload(value: unknown): value is GatewayTypingStart {
+  if (!isRecord(value)) return false;
+  if (typeof value.channelId !== "string" || typeof value.userId !== "string") return false;
+  if (typeof value.timestamp !== "number") return false;
+  return !("channel_id" in value || "user_id" in value);
+}
+
+/** Type guard for `webhooksUpdate` hub payloads (G3-p3 camelCase). */
+export function isWebhooksUpdatePayload(value: unknown): value is GatewayWebhooksUpdate {
+  if (!isRecord(value)) return false;
+  if (typeof value.guildId !== "string" || typeof value.channelId !== "string") return false;
+  return !("guild_id" in value || "channel_id" in value);
+}
+
+/** Type guard for `guildEmojisUpdate` hub payloads (G3-p3 camelCase). */
+export function isGuildEmojisUpdatePayload(value: unknown): value is GatewayGuildEmojisUpdate {
+  if (!isRecord(value)) return false;
+  if (typeof value.guildId !== "string" || !Array.isArray(value.emojis)) return false;
+  return !("guild_id" in value);
 }

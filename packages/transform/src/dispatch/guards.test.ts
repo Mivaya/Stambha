@@ -1,19 +1,27 @@
 import { describe, expect, it } from "vitest";
+import { camelizeDispatch } from "./camelize.js";
 import { TIER1_FIXTURES } from "./fixtures/tier1.js";
 import { TIER2_FIXTURES } from "./fixtures/tier2.js";
+import { TIER3_FIXTURES } from "./fixtures/tier3.js";
 import {
   isChannelCreatePayload,
   isGuildAuditLogEntryCreatePayload,
   isGuildBanAddPayload,
   isGuildCreatePayload,
+  isGuildEmojisUpdatePayload,
   isGuildMemberAddPayload,
   isGuildMembersChunkPayload,
   isGuildRoleCreatePayload,
+  isGuildScheduledEventCreatePayload,
+  isIntegrationCreatePayload,
+  isInviteCreatePayload,
   isMessageReactionAddPayload,
+  isStageInstanceCreatePayload,
   isThreadCreatePayload,
+  isTypingStartPayload,
   isVoiceStateUpdatePayload,
+  isWebhooksUpdatePayload,
 } from "./guards.js";
-import { camelizeDispatch } from "./camelize.js";
 
 describe("dispatch/guards", () => {
   it("recognizes camelized Tier 1 reaction payloads", () => {
@@ -59,5 +67,29 @@ describe("dispatch/guards", () => {
 
   it("rejects raw snake_case Tier 2 channel payloads", () => {
     expect(isChannelCreatePayload(TIER2_FIXTURES.CHANNEL_CREATE)).toBe(false);
+  });
+
+  it("recognizes camelized Tier 3 payloads per event group", () => {
+    expect(isInviteCreatePayload(camelizeDispatch(TIER3_FIXTURES.INVITE_CREATE))).toBe(true);
+    expect(isIntegrationCreatePayload(camelizeDispatch(TIER3_FIXTURES.INTEGRATION_CREATE))).toBe(
+      true,
+    );
+    expect(
+      isStageInstanceCreatePayload(camelizeDispatch(TIER3_FIXTURES.STAGE_INSTANCE_CREATE)),
+    ).toBe(true);
+    expect(
+      isGuildScheduledEventCreatePayload(
+        camelizeDispatch(TIER3_FIXTURES.GUILD_SCHEDULED_EVENT_CREATE),
+      ),
+    ).toBe(true);
+    expect(isTypingStartPayload(camelizeDispatch(TIER3_FIXTURES.TYPING_START))).toBe(true);
+    expect(isWebhooksUpdatePayload(camelizeDispatch(TIER3_FIXTURES.WEBHOOKS_UPDATE))).toBe(true);
+    expect(isGuildEmojisUpdatePayload(camelizeDispatch(TIER3_FIXTURES.GUILD_EMOJIS_UPDATE))).toBe(
+      true,
+    );
+  });
+
+  it("rejects raw snake_case Tier 3 invite payloads", () => {
+    expect(isInviteCreatePayload(TIER3_FIXTURES.INVITE_CREATE)).toBe(false);
   });
 });
