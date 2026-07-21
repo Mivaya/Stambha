@@ -1,19 +1,20 @@
 # Sharding & resharding
 
-`@stambha/gateway` includes capacity planning, identify rate limiting, and operator APIs for production sharding.
+`@stambha/gateway` includes capacity planning, identify rate limiting, automatic threshold checks, and operator APIs for production sharding.
 
 ## vs Discordeno auto-reshard
 
-[Discordeno](https://discordeno.js.org/) can trigger resharding from gateway metrics automatically. Stambha provides **planning and pacing primitives** (`evaluateReshard`, `ReshardController`, `IdentifyBudget`, HTTP operator API) — you wire them into your gateway workers and run migration deliberately.
+[Discordeno](https://discordeno.js.org/) can trigger resharding from gateway metrics automatically. Stambha provides the same **80% capacity** policy plus a deliberate migration loop (`ReshardController.nextIdentify`, `IdentifyBudget`) so you control when shards re-identify.
 
-| | **Discordeno** | **Stambha (1.0.0)** |
-|---|----------------|---------------------|
-| Threshold detection | Built into gateway | `evaluateReshard()` |
+| | **Discordeno** | **Stambha** |
+|---|----------------|-------------|
+| Threshold detection | Built into gateway | `evaluateReshard()` / `controller.check()` |
+| Auto plan on threshold | Framework-managed | `controller.check()` / `createAutoReshardMonitor` (**G1**) |
 | Identify pacing | Framework-managed | `IdentifyBudget` + `ReshardController.nextIdentify()` |
 | Live shard reconnect | Integrated | Your WebSocket worker + `createNativeGatewayClient` |
 | Zero-downtime proxy | Gateway proxy plugin | **2.0 G2** — see [Known gaps](/guide/known-gaps) |
 
-Automatic threshold resharding without operator steps is backlog **G1** (1.x). Until then, treat resharding as a **planned maintenance** event using the APIs below.
+Live WebSocket re-identify after an auto plan is still **your worker loop** — G1 automates threshold → plan (and optional `start`), not zero-downtime reconnect (see G2).
 
 ## Shard calculator
 
@@ -31,20 +32,74 @@ shardCapacityRatio(2500, 2); // ~1.25 (over 1000 guilds/shard cap)
 guildsAffectedByReshard(2, 4, ["100000000000000001"]);
 ```
 
-## Automated resharding (threshold)
+## Threshold policy
+
+Default: scale up at **80%** of `guildsPerShard` (1000), scale down below **30%**:
 
 ```ts
 import { evaluateReshard } from "@stambha/gateway";
 
 const evaluation = evaluateReshard(2500, 2, {
   guildsPerShard: 1000,
-  scaleUpThreshold: 0.8,   // scale up at 80% capacity
-  scaleDownThreshold: 0.3, // scale down below 30%
+  scaleUpThreshold: 0.8,
+  scaleDownThreshold: 0.3,
 });
 
 if (evaluation.needed && evaluation.reason === "scale_up") {
   console.log(`Reshard to ${evaluation.recommendedShards} shards`);
 }
+```
+
+## Automatic threshold check (G1)
+
+`ReshardController.check` evaluates capacity and, when needed, builds a plan (optionally starts identify). Skips while a migration is in flight or within the cooldown after a prior auto plan:
+
+```ts
+import { createShardManager, createReshardController } from "@stambha/gateway";
+
+const manager = createShardManager({ totalShards: 2 });
+const controller = createReshardController({
+  manager,
+  policy: { scaleUpThreshold: 0.8 },
+  getGuildIds: () => myGuildIdList,
+});
+
+const result = controller.check(guildCount, {
+  autoStart: false, // plan only (default) — set true to enter identifying
+  cooldownMs: 300_000,
+  onPlan: (plan, evaluation) => {
+    console.log(`Auto plan ${plan.fromTotal} → ${plan.toTotal} (${evaluation.reason})`);
+  },
+});
+
+if (result.planned) {
+  controller.start(); // if you did not pass autoStart: true
+  let shardId: number | null;
+  while ((shardId = await controller.nextIdentify()) !== null) {
+    // identify shardId with new total from controller.plan!.toTotal
+    controller.markIdentifyComplete(shardId, { sessionId: "...", sequence: 0 });
+  }
+  controller.complete();
+}
+```
+
+Poll on an interval (e.g. after READY guild backfill or periodic inventory):
+
+```ts
+import { createAutoReshardMonitor } from "@stambha/gateway";
+
+const monitor = createAutoReshardMonitor({
+  controller,
+  getGuildCount: () => myGuildIdList.length,
+  intervalMs: 60_000,
+  autoStart: false,
+  onResult: (result) => {
+    if (result.planned) {
+      // kick your identify / reconnect loop
+    }
+  },
+});
+monitor.start();
 ```
 
 ## Identify budget
@@ -69,9 +124,9 @@ try {
 
 `createNativeGatewayClient` builds this budget automatically from `/gateway/bot` (override with `identifyBudget` or `maxConcurrency`).
 
-## Reshard controller
+## Reshard controller (manual)
 
-Plan migration, stagger identifies, then resize the shard manager:
+Plan migration, stagger identifies, then resize the shard manager without using `check`:
 
 ```ts
 import { createShardManager, createReshardController } from "@stambha/gateway";
@@ -128,7 +183,7 @@ The APIs below provide **planning and pacing** primitives. A full zero-downtime 
 2. Drain guilds that changed shard assignment (see `guildsToMigrate` on `ReshardPlan`)
 3. Respect `IdentifyBudget` across all gateway workers sharing one bot token
 
-A bundled native WebSocket gateway client will integrate these primitives with live shard connections.
+A bundled native WebSocket gateway client integrates identify pacing; zero-downtime proxy remains **G2**.
 
 ## Related
 
