@@ -91,6 +91,39 @@ Returns a detach function. Expects normalized `StambhaMessage` / `StambhaInterac
 | Tier 3 | `inviteCreate`, `integrationCreate`, `stageInstanceCreate`, `guildScheduledEventCreate`, `typingStart`, `webhooksUpdate`, `guildEmojisUpdate`, … | camelCase structural |
 | Tier 4 | `autoModerationRuleCreate`, `guildSoundboardSoundCreate`, `entitlementCreate`, `subscriptionCreate`, `applicationCommandPermissionsUpdate`, `userUpdate`, … | camelCase structural |
 
+#### Typed hub listeners (G3a)
+
+`GatewayEventHub.on` / `once` / `off` are typed via `GatewayEventMap` (exported from `@stambha/gateway` and `@stambha/transform`). Known event names narrow the payload; unknown names stay `unknown`. Runtime guards remain useful when you need to validate wire shapes.
+
+```ts
+import { createGatewayEventHub } from "@stambha/gateway";
+
+const hub = createGatewayEventHub();
+
+hub.on("messageReactionAdd", (payload) => {
+  // payload.guildId, payload.emoji.name — typed
+});
+
+hub.on("entitlementCreate", (payload) => {
+  // payload.skuId — typed
+});
+```
+
+| Hub event (examples) | Payload type |
+|----------------------|--------------|
+| `ready` | `GatewayReadyPayload` / `GatewayEventHubReadyPayload` |
+| `messageCreate` / `messageUpdate` | `StambhaMessage` |
+| `interactionCreate` | `StambhaInteraction` |
+| `messageReactionAdd` | `GatewayMessageReactionAdd` |
+| `guildMemberAdd` | `GatewayGuildMemberAdd` |
+| `channelCreate` | `GatewayChannelCreate` |
+| `inviteCreate` | `GatewayInviteCreate` |
+| `entitlementCreate` | `GatewayEntitlementCreate` |
+| `guildAvailable` / `guildUnavailable` | `GatewayGuildCreate` |
+| `error` | `GatewayShardFatalError` |
+
+See `GatewayEventMap` for the full event → type table. Sibling create/update/delete events often share one minimal interface.
+
 #### Migration from 1.1.x / 1.2.x
 
 ```ts
