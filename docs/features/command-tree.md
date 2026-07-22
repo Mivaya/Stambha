@@ -57,6 +57,20 @@ super(registry, {
 
 Multiple leaves with the same `slashRoot` merge into one `/mod` command at deploy time.
 
+## Typing indicator
+
+For long-running handlers, set `typing: true` so the pipeline posts a channel typing indicator after gates pass (requires `client.restPort` and `ctx.channelId`). Failures are ignored — the command still runs.
+
+```ts
+super(registry, {
+  name: "analyze",
+  description: "Slow work",
+  typing: true,
+});
+```
+
+Manual control: `triggerTyping(client.restPort!, channelId)` from `@stambha/rest`.
+
 ## Categories & help
 
 ```ts

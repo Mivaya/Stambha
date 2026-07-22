@@ -85,6 +85,12 @@ export interface CommandOptions extends UnitOptions {
   slashSubcommand?: string;
   defaultMemberPermissions?: bigint;
   dmPermission?: boolean;
+  /**
+   * When true, after gates pass the pipeline sends a typing indicator in
+   * `ctx.channelId` (requires `client.restPort`). Failures are ignored so
+   * the command still runs. Use for long-running handlers.
+   */
+  typing?: boolean;
 }
 
 /** User-facing command piece (`commands/` folder). */
@@ -113,6 +119,7 @@ export abstract class Command extends Unit<CommandOptions> {
   readonly slashSubcommand?: string;
   readonly defaultMemberPermissions?: bigint;
   readonly dmPermission?: boolean;
+  readonly typing: boolean;
 
   constructor(registry: Registry<Command>, options: CommandOptions) {
     super(registry, options);
@@ -149,6 +156,7 @@ export abstract class Command extends Unit<CommandOptions> {
       this.defaultMemberPermissions = options.defaultMemberPermissions;
     }
     if (options.dmPermission !== undefined) this.dmPermission = options.dmPermission;
+    this.typing = options.typing === true;
   }
 
   abstract execute(ctx: CommandContext): Promise<Outcome<unknown>>;
