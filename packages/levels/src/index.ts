@@ -15,3 +15,15 @@ export {
   resetPermissionLevels,
   resolvePermissionLevel,
 } from "./resolve.js";
+export {
+  attachVaultLevelOverrides,
+  type AttachVaultLevelOverridesOptions,
+  clearMemberPermissionLevel,
+  createVaultLevelOverrideResolver,
+  getMemberPermissionLevel,
+  PERMISSION_LEVELS_FIELD,
+  type PermissionLevelEntry,
+  permissionLevelsField,
+  setMemberPermissionLevel,
+  type VaultLevelOptions,
+} from "./vaultLevels.js";

@@ -105,12 +105,11 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ## Planned next (after 1.3.0 train)
 
-Path: **C1** (in progress) → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
+Path: **C2** (in progress) → **A1–A2** → collectors. Branch from `main` (after C1) per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **C1** | Permission levels | **In progress** — `@stambha/levels` + `permissionLevelGate` |
-| **C2** | Vault level overrides | Needs C1 |
+| **C2** | Vault level overrides | **In progress** — guild `permissionLevels` + admin `setlevel` |
 | **A1–A2** | Redis / shared cooldowns | Often plugins |
 | **Collectors** | Interaction/message collectors | — |
 

@@ -36,7 +36,7 @@ await loadPieces(client, {
 | Guild config         | `prefix`, `modLogChannel`, `disabledModules`, nested toggles     |
 | User / member config | Per-user prefs; per-guild member XP/points **as simple ledgers** |
 | Feature flags        | Module on/off, beta flags                                        |
-| Level overrides      | `userId → permission level` in guild blueprint (1.x)             |
+| Level overrides      | `permissionLevels: [{ userId, level }]` + `attachVaultLevelOverrides` (**C2**) |
 | Setup wizards        | Sequences writing to Vault records                               |
 
 
@@ -156,7 +156,7 @@ vault.on("recordDelete", ({ ledger, id }) => {});
 - [ ] Discord field types + `record.resolve()` (channel, role, user ids)
 - [ ] Array update ops (`add` / `remove` / `overwrite` / index) for settings arrays
 - [ ] Guild settings attach ergonomics (`ctx` / client integration)
-- [ ] 1.x — guild blueprint level overrides (**C2**; C1 `@stambha/levels` ships separately)
+- [x] 1.x — guild blueprint level overrides (**C2**) via `permissionLevels` + `attachVaultLevelOverrides`
 - [ ] Plugins — hosted dashboard UI on top of [`@stambha/api`](/extensions/api); optional `vault-redis` for split tier
 - [x] Plugins — [`@stambha/api`](/extensions/api) Discord OAuth + `/guilds/…/settings`
 
