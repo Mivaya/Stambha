@@ -2,6 +2,8 @@
 
 Sequences chain **buttons → selects → modals** without manual collectors. Today you **wire each step** through [Signals](/features/signals) or direct `SequenceStore` handlers; automatic `runSequence` orchestration is planned for **2.0**.
 
+For a **single** await (reply / reaction / button) with `time` / `max`, use [Collectors](/features/collectors) on the gateway hub.
+
 ## Core (`@stambha/core`)
 
 ```ts
