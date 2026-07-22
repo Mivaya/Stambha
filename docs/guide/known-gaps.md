@@ -38,9 +38,10 @@ Use this stack for new bots:
 | **B4** | Piece lifecycle + error hooks | Shipped (#85) — `onLoad` / `onUnload` / `onCommandError` |
 | **B5** | Component UI builders, persistent views | Shipped (#86) — builders + `registerPersistentSignals` |
 | **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | Shipped (#87) — `editTracking` on `attachStambhaClient` |
-| **C1** | Numeric permission levels (`@stambha/levels`) | **In progress** — ladder + `permissionLevelGate` |
-| **C2** | Vault level overrides | Needs C1 |
-| **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
+| **C1** | Numeric permission levels (`@stambha/levels`) | Shipped (#88) — ladder + `permissionLevelGate` |
+| **C2** | Vault level overrides | Shipped (#89) — guild `permissionLevels` + `setlevel` |
+| **A1** | Redis cache (`@stambha/cache-redis`) | Feature branch — shared `Cache` across workers |
+| **A2** | Shared Redis cooldown store | **In progress** — async `CooldownStore` + `@stambha/cooldown-redis` |
 | **G1** | Auto resharding threshold | Shipped (#82) — `ReshardController.check` / `createAutoReshardMonitor` |
 | **G3** | Gateway dispatch normalization (all events) | Tier 1–4 on main → **1.4.0** / **1.5.0** (catalog complete) |
 | **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Shipped (#81) — typed `hub.on` / `once` / `off` |
@@ -57,7 +58,9 @@ Official extensions — product guides (packages ship independently; **`@stambha
 | `@stambha/pagination` | [Pagination](/extensions/pagination) |
 | `@stambha/api` | [HTTP API](/extensions/api) — OAuth, Vault settings, **`src/routes/`** loader (1.2.0) |
 | `@stambha/metrics` | [Metrics](/extensions/metrics) |
-| `@stambha/cache` | [Cache](/extensions/cache) |
+| `@stambha/cache` | [Cache](/extensions/cache) — `MemoryCache` |
+| `@stambha/cache-redis` | [Cache](/extensions/cache) — Redis driver (**A1**) |
+| `@stambha/cooldown-redis` | [Gates](/features/gates#cooldown-scopes) — Redis `CooldownStore` (**A2**) |
 | `@stambha/vault-sql` | [Vault — SQL drivers](/features/vault#sql-drivers) |
 
 Hub: [Extensions](/extensions/).
@@ -68,7 +71,6 @@ Still planned in that repo (not core):
 |------|-------------------|
 | Admin dashboard **UI** (hosted SPA) | Separate product / `@stambha/dashboard` — OAuth + Vault settings HTTP already in [`@stambha/api`](/extensions/api) |
 | Hot reload | `@stambha/dev-reload` |
-| Redis cache / cooldown drivers | — |
 
 Core stays transport-agnostic; plugins ship on independent semver.
 
@@ -105,12 +107,11 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ## Planned next (after 1.3.0 train)
 
-Path: **C2** (in progress) → **A1–A2** → collectors. Branch from `main` (after C1) per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
+Path: **A2** (in progress) → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **C2** | Vault level overrides | **In progress** — guild `permissionLevels` + admin `setlevel` |
-| **A1–A2** | Redis / shared cooldowns | Often plugins |
+| **A2** | Redis cooldown store | **In progress** — async `CooldownStore` + `@stambha/cooldown-redis` |
 | **Collectors** | Interaction/message collectors | — |
 
 ## Shipped after 1.3.0 train (on main; release cut pending)
@@ -123,6 +124,8 @@ Path: **C2** (in progress) → **A1–A2** → collectors. Branch from `main` (a
 | **B4** | Piece lifecycle + error hooks | `onLoad` / `onUnload` / `Command.onCommandError` (#85) |
 | **B5** | Components + persistent signals | Builders + `registerPersistentSignals` (#86) |
 | **B6** | Prefix edit-tracking | `editTracking` on `attachStambhaClient` (#87) |
+| **C1** | Permission levels | `@stambha/levels` + `permissionLevelGate` (#88) |
+| **C2** | Vault level overrides | Guild `permissionLevels` + `setlevel` (#89) |
 | **G3-p3** | Tier 3 camelCase | Invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker → **1.4.0** (#78) |
 | **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, subscriptions, … → **1.5.0** (#79) |
 | **ADAPTERS-1.5** | Remove legacy adapters | discord.js / Discordeno shape converters removed (#80) |
