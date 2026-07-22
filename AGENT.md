@@ -42,6 +42,7 @@ Stambha is a **native-first** Discord bot framework for Node.js 20+ and TypeScri
 @stambha/gates         Built-in gate pieces (cooldown, permissions, …)
 @stambha/levels        Numeric permission levels (Klasa-style ladder)
 @stambha/args          Prefix + slash argument resolvers
+@stambha/help          Built-in help command (category catalog)
 @stambha/vault         Typed guild config blueprints
 @stambha/plugins       Lifecycle hooks + container DI
 ```

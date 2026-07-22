@@ -105,6 +105,20 @@ export class StambhaClient extends EventEmitter {
     return registered;
   }
 
+  /** Register a command and await {@link Command.onLoad}. */
+  async loadCommand(command: Command): Promise<Command> {
+    const loaded = await this.registries.commands.load(command);
+    this.rebuildCommandIndex();
+    return loaded;
+  }
+
+  /** Await {@link Command.onUnload} and remove from the command registry. */
+  async unloadCommand(name: string): Promise<boolean> {
+    const removed = await this.registries.commands.unload(name);
+    if (removed) this.rebuildCommandIndex();
+    return removed;
+  }
+
   rebuildCommandIndex(): void {
     this.commandIndex.rebuild(this.registries.commands.values());
   }

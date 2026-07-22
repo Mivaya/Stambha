@@ -154,6 +154,21 @@ describe("dispatch/normalize", () => {
     });
   });
 
+  it("normalizes MESSAGE_UPDATE without author for edit-tracking", () => {
+    const msg = messageFromDispatch({
+      id: "1",
+      content: "!ping",
+      channel_id: "c1",
+    });
+    expect(msg).toEqual({
+      id: "1",
+      content: "!ping",
+      channelId: "c1",
+      guildId: null,
+      author: { id: "" },
+    });
+  });
+
   it("includes guildIds from READY stubs", () => {
     expect(
       readyFromDispatch({

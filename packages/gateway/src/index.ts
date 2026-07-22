@@ -3,6 +3,11 @@ export {
   attachStambhaClient,
 } from "./attachStambhaClient.js";
 export {
+  PrefixEditTracker,
+  type PrefixEditTrackerOptions,
+  type TrackedPrefixReply,
+} from "./prefixEditTracking.js";
+export {
   createGatewayEventHub,
   GatewayEventHub,
   type GatewayEventHubReadyPayload,

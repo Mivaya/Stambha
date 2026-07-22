@@ -1,4 +1,4 @@
-import { Args, replyIfArgError, SlashArgs, stringArg, unwrapArg } from "@stambha/args";
+import { HybridArgs, replyIfArgError, unwrapArg } from "@stambha/args";
 import {
   Command,
   type CommandContext,
@@ -28,20 +28,11 @@ export class SayCommand extends Command {
   }
 
   async execute(ctx: CommandContext) {
-    let text: string | null;
-    if (ctx.kind === "slash") {
-      text = SlashArgs.fromContext(ctx).getString("text");
-    } else {
-      const picked = Args.fromContext(ctx).pick(stringArg);
-      if (await replyIfArgError(ctx, picked)) return ok(undefined);
-      text = unwrapArg(picked);
-    }
+    const args = HybridArgs.fromContext(ctx);
+    const required = args.requireString("text");
+    if (await replyIfArgError(ctx, required)) return ok(undefined);
 
-    if (!text) {
-      await ctx.reply(ctx.kind === "slash" ? "Please provide text." : "Usage: `!say <message>`");
-      return ok(undefined);
-    }
-
+    const text = unwrapArg(required);
     await ctx.reply(text);
     return ok(text);
   }

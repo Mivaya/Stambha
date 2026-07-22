@@ -38,7 +38,7 @@ Tier-split vars (`REST_WORKER_URL`, `BOT_WORKER_URL`, …) are documented in `.e
 
 ```text
 src/
-  commands/General/     Ping, say, confirm, echo, help, config
+  commands/General/     Ping, say, confirm, menu, echo, help, config
   commands/Admin/       Setup, lock (bitfield), purge (permission levels)
   listeners/            Ready hook
   scouts/               Mention logger
@@ -50,7 +50,8 @@ src/
   tasks/                Heartbeat cron
   schemas/              Vault guild blueprint
   plugins/              Logging plugin (wired in setup)
-  lib/setup.ts          Shared client + vault + loadPieces
+  lib/setup.ts          Shared client + vault + loadPieces + persistent signals
+  lib/ColorMenuSignal   Persistent select (registerPersistentSignals)
   workers/              Optional multi-process workers
   main.ts
 ```

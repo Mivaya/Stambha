@@ -29,6 +29,14 @@ export interface ContextBuildOptions {
   desired?: ResolvedDesiredProperties;
   /** Discord application id — used for slash `editReply` webhook route when not on the interaction payload. */
   applicationId?: string | null;
+  /**
+   * Prefix edit-tracking (B6): when set, `reply` PATCHes this message instead of POSTing a new one.
+   */
+  editReplyMessageId?: string;
+  /**
+   * Prefix edit-tracking (B6): called with the created message id after a successful POST reply.
+   */
+  onPrefixReplyCreated?: (replyMessageId: string) => void;
 }
 
 function finalize(ctx: CommandContext, desired?: ResolvedDesiredProperties): CommandContext {
@@ -156,6 +164,31 @@ export function commandContextFromStambhaMessageViaRest(
   }
 
   const messageReference = message.id ? { message_reference: { message_id: message.id } } : {};
+  const editReplyMessageId = options?.editReplyMessageId;
+  const onPrefixReplyCreated = options?.onPrefixReplyCreated;
+
+  const sendOrEdit = async (messageOrPayload: string | ReplyPayload) => {
+    const body = {
+      ...channelMessageBody(messageOrPayload),
+      ...(editReplyMessageId ? {} : messageReference),
+    };
+    if (editReplyMessageId) {
+      await restPort.request({
+        method: "PATCH",
+        route: `/channels/${channelId}/messages/${editReplyMessageId}`,
+        body,
+      });
+      return;
+    }
+    const created = await restPort.request<{ id?: string }>({
+      method: "POST",
+      route: `/channels/${channelId}/messages`,
+      body,
+    });
+    if (created?.id && onPrefixReplyCreated) {
+      onPrefixReplyCreated(created.id);
+    }
+  };
 
   const full: CommandContext = {
     kind: "prefix",
@@ -165,29 +198,13 @@ export function commandContextFromStambhaMessageViaRest(
     channelId,
     ...(argsText.length > 0 ? { argsText } : {}),
     raw: message,
-    reply: async (messageOrPayload) => {
-      await restPort.request({
-        method: "POST",
-        route: `/channels/${channelId}/messages`,
-        body: {
-          ...channelMessageBody(messageOrPayload),
-          ...messageReference,
-        },
-      });
-    },
+    reply: sendOrEdit,
     replyEphemeral: async (messageOrPayload) => {
       const payload: ReplyPayload =
         typeof messageOrPayload === "string"
           ? { content: messageOrPayload, ephemeral: true }
           : { ...messageOrPayload, ephemeral: true };
-      await restPort.request({
-        method: "POST",
-        route: `/channels/${channelId}/messages`,
-        body: {
-          ...channelMessageBody(payload),
-          ...messageReference,
-        },
-      });
+      await sendOrEdit(payload);
     },
   };
   return finalize(full, desired);
@@ -269,6 +286,7 @@ export function signalContextFromStambhaInteraction(
     guildId: interaction.guildId,
     channelId: interaction.channelId,
     customId: interaction.customId,
+    values: interaction.kind === "component" ? interaction.values : [],
     raw: interaction,
     reply: callbacks.reply,
     replyEphemeral: callbacks.replyEphemeral,

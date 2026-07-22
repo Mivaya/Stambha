@@ -9,6 +9,7 @@ import {
   scoutContextFromStambhaMessage,
   signalContextFromStambhaInteraction,
 } from "@stambha/transform";
+import { PrefixEditTracker } from "./prefixEditTracking.js";
 
 export interface AttachStambhaClientOptions {
   prefixCommands?: boolean;
@@ -23,6 +24,11 @@ export interface AttachStambhaClientOptions {
    */
   mentionCommands?: boolean;
   /**
+   * When true, re-run prefix commands on `messageUpdate` and PATCH the prior bot reply
+   * (Poise/Akairo-style edit tracking). Requires message ids on create/update payloads.
+   */
+  editTracking?: boolean;
+  /**
    * Per-guild or dynamic prefix. Sets {@link StambhaClient.resolvePrefix} for the lifetime of the attach.
    * When omitted, uses {@link StambhaClient.prefix}.
    */
@@ -36,6 +42,27 @@ function asStambhaMessage(payload: unknown): StambhaMessage | null {
   const m = payload as StambhaMessage;
   if (typeof m.content !== "string" || !m.author?.id) return null;
   return m;
+}
+
+/** Like {@link asStambhaMessage}, but fills author from the edit tracker when Discord omits it. */
+function asEditableMessage(
+  payload: unknown,
+  tracker: PrefixEditTracker,
+): StambhaMessage | null {
+  const full = asStambhaMessage(payload);
+  if (full) return full;
+  if (!payload || typeof payload !== "object") return null;
+  const m = payload as StambhaMessage;
+  if (typeof m.content !== "string" || !m.id) return null;
+  const tracked = tracker.get(m.id);
+  if (!tracked) return null;
+  return {
+    id: m.id,
+    content: m.content,
+    channelId: m.channelId ?? tracked.channelId,
+    guildId: m.guildId ?? null,
+    author: { id: tracked.userId, bot: false },
+  };
 }
 
 function asStambhaInteraction(payload: unknown): StambhaInteraction | null {
@@ -61,6 +88,7 @@ export function attachStambhaClient(
     autocomplete = true,
     scouts = true,
     mentionCommands = false,
+    editTracking = false,
     resolvePrefix,
     applicationId,
   } = options;
@@ -74,6 +102,7 @@ export function attachStambhaClient(
     if (client.botUserId) wireMentionResolver(client.botUserId);
   }
   const unsubs: (() => void)[] = [];
+  const tracker = editTracking ? new PrefixEditTracker() : null;
 
   const on = (event: string, handler: (payload: unknown) => void | Promise<void>) => {
     hub.on(event, handler);
@@ -103,7 +132,9 @@ export function attachStambhaClient(
     });
 
     on("messageUpdate", async (payload) => {
-      const message = asStambhaMessage(payload);
+      const message = tracker
+        ? (asEditableMessage(payload, tracker) ?? asStambhaMessage(payload))
+        : asStambhaMessage(payload);
       if (!message?.content) return;
       await client.router.processScout(scoutContextFromStambhaMessage(message, "messageUpdate"));
     });
@@ -126,15 +157,90 @@ export function attachStambhaClient(
         );
       }
 
+      const ctxOpts = {
+        ...buildOptions(),
+        ...(tracker && message.id
+          ? {
+              onPrefixReplyCreated: (replyId: string) => {
+                if (!message.channelId) return;
+                tracker.remember(message.id!, {
+                  channelId: message.channelId,
+                  replyId,
+                  userId: message.author.id,
+                });
+              },
+            }
+          : {}),
+      };
+
       const ctx = commandContextFromStambhaMessageViaRest(
         message,
         parsed.name,
         client.restPort,
         parsed.args,
-        buildOptions(),
+        ctxOpts,
       );
       await client.router.processPrefixCommand(ctx);
     });
+
+    if (tracker) {
+      on("messageUpdate", async (payload) => {
+        const message = asEditableMessage(payload, tracker) ?? asStambhaMessage(payload);
+        if (!message?.content || message.author.bot || !message.id) return;
+
+        if (!client.restPort) {
+          throw new Error(
+            "Native prefix commands require restPort (createNativeRestPort or HttpRestPort)",
+          );
+        }
+
+        const prefixCtx = { userId: message.author.id };
+        if (message.guildId) Object.assign(prefixCtx, { guildId: message.guildId });
+        if (message.channelId) Object.assign(prefixCtx, { channelId: message.channelId });
+        const parsed = await client.router.parsePrefixCommand(message.content, prefixCtx);
+        const tracked = tracker.get(message.id);
+
+        if (!parsed) {
+          if (tracked) {
+            try {
+              await client.restPort.request({
+                method: "DELETE",
+                route: `/channels/${tracked.channelId}/messages/${tracked.replyId}`,
+              });
+            } catch {
+              // reply may already be gone
+            }
+            tracker.forget(message.id);
+          }
+          return;
+        }
+
+        const ctxOpts = {
+          ...buildOptions(),
+          ...(tracked
+            ? { editReplyMessageId: tracked.replyId }
+            : {
+                onPrefixReplyCreated: (replyId: string) => {
+                  if (!message.channelId) return;
+                  tracker.remember(message.id!, {
+                    channelId: message.channelId,
+                    replyId,
+                    userId: message.author.id,
+                  });
+                },
+              }),
+        };
+
+        const ctx = commandContextFromStambhaMessageViaRest(
+          message,
+          parsed.name,
+          client.restPort,
+          parsed.args,
+          ctxOpts,
+        );
+        await client.router.processPrefixCommand(ctx);
+      });
+    }
   }
 
   const needsInteractions = slashCommands || signals || autocomplete;
@@ -188,6 +294,7 @@ export function attachStambhaClient(
 
   return () => {
     for (const off of unsubs) off();
+    tracker?.clear();
     if (resolvePrefix || mentionCommands) {
       client.resolvePrefix = previousResolvePrefix;
     }
