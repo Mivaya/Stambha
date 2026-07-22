@@ -25,6 +25,7 @@ const hub = createGatewayEventHub();
 attachStambhaClient(hub, client, {
   applicationId: process.env.DISCORD_APPLICATION_ID,
   mentionCommands: true,
+  editTracking: true,
 });
 client.setBridge(hub);
 
@@ -89,6 +90,7 @@ if (demo) {
     channelId: "c1",
     customId: "stambha:confirm:yes",
     componentType: "button",
+    values: [],
     raw: {},
   } satisfies StambhaInteraction);
 

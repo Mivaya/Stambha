@@ -29,6 +29,39 @@ export type {
   SubcommandGroupDefinition,
 } from "./command/slashTypes.js";
 export { SlashOptionType } from "./command/slashTypes.js";
+// Components (message / modal builders)
+export {
+  actionRow,
+  button,
+  buttonRow,
+  ButtonStyle,
+  type ButtonComponent,
+  type ButtonOptions,
+  type ButtonStyleId,
+  type ComponentEmoji,
+  ComponentType,
+  type ComponentTypeId,
+  confirmCancelRow,
+  linkButton,
+  type LinkButtonOptions,
+  modal,
+  type ModalComponent,
+  type ModalOptions,
+  type PersistentSignalFactory,
+  registerPersistentSignals,
+  type ActionRowChild,
+  type ActionRowComponent,
+  type SelectOption,
+  selectRow,
+  stringSelect,
+  type StringSelectComponent,
+  type StringSelectOptions,
+  textInput,
+  type TextInputComponent,
+  type TextInputOptions,
+  TextInputStyle,
+  type TextInputStyleId,
+} from "./components/index.js";
 // Piece paths (Sapphire / Klasa layout)
 export { type PiecePathKey, PiecePaths } from "./constants/piecePaths.js";
 export { ConsoleLogger } from "./container/ConsoleLogger.js";

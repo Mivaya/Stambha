@@ -3,6 +3,7 @@ import { StambhaClient } from "../client/StambhaClient.js";
 import type { CommandContext } from "../context/types.js";
 import { attachCommandLifecycleEpilogues } from "../epilogues/commandLifecycle.js";
 import { isOk, ok } from "../outcome/Outcome.js";
+import type { Registry } from "../pieces/Registry.js";
 import { Barrier } from "../registries/Barrier.js";
 import { Command } from "../registries/Command.js";
 import { Epilogue } from "../registries/Epilogue.js";

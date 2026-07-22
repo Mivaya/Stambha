@@ -94,7 +94,7 @@ client.registries.epilogues.register(
 | `commandDenied` | `runOn: "denied"` or `onDenied` |
 | `commandBlocked` | `runOn: "blocked"` or `onBlocked` |
 
-Client events still emit for metrics plugins and backward compatibility. New bots should use epilogues for app logging and auditing.
+Client events still emit for metrics plugins and backward compatibility. New bots should use epilogues for app logging and auditing. Per-command failures also invoke `Command.onCommandError` (default logger) — see [Pieces — lifecycle](/guide/pieces#lifecycle-onload--onunload--oncommanderror).
 
 ## Related
 

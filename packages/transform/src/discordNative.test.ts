@@ -67,6 +67,26 @@ describe("interactionFromDispatch", () => {
     if (interaction?.kind !== "component") return;
     expect(interaction.customId).toBe("stambha:confirm:yes");
     expect(interaction.componentType).toBe("button");
+    expect(interaction.values).toEqual([]);
+  });
+
+  it("parses select menu values", () => {
+    const interaction = interactionFromDispatch({
+      id: "i3b",
+      token: "tok3b",
+      type: 3,
+      user: { id: "u1" },
+      data: {
+        custom_id: "stambha:colors",
+        component_type: 3,
+        values: ["blue"],
+      },
+    });
+
+    expect(interaction?.kind).toBe("component");
+    if (interaction?.kind !== "component") return;
+    expect(interaction.componentType).toBe("select");
+    expect(interaction.values).toEqual(["blue"]);
   });
 
   it("parses modal submit", () => {

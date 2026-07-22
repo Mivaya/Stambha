@@ -95,7 +95,7 @@ Paths align with `PiecePaths` from `@stambha/core`.
 
 | Export | Purpose |
 |--------|---------|
-| `loadPieces` | Scan folders and register pieces |
+| `loadPieces` | Scan folders, `Registry.load` each piece (`onLoad`), rebuild command index |
 | `LoadPiecesOptions` | `basePath`, `context`, `bindings`, `paths` |
 | `LoaderContext` | Factory context (`client`, `binder`, `logger`, …) |
 | `LoaderBinding` | Pre-load `binder.registerSingleton` / `registerFactory` |
