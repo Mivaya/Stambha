@@ -46,6 +46,7 @@ Use this stack for new bots:
 | **G3** | Gateway dispatch normalization (all events) | Tier 1–4 on main → **1.4.0** / **1.5.0** (catalog complete) |
 | **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Shipped (#81) — typed `hub.on` / `once` / `off` |
 | **Collectors** | Message/reaction/interaction collectors | **In progress** — `@stambha/gateway` hub collectors |
+| **HTTP-INTERACTIONS** | Interaction endpoint (no gateway) | **In progress** — Ed25519 verify + `createHttpInteractionHandler` |
 
 ---
 

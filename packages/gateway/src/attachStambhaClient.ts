@@ -1,14 +1,12 @@
 import type { Bridge, PrefixResolver, StambhaClient } from "@stambha/core";
-import { createMentionPrefixResolver, Signal } from "@stambha/core";
+import { createMentionPrefixResolver } from "@stambha/core";
 import {
-  autocompleteContextFromStambhaInteraction,
   commandContextFromStambhaMessageViaRest,
-  commandContextFromStambhaSlashViaRest,
   type StambhaInteraction,
   type StambhaMessage,
   scoutContextFromStambhaMessage,
-  signalContextFromStambhaInteraction,
 } from "@stambha/transform";
+import { routeStambhaInteraction } from "./http/routeInteraction.js";
 import { PrefixEditTracker } from "./prefixEditTracking.js";
 
 export interface AttachStambhaClientOptions {
@@ -253,42 +251,12 @@ export function attachStambhaClient(
         throw new Error("Native interactions require restPort");
       }
 
-      const ctxOpts = {
-        ...buildOptions(),
-        applicationId: interaction.applicationId ?? applicationId ?? null,
-      };
-
-      switch (interaction.kind) {
-        case "slash": {
-          if (!slashCommands) return;
-          const ctx = commandContextFromStambhaSlashViaRest(interaction, client.restPort, ctxOpts);
-          await client.router.processSlashCommand(ctx);
-          return;
-        }
-        case "autocomplete": {
-          if (!autocomplete) return;
-          const ctx = autocompleteContextFromStambhaInteraction(interaction, client.restPort);
-          await client.router.processAutocomplete(ctx);
-          return;
-        }
-        case "component":
-        case "modal": {
-          if (!signals) return;
-          const parsed = Signal.parseCustomId(interaction.customId);
-          if (!parsed) return;
-          const signalType = interaction.kind === "modal" ? "modal" : interaction.componentType;
-          const signalCtx = signalContextFromStambhaInteraction(
-            interaction,
-            parsed.name,
-            client.restPort,
-            ctxOpts,
-          );
-          await client.signalRouter.dispatch(signalCtx, signalType);
-          return;
-        }
-        default:
-          return;
-      }
+      await routeStambhaInteraction(client, interaction, client.restPort, {
+        slashCommands,
+        signals,
+        autocomplete,
+        applicationId: applicationId ?? null,
+      });
     });
   }
 

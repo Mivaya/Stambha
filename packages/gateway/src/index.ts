@@ -3,6 +3,20 @@ export {
   attachStambhaClient,
 } from "./attachStambhaClient.js";
 export {
+  CapturingInteractionRestPort,
+} from "./http/CapturingRestPort.js";
+export {
+  type CreateHttpInteractionHandlerOptions,
+  createHttpInteractionHandler,
+  type HttpInteractionRequest,
+  type HttpInteractionResult,
+} from "./http/createHttpInteractionHandler.js";
+export {
+  type RouteStambhaInteractionOptions,
+  routeStambhaInteraction,
+} from "./http/routeInteraction.js";
+export { verifyDiscordInteractionRequest } from "./http/verifyKey.js";
+export {
   awaitInteractions,
   awaitMessages,
   awaitReactions,
