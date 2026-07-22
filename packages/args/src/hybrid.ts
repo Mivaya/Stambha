@@ -12,12 +12,10 @@ import { SlashArgs } from "./SlashArgs.js";
  * - **Prefix:** prefers `--name=value`, then the next positional token
  */
 export class HybridArgs {
-  private readonly kind: CommandContext["kind"];
   private readonly slash: SlashArgs | null;
   private readonly prefix: Args | null;
 
   private constructor(ctx: CommandContext) {
-    this.kind = ctx.kind;
     if (ctx.kind === "slash") {
       this.slash = SlashArgs.fromContext(ctx);
       this.prefix = null;
