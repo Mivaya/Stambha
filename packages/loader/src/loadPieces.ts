@@ -83,7 +83,7 @@ export async function loadPieces(
         const PieceClass = resolveExport(mod, file);
         if (!PieceClass) continue;
 
-        registerPiece(kind, client, PieceClass, ctx);
+        await registerPiece(kind, client, PieceClass, ctx);
         result.loaded[kind].push(file);
       } catch (error) {
         result.errors.push({ file, error });
@@ -117,52 +117,43 @@ function registerPiece(
   client: StambhaClient,
   PieceClass: new (...args: never[]) => unknown,
   ctx: LoaderContext,
-): void {
+): Promise<void> {
   switch (kind) {
     case "commands": {
       const instance = instantiate(PieceClass, ctx, client.registries.commands);
-      client.register(instance as Command);
-      break;
+      return client.registries.commands.load(instance as Command).then(() => undefined);
     }
     case "listeners": {
       const instance = instantiate(PieceClass, ctx, client.registries.hooks);
-      client.registries.hooks.register(instance as Hook);
-      break;
+      return client.registries.hooks.load(instance as Hook).then(() => undefined);
     }
     case "scouts": {
       const instance = instantiate(PieceClass, ctx, client.registries.scouts);
-      client.registries.scouts.register(instance as Scout);
-      break;
+      return client.registries.scouts.load(instance as Scout).then(() => undefined);
     }
     case "barriers": {
       const instance = instantiate(PieceClass, ctx, client.registries.barriers);
-      client.registries.barriers.register(instance as Barrier);
-      break;
+      return client.registries.barriers.load(instance as Barrier).then(() => undefined);
     }
     case "gates": {
       const instance = instantiate(PieceClass, ctx, client.registries.gates);
-      client.registries.gates.register(instance as Gate);
-      break;
+      return client.registries.gates.load(instance as Gate).then(() => undefined);
     }
     case "epilogues": {
       const instance = instantiate(PieceClass, ctx, client.registries.epilogues);
-      client.registries.epilogues.register(instance as Epilogue);
-      break;
+      return client.registries.epilogues.load(instance as Epilogue).then(() => undefined);
     }
     case "conduits": {
       const instance = instantiate(PieceClass, ctx, client.registries.conduits);
-      client.registries.conduits.register(instance as Conduit);
-      break;
+      return client.registries.conduits.load(instance as Conduit).then(() => undefined);
     }
     case "signals": {
       const instance = instantiate(PieceClass, ctx, client.registries.signals);
-      client.registries.signals.register(instance as Signal);
-      break;
+      return client.registries.signals.load(instance as Signal).then(() => undefined);
     }
     case "tasks": {
       const instance = instantiate(PieceClass, ctx, client.registries.chrons);
-      client.registries.chrons.register(instance as Chron);
-      break;
+      return client.registries.chrons.load(instance as Chron).then(() => undefined);
     }
   }
 }
