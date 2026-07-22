@@ -12,7 +12,7 @@ This guide helps [Discordeno](https://discordeno.deno.dev/) “big bot” setups
 | `@discordeno/gateway` workers | `@stambha/gateway` relay + your WebSocket worker |
 | `@discordeno/rest` proxy | `@stambha/rest` + `createNativeRestWorker` |
 | Desired properties / transformers | `desiredProperties` + `@stambha/transform` |
-| Custom cache | `@stambha/cache` (memory; Redis planned) |
+| Custom cache | `@stambha/cache` / `@stambha/cache-redis` |
 | Shard manager / resharding | `@stambha/gateway` shard + reshard APIs |
 
 Stambha's **native transport** replaces Discordeno library coupling while keeping big-bot topology (split REST, sharding, desired properties).
