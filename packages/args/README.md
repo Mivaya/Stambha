@@ -1,6 +1,6 @@
 # @stambha/args
 
-**Typed argument parsing** — prefix command lexer and slash option resolver. Sapphire `@sapphire/plugin-subcommands` Args parity without coupling to discord.js.
+**Typed argument parsing** — prefix lexer (with flags), slash options, hybrid shared names, and REST-backed user resolvers. Sapphire Args parity without coupling to discord.js.
 
 Part of the [**@stambha**](https://www.npmjs.com/org/stambha) monorepo · [GitHub](https://github.com/mivaya/Stambha)
 
@@ -18,27 +18,26 @@ Requires **Node.js 20+**.
 
 ## Quick start
 
-### Prefix commands
+### Hybrid slash + prefix
+
+```ts
+import { HybridArgs, replyIfArgError, unwrapArg } from "@stambha/args";
+
+const args = HybridArgs.fromContext(ctx);
+const text = args.requireString("text"); // slash option or `--text=` / positional
+if (await replyIfArgError(ctx, text)) return ok(undefined);
+await ctx.reply(unwrapArg(text));
+```
+
+### Prefix commands + flags
 
 ```ts
 import { Args, replyIfArgError, stringArg, unwrapArg } from "@stambha/args";
-import { Command, ok, type CommandContext, type Registry } from "@stambha/core";
 
-export class EchoCommand extends Command {
-  constructor(registry: Registry<Command>) {
-    super(registry, { name: "echo", kinds: ["prefix"] });
-  }
-
-  async execute(ctx: CommandContext) {
-    const args = Args.fromContext(ctx);
-    const picked = args.pick(stringArg);
-    if (await replyIfArgError(ctx, picked)) return ok(undefined);
-
-    const text = unwrapArg(picked);
-    await ctx.reply(text ?? "Usage: `!echo <message>`");
-    return ok(undefined);
-  }
-}
+const args = Args.fromText("run --verbose --name=bob leftover");
+args.flag("verbose"); // true
+args.option("name"); // "bob"
+const leftover = unwrapArg(args.pick(stringArg)); // "run" then "leftover"
 ```
 
 ### Slash commands
@@ -51,12 +50,15 @@ const target = args.getString("target");
 const count = args.getInteger("count");
 ```
 
-### Reply on parse errors
+### REST user entity
 
 ```ts
-import { replyIfArgError } from "@stambha/args";
+import { Args, replyIfArgError, userArg, unwrapArg } from "@stambha/args";
 
-if (await replyIfArgError(ctx, picked)) return ok(undefined);
+const args = Args.fromContext(ctx);
+const user = await args.pickAsync(userArg(client.restPort));
+if (await replyIfArgError(ctx, user)) return ok(undefined);
+await ctx.reply(`Hello ${unwrapArg(user).username}`);
 ```
 
 ---
@@ -71,11 +73,10 @@ if (await replyIfArgError(ctx, picked)) return ok(undefined);
 | `userMentionArg` | `<@id>` mention or raw id |
 | `channelMentionArg` | `<#id>` mention or raw id |
 | `roleMentionArg` | `<@&id>` mention or raw id |
+| `userArg(rest)` | Mention/id → `GET /users/:id` via `RestPort` |
 | `rest` (via registry) | Remaining tokens as one string |
 
-REST-backed resolvers (fetch user/member/channel objects) are **not** built in — use `@stambha/rest` `fetchUser` / `fetchGuildMember` with `defineArgResolver`. Full Sapphire-style entity resolvers are planned for **1.x B2**.
-
-Low-level lexer: `tokenize`, `joinFrom`.
+Low-level lexer: `tokenize`, `parsePrefixArgs`, `joinFrom`.
 
 ---
 
@@ -83,9 +84,11 @@ Low-level lexer: `tokenize`, `joinFrom`.
 
 | Export | Purpose |
 |--------|---------|
-| `Args` | Prefix argument parsers |
+| `Args` | Prefix parsers + `flag` / `option` / `pickAsync` |
+| `HybridArgs` | Shared named getters for slash + prefix |
 | `SlashArgs`, `slashArgsFromContext` | Slash option parsers |
-| `tokenize`, `joinFrom` | Prefix lexer |
+| `userArg`, `resolveUser` | REST user entity |
+| `tokenize`, `parsePrefixArgs`, `joinFrom` | Prefix lexer |
 | `replyArgError`, `replyIfArgError` | User-facing arg errors |
 
 ---
@@ -94,8 +97,9 @@ Low-level lexer: `tokenize`, `joinFrom`.
 
 | Package | Role |
 |---------|------|
-| [`@stambha/core`](../core) | `CommandContext`, `ctx.args` |
+| [`@stambha/core`](../core) | `CommandContext`, `RestPort` |
 | [`@stambha/gates`](../gates) | Run checks before parsing |
+| [`@stambha/rest`](../rest) | `createNativeRestPort` for `userArg` |
 
 ---
 

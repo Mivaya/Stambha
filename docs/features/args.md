@@ -1,6 +1,6 @@
 # Arguments (`@stambha/args`)
 
-**Args** for prefix commands and typed **slash option** accessors.
+**Args** for prefix commands, typed **slash option** accessors, **hybrid** shared names, and REST-backed entity resolvers.
 
 ## Installation
 
@@ -8,7 +8,30 @@
 pnpm add @stambha/args
 ```
 
-On the **native** stack (0.3.5+), prefix commands populate `CommandContext.argsText` via `attachStambhaClient`. Slash options populate `CommandContext.slashOptions` from `interactionFromDispatch` — use `SlashArgs.fromContext(ctx)` in `execute()`.
+On the **native** stack, prefix commands populate `CommandContext.argsText` via `attachStambhaClient`. Slash options populate `CommandContext.slashOptions` from `interactionFromDispatch`.
+
+## Hybrid commands (`kinds: ['slash','prefix']`)
+
+Use `HybridArgs` so one `execute` reads the same option names for both kinds:
+
+```ts
+import { HybridArgs, replyIfArgError, unwrapArg } from "@stambha/args";
+
+async execute(ctx: CommandContext) {
+  const args = HybridArgs.fromContext(ctx);
+  const text = args.requireString("text"); // slash option or `--text=` / positional
+  if (await replyIfArgError(ctx, text)) return ok(undefined);
+  await ctx.reply(unwrapArg(text));
+  return ok(undefined);
+}
+```
+
+| Kind | How `getString("text")` resolves |
+|------|----------------------------------|
+| Slash | Option `text` |
+| Prefix | `--text=value` / `--text value`, else next positional token |
+
+See `examples/bot` `SayCommand`.
 
 ## Prefix commands
 
@@ -31,15 +54,39 @@ async execute(ctx: CommandContext) {
 }
 ```
 
-### Lexer
+### Lexer and flags
 
 - Whitespace-separated tokens
 - `"quoted strings"` and `'quoted strings'`
 - Basic `\` escapes inside quotes
+- **Long flags** (FlagConverter-style), stripped from positionals:
 
 ```ts
-import { tokenize } from "@stambha/args";
+import { Args, parsePrefixArgs, tokenize } from "@stambha/args";
+
 tokenize('say "hello world"'); // ["say", "hello world"]
+
+parsePrefixArgs("ping --verbose --name=bob leftover");
+// tokens: ["ping", "leftover"], flags: verbose → true, name → "bob"
+
+const args = Args.fromText("run --dry-out path");
+args.flag("dry-out");   // true
+args.option("name");    // undefined
+```
+
+| Form | Result |
+|------|--------|
+| `--verbose` | boolean `true` (next token stays positional) |
+| `--foo=bar` | string `"bar"` |
+| `--foo="bar baz"` | string `"bar baz"` |
+| `--` | Ends flag parsing; following tokens stay positional |
+
+Use `--name=value` for string options. A bare `--name` is always boolean so `!cmd --verbose target` keeps `target` as a positional.
+
+```ts
+args.flag("verbose");   // boolean presence / coerced true|false
+args.option("foo");     // string value only
+args.hasFlag("foo");    // present in any form
 ```
 
 ### Built-in types
@@ -53,21 +100,24 @@ tokenize('say "hello world"'); // ["say", "hello world"]
 | `rest` | Remaining text (via `pickRest()` / `rest()`) |
 | `stringArray` | Comma-separated in one token |
 
-### Mention and snowflake ids (0.3.4+)
+### Mention ids and REST users
 
 ```ts
 import {
   channelMentionArg,
   roleMentionArg,
   snowflakeArg,
+  userArg,
   userMentionArg,
 } from "@stambha/args";
 
 const userId = args.pick(userMentionArg); // <@123> or raw snowflake
-const channelId = args.pick(channelMentionArg);
-```
 
-REST entity resolvers (fetch user object by mention) are planned for **1.x B2** — today you get validated ids only.
+// REST entity (needs client.restPort):
+const user = await args.pickAsync(userArg(client.restPort));
+if (await replyIfArgError(ctx, user)) return ok(undefined);
+// user.value → { id, username?, globalName?, bot? }
+```
 
 ### Custom resolvers
 
@@ -100,14 +150,13 @@ async execute(ctx: CommandContext) {
 }
 ```
 
-No third-party bridge is required when using `createNativeGatewayClient` + `attachStambhaClient`.
-
-## Unified helper
+## Unified helpers
 
 ```ts
-import { argsForContext } from "@stambha/args";
+import { argsForContext, HybridArgs } from "@stambha/args";
 
-const args = argsForContext(ctx); // Args or SlashArgs based on ctx.kind
+const args = argsForContext(ctx); // Args | SlashArgs (different APIs)
+const hybrid = HybridArgs.fromContext(ctx); // shared named getters
 ```
 
 ## Error handling
@@ -121,8 +170,8 @@ const args = argsForContext(ctx); // Args or SlashArgs based on ctx.kind
 
 | Command | Demo |
 |---------|------|
+| Hybrid say | `examples/bot/src/commands/General/SayCommand.ts` |
 | Prefix lexer | `examples/bot/src/commands/General/EchoCommand.ts` |
-| Slash options | `examples/bot/src/commands/General/SayCommand.ts` |
 
 ## See also
 
