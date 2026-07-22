@@ -82,6 +82,7 @@ See `examples/bot` (`pnpm split:gateway`) for a full tier-split relay.
 | Export | Purpose |
 |--------|---------|
 | `createGatewayEventHub`, `GatewayEventHub` | Event bus → Stambha client |
+| `createMessageCollector`, `awaitMessages`, … | One-shot hub collectors (messages / reactions / interactions) |
 | `createNativeGatewayClient` | Bundled WebSocket shard client (0.3.0) |
 | `attachStambhaClient` | Wire hub to `InboundRouter` |
 | `ShardManager`, `createShardManager` | Shard lifecycle |

@@ -24,6 +24,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
       { text: "Permission levels", link: "/features/levels" },
       { text: "Epilogues", link: "/features/epilogues" },
       { text: "Signals", link: "/features/signals" },
+      { text: "Collectors", link: "/features/collectors" },
       { text: "Components", link: "/features/components" },
       { text: "Arguments", link: "/features/args" },
       { text: "Help", link: "/features/help" },
