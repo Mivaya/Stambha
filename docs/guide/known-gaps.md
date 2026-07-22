@@ -32,7 +32,8 @@ Use this stack for new bots:
 | ID | Feature | Notes |
 |----|---------|-------|
 | **B1** | Declarative gates on `Command` options | Shipped (#74) — `cooldown` / `runIn` / `nsfw` / permissions; also `gates: [...]` / `gateNames` |
-| **B2** | Hybrid arg mapping, flags, entity resolvers | **In progress** — `HybridArgs`, prefix flags, `userArg(rest)` |
+| **B2** | Hybrid arg mapping, flags, entity resolvers | Shipped (#83) — `HybridArgs`, prefix flags, `userArg(rest)` |
+| **B3** | Help system (`@stambha/help`) | **In progress** — category catalog + `detailedDescription` / `hidden` |
 | **B4** | Per-piece error hooks | Epilogues cover most cases |
 | **B5** | Component UI builders, persistent views | Signals + manual `stambha:` ids today |
 | **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | — |
@@ -103,12 +104,12 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ## Planned next (after 1.3.0 train)
 
-Path: **B2** (in progress) → **B3–B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
+Path: **B3** (in progress) → **B4–B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **B2** | Hybrid args, flags, entity resolvers | **In progress** — `HybridArgs`, `--flags`, `userArg` |
-| **B3–B6** | Help, lifecycle, components, edit-tracking | — |
+| **B3** | Help system | **In progress** — `@stambha/help` + `hidden` / `detailedDescription` |
+| **B4–B6** | Lifecycle, components, edit-tracking | — |
 | **C1** / **C2** | Permission levels + vault overrides | — |
 | **A1–A2** | Redis / shared cooldowns | Often plugins |
 | **Collectors** | Interaction/message collectors | — |
@@ -118,6 +119,7 @@ Path: **B2** (in progress) → **B3–B6** → **C1** → **C2** → **A1–A2**
 | ID | Feature | Notes |
 |----|---------|-------|
 | **B1** | Declarative gates | `cooldown` / `runIn` / `nsfw` / permissions on `Command` (#74) |
+| **B2** | Hybrid args, flags, entity resolvers | `HybridArgs`, prefix `--flags`, `userArg(rest)` (#83) |
 | **G3-p3** | Tier 3 camelCase | Invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker → **1.4.0** (#78) |
 | **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, subscriptions, … → **1.5.0** (#79) |
 | **ADAPTERS-1.5** | Remove legacy adapters | discord.js / Discordeno shape converters removed (#80) |
