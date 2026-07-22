@@ -8,7 +8,7 @@ import {
 } from "@stambha/core";
 import { describe, expect, it, vi } from "vitest";
 import { cooldownGate } from "./cooldownGate.js";
-import { MemoryCooldownStore } from "./cooldownStore.js";
+import { type CooldownStore, MemoryCooldownStore } from "./cooldownStore.js";
 import { enableDeclarativeCommandGates, resolveCommandGates } from "./declarativeGates.js";
 import { nsfwGate } from "./nsfwGate.js";
 import { combinePermissions, hasPermissions, Permission } from "./permissions.js";
@@ -88,6 +88,19 @@ describe("cooldownGate", () => {
 
     expect((await gate.check(ctx())).allow).toBe(true);
     expect((await gate.check(ctx())).allow).toBe(true);
+  });
+
+  it("awaits async CooldownStore.consume", async () => {
+    const store: CooldownStore = {
+      async consume() {
+        await Promise.resolve();
+        return { allowed: false, retryAfterMs: 1500 };
+      },
+    };
+    const gate = cooldownGate({ limit: 1, delay: 60_000, store });
+    const denied = await gate.check(ctx());
+    expect(denied.allow).toBe(false);
+    expect(denied.reason).toContain("2 seconds");
   });
 });
 
