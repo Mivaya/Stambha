@@ -1,6 +1,6 @@
 # @stambha/plugins
 
-**Plugin lifecycle** — `definePlugin`, DI container, and Sapphire-style hooks around client startup and interactions.
+**Plugin lifecycle** — `definePlugin`, DI container, and hooks around client startup and interactions.
 
 Part of the [**@stambha**](https://www.npmjs.com/org/stambha) monorepo · [GitHub](https://github.com/mivaya/Stambha)
 

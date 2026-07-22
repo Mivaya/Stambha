@@ -6,7 +6,7 @@ export interface StambhaContainerOptions {
   config?: Record<string, unknown>;
 }
 
-/** Logger + DI binder + optional config (Sapphire Container parity). */
+/** Logger + DI binder + optional config. */
 export class StambhaContainer extends DefaultStambhaContainer {
   readonly config: Readonly<Record<string, unknown>>;
 

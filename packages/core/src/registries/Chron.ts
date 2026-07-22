@@ -14,7 +14,7 @@ export interface ChronOptions extends UnitOptions {
 }
 
 /**
- * Scheduled background work (Klasa `Task` / cron jobs).
+ * Scheduled background work (interval or cron).
  * Lives in `src/tasks/` and is loaded by `@stambha/loader`.
  */
 export abstract class Chron extends Unit<ChronOptions> {

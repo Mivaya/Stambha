@@ -5,7 +5,7 @@ export interface NsfwGateOptions {
 }
 
 /**
- * Requires an NSFW channel. Inspired by Sapphire's NSFW precondition.
+ * Requires an NSFW channel.
  * When `meta.channelNsfw` is unknown, the gate allows (bridges should populate meta).
  */
 export function nsfwGate(options: NsfwGateOptions = {}): GateLike {

@@ -1,6 +1,6 @@
 # Permission levels (`@stambha/levels`)
 
-Numeric staff hierarchy (Klasa-style) without discord.js — Everyone → Moderator → Administrator → GuildOwner → BotOwner.
+Numeric staff hierarchy without discord.js — Everyone → Moderator → Administrator → GuildOwner → BotOwner.
 
 ## Installation
 
@@ -54,9 +54,9 @@ The gate runs in the normal pipeline (`commandGatesForRun`) — same deny path a
 | `PermissionLevel.GuildOwner` | 9 |
 | `PermissionLevel.BotOwner` | 10 |
 
-See [package README](https://github.com/Mivaya/Stambha/tree/main/packages/levels) for role maps, bitfield fallback, and `resolveOverride` (C2 / Vault).
+See [package README](https://github.com/Mivaya/Stambha/tree/main/packages/levels) for role maps, bitfield fallback, and `resolveOverride` (Vault).
 
-## Vault overrides (C2)
+## Vault overrides
 
 Store per-member levels on the guild blueprint and wire them into the gate:
 

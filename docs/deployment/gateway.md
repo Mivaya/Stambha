@@ -103,7 +103,7 @@ Returns a detach function. Expects normalized `StambhaMessage` / `StambhaInterac
 | Tier 3 | `inviteCreate`, `integrationCreate`, `stageInstanceCreate`, `guildScheduledEventCreate`, `typingStart`, `webhooksUpdate`, `guildEmojisUpdate`, … | camelCase structural |
 | Tier 4 | `autoModerationRuleCreate`, `guildSoundboardSoundCreate`, `entitlementCreate`, `subscriptionCreate`, `applicationCommandPermissionsUpdate`, `userUpdate`, … | camelCase structural |
 
-#### Typed hub listeners (G3a)
+#### Typed hub listeners
 
 `GatewayEventHub.on` / `once` / `off` are typed via `GatewayEventMap` (exported from `@stambha/gateway` and `@stambha/transform`). Known event names narrow the payload; unknown names stay `unknown`. Runtime guards remain useful when you need to validate wire shapes.
 

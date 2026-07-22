@@ -3,7 +3,7 @@ import { Hook, type Registry } from "@stambha/core";
 import type { LoaderContext } from "@stambha/loader";
 import { isMessageReactionAddPayload } from "@stambha/transform";
 
-/** Logs G3-p1 camelCase `messageReactionAdd` payloads from the native gateway hub. */
+/** Logs camelCase `messageReactionAdd` payloads from the native gateway hub. */
 export class ReactionListener extends Hook {
   static create(ctx: LoaderContext) {
     const logger = ctx.logger ?? ctx.client.container.logger;

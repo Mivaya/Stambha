@@ -1,6 +1,6 @@
 # @stambha/loader
 
-**Auto-load bot pieces** from Sapphire/Klasa-style folders — `commands/`, `listeners/`, `gates/`, and more.
+**Auto-load bot pieces** from conventional folders — `commands/`, `listeners/`, `gates/`, and more.
 
 Part of the [**@stambha**](https://www.npmjs.com/org/stambha) monorepo · [GitHub](https://github.com/mivaya/Stambha) · [Project structure](https://github.com/mivaya/Stambha/tree/main/docs/guide/project-structure.md)
 

@@ -31,7 +31,7 @@ function resolvePolicy(options?: ReshardPolicyOptions): Required<ReshardPolicyOp
 }
 
 /**
- * Threshold-based reshard recommendation (Discordeno-style capacity planning).
+ * Threshold-based reshard recommendation (capacity planning).
  */
 export function evaluateReshard(
   guildCount: number,

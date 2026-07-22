@@ -41,7 +41,7 @@ const LOAD_ORDER: PieceKind[] = [
 ];
 
 /**
- * Load pieces from disk using Sapphire/Klasa folder conventions.
+ * Load pieces from disk using Stambha folder conventions.
  */
 export async function loadPieces(
   client: StambhaClient,

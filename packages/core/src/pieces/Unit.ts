@@ -27,7 +27,7 @@ export abstract class Unit<TOptions extends UnitOptions = UnitOptions> {
   }
 
   /**
-   * Called by {@link Registry.load} after the unit is registered (Sapphire / cog parity).
+   * Called by {@link Registry.load} after the unit is registered.
    * Override for setup that needs the client (timers, caches, subscriptions).
    */
   async onLoad(): Promise<void> {}

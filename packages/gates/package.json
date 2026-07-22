@@ -1,7 +1,7 @@
 {
   "name": "@stambha/gates",
   "version": "1.2.1",
-  "description": "Built-in Stambha gates — cooldown, permissions, NSFW, and RunIn (Sapphire preconditions parity)",
+  "description": "Built-in Stambha gates \u2014 cooldown, permissions, NSFW, and RunIn",
   "author": "Mivaya",
   "license": "MIT",
   "homepage": "https://github.com/mivaya/Stambha/tree/main/packages/gates#readme",
@@ -18,8 +18,7 @@
     "discord-bot",
     "stambha",
     "gates",
-    "preconditions",
-    "sapphire"
+    "preconditions"
   ],
   "type": "module",
   "main": "./dist/index.cjs",
