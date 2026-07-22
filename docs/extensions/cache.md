@@ -1,30 +1,35 @@
 # Cache
 
-**Pluggable in-process cache** for gateway and bot workers — avoid re-fetching guild/channel payloads on every event.
+**Pluggable cache** for gateway and bot workers — avoid re-fetching guild/channel payloads on every event.
 
-Ships as [`@stambha/cache`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cache) from **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)** (independent semver).
+| Package | Role |
+|---------|------|
+| [`@stambha/cache`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cache) | `Cache` interface + in-process `MemoryCache` |
+| [`@stambha/cache-redis`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cache-redis) | Redis driver for shared cache across workers |
 
-Current line: **1.0.0**. No required peer on `@stambha/core` (works alongside the native stack).
+Both ship from **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)** (independent semver). Current line: **1.0.0**. No required peer on `@stambha/core`.
 
-Redis-backed drivers are planned later; today the memory implementation covers monolith and single-process workers.
+Monolith bots keep **`MemoryCache`**. Use Redis only when multiple processes need the same hot keys.
 
 ## When to use it
 
 | Use cache when… | Prefer something else when… |
 |-----------------|-----------------------------|
-| Hot guild/member lookups in a worker | You need shared state across many hosts (wait for Redis driver / external store) |
-| Short TTL for Discord entities | Durable settings — use [Vault](/features/vault) |
-| Tests with deterministic maps | Cross-process rate limits — see gates / future cooldown drivers |
+| Hot guild/member lookups in a worker | Durable settings — use [Vault](/features/vault) |
+| Short TTL for Discord entities | Cross-process **command** rate limits — see [Gates](/features/gates) / future Redis cooldown (**A2**) |
+| Shared snapshots across gateway + bot workers | Single-process bot — `MemoryCache` is enough |
 
 ## Install
 
 ```bash
 pnpm add @stambha/cache
+# split-tier / multi-host:
+pnpm add @stambha/cache-redis redis
 ```
 
 Requires **Node.js 20+**.
 
-## Quick start
+## Quick start (memory)
 
 ```ts
 import { createMemoryCache } from "@stambha/cache";
@@ -38,7 +43,33 @@ await cache.delete("guild:g1");
 await cache.clear();
 ```
 
-Wire the same instance into shard / bot setup as your process needs — see [Gateway](/deployment/gateway) for worker-oriented patterns.
+Wire the same instance into shard / bot setup as your process needs — see [Gateway](/deployment/gateway).
+
+## Redis (shared workers)
+
+```ts
+import { createClient } from "redis";
+import { createRedisCache } from "@stambha/cache-redis";
+
+const client = createClient({ url: process.env.REDIS_URL });
+await client.connect();
+
+const cache = createRedisCache({
+  client,
+  defaultTtlMs: 60_000,
+  // keyPrefix: "stambha:cache:", // default — clear() only deletes this prefix
+});
+
+await cache.set("guild:g1", { name: "My Server" });
+```
+
+Values must be **JSON-serializable**. The app owns `client.connect()` / `client.quit()`.
+
+| Option | Default | Notes |
+|--------|---------|--------|
+| `client` | (required) | Connected `redis` client |
+| `keyPrefix` | `stambha:cache:` | Namespace; `clear()` never runs `FLUSHDB` |
+| `defaultTtlMs` | unset | Applied when `set` omits `ttlMs` |
 
 ## `Cache` interface
 
@@ -46,11 +77,11 @@ All implementations are async:
 
 | Method | Returns | Notes |
 |--------|---------|--------|
-| `get(key)` | `Promise<V \| undefined>` | Expired entries are deleted and return `undefined` |
+| `get(key)` | `Promise<V \| undefined>` | Expired / missing → `undefined` |
 | `set(key, value, ttlMs?)` | `Promise<void>` | Optional per-call TTL overrides the default |
 | `delete(key)` | `Promise<boolean>` | `true` if the key existed |
 | `has(key)` | `Promise<boolean>` | Uses `get` (respects expiry) |
-| `clear()` | `Promise<void>` | Drops all keys |
+| `clear()` | `Promise<void>` | Memory: all keys; Redis: prefix only |
 
 ## Memory cache
 
@@ -80,6 +111,8 @@ There is no LRU eviction yet — unbounded growth is your responsibility in long
 
 ## Exports
 
+### `@stambha/cache`
+
 | Export | Purpose |
 |--------|---------|
 | `Cache` | Interface: `get` / `set` / `delete` / `has` / `clear` |
@@ -88,8 +121,17 @@ There is no LRU eviction yet — unbounded growth is your responsibility in long
 | `MemoryCacheOptions` | `{ defaultTtlMs?: number }` |
 | `CacheSetOptions` | `{ ttlMs?: number }` (typing helper for drivers) |
 
+### `@stambha/cache-redis`
+
+| Export | Purpose |
+|--------|---------|
+| `RedisCache` / `createRedisCache` | Redis `Cache` implementation |
+| `RedisCacheOptions` | `client`, `keyPrefix`, `defaultTtlMs` |
+| `RedisCacheClient` | Minimal client surface for tests / adapters |
+
 ## Related
 
 - [Gateway](/deployment/gateway) — sharding and worker layout
 - [Extensions](/extensions/) — other official add-ons
 - [Vault](/features/vault) — durable typed settings (not a cache)
+- [Stambha-plugins `@stambha/cache-redis`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cache-redis)

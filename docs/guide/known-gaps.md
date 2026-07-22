@@ -40,8 +40,8 @@ Use this stack for new bots:
 | **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | Shipped (#87) — `editTracking` on `attachStambhaClient` |
 | **C1** | Numeric permission levels (`@stambha/levels`) | Shipped (#88) — ladder + `permissionLevelGate` |
 | **C2** | Vault level overrides | Shipped (#89) — guild `permissionLevels` + `setlevel` |
-| **A1** | Redis cache (`@stambha/cache-redis`) | Feature branch — shared `Cache` across workers |
-| **A2** | Shared Redis cooldown store | **In progress** — async `CooldownStore` + `@stambha/cooldown-redis` |
+| **A1** | Redis cache (`@stambha/cache-redis`) | **In progress** — shared `Cache` across workers |
+| **A2** | Shared Redis cooldown store | Memory `CooldownStore` default; Redis driver planned |
 | **G1** | Auto resharding threshold | Shipped (#82) — `ReshardController.check` / `createAutoReshardMonitor` |
 | **G3** | Gateway dispatch normalization (all events) | Tier 1–4 on main → **1.4.0** / **1.5.0** (catalog complete) |
 | **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Shipped (#81) — typed `hub.on` / `once` / `off` |
@@ -59,8 +59,7 @@ Official extensions — product guides (packages ship independently; **`@stambha
 | `@stambha/api` | [HTTP API](/extensions/api) — OAuth, Vault settings, **`src/routes/`** loader (1.2.0) |
 | `@stambha/metrics` | [Metrics](/extensions/metrics) |
 | `@stambha/cache` | [Cache](/extensions/cache) — `MemoryCache` |
-| `@stambha/cache-redis` | [Cache](/extensions/cache) — Redis driver (**A1**) |
-| `@stambha/cooldown-redis` | [Gates](/features/gates#cooldown-scopes) — Redis `CooldownStore` (**A2**) |
+| `@stambha/cache-redis` | [Cache](/extensions/cache#redis-shared-workers) — Redis driver (**A1**) |
 | `@stambha/vault-sql` | [Vault — SQL drivers](/features/vault#sql-drivers) |
 
 Hub: [Extensions](/extensions/).
@@ -71,6 +70,7 @@ Still planned in that repo (not core):
 |------|-------------------|
 | Admin dashboard **UI** (hosted SPA) | Separate product / `@stambha/dashboard` — OAuth + Vault settings HTTP already in [`@stambha/api`](/extensions/api) |
 | Hot reload | `@stambha/dev-reload` |
+| Redis cooldown drivers | **A2** |
 
 Core stays transport-agnostic; plugins ship on independent semver.
 
@@ -107,11 +107,12 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ## Planned next (after 1.3.0 train)
 
-Path: **A2** (in progress) → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
+Path: **A1** (in progress) → **A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **A2** | Redis cooldown store | **In progress** — async `CooldownStore` + `@stambha/cooldown-redis` |
+| **A1** | Redis cache | **In progress** — `@stambha/cache-redis` |
+| **A2** | Redis cooldown store | Gates `CooldownStore` + plugins driver |
 | **Collectors** | Interaction/message collectors | — |
 
 ## Shipped after 1.3.0 train (on main; release cut pending)
