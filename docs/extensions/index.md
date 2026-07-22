@@ -13,7 +13,7 @@ Current plugins line: packages ship independently. **`@stambha/api` is at 1.2.0*
 | Paginated embeds (prev / next / dismiss) | [Pagination](/extensions/pagination) |
 | HTTP routes / Discord OAuth admin API (`src/routes/` in 1.2.0+) | [HTTP API](/extensions/api) |
 | Prometheus scrape endpoint | [Metrics](/extensions/metrics) |
-| In-process guild/entity cache | [Cache](/extensions/cache) |
+| In-process or shared Redis guild/entity cache | [Cache](/extensions/cache) |
 | Persist Vault to SQLite / Postgres | [Vault — SQL drivers](/features/vault#sql-drivers) |
 
 Each guide is self-contained: when to use it, install, examples, options, and exports. Source and CHANGELOG live in [Stambha-plugins](https://github.com/Mivaya/Stambha-plugins).
