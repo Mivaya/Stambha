@@ -41,6 +41,19 @@ interface DiscordOptionPayload {
   options?: DiscordOptionPayload[];
 }
 
+interface DiscordEntitlementPayload {
+  id?: string;
+  sku_id?: string;
+  application_id?: string;
+  user_id?: string;
+  guild_id?: string;
+  type?: number;
+  deleted?: boolean;
+  starts_at?: string | null;
+  ends_at?: string | null;
+  consumed?: boolean;
+}
+
 interface DiscordInteractionPayload {
   id?: string;
   token?: string;
@@ -62,6 +75,7 @@ interface DiscordInteractionPayload {
   channel_id?: string;
   channel?: DiscordChannelPayload;
   app_permissions?: string;
+  entitlements?: DiscordEntitlementPayload[];
 }
 
 function userFromDiscord(user: DiscordUserPayload | undefined): StambhaUser | null {
@@ -202,6 +216,26 @@ export function metaFromDiscordInteraction(
     } catch {
       // ignore
     }
+  }
+
+  if (payload.entitlements && payload.entitlements.length > 0) {
+    const entitlements = [];
+    for (const raw of payload.entitlements) {
+      if (!raw?.id || !raw.sku_id) continue;
+      entitlements.push({
+        id: raw.id,
+        skuId: raw.sku_id,
+        ...(raw.application_id !== undefined ? { applicationId: raw.application_id } : {}),
+        ...(raw.user_id !== undefined ? { userId: raw.user_id } : {}),
+        ...(raw.guild_id !== undefined ? { guildId: raw.guild_id } : {}),
+        ...(raw.type !== undefined ? { type: raw.type } : {}),
+        ...(raw.deleted !== undefined ? { deleted: raw.deleted } : {}),
+        ...(raw.starts_at !== undefined ? { startsAt: raw.starts_at } : {}),
+        ...(raw.ends_at !== undefined ? { endsAt: raw.ends_at } : {}),
+        ...(raw.consumed !== undefined ? { consumed: raw.consumed } : {}),
+      });
+    }
+    if (entitlements.length > 0) meta.entitlements = entitlements;
   }
 
   return Object.keys(meta).length > 0 ? meta : undefined;

@@ -77,15 +77,31 @@ if (shouldDeploySlashCommands({ shardId: 0 })) {
 Thin wrappers over `RestPort.request` for common bot operations — no discord.js required:
 
 ```ts
-import { fetchUser, fetchGuildMember, sendChannelMessage } from "@stambha/rest";
+import {
+  createEntitlementLookup,
+  fetchUser,
+  fetchGuildMember,
+  listEntitlements,
+  listSkus,
+  sendChannelMessage,
+} from "@stambha/rest";
 
 const user = await fetchUser(client.restPort!, userId);
 await sendChannelMessage(client.restPort!, channelId, {
   embeds: [{ title: "Hello" }],
 });
+
+const skus = await listSkus(client.restPort!, applicationId);
+const ents = await listEntitlements(client.restPort!, applicationId, {
+  userId,
+  excludeEnded: true,
+});
+
+// Wire into entitlementGate for prefix commands:
+createEntitlementLookup(client.restPort!, applicationId, "SKU_ID");
 ```
 
-Use with `defineArgResolver` from `@stambha/args` when you need REST-backed entity parsing.
+Use with `defineArgResolver` from `@stambha/args` when you need REST-backed entity parsing. See [Monetization](https://github.com/mivaya/Stambha/blob/main/docs/features/monetization.md).
 
 ---
 
@@ -103,6 +119,7 @@ Use with `defineArgResolver` from `@stambha/args` when you need REST-backed enti
 | `shouldDeploySlashCommands` | Guard for multi-process sharding |
 | `formatDeployDiff` | Log diff summary |
 | `fetchUser`, `fetchGuild`, `fetchGuildMember`, … | Common REST resource helpers |
+| `listEntitlements`, `listSkus`, `createEntitlementLookup` | Monetization / SKU helpers |
 | `createRestTelemetryListener` | Hook metrics into the queue |
 
 ---

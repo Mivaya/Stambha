@@ -18,6 +18,9 @@ export function slimMeta(
   if (desired.clientPermissions && meta.clientPermissions !== undefined) {
     out.clientPermissions = meta.clientPermissions;
   }
+  if (desired.entitlements && meta.entitlements !== undefined) {
+    out.entitlements = meta.entitlements;
+  }
 
   return Object.keys(out).length > 0 ? out : undefined;
 }

@@ -18,6 +18,7 @@ export interface DesiredMetaFields {
   channelNsfw?: boolean;
   memberPermissions?: boolean;
   clientPermissions?: boolean;
+  entitlements?: boolean;
 }
 
 /** Client-level mask for context slimming. */
@@ -44,6 +45,7 @@ const DEFAULT_META: Required<DesiredMetaFields> = {
   channelNsfw: true,
   memberPermissions: true,
   clientPermissions: true,
+  entitlements: true,
 };
 
 /** Full context — default for discord.js bots and local development. */
@@ -60,13 +62,20 @@ export const minimalDesiredProperties: DesiredProperties = Object.freeze({
     channelNsfw: false,
     memberPermissions: false,
     clientPermissions: false,
+    entitlements: false,
   },
 });
 
 /** Only fields required by `@stambha/gates`. */
 export const gatesDesiredProperties: DesiredProperties = Object.freeze({
   context: { meta: true, argsText: true, slashOptions: true, slashPath: true, raw: false },
-  meta: { channelType: true, channelNsfw: true, memberPermissions: true, clientPermissions: true },
+  meta: {
+    channelType: true,
+    channelNsfw: true,
+    memberPermissions: true,
+    clientPermissions: true,
+    entitlements: true,
+  },
 });
 
 export function resolveDesiredProperties(overrides?: DesiredProperties): ResolvedDesiredProperties {
