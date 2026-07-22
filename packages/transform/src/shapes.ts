@@ -47,6 +47,8 @@ export interface StambhaComponentInteraction extends StambhaInteractionBase {
   readonly kind: "component";
   readonly customId: string;
   readonly componentType: "button" | "select";
+  /** Select menu values (empty for buttons). */
+  readonly values: readonly string[];
 }
 
 export interface StambhaModalInteraction extends StambhaInteractionBase {
