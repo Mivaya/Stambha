@@ -72,5 +72,51 @@ export {
   fetchPollAnswerVoters,
   sendPollMessage,
 } from "./polls.js";
+export {
+  type ApiGuildScheduledEvent,
+  type ApiGuildScheduledEventUser,
+  type CreateScheduledEventOptions,
+  type ModifyScheduledEventOptions,
+  type ScheduledEventEntityMetadata,
+  cancelGuildScheduledEvent,
+  completeGuildScheduledEvent,
+  createGuildScheduledEvent,
+  deleteGuildScheduledEvent,
+  fetchGuildScheduledEvent,
+  listGuildScheduledEventUsers,
+  listGuildScheduledEvents,
+  modifyGuildScheduledEvent,
+  ScheduledEventEntityType,
+  ScheduledEventPrivacyLevel,
+  ScheduledEventStatus,
+  startGuildScheduledEvent,
+} from "./scheduledEvents.js";
+export {
+  type ApiAutoModerationRule,
+  type AutoModAction,
+  type AutoModActionMetadata,
+  type AutoModTriggerMetadata,
+  type CreateAutoModerationRuleOptions,
+  type ModifyAutoModerationRuleOptions,
+  AutoModActionType,
+  AutoModEventType,
+  AutoModKeywordPreset,
+  AutoModTriggerType,
+  autoModAlert,
+  autoModBlockMessage,
+  autoModTimeout,
+  createAutoModerationRule,
+  deleteAutoModerationRule,
+  fetchAutoModerationRule,
+  listAutoModerationRules,
+  modifyAutoModerationRule,
+} from "./autoModeration.js";
+export {
+  type ApiSoundboardSound,
+  fetchGuildSoundboardSound,
+  listDefaultSoundboardSounds,
+  listGuildSoundboardSounds,
+  sendSoundboardSound,
+} from "./soundboard.js";
 export type { RateLimitQueueListener, RestTelemetry } from "./telemetry.js";
 export { createRestTelemetryListener } from "./telemetry.js";

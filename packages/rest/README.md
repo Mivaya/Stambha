@@ -104,7 +104,7 @@ await sendPollMessage(rest, channelId, { content: "Team vote", poll });
 await endPoll(rest, channelId, messageId);
 ```
 
-See [Polls](../../docs/features/polls.md).
+See [Polls](../../docs/features/polls.md) and [REST surface](../../docs/features/rest-surface.md) (scheduled events, automod, soundboard).
 
 ---
 
@@ -123,6 +123,9 @@ See [Polls](../../docs/features/polls.md).
 | `formatDeployDiff` | Log diff summary |
 | `fetchUser`, `fetchGuild`, `fetchGuildMember`, … | Common REST resource helpers |
 | `createPoll`, `sendPollMessage`, `endPoll`, `fetchPollAnswerVoters` | Native Discord polls |
+| `createGuildScheduledEvent`, `listGuildScheduledEvents`, … | Guild scheduled events |
+| `createAutoModerationRule`, `listAutoModerationRules`, … | Auto Moderation CRUD |
+| `listGuildSoundboardSounds`, `sendSoundboardSound`, … | Soundboard |
 | `createRestTelemetryListener` | Hook metrics into the queue |
 
 ---

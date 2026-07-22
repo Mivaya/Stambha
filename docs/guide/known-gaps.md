@@ -47,6 +47,7 @@ Use this stack for new bots:
 | **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Shipped (#81) — typed `hub.on` / `once` / `off` |
 | **Collectors** | Message/reaction/interaction collectors | **In progress** — `@stambha/gateway` hub collectors |
 | **POLL-DX** | Poll create/end + vote handlers | **In progress** — `createPoll` / `endPoll` + hub vote docs |
+| **REST-SURFACE** | High-level REST for modern resources | **In progress** — scheduled events, automod CRUD, soundboard |
 
 ---
 
