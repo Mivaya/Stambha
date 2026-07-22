@@ -156,7 +156,7 @@ vault.on("recordDelete", ({ ledger, id }) => {});
 - [ ] Discord field types + `record.resolve()` (channel, role, user ids)
 - [ ] Array update ops (`add` / `remove` / `overwrite` / index) for settings arrays
 - [ ] Guild settings attach ergonomics (`ctx` / client integration)
-- [ ] 1.x — `@stambha/levels` + guild blueprint overrides
+- [ ] 1.x — guild blueprint level overrides (**C2**; C1 `@stambha/levels` ships separately)
 - [ ] Plugins — hosted dashboard UI on top of [`@stambha/api`](/extensions/api); optional `vault-redis` for split tier
 - [x] Plugins — [`@stambha/api`](/extensions/api) Discord OAuth + `/guilds/…/settings`
 
