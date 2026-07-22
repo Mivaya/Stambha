@@ -211,7 +211,7 @@ Listens to `commandDenied` and sends the gate's reason. Prefix commands use `rep
 
 ## See also
 
-- [Permission levels](/features/levels) — numeric hierarchy (`@stambha/levels`)
+- [Capabilities](/features/capabilities) — named capability gates (`@stambha/authz`)
 - [Project structure](/guide/project-structure) — `gates/` folder
 - [Barriers](/features/barriers) — global blockers before gates
 - [Arguments](/features/args) — prefix and slash option parsing

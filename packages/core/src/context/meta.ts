@@ -13,7 +13,7 @@ export type ChannelType =
   | "unknown";
 
 /**
- * Optional metadata bridges attach for built-in gates (`@stambha/gates`, `@stambha/levels`).
+ * Optional metadata bridges attach for built-in gates (`@stambha/gates`, `@stambha/authz`).
  * When absent, gates that need metadata typically allow or degrade gracefully per gate docs.
  */
 export interface CommandContextMeta {
@@ -23,11 +23,11 @@ export interface CommandContextMeta {
   memberPermissions?: bigint;
   /** Bot permissions in the current channel. */
   clientPermissions?: bigint;
-  /** Guild member role ids (for `@stambha/levels` role → level mapping). */
+  /** Guild member role ids (for `@stambha/authz` role → capability mapping). */
   memberRoleIds?: readonly string[];
   /**
    * Guild owner user id when known (gateway/REST enrichment).
-   * Interactions do not include this — set via worker or leave unset and use {@link LevelsConfig}.
+   * Interactions do not include this — set via worker or leave unset and use `guildOwners` in authz config.
    */
   guildOwnerId?: string;
 }
