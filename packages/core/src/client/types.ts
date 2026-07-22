@@ -39,6 +39,10 @@ export type StambhaClientEvents = {
   ready: [];
   unitRegistered: [{ registry: string; unit: import("../pieces/Unit.js").Unit }];
   unitUnregistered: [{ registry: string; name: string }];
+  unitLoaded: [{ registry: string; unit: import("../pieces/Unit.js").Unit }];
+  unitUnloaded: [{ registry: string; name: string }];
+  unitLoadError: [{ registry: string; unit: string; error: unknown }];
+  unitUnloadError: [{ registry: string; unit: string; error: unknown }];
   scoutError: [{ scout: string; error: unknown; ctx: import("../context/types.js").ScoutContext }];
   commandBlocked: [
     {
@@ -65,6 +69,13 @@ export type StambhaClientEvents = {
       ctx: import("../context/types.js").CommandContext;
       command: string;
       error: unknown;
+    },
+  ];
+  commandErrorHookError: [
+    {
+      command: string;
+      error: unknown;
+      ctx: import("../context/types.js").CommandContext;
     },
   ];
   epilogueError: [

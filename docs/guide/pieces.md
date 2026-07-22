@@ -34,7 +34,42 @@ import { loadPieces } from "@stambha/loader";
 await loadPieces(client, { context: { client, vault } });
 ```
 
-Defaults match `PiecePaths` in `@stambha/core` (`src/commands`, `src/listeners`, etc.). Gates load **before** commands so `gateNames` resolve at validation time.
+Defaults match `PiecePaths` in `@stambha/core` (`src/commands`, `src/listeners`, etc.). Gates load **before** commands so `gateNames` resolve at validation time. Each piece’s `onLoad()` is awaited as it is registered (see [lifecycle](#lifecycle-onload--onunload--oncommanderror)).
+
+## Lifecycle (`onLoad` / `onUnload` / `onCommandError`)
+
+Every piece (`Unit`) can override:
+
+| Hook | When |
+|------|------|
+| `onLoad()` | After `Registry.load` / `@stambha/loader` registers the piece |
+| `onUnload()` | Before `Registry.unload` removes it |
+| `Command.onCommandError(error, ctx)` | When `execute` returns `err()` or throws — **default logs** via `client.container.logger` |
+
+```ts
+export class CacheCommand extends Command {
+  async onLoad() {
+    await this.client.binder.resolve(CACHE).warmup();
+  }
+
+  async onUnload() {
+    /* close handles */
+  }
+
+  async onCommandError(error: unknown, ctx: CommandContext) {
+    await ctx.replyEphemeral("Something went wrong.");
+    await super.onCommandError(error, ctx); // keep default log, or omit to silence
+  }
+
+  async execute(ctx: CommandContext) {
+    return ok(undefined);
+  }
+}
+```
+
+- Sync `registry.register()` / `client.register()` still work and **do not** call `onLoad` (tests and one-off wiring).
+- Prefer `await client.loadCommand(cmd)` or `await registry.load(unit)` when you need lifecycle.
+- Epilogues remain the right place for cross-cutting success/denied/blocked audits; `onCommandError` is per-command.
 
 ## Manual registration
 
