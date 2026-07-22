@@ -90,6 +90,7 @@ if (demo) {
     channelId: "c1",
     customId: "stambha:confirm:yes",
     componentType: "button",
+    values: [],
     raw: {},
   } satisfies StambhaInteraction);
 

@@ -32,11 +32,11 @@ Use this stack for new bots:
 | ID | Feature | Notes |
 |----|---------|-------|
 | **B1** | Declarative gates on `Command` options | Shipped (#74) — `cooldown` / `runIn` / `nsfw` / permissions; also `gates: [...]` / `gateNames` |
-| **B2** | Hybrid arg mapping, flags, entity resolvers | Partial `@stambha/args` today |
-| **B3** | Help system (`@stambha/help`) | PR may be open |
-| **B4** | Piece lifecycle + error hooks | PR may be open |
-| **B5** | Component UI builders, persistent views | PR may be open |
-| **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | **In progress** — `editTracking` on `attachStambhaClient` |
+| **B2** | Hybrid arg mapping, flags, entity resolvers | Shipped (#83) — `HybridArgs`, prefix flags, `userArg(rest)` |
+| **B3** | Help system (`@stambha/help`) | Shipped (#84) — category catalog + `detailedDescription` / `hidden` |
+| **B4** | Piece lifecycle + error hooks | Shipped (#85) — `onLoad` / `onUnload` / `onCommandError` |
+| **B5** | Component UI builders, persistent views | **In progress** — builders + `registerPersistentSignals` |
+| **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | — |
 | **C1** | Numeric permission levels (`@stambha/levels`) | Use `userPermissionsGate` + roles today |
 | **C2** | Vault level overrides | Needs C1 |
 | **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
@@ -104,11 +104,12 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ## Planned next (after 1.3.0 train)
 
-Path: **B6** (in progress) → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
+Path: **B5** (in progress) → **B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **B6** | Prefix edit-tracking | **In progress** — `editTracking` on `attachStambhaClient` |
+| **B5** | Components + persistent signals | **In progress** — builders + `registerPersistentSignals` |
+| **B6** | Prefix edit-tracking | — |
 | **C1** / **C2** | Permission levels + vault overrides | — |
 | **A1–A2** | Redis / shared cooldowns | Often plugins |
 | **Collectors** | Interaction/message collectors | — |
@@ -118,6 +119,9 @@ Path: **B6** (in progress) → **C1** → **C2** → **A1–A2** → collectors.
 | ID | Feature | Notes |
 |----|---------|-------|
 | **B1** | Declarative gates | `cooldown` / `runIn` / `nsfw` / permissions on `Command` (#74) |
+| **B2** | Hybrid args, flags, entity resolvers | `HybridArgs`, prefix `--flags`, `userArg(rest)` (#83) |
+| **B3** | Help system | `@stambha/help` + `hidden` / `detailedDescription` (#84) |
+| **B4** | Piece lifecycle + error hooks | `onLoad` / `onUnload` / `Command.onCommandError` (#85) |
 | **G3-p3** | Tier 3 camelCase | Invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker → **1.4.0** (#78) |
 | **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, subscriptions, … → **1.5.0** (#79) |
 | **ADAPTERS-1.5** | Remove legacy adapters | discord.js / Discordeno shape converters removed (#80) |

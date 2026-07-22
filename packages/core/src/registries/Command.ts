@@ -64,6 +64,14 @@ export interface CommandOptions extends UnitOptions {
   /** Help / grouping (Sapphire-style). */
   category?: string;
   subCategory?: string;
+  /**
+   * Longer help text for `help <command>` (B3). Falls back to {@link description} when omitted.
+   */
+  detailedDescription?: string;
+  /**
+   * When true, omit from help listings (B3). Command remains runnable if invoked by name.
+   */
+  hidden?: boolean;
   /** Top-level slash options (when not using subcommands). */
   slashOptions?: readonly SlashOptionDefinition[];
   /** Inline subcommands on this root command. */
@@ -93,6 +101,8 @@ export abstract class Command extends Unit<CommandOptions> {
   readonly aliases: readonly string[];
   readonly category: string;
   readonly subCategory: string;
+  readonly detailedDescription: string;
+  readonly hidden: boolean;
   readonly slashOptions: readonly SlashOptionDefinition[];
   readonly subcommands: readonly SubcommandDefinition[];
   readonly subcommandGroups: readonly SubcommandGroupDefinition[];
@@ -121,6 +131,8 @@ export abstract class Command extends Unit<CommandOptions> {
     this.aliases = options.aliases ?? [];
     this.category = options.category ?? "General";
     this.subCategory = options.subCategory ?? "";
+    this.detailedDescription = options.detailedDescription ?? "";
+    this.hidden = options.hidden === true;
     this.slashOptions = options.slashOptions ?? [];
     this.subcommands = options.subcommands ?? [];
     this.subcommandGroups = options.subcommandGroups ?? [];
@@ -140,6 +152,15 @@ export abstract class Command extends Unit<CommandOptions> {
   }
 
   abstract execute(ctx: CommandContext): Promise<Outcome<unknown>>;
+
+  /**
+   * Called when {@link execute} returns `err()` or throws (B4).
+   * Default logs via `client.container.logger`. Override to customize or no-op.
+   */
+  async onCommandError(error: unknown, _ctx: CommandContext): Promise<void> {
+    const message = error instanceof Error ? error.message : String(error);
+    this.client.container.logger.error(`Command "${this.name}" failed: ${message}`, error);
+  }
 
   /** Optional slash autocomplete handler for this command. */
   autocomplete?(_ctx: AutocompleteContext): Promise<void>;

@@ -76,11 +76,11 @@ export class CommandIndex {
     return this.slashByPath.get(CommandIndex.pathKey(path)) ?? this.topLevel.get(path.root);
   }
 
-  /** Commands grouped by category for help listings. */
+  /** Commands grouped by category for help listings (skips disabled and hidden). */
   byCategory(commands: Iterable<Command>): Map<string, Command[]> {
     const map = new Map<string, Command[]>();
     for (const command of commands) {
-      if (!command.enabled) continue;
+      if (!command.enabled || command.hidden) continue;
       const key = command.category || "General";
       const list = map.get(key) ?? [];
       list.push(command);

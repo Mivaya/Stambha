@@ -1,22 +1,4 @@
-import { Command, type CommandContext, ok, type Registry } from "@stambha/core";
+import { HelpCommand } from "@stambha/help";
 
-export class HelpCommand extends Command {
-  constructor(registry: Registry<Command>) {
-    super(registry, {
-      name: "help",
-      description: "List available commands",
-      kinds: ["prefix", "slash"],
-      category: "General",
-    });
-  }
-
-  async execute(ctx: CommandContext) {
-    const names = [...this.client.registries.commands.values()]
-      .map((cmd) => cmd.name)
-      .sort()
-      .join(", ");
-
-    await ctx.reply(`Commands: ${names}`);
-    return ok(names);
-  }
-}
+/** Re-export package help so the loader registers `@stambha/help`. */
+export { HelpCommand };

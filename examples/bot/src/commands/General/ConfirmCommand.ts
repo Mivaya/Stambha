@@ -1,4 +1,12 @@
-import { Command, type CommandContext, ok, type Registry } from "@stambha/core";
+import {
+  button,
+  ButtonStyle,
+  Command,
+  type CommandContext,
+  confirmCancelRow,
+  ok,
+  type Registry,
+} from "@stambha/core";
 
 export class ConfirmCommand extends Command {
   constructor(registry: Registry<Command>) {
@@ -12,16 +20,24 @@ export class ConfirmCommand extends Command {
 
   async execute(ctx: CommandContext) {
     const signal = this.client.registries.signals.get("confirm");
-    const customId = signal?.customId("yes") ?? "stambha:confirm:yes";
+    const components = signal
+      ? [confirmCancelRow(signal)]
+      : [
+          {
+            type: 1 as const,
+            components: [
+              button({
+                customId: "stambha:confirm:yes",
+                label: "Confirm",
+                style: ButtonStyle.Success,
+              }),
+            ],
+          },
+        ];
 
     await ctx.reply({
-      content: "Press the button to confirm:",
-      components: [
-        {
-          type: 1,
-          components: [{ type: 2, style: 1, label: "Confirm", custom_id: customId }],
-        },
-      ],
+      content: "Press a button to confirm or cancel:",
+      components,
     });
     return ok(undefined);
   }

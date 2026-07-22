@@ -1,0 +1,63 @@
+{
+  "name": "@stambha/help",
+  "version": "1.2.1",
+  "description": "Built-in Stambha help command — list commands by category (Sapphire help parity)",
+  "author": "Mivaya",
+  "license": "MIT",
+  "homepage": "https://github.com/mivaya/Stambha/tree/main/packages/help#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mivaya/Stambha.git",
+    "directory": "packages/help"
+  },
+  "bugs": {
+    "url": "https://github.com/mivaya/Stambha/issues"
+  },
+  "keywords": [
+    "discord",
+    "discord-bot",
+    "stambha",
+    "help",
+    "commands",
+    "sapphire"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "@stambha/args": "workspace:*",
+    "@stambha/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@stambha/args": "workspace:*",
+    "@stambha/core": "workspace:*",
+    "@types/node": "^26.1.1",
+    "tsup": "^8.3.6",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}
