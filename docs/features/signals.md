@@ -2,6 +2,8 @@
 
 **Signals** handle component interactions — buttons, select menus, and modals — routed by Discord `custom_id` values with the `stambha:` prefix.
 
+For **one-shot** waits inside a command (next message / reaction / click with a timeout), use [Collectors](/features/collectors) instead of a permanent Signal.
+
 Place signal pieces under `src/signals/`.
 
 ## Custom id format
