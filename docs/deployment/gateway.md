@@ -343,6 +343,8 @@ HTTP endpoints (parity with REST worker):
 
 ## Cache
 
+**Monolith / single process** — in-memory:
+
 ```ts
 import { createMemoryCache } from "@stambha/cache";
 
@@ -351,7 +353,20 @@ await cache.set("guild:123", { name: "My Guild" });
 const guild = await cache.get<{ name: string }>("guild:123");
 ```
 
-Redis and gateway-backed cache adapters are planned; the `Cache` interface is stable for custom backends.
+**Split-tier / shared workers** — Redis via [`@stambha/cache-redis`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cache-redis):
+
+```ts
+import { createClient } from "redis";
+import { createRedisCache } from "@stambha/cache-redis";
+
+const client = createClient({ url: process.env.REDIS_URL });
+await client.connect();
+
+const cache = createRedisCache({ client, defaultTtlMs: 60_000 });
+// Pass the same Cache into each worker that should share hot keys.
+```
+
+See [Cache](/extensions/cache) for options (`keyPrefix`, TTL). Redis is optional — monoliths keep `MemoryCache`.
 
 ## Tier split v2
 
