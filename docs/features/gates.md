@@ -121,11 +121,24 @@ userPermissionsGate(mod);
 | `userGuild` | user + guild (default) |
 | `global` | entire bot |
 
-Custom store for multi-process bots:
+Custom store for multi-process / split-tier bots (async-capable):
 
 ```ts
-cooldownGate({ limit: 1, delay: 5000, store: myRedisCooldownStore });
+import { createClient } from "redis";
+import { cooldownGate } from "@stambha/gates";
+import { createRedisCooldownStore } from "@stambha/cooldown-redis";
+
+const client = createClient({ url: process.env.REDIS_URL });
+await client.connect();
+
+const store = createRedisCooldownStore({ client });
+
+cooldownGate({ limit: 1, delay: 5000, store });
 ```
+
+Monolith bots keep the default in-memory store. `CooldownStore.consume` may return a `Promise` — `cooldownGate` always awaits it.
+
+See [`@stambha/cooldown-redis`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cooldown-redis).
 
 ## Context metadata
 

@@ -53,11 +53,11 @@ export function cooldownGate(options: CooldownGateOptions): GateLike {
   const store = options.store ?? defaultCooldownStore;
   const filtered = new Set(options.filteredUsers ?? []);
 
-  return defineGate(`cooldown(${scope})`, (ctx) => {
+  return defineGate(`cooldown(${scope})`, async (ctx) => {
     if (filtered.has(ctx.userId)) return { allow: true };
 
     const key = cooldownKey(ctx, scope, perCommand);
-    const result = store.consume(key, options.limit, options.delay);
+    const result = await store.consume(key, options.limit, options.delay);
 
     if (result.allowed) return { allow: true };
 
