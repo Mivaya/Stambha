@@ -201,6 +201,9 @@ importers:
       '@stambha/core':
         specifier: workspace:*
         version: link:../core
+      '@stambha/vault':
+        specifier: workspace:*
+        version: link:../vault
       '@types/node':
         specifier: ^26.1.1
         version: 26.1.1

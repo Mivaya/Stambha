@@ -42,10 +42,17 @@
     "test": "vitest run"
   },
   "peerDependencies": {
-    "@stambha/core": "workspace:*"
+    "@stambha/core": "workspace:*",
+    "@stambha/vault": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@stambha/vault": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@stambha/core": "workspace:*",
+    "@stambha/vault": "workspace:*",
     "@types/node": "^26.1.1",
     "tsup": "^8.3.6",
     "typescript": "^6.0.3",

@@ -56,6 +56,30 @@ The gate runs in the normal pipeline (`commandGatesForRun`) — same deny path a
 
 See [package README](https://github.com/Mivaya/Stambha/tree/main/packages/levels) for role maps, bitfield fallback, and `resolveOverride` (C2 / Vault).
 
+## Vault overrides (C2)
+
+Store per-member levels on the guild blueprint and wire them into the gate:
+
+```ts
+import { defineBlueprint, field } from "@stambha/vault";
+import {
+  attachVaultLevelOverrides,
+  permissionLevelsField,
+} from "@stambha/levels";
+
+export const GuildBlueprint = defineBlueprint({
+  prefix: field.string().default("!").build(),
+  permissionLevels: permissionLevelsField(),
+});
+
+attachVaultLevelOverrides(vault, {
+  levels: { botOwners: [process.env.BOT_OWNER_ID!] },
+});
+```
+
+Helpers: `setMemberPermissionLevel` / `clearMemberPermissionLevel` / `getMemberPermissionLevel`.
+Example bot: `!setlevel` (Administrator+).
+
 ## Meta requirements
 
 | Field | Source |
@@ -79,5 +103,5 @@ Prefer levels when many commands share the same staff bar. Keep `userPermissions
 ## See also
 
 - [Gates](/features/gates) — bitfields, cooldown, NSFW, RunIn
-- [Vault](/features/vault) — C2 guild level overrides (planned)
+- [Vault](/features/vault) — C2 guild `permissionLevels` field + `attachVaultLevelOverrides`
 - [Known gaps](/guide/known-gaps) — C1 / C2
