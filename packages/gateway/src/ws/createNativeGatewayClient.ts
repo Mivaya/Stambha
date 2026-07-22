@@ -47,7 +47,7 @@ export interface NativeGatewayClientOptions {
   /** Custom fetch for `/gateway/bot` (tests). */
   fetch?: typeof fetch;
   /**
-   * Gateway dispatch payload normalization (G3-p1).
+   * Gateway dispatch payload normalization.
    * `default` — Tier 1 camelCase at hub; `raw` — wire snake_case escape hatch.
    */
   dispatchNormalize?: NormalizeDispatchMode;
@@ -70,7 +70,7 @@ export interface NativeGatewayClient {
 
 /**
  * Connect native WebSocket shard(s) to a {@link GatewayEventHub}.
- * This is the 0.3.0 bundled gateway client (release-plan N1 / future-v2 A5).
+ * This is the bundled native WebSocket gateway client.
  */
 export async function createNativeGatewayClient(
   options: NativeGatewayClientOptions,

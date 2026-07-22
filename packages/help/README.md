@@ -1,6 +1,6 @@
 # @stambha/help
 
-Built-in **help** command for Stambha — lists registered commands by category, with optional per-command details. Sapphire help parity without discord.js.
+Built-in **help** command for Stambha — lists registered commands by category, with optional per-command details. No discord.js required.
 
 Part of the [**@stambha**](https://www.npmjs.com/org/stambha) monorepo · [GitHub](https://github.com/mivaya/Stambha)
 

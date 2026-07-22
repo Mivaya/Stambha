@@ -4,7 +4,7 @@ export type SaveHandler = (
   data: Record<string, unknown>,
 ) => Promise<void>;
 
-/** Debounces writes per record id (Klasa RequestHandler-inspired). */
+/** Debounces writes per record id. */
 export class SyncBatcher {
   private readonly timers = new Map<string, ReturnType<typeof setTimeout>>();
   private readonly pending = new Map<string, Record<string, unknown>>();

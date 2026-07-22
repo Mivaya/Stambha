@@ -135,7 +135,7 @@ class PingCommand extends Command {
   }
 }
 
-describe("declarative Command options (B1)", () => {
+describe("declarative Command options", () => {
   it("builds cooldown/runIn/nsfw/permissions from options", () => {
     const client = new StambhaClient();
     const command = new PingCommand(client.registries.commands, {

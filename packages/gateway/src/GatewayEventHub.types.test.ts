@@ -1,7 +1,7 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 import { createGatewayEventHub, type GatewayEventMap } from "./GatewayEventHub.js";
 
-describe("GatewayEventHub G3a typing", () => {
+describe("GatewayEventHub typed listeners", () => {
   it("narrows known hub listener payloads", () => {
     const hub = createGatewayEventHub();
 

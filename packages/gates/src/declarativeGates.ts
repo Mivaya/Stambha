@@ -52,7 +52,7 @@ function runInFromOption(option: CommandRunInOption): GateLike {
 }
 
 /**
- * Build gates from declarative {@link Command} options (B1).
+ * Build gates from declarative {@link Command} options.
  * Order: cooldown → runIn → nsfw → permissions.
  */
 export function resolveCommandGates(command: Command): GateLike[] {
@@ -87,5 +87,5 @@ export function enableDeclarativeCommandGates(): void {
   registerDeclarativeGatesResolver(resolveCommandGates);
 }
 
-// Enable on package import so `import "@stambha/gates"` / gate helpers activate B1.
+// Enable on package import so `import "@stambha/gates"` / gate helpers activate declarative options.
 enableDeclarativeCommandGates();

@@ -1,7 +1,7 @@
 {
   "name": "@stambha/levels",
   "version": "1.2.1",
-  "description": "Numeric permission levels for Stambha — Klasa-style ladder + permissionLevelGate",
+  "description": "Numeric permission levels for Stambha \u2014 ladder + permissionLevelGate",
   "author": "Mivaya",
   "license": "MIT",
   "homepage": "https://github.com/mivaya/Stambha/tree/main/packages/levels#readme",
@@ -18,8 +18,7 @@
     "discord-bot",
     "stambha",
     "levels",
-    "permissions",
-    "klasa"
+    "permissions"
   ],
   "type": "module",
   "main": "./dist/index.cjs",

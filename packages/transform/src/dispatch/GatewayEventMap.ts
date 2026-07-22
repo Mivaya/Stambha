@@ -1,5 +1,5 @@
 /**
- * Hub event name → payload type for typed {@link GatewayEventHub} listeners (G3a).
+ * Hub event name → payload type for typed {@link GatewayEventHub} listeners.
  *
  * Shapes are minimal camelCase DTOs (not full Discord API types). Sibling create/update/delete
  * events often share one interface. Events omitted here remain `unknown` via the hub string overload.
@@ -131,7 +131,7 @@ export interface GatewayIntegrationDelete {
   applicationId?: string;
 }
 
-/** Typed hub events for G3a. Extra hub-only names (`guildAvailable`, `error`) live on `@stambha/gateway`. */
+/** Typed hub events. Extra hub-only names (`guildAvailable`, `error`) live on `@stambha/gateway`. */
 export interface GatewayEventMap {
   // Routing
   ready: GatewayReadyPayload;

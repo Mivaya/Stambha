@@ -1,6 +1,6 @@
 # @stambha/gates
 
-**Built-in gates** — cooldown, permissions, NSFW, and channel-type checks. Sapphire `@sapphire/plugin-subcommands` preconditions parity without discord.js.
+**Built-in gates** — cooldown, permissions, NSFW, and channel-type checks for the Stambha command pipeline. No discord.js required.
 
 Part of the [**@stambha**](https://www.npmjs.com/org/stambha) monorepo · [GitHub](https://github.com/mivaya/Stambha) · [Gates guide](https://github.com/mivaya/Stambha/tree/main/docs/features/gates.md)
 
@@ -18,7 +18,7 @@ Requires **Node.js 20+**.
 
 ## Quick start
 
-### Declarative options (B1)
+### Declarative options
 
 ```ts
 import { Command, ok, type CommandContext, type Registry } from "@stambha/core";
@@ -99,7 +99,7 @@ Combine custom gates in `@stambha/core` with `gateAnd()` / `gateOr()`.
 | `permissionsGate`, `Permission` | Discord permission math |
 | `nsfwGate` | Age-restricted channels |
 | `guildOnlyGate`, `dmOnlyGate`, `runInGate` | Where commands may run |
-| `resolveCommandGates` | B1: build gates from Command options |
+| `resolveCommandGates` | Build gates from Command options |
 | `attachGateDeniedReply` | User-facing denial messages |
 
 ---

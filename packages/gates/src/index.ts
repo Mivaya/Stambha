@@ -41,5 +41,5 @@ export {
   runInGate,
 } from "./runInGate.js";
 
-// Register B1 declarative Command options → gates on package import.
+// Register declarative Command options → gates on package import.
 import "./declarativeGates.js";

@@ -1,6 +1,6 @@
 # Built-in gates (`@stambha/gates`)
 
-**Gates** are per-command checks — declarative Command options (B1), inline `gates: [...]`, `gateNames` / `preconditions`, or `global: true` on gate pieces.
+**Gates** are per-command checks — declarative Command options, inline `gates: [...]`, `gateNames` / `preconditions`, or `global: true` on gate pieces.
 
 ## Installation
 
@@ -12,7 +12,7 @@ Requires `@stambha/core`. Gateway workers should populate `CommandContext.meta` 
 
 ## Quick start
 
-### Declarative options (B1)
+### Declarative options
 
 ```ts
 import { Command, ok, type CommandContext, type Registry } from "@stambha/core";
@@ -99,7 +99,7 @@ export class BanCommand extends Command {
 | `runInGate()` | Channel type allow-list |
 | `guildOnlyGate()` | No DMs |
 | `dmOnlyGate()` | DMs only |
-| `resolveCommandGates(command)` | Build declarative gates from Command options (B1) |
+| `resolveCommandGates(command)` | Build declarative gates from Command options |
 
 Compose with core helpers: `gateAnd()`, `gateOr()`, `defineGate()`.
 
@@ -211,7 +211,7 @@ Listens to `commandDenied` and sends the gate's reason. Prefix commands use `rep
 
 ## See also
 
-- [Permission levels](/features/levels) — Klasa-style numeric hierarchy (`@stambha/levels`)
+- [Permission levels](/features/levels) — numeric hierarchy (`@stambha/levels`)
 - [Project structure](/guide/project-structure) — `gates/` folder
 - [Barriers](/features/barriers) — global blockers before gates
 - [Arguments](/features/args) — prefix and slash option parsing
