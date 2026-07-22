@@ -46,24 +46,32 @@ export class ConfirmSignal extends Signal {
 }
 ```
 
-Send a button from a command via `ReplyPayload.components`:
+Send a button from a command via builders + `ReplyPayload.components`:
 
 ```ts
-const signal = this.client.registries.signals.get("confirm");
+import { confirmCancelRow } from "@stambha/core";
+
+const signal = this.client.registries.signals.get("confirm")!;
 
 await ctx.reply({
   content: "Are you sure?",
-  components: [{
-    type: 1,
-    components: [{
-      type: 2,
-      style: 1,
-      label: "Yes",
-      custom_id: signal!.customId("yes"),
-    }],
-  }],
+  components: [confirmCancelRow(signal)],
 });
 ```
+
+Raw Discord shapes still work; prefer [Components](/features/components) for rows, selects, and modals.
+
+## Persistent signals
+
+For long-lived panels (role menus, permanent buttons), use stable `stambha:{name}` ids and register signals on every boot:
+
+```ts
+import { registerPersistentSignals } from "@stambha/core";
+
+registerPersistentSignals(client, (registry) => [new ColorMenuSignal(registry)]);
+```
+
+See [Components — persistent signals](/features/components#persistent-signals). File-based `src/signals/` pieces loaded by `@stambha/loader` are also persistent across restarts.
 
 ## SignalContext
 
@@ -71,6 +79,7 @@ await ctx.reply({
 |-------|-------------|
 | `signalName` | Parsed from custom id |
 | `customId` | Full Discord custom id |
+| `values` | Select menu values (empty for buttons / modals) |
 | `userId`, `guildId`, `channelId` | Interaction context |
 | `reply(text \| payload)` | Interaction callback reply |
 | `replyEphemeral(text)` | Ephemeral callback |
@@ -127,6 +136,7 @@ if (target?.kind === "signal") {
 
 ## Related
 
+- [Components](/features/components) — builders + `registerPersistentSignals`
 - [Sequences](/features/sequences) — multi-step flows using `stambha:seq:` ids
 - [Extensions](/extensions/) — `@stambha/pagination` for embed pages
 - [Pagination](/extensions/pagination) — prev / next / dismiss helper

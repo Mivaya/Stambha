@@ -1,7 +1,7 @@
 import { dirname, resolve as nodeResolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { RestPort, RestRequest, StambhaClient } from "@stambha/core";
-import { createStambhaBot, HttpRestPort } from "@stambha/core";
+import { createStambhaBot, HttpRestPort, registerPersistentSignals } from "@stambha/core";
 import { attachGateDeniedReply } from "@stambha/gates";
 import { loadPieces } from "@stambha/loader";
 import { attachPlugins } from "@stambha/plugins";
@@ -9,6 +9,7 @@ import { createNativeRestPort } from "@stambha/rest";
 import { MemoryDriver, Vault } from "@stambha/vault";
 import { LoggingPlugin } from "../plugins/LoggingPlugin.js";
 import { GuildBlueprint } from "../schemas/GuildBlueprint.js";
+import { ColorMenuSignal } from "./ColorMenuSignal.js";
 
 export interface BotSetupOptions {
   tier?: "monolith" | "split";
@@ -80,6 +81,9 @@ export async function setupBot(options: BotSetupOptions = {}): Promise<BotSetupR
       console.error(`[loader] ${file}:`, error);
     }
   }
+
+  // Long-lived menus (stable stambha: ids). File-based signals under src/signals/ are also persistent.
+  registerPersistentSignals(client, (registry) => [new ColorMenuSignal(registry)]);
 
   return { client, vault };
 }

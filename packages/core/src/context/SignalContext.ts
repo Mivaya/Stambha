@@ -7,6 +7,8 @@ export interface SignalContext {
   readonly guildId: string | null;
   readonly channelId: string | null;
   readonly customId: string;
+  /** Selected values for select menus (empty for buttons / modals). */
+  readonly values: readonly string[];
   readonly raw: unknown;
   reply(message: string | ReplyPayload): Promise<void>;
   replyEphemeral(message: string | ReplyPayload): Promise<void>;

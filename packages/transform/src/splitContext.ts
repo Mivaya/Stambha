@@ -269,6 +269,7 @@ export function signalContextFromStambhaInteraction(
     guildId: interaction.guildId,
     channelId: interaction.channelId,
     customId: interaction.customId,
+    values: interaction.kind === "component" ? interaction.values : [],
     raw: interaction,
     reply: callbacks.reply,
     replyEphemeral: callbacks.replyEphemeral,
