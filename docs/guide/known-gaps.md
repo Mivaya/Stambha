@@ -16,6 +16,7 @@ Use this stack for new bots:
 | Transform | `@stambha/transform` | Normalized hub events (`StambhaMessage`, `StambhaInteraction`), dispatch catalog |
 | Loader | `@stambha/loader` | Auto-load pieces from `src/` folders |
 | Gates | `@stambha/gates` | Cooldowns, permissions, channel checks |
+| Levels | `@stambha/levels` | Numeric staff hierarchy (C1) |
 
 **Routing (0.3.5+):** `attachStambhaClient` handles prefix commands, slash commands (with options and `ctx.meta`), autocomplete, signals (buttons/selects/modals), and scouts — when the gateway emits normalized payloads.
 
@@ -35,9 +36,9 @@ Use this stack for new bots:
 | **B2** | Hybrid arg mapping, flags, entity resolvers | Shipped (#83) — `HybridArgs`, prefix flags, `userArg(rest)` |
 | **B3** | Help system (`@stambha/help`) | Shipped (#84) — category catalog + `detailedDescription` / `hidden` |
 | **B4** | Piece lifecycle + error hooks | Shipped (#85) — `onLoad` / `onUnload` / `onCommandError` |
-| **B5** | Component UI builders, persistent views | **In progress** — builders + `registerPersistentSignals` |
-| **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | — |
-| **C1** | Numeric permission levels (`@stambha/levels`) | Use `userPermissionsGate` + roles today |
+| **B5** | Component UI builders, persistent views | Shipped (#86) — builders + `registerPersistentSignals` |
+| **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | Shipped (#87) — `editTracking` on `attachStambhaClient` |
+| **C1** | Numeric permission levels (`@stambha/levels`) | **In progress** — ladder + `permissionLevelGate` |
 | **C2** | Vault level overrides | Needs C1 |
 | **A1–A2** | Redis cache / shared cooldown store | In-memory defaults for monolith |
 | **G1** | Auto resharding threshold | Shipped (#82) — `ReshardController.check` / `createAutoReshardMonitor` |
@@ -104,13 +105,12 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ## Planned next (after 1.3.0 train)
 
-Path: **B5** (in progress) → **B6** → **C1** → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
+Path: **C1** (in progress) → **C2** → **A1–A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **B5** | Components + persistent signals | **In progress** — builders + `registerPersistentSignals` |
-| **B6** | Prefix edit-tracking | — |
-| **C1** / **C2** | Permission levels + vault overrides | — |
+| **C1** | Permission levels | **In progress** — `@stambha/levels` + `permissionLevelGate` |
+| **C2** | Vault level overrides | Needs C1 |
 | **A1–A2** | Redis / shared cooldowns | Often plugins |
 | **Collectors** | Interaction/message collectors | — |
 
@@ -122,6 +122,8 @@ Path: **B5** (in progress) → **B6** → **C1** → **C2** → **A1–A2** → 
 | **B2** | Hybrid args, flags, entity resolvers | `HybridArgs`, prefix `--flags`, `userArg(rest)` (#83) |
 | **B3** | Help system | `@stambha/help` + `hidden` / `detailedDescription` (#84) |
 | **B4** | Piece lifecycle + error hooks | `onLoad` / `onUnload` / `Command.onCommandError` (#85) |
+| **B5** | Components + persistent signals | Builders + `registerPersistentSignals` (#86) |
+| **B6** | Prefix edit-tracking | `editTracking` on `attachStambhaClient` (#87) |
 | **G3-p3** | Tier 3 camelCase | Invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker → **1.4.0** (#78) |
 | **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, subscriptions, … → **1.5.0** (#79) |
 | **ADAPTERS-1.5** | Remove legacy adapters | discord.js / Discordeno shape converters removed (#80) |
