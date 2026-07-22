@@ -158,7 +158,7 @@ describe("@stambha/gateway resharding", () => {
     vi.useRealTimers();
   });
 
-  it("auto-plans scale-up when over threshold (G1)", () => {
+  it("auto-plans scale-up when over threshold", () => {
     const manager = createShardManager({ totalShards: 2 });
     const controller = createReshardController({ manager });
     const onPlan = vi.fn();

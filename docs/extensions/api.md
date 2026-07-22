@@ -62,7 +62,7 @@ Always available under `prefix`:
 
 ### File-based routes (`src/routes/`) — 1.2.0
 
-Prefer one file per route under a directory (commonly `src/routes/`), Sapphire-style `name.method.ts` naming:
+Prefer one file per route under a directory (commonly `src/routes/`), using `name.method.ts` naming:
 
 | File | Route |
 |------|--------|

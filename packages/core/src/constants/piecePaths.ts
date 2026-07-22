@@ -1,31 +1,31 @@
 /**
- * Default source folders aligned with Sapphire + Klasa conventions.
- * Used by the piece loader (future) and documented for manual project layout.
+ * Default source folders for bot pieces.
+ * Used by `@stambha/loader` and documented for project layout.
  */
 export const PiecePaths = {
-  /** Sapphire: `commands/` — Klasa: `commands/` */
+  /** Command pieces (`commands/`). */
   commands: "src/commands",
-  /** Sapphire: `listeners/` — Klasa: `events/` */
+  /** Event listeners (`listeners/`). */
   listeners: "src/listeners",
-  /** Klasa: `events/` (alias for listeners) */
+  /** Alias for {@link PiecePaths.listeners}. */
   events: "src/listeners",
-  /** Stambha: Scouts (Klasa: `monitors/`) */
+  /** Scout pieces (`scouts/`). */
   scouts: "src/scouts",
-  /** Stambha: Barriers (Klasa: `inhibitors/`) */
+  /** Barrier pieces (`barriers/`). */
   barriers: "src/barriers",
-  /** Stambha: Gates (Sapphire: `preconditions/`) */
+  /** Gate pieces (`gates/`). */
   gates: "src/gates",
-  /** Sapphire: `preconditions/` (alias for gates) */
+  /** Alias for {@link PiecePaths.gates}. */
   preconditions: "src/gates",
-  /** Stambha: Epilogues (Klasa: `finalizers/`) */
+  /** Epilogue pieces (`epilogues/`). */
   epilogues: "src/epilogues",
-  /** Klasa: `finalizers/` (alias for epilogues) */
+  /** Alias for {@link PiecePaths.epilogues}. */
   finalizers: "src/epilogues",
-  /** Stambha: Conduits (middleware) */
+  /** Conduit middleware (`conduits/`). */
   conduits: "src/conduits",
-  /** Stambha: Signals (buttons, modals, selects) */
+  /** Signal pieces — buttons, modals, selects (`signals/`). */
   signals: "src/signals",
-  /** Klasa: `tasks/` — Stambha: Chron */
+  /** Chron scheduled jobs (`tasks/`). */
   tasks: "src/tasks",
   /** Vault blueprints / ledger schemas */
   schemas: "src/schemas",

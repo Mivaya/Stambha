@@ -1,4 +1,4 @@
-/** Plugin lifecycle hook names (Sapphire-aligned). */
+/** Plugin lifecycle hook names. */
 export type PluginHookName = "preInit" | "postInit" | "preStart" | "postStart" | "postLoad";
 
 /** Implemented by {@link PluginManager} from `@stambha/plugins`. */

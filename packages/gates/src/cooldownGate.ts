@@ -45,7 +45,7 @@ function formatRetry(ms: number): string {
 }
 
 /**
- * Rate-limit gate inspired by Sapphire's Cooldown precondition.
+ * Rate-limit gate for command invocations.
  */
 export function cooldownGate(options: CooldownGateOptions): GateLike {
   const scope = options.scope ?? "userGuild";

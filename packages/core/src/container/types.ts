@@ -1,4 +1,4 @@
-/** Minimal logger interface (Sapphire `@sapphire/plugin-logger` aligned). */
+/** Minimal logger interface. */
 export interface StambhaLogger {
   debug(message: string, meta?: unknown): void;
   info(message: string, meta?: unknown): void;

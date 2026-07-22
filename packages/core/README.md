@@ -67,7 +67,7 @@ Conduit → Barrier → Gate → Command → Epilogue
 | **Hook** | `listeners/` | Gateway event listeners |
 | **Scout** | `scouts/` | Passive message watchers |
 | **Barrier** | `barriers/` | Global command blockers |
-| **Gate** | `gates/` | Per-command checks (Sapphire preconditions) |
+| **Gate** | `gates/` | Per-command checks |
 | **Conduit** | `conduits/` | Middleware before gates |
 | **Epilogue** | `epilogues/` | Post-command hooks |
 | **Signal** | `signals/` | Buttons, selects, modals (`stambha:` ids) |
@@ -82,7 +82,7 @@ Auto-load folders with [`@stambha/loader`](../loader).
 | Export | Purpose |
 |--------|---------|
 | `createStambhaBot`, `StambhaClient` | Bot client and lifecycle |
-| `button`, `selectRow`, `registerPersistentSignals`, … | Component builders (B5) |
+| `button`, `selectRow`, `registerPersistentSignals`, … | Component builders |
 | `Command`, `Hook`, `Gate`, `Scout`, … | Piece base classes |
 | `ExecutionPipeline` | Run conduit → command flow |
 | `InboundRouter`, `SignalRouter` | Dispatch commands and components |

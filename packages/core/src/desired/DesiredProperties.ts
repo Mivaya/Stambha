@@ -20,7 +20,7 @@ export interface DesiredMetaFields {
   clientPermissions?: boolean;
 }
 
-/** Client-level mask for context slimming (Discordeno-inspired). */
+/** Client-level mask for context slimming. */
 export interface DesiredProperties {
   context?: DesiredContextFields;
   meta?: DesiredMetaFields;

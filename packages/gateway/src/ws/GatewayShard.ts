@@ -39,7 +39,7 @@ export interface GatewayShardOptions {
   /** Cap for reconnect backoff (default 60_000). */
   reconnectMaxDelayMs?: number;
   /**
-   * Gateway dispatch payload normalization (G3-p1).
+   * Gateway dispatch payload normalization.
    * `default` — Tier 1 camelCase at hub; `raw` — wire snake_case escape hatch.
    */
   dispatchNormalize?: NormalizeDispatchMode;

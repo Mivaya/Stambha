@@ -21,7 +21,7 @@ export interface ReshardControllerOptions {
 
 /**
  * Operator-facing resharding state machine — plan, stagger identifies, resize shards.
- * Use {@link check} / {@link checkAutoReshard} for automatic threshold planning (G1).
+ * Use {@link check} / {@link checkAutoReshard} for automatic threshold planning.
  */
 export class ReshardController {
   private readonly manager: ShardManager;
@@ -59,7 +59,7 @@ export class ReshardController {
   }
 
   /**
-   * G1: evaluate capacity and auto-plan (optionally start) when over threshold.
+   * Evaluate capacity and auto-plan (optionally start) when over threshold.
    * Skips when busy or within cooldown after a prior auto plan.
    */
   check(guildCount: number, options?: AutoReshardCheckOptions): AutoReshardCheckResult {

@@ -7,7 +7,7 @@ function snakeKeyToCamel(key: string): string {
  * Deep-camelCase Discord gateway dispatch payload keys.
  * Values are preserved; arrays are mapped element-wise.
  *
- * Not applied at the hub boundary in v1.1 — exported for G3-p1 migration prep.
+ * Not applied at the hub boundary in v1.1 — exported for migration prep.
  */
 export function camelizeDispatch(data: unknown): unknown {
   if (data === null || data === undefined) return data;

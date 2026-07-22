@@ -106,7 +106,7 @@ const ROUTING_EVENTS = new Set<string>([
   "READY",
 ]);
 
-/** Tier 1 structural normalization (G3-p1) — camelCase at hub boundary. */
+/** Tier 1 structural normalization — camelCase at hub boundary. */
 const TIER1_EVENTS = new Set<string>([
   "MESSAGE_DELETE",
   "MESSAGE_DELETE_BULK",
@@ -127,7 +127,7 @@ const TIER1_EVENTS = new Set<string>([
   "GUILD_MEMBER_UPDATE",
 ]);
 
-/** Tier 2 structural normalization (G3-p2) — camelCase at hub boundary. */
+/** Tier 2 structural normalization — camelCase at hub boundary. */
 const TIER2_EVENTS = new Set<string>([
   "CHANNEL_CREATE",
   "CHANNEL_UPDATE",
@@ -148,7 +148,7 @@ const TIER2_EVENTS = new Set<string>([
   "GUILD_AUDIT_LOG_ENTRY_CREATE",
 ]);
 
-/** Tier 3 structural normalization (G3-p3) — camelCase at hub boundary. */
+/** Tier 3 structural normalization — camelCase at hub boundary. */
 const TIER3_EVENTS = new Set<string>([
   "INVITE_CREATE",
   "INVITE_DELETE",
@@ -170,7 +170,7 @@ const TIER3_EVENTS = new Set<string>([
   "GUILD_STICKERS_UPDATE",
 ]);
 
-/** Tier 4 structural normalization (G3-p4) — camelCase at hub boundary. */
+/** Tier 4 structural normalization — camelCase at hub boundary. */
 const TIER4_EVENTS = new Set<string>([
   "APPLICATION_COMMAND_PERMISSIONS_UPDATE",
   "AUTO_MODERATION_RULE_CREATE",
@@ -208,22 +208,22 @@ export function dispatchNormalizationTier(dispatchName: string): DispatchNormali
   return tierFor(dispatchName);
 }
 
-/** True when G3-p1 applies structural camelCase at the hub boundary. */
+/** True when Tier 1 applies structural camelCase at the hub boundary. */
 export function isTier1Dispatch(dispatchName: string): boolean {
   return tierFor(dispatchName) === "tier1";
 }
 
-/** True when G3-p2 applies structural camelCase at the hub boundary. */
+/** True when Tier 2 applies structural camelCase at the hub boundary. */
 export function isTier2Dispatch(dispatchName: string): boolean {
   return tierFor(dispatchName) === "tier2";
 }
 
-/** True when G3-p3 applies structural camelCase at the hub boundary. */
+/** True when Tier 3 applies structural camelCase at the hub boundary. */
 export function isTier3Dispatch(dispatchName: string): boolean {
   return tierFor(dispatchName) === "tier3";
 }
 
-/** True when G3-p4 applies structural camelCase at the hub boundary. */
+/** True when Tier 4 applies structural camelCase at the hub boundary. */
 export function isTier4Dispatch(dispatchName: string): boolean {
   return tierFor(dispatchName) === "tier4";
 }
@@ -243,7 +243,7 @@ export function dispatchCatalogEntry(dispatchName: GatewayDispatchEventName): Di
   };
 }
 
-/** Full dispatch catalog for tests and G3 migration planning. */
+/** Full dispatch catalog for tests and migration planning. */
 export function buildDispatchCatalog(): DispatchCatalogEntry[] {
   return GATEWAY_DISPATCH_EVENTS.map((name) => dispatchCatalogEntry(name));
 }

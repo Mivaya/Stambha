@@ -22,7 +22,6 @@ function resolveFlags(input: bigint | PermissionFlag | PermissionFlag[]): bigint
 
 /**
  * Gate that checks member and/or bot permission bitfields on {@link CommandContext.meta}.
- * Inspired by Sapphire's UserPermissions and ClientPermissions preconditions.
  */
 export function permissionsGate(options: PermissionsGateOptions): GateLike {
   const userNeed = options.user !== undefined ? resolveFlags(options.user) : 0n;

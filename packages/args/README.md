@@ -1,6 +1,6 @@
 # @stambha/args
 
-**Typed argument parsing** — prefix lexer (with flags), slash options, hybrid shared names, and REST-backed user resolvers. Sapphire Args parity without coupling to discord.js.
+**Typed argument parsing** — prefix lexer (with flags), slash options, hybrid shared names, and REST-backed user resolvers. No discord.js coupling.
 
 Part of the [**@stambha**](https://www.npmjs.com/org/stambha) monorepo · [GitHub](https://github.com/mivaya/Stambha)
 

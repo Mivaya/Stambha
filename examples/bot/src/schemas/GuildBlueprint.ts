@@ -5,6 +5,6 @@ export const GuildBlueprint = defineBlueprint({
   prefix: field.string().default("!").build(),
   modLogChannel: field.string().nullable().default(null).build(),
   welcomeEnabled: field.boolean().default(true).build(),
-  /** Per-member permission level overrides (C2). */
+  /** Per-member permission level overrides. */
   permissionLevels: permissionLevelsField(),
 });

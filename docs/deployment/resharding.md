@@ -2,19 +2,19 @@
 
 `@stambha/gateway` includes capacity planning, identify rate limiting, automatic threshold checks, and operator APIs for production sharding.
 
-## vs Discordeno auto-reshard
+## Capacity planning
 
-[Discordeno](https://discordeno.js.org/) can trigger resharding from gateway metrics automatically. Stambha provides the same **80% capacity** policy plus a deliberate migration loop (`ReshardController.nextIdentify`, `IdentifyBudget`) so you control when shards re-identify.
+Stambha evaluates shard capacity (default **80%** of guilds-per-shard) and offers a deliberate migration loop (`ReshardController.nextIdentify`, `IdentifyBudget`) so you control when shards re-identify.
 
-| | **Discordeno** | **Stambha** |
-|---|----------------|-------------|
-| Threshold detection | Built into gateway | `evaluateReshard()` / `controller.check()` |
-| Auto plan on threshold | Framework-managed | `controller.check()` / `createAutoReshardMonitor` (**G1**) |
-| Identify pacing | Framework-managed | `IdentifyBudget` + `ReshardController.nextIdentify()` |
-| Live shard reconnect | Integrated | Your WebSocket worker + `createNativeGatewayClient` |
-| Zero-downtime proxy | Gateway proxy plugin | **2.0 G2** — see [Known gaps](/guide/known-gaps) |
+| Concern | Stambha API |
+|---|---|
+| Threshold detection | `evaluateReshard()` / `controller.check()` |
+| Auto plan on threshold | `controller.check()` / `createAutoReshardMonitor` |
+| Identify pacing | `IdentifyBudget` + `ReshardController.nextIdentify()` |
+| Live shard reconnect | Your WebSocket worker + `createNativeGatewayClient` |
+| Zero-downtime proxy | Planned — see [Known gaps](/guide/known-gaps) |
 
-Live WebSocket re-identify after an auto plan is still **your worker loop** — G1 automates threshold → plan (and optional `start`), not zero-downtime reconnect (see G2).
+Live WebSocket re-identify after an auto plan is still **your worker loop** — automatic checks plan (and optionally `start`) from capacity thresholds; zero-downtime reconnect remains a separate concern.
 
 ## Shard calculator
 
@@ -50,7 +50,7 @@ if (evaluation.needed && evaluation.reason === "scale_up") {
 }
 ```
 
-## Automatic threshold check (G1)
+## Automatic threshold check
 
 `ReshardController.check` evaluates capacity and, when needed, builds a plan (optionally starts identify). Skips while a migration is in flight or within the cooldown after a prior auto plan:
 
@@ -183,7 +183,7 @@ The APIs below provide **planning and pacing** primitives. A full zero-downtime 
 2. Drain guilds that changed shard assignment (see `guildsToMigrate` on `ReshardPlan`)
 3. Respect `IdentifyBudget` across all gateway workers sharing one bot token
 
-A bundled native WebSocket gateway client integrates identify pacing; zero-downtime proxy remains **G2**.
+A bundled native WebSocket gateway client integrates identify pacing; a zero-downtime gateway proxy remains planned — see [Known gaps](/guide/known-gaps).
 
 ## Related
 

@@ -1,5 +1,5 @@
 /**
- * Tokenize prefix command argument text (Sapphire / lexure inspired).
+ * Tokenize prefix command argument text (flags + positional tokens).
  * Supports single and double quoted strings with basic backslash escapes.
  */
 export function tokenize(input: string): string[] {
