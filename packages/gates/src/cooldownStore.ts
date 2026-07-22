@@ -4,11 +4,21 @@ export interface CooldownConsumeResult {
   retryAfterMs: number;
 }
 
-/** Pluggable cooldown storage (defaults to in-memory). */
+/**
+ * Pluggable cooldown storage (defaults to in-memory).
+ *
+ * `consume` may be sync or async — Redis drivers return a Promise.
+ * Gates always `await` the result.
+ */
 export interface CooldownStore {
-  consume(key: string, limit: number, windowMs: number, now?: number): CooldownConsumeResult;
-  reset?(key: string): void;
-  clear?(): void;
+  consume(
+    key: string,
+    limit: number,
+    windowMs: number,
+    now?: number,
+  ): CooldownConsumeResult | Promise<CooldownConsumeResult>;
+  reset?(key: string): void | Promise<void>;
+  clear?(): void | Promise<void>;
 }
 
 /** Sliding-window cooldown store (single process). */
