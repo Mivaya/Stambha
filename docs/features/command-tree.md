@@ -62,9 +62,12 @@ Multiple leaves with the same `slashRoot` merge into one `/mod` command at deplo
 ```ts
 category: "General",
 subCategory: "Utility",
+description: "Short catalog line",
+detailedDescription: "Longer text for help <command>",
+hidden: false, // omit from help when true
 ```
 
-`HelpCommand` in the example bot lists commands via `client.commandIndex.byCategory()`.
+Use [`@stambha/help`](/features/help) — `HelpCommand` lists via `client.commandIndex.byCategory()` (skips `hidden` / disabled).
 
 ## Autocomplete
 

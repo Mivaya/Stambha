@@ -35,6 +35,10 @@ export class Registry<T extends Unit = Unit> {
     return this.units.has(name);
   }
 
+  /**
+   * Insert a unit without running {@link Unit.onLoad}.
+   * Prefer {@link load} when you need lifecycle (loader and hot-swap paths).
+   */
   register(unit: T): T {
     if (this.units.has(unit.name)) {
       throw new Error(`[${this.name}] Unit "${unit.name}" is already registered.`);
@@ -44,12 +48,53 @@ export class Registry<T extends Unit = Unit> {
     return unit;
   }
 
+  /**
+   * Register then await {@link Unit.onLoad}. Used by `@stambha/loader`.
+   * Safe to call if already loaded (no-ops the second onLoad).
+   */
+  async load(unit: T): Promise<T> {
+    if (!this.units.has(unit.name)) {
+      this.register(unit);
+    }
+    if (!unit.loaded) {
+      try {
+        await unit.onLoad();
+        unit.loaded = true;
+        this.client.emit("unitLoaded", { registry: this.name, unit });
+      } catch (error) {
+        this.client.emit("unitLoadError", { registry: this.name, unit: unit.name, error });
+        throw error;
+      }
+    }
+    return unit;
+  }
+
+  /** Remove without {@link Unit.onUnload}. Prefer {@link unload} for lifecycle. */
   unregister(name: string): boolean {
+    const unit = this.units.get(name);
     const removed = this.units.delete(name);
     if (removed) {
+      if (unit) unit.loaded = false;
       this.client.emit("unitUnregistered", { registry: this.name, name });
     }
     return removed;
+  }
+
+  /** Await {@link Unit.onUnload} then unregister. */
+  async unload(name: string): Promise<boolean> {
+    const unit = this.units.get(name);
+    if (!unit) return false;
+    if (unit.loaded) {
+      try {
+        await unit.onUnload();
+        unit.loaded = false;
+        this.client.emit("unitUnloaded", { registry: this.name, name });
+      } catch (error) {
+        this.client.emit("unitUnloadError", { registry: this.name, unit: name, error });
+        throw error;
+      }
+    }
+    return this.unregister(name);
   }
 
   /** Register an already-instantiated unit instance. */

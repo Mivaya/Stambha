@@ -32,9 +32,9 @@ Use this stack for new bots:
 | ID | Feature | Notes |
 |----|---------|-------|
 | **B1** | Declarative gates on `Command` options | Shipped (#74) — `cooldown` / `runIn` / `nsfw` / permissions; also `gates: [...]` / `gateNames` |
-| **B2** | Hybrid arg mapping, flags, entity resolvers | Partial `@stambha/args` today |
-| **B3** | Help system (`@stambha/help`) | PR may be open — category catalog |
-| **B4** | Piece lifecycle + error hooks | PR may be open — `onLoad` / `onUnload` / `onCommandError` |
+| **B2** | Hybrid arg mapping, flags, entity resolvers | Shipped (#83) — `HybridArgs`, prefix flags, `userArg(rest)` |
+| **B3** | Help system (`@stambha/help`) | Shipped (#84) — category catalog + `detailedDescription` / `hidden` |
+| **B4** | Piece lifecycle + error hooks | Shipped (#85) — `onLoad` / `onUnload` / `onCommandError` |
 | **B5** | Component UI builders, persistent views | **In progress** — builders + `registerPersistentSignals` |
 | **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | — |
 | **C1** | Numeric permission levels (`@stambha/levels`) | Use `userPermissionsGate` + roles today |
@@ -119,6 +119,9 @@ Path: **B5** (in progress) → **B6** → **C1** → **C2** → **A1–A2** → 
 | ID | Feature | Notes |
 |----|---------|-------|
 | **B1** | Declarative gates | `cooldown` / `runIn` / `nsfw` / permissions on `Command` (#74) |
+| **B2** | Hybrid args, flags, entity resolvers | `HybridArgs`, prefix `--flags`, `userArg(rest)` (#83) |
+| **B3** | Help system | `@stambha/help` + `hidden` / `detailedDescription` (#84) |
+| **B4** | Piece lifecycle + error hooks | `onLoad` / `onUnload` / `Command.onCommandError` (#85) |
 | **G3-p3** | Tier 3 camelCase | Invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker → **1.4.0** (#78) |
 | **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, subscriptions, … → **1.5.0** (#79) |
 | **ADAPTERS-1.5** | Remove legacy adapters | discord.js / Discordeno shape converters removed (#80) |

@@ -114,6 +114,15 @@ export class ExecutionPipeline {
     if (isOk(outcome)) {
       this.client.emit("commandSuccess", { ctx, command: command.name, durationMs });
     } else {
+      try {
+        await command.onCommandError(outcome.error, ctx);
+      } catch (hookError) {
+        this.client.emit("commandErrorHookError", {
+          command: command.name,
+          error: hookError,
+          ctx,
+        });
+      }
       this.client.emit("commandError", { ctx, command: command.name, error: outcome.error });
     }
 
