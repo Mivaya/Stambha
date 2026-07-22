@@ -3,6 +3,20 @@ export {
   attachStambhaClient,
 } from "./attachStambhaClient.js";
 export {
+  awaitInteractions,
+  awaitMessages,
+  awaitReactions,
+  Collector,
+  type CollectHandler,
+  type CollectorEndReason,
+  type CollectorHub,
+  type CollectorOptions,
+  createInteractionCollector,
+  createMessageCollector,
+  createReactionCollector,
+  type EndHandler,
+} from "./collectors/index.js";
+export {
   PrefixEditTracker,
   type PrefixEditTrackerOptions,
   type TrackedPrefixReply,
