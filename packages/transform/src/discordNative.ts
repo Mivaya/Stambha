@@ -51,6 +51,7 @@ interface DiscordInteractionPayload {
     type?: number;
     custom_id?: string;
     component_type?: number;
+    values?: string[];
     options?: DiscordOptionPayload[];
     components?: { components?: { custom_id?: string }[] }[];
   };
@@ -265,6 +266,7 @@ function componentFromDispatch(
     ...baseInteraction(payload, user),
     customId,
     componentType,
+    values: payload.data?.values ?? [],
   };
 }
 
