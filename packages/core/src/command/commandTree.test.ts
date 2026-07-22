@@ -114,6 +114,33 @@ describe("CommandIndex", () => {
     const cmd = client.commandIndex.resolveSlash({ root: "mod", subcommand: "ban" });
     expect(cmd?.name).toBe("ban");
   });
+
+  it("byCategory skips disabled and hidden", () => {
+    class HiddenPing extends Command {
+      constructor(registry: Registry<Command>) {
+        super(registry, {
+          name: "secret",
+          kinds: ["prefix"],
+          category: "Admin",
+          hidden: true,
+        });
+      }
+      execute = async () => ok(undefined);
+    }
+    class OffPing extends Command {
+      constructor(registry: Registry<Command>) {
+        super(registry, { name: "off", kinds: ["prefix"], enabled: false });
+      }
+      execute = async () => ok(undefined);
+    }
+    const client = new StambhaClient();
+    client.register(new PingCommand(client.registries.commands));
+    client.register(new HiddenPing(client.registries.commands));
+    client.register(new OffPing(client.registries.commands));
+    const byCategory = client.commandIndex.byCategory(client.registries.commands.values());
+    expect([...byCategory.keys()]).toEqual(["General"]);
+    expect(byCategory.get("General")?.map((c) => c.name)).toEqual(["ping"]);
+  });
 });
 
 describe("InboundRouter aliases", () => {
