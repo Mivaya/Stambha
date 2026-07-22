@@ -1,6 +1,6 @@
 import { type ChannelType, defineGate, type GateLike, isGuildChannelType } from "@stambha/core";
 
-/** Sapphire-style RunIn channel presets. */
+/** RunIn channel presets. */
 export const RunIn = {
   DM: "dm" as const,
   GuildText: "guild_text" as const,
@@ -38,7 +38,7 @@ function matchesRunIn(type: ChannelType, allowed: RunInOption): boolean {
 }
 
 /**
- * Restrict commands to specific channel types. Inspired by Sapphire's RunIn precondition.
+ * Restrict commands to specific channel types.
  */
 export function runInGate(...allowed: RunInOption[]): GateLike;
 export function runInGate(options: RunInGateOptions, ...allowed: RunInOption[]): GateLike;

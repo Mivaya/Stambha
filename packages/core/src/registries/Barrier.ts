@@ -10,7 +10,7 @@ export interface BarrierResult {
 
 export interface BarrierOptions extends UnitOptions {
   priority?: number;
-  /** Skip this barrier when generating help (Klasa spamProtection equivalent). */
+  /** Skip this barrier when generating help (e.g. spam-protection barriers). */
   skipOnHelp?: boolean;
 }
 

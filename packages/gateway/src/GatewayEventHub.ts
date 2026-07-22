@@ -10,7 +10,7 @@ import type { GatewayShardFatalError } from "./ws/constants.js";
 export type GatewayEventHubReadyPayload = GatewayReadyPayload;
 
 /**
- * Hub event → payload map for typed {@link GatewayEventHub} listeners (G3a).
+ * Hub event → payload map for typed {@link GatewayEventHub} listeners.
  * Extends Discord dispatch map with Stambha-only hub events.
  */
 export type GatewayEventMap = DiscordGatewayEventMap & {

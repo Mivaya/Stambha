@@ -62,7 +62,7 @@ export {
   TextInputStyle,
   type TextInputStyleId,
 } from "./components/index.js";
-// Piece paths (Sapphire / Klasa layout)
+// Piece paths (default project layout)
 export { type PiecePathKey, PiecePaths } from "./constants/piecePaths.js";
 export { ConsoleLogger } from "./container/ConsoleLogger.js";
 export { DefaultStambhaContainer } from "./container/DefaultStambhaContainer.js";

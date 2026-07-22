@@ -30,11 +30,11 @@ export interface ContextBuildOptions {
   /** Discord application id — used for slash `editReply` webhook route when not on the interaction payload. */
   applicationId?: string | null;
   /**
-   * Prefix edit-tracking (B6): when set, `reply` PATCHes this message instead of POSTing a new one.
+   * Prefix edit-tracking: when set, `reply` PATCHes this message instead of POSTing a new one.
    */
   editReplyMessageId?: string;
   /**
-   * Prefix edit-tracking (B6): called with the created message id after a successful POST reply.
+   * Prefix edit-tracking: called with the created message id after a successful POST reply.
    */
   onPrefixReplyCreated?: (replyMessageId: string) => void;
 }

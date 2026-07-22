@@ -4,13 +4,13 @@ import type { Gate, GateLike } from "../registries/Gate.js";
 
 /**
  * Optional hook used by `@stambha/gates` to turn declarative Command options
- * (`cooldown`, `runIn`, `nsfw`, permissions) into inline {@link GateLike}s (B1).
+ * (`cooldown`, `runIn`, `nsfw`, permissions) into inline {@link GateLike}s.
  */
 export type DeclarativeGatesResolver = (command: Command) => GateLike[];
 
 let declarativeGatesResolver: DeclarativeGatesResolver | undefined;
 
-/** Register the B1 declarative options → gates builder (called by `@stambha/gates`). */
+/** Register the declarative options → gates builder (called by `@stambha/gates`). */
 export function registerDeclarativeGatesResolver(resolver: DeclarativeGatesResolver): void {
   declarativeGatesResolver = resolver;
 }

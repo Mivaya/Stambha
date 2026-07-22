@@ -1,7 +1,7 @@
 {
   "name": "@stambha/help",
   "version": "1.2.1",
-  "description": "Built-in Stambha help command — list commands by category (Sapphire help parity)",
+  "description": "Built-in Stambha help command \u2014 list commands by category",
   "author": "Mivaya",
   "license": "MIT",
   "homepage": "https://github.com/mivaya/Stambha/tree/main/packages/help#readme",
@@ -18,8 +18,7 @@
     "discord-bot",
     "stambha",
     "help",
-    "commands",
-    "sapphire"
+    "commands"
   ],
   "type": "module",
   "main": "./dist/index.cjs",
