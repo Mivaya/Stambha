@@ -69,6 +69,30 @@ Keep bitfield gates when you need a **specific** Discord permission (e.g. Manage
 
 ---
 
+## Vault overrides (C2)
+
+```ts
+import { attachVaultLevelOverrides, permissionLevelsField } from "@stambha/levels";
+import { defineBlueprint, field } from "@stambha/vault";
+
+export const GuildBlueprint = defineBlueprint({
+  prefix: field.string().default("!").build(),
+  permissionLevels: permissionLevelsField(),
+});
+
+attachVaultLevelOverrides(vault, { levels: { botOwners: ["…"] } });
+```
+
+| Helper | Role |
+|--------|------|
+| `permissionLevelsField()` | Blueprint field schema |
+| `attachVaultLevelOverrides` | Wires `resolveOverride` into levels |
+| `setMemberPermissionLevel` / `clear` / `get` | CRUD for overrides |
+
+`@stambha/vault` is an optional peer — required only when using these helpers.
+
+---
+
 ## Key exports
 
 | Export | Purpose |
@@ -78,6 +102,8 @@ Keep bitfield gates when you need a **specific** Discord permission (e.g. Manage
 | `configurePermissionLevels` | Process-wide config |
 | `resolvePermissionLevel` | Resolve level for a context |
 | `permissionLevelGate` | Pipeline gate (`level >= min`) |
+| `attachVaultLevelOverrides` | Vault → `resolveOverride` |
+| `permissionLevelsField` | Guild blueprint field |
 
 ---
 
