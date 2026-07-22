@@ -29,9 +29,8 @@ export interface RateLimitQueueOptions {
 const defaultSleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 /**
- * Per-bucket request chains — serializes calls so rate limits stay centralized
- * (Discordeno `@discordeno/rest` pattern). Also enforces the global 50 req/s
- * budget and pauses all traffic on global/user 429s.
+ * Per-bucket request chains — serializes calls so rate limits stay centralized.
+ * Also enforces the global 50 req/s budget and pauses all traffic on global/user 429s.
  */
 export class RateLimitQueue {
   readonly store: RateLimitStore;

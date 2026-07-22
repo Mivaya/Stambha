@@ -1,4 +1,4 @@
-/** Minimal camelCase shapes for G3-p3 Tier 3 hub payloads (not full Discord API types). */
+/** Minimal camelCase shapes for Tier 3 hub payloads (not full Discord API types). */
 
 import type { GatewaySnowflakeUser } from "./tier1Types.js";
 

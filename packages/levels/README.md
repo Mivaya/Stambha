@@ -1,6 +1,6 @@
 # @stambha/levels
 
-Numeric **permission levels** (Klasa-style) for Stambha — Everyone → Moderator → Administrator → GuildOwner → BotOwner — plus `permissionLevelGate` for the command pipeline.
+Numeric **permission levels** for Stambha — Everyone → Moderator → Administrator → GuildOwner → BotOwner — plus `permissionLevelGate` for the command pipeline.
 
 Part of the [**@stambha**](https://www.npmjs.com/org/stambha) monorepo · [GitHub](https://github.com/mivaya/Stambha)
 
@@ -69,7 +69,7 @@ Keep bitfield gates when you need a **specific** Discord permission (e.g. Manage
 
 ---
 
-## Vault overrides (C2)
+## Vault overrides
 
 ```ts
 import { attachVaultLevelOverrides, permissionLevelsField } from "@stambha/levels";

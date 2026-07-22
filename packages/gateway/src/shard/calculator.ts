@@ -50,7 +50,7 @@ export function guildsAffectedByReshard(
   return guildIds.filter((id) => guildShardChanged(id, fromTotal, toTotal));
 }
 
-/** Shard ids owned by this worker in Discordeno-style concurrency groups. */
+/** Shard ids owned by this worker in concurrency groups. */
 export function shardIdsForWorker(
   totalShards: number,
   workerIndex: number,

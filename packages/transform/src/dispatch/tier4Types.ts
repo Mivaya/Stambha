@@ -1,4 +1,4 @@
-/** Minimal camelCase shapes for G3-p4 Tier 4 hub payloads (not full Discord API types). */
+/** Minimal camelCase shapes for Tier 4 hub payloads (not full Discord API types). */
 
 export interface GatewayApplicationCommandPermissionsUpdate {
   id: string;

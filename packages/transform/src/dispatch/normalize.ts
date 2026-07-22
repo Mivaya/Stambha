@@ -6,7 +6,7 @@ import { messageFromDispatch, readyFromDispatch } from "./messages.js";
 export type NormalizeDispatchMode = "default" | "raw";
 
 export interface NormalizeDispatchOptions {
-  /** When `'raw'`, skip Tier 1–4 structural camelCase (G3 migration escape hatch). */
+  /** When `'raw'`, skip Tier 1–4 structural camelCase (escape hatch). */
   mode?: NormalizeDispatchMode;
 }
 

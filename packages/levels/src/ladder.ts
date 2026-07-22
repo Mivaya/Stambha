@@ -1,5 +1,5 @@
 /**
- * Default Klasa-style permission ladder (higher = more privileged).
+ * Default permission ladder (higher = more privileged).
  * Commands require `level >= min` via {@link permissionLevelGate}.
  */
 export const PermissionLevel = {

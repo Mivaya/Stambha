@@ -11,7 +11,7 @@ import type { Registry } from "../pieces/Registry.js";
 import { Unit, type UnitOptions } from "../pieces/Unit.js";
 import type { GateLike } from "./Gate.js";
 
-/** Sapphire-style cooldown: seconds delay (limit 1) or full options bag. */
+/** Cooldown: seconds delay (limit 1) or full options bag. */
 export type CommandCooldownOption =
   | number
   | {
@@ -33,43 +33,43 @@ export interface CommandOptions extends UnitOptions {
   /** Inline gates (factory helpers, ad-hoc checks). Applied after declarative options. */
   gates?: GateLike[];
   /**
-   * Names of {@link Gate} pieces in `client.registries.gates` (Sapphire preconditions).
+   * Names of {@link Gate} pieces in `client.registries.gates`.
    * Only listed gates run — registry gates are not applied to every command unless {@link GateOptions.global}.
    * Alias: {@link CommandOptions.preconditions}.
    */
   gateNames?: readonly string[];
   /**
-   * Sapphire-style alias for {@link CommandOptions.gateNames}.
+   * Alias for {@link CommandOptions.gateNames}.
    * When both are set, values are concatenated (`gateNames` first).
    */
   preconditions?: readonly string[];
   /**
-   * Declarative cooldown (B1). Requires `@stambha/gates` to be imported so the
+   * Declarative cooldown. Requires `@stambha/gates` to be imported so the
    * declarative gate resolver is registered. Number = seconds delay, limit 1.
    */
   cooldown?: CommandCooldownOption;
   /**
-   * Declarative channel restriction (B1). `'guild'` → guild-only; `'dm'` → DMs only;
+   * Declarative channel restriction. `'guild'` → guild-only; `'dm'` → DMs only;
    * or one/more channel types. Requires `@stambha/gates`.
    */
   runIn?: CommandRunInOption;
-  /** When true, require an NSFW channel (B1). Requires `@stambha/gates`. */
+  /** When true, require an NSFW channel. Requires `@stambha/gates`. */
   nsfw?: boolean;
-  /** Member permission bitfield / flags (B1). Requires `@stambha/gates`. */
+  /** Member permission bitfield / flags. Requires `@stambha/gates`. */
   userPermissions?: bigint | number | readonly bigint[] | readonly number[];
-  /** Bot permission bitfield / flags (B1). Requires `@stambha/gates`. */
+  /** Bot permission bitfield / flags. Requires `@stambha/gates`. */
   clientPermissions?: bigint | number | readonly bigint[] | readonly number[];
   /** Prefix aliases (e.g. `p` for `ping`). */
   aliases?: readonly string[];
-  /** Help / grouping (Sapphire-style). */
+  /** Help / grouping category. */
   category?: string;
   subCategory?: string;
   /**
-   * Longer help text for `help <command>` (B3). Falls back to {@link description} when omitted.
+   * Longer help text for `help <command>`. Falls back to {@link description} when omitted.
    */
   detailedDescription?: string;
   /**
-   * When true, omit from help listings (B3). Command remains runnable if invoked by name.
+   * When true, omit from help listings. Command remains runnable if invoked by name.
    */
   hidden?: boolean;
   /** Top-level slash options (when not using subcommands). */
@@ -87,7 +87,7 @@ export interface CommandOptions extends UnitOptions {
   dmPermission?: boolean;
 }
 
-/** User-facing command piece (Sapphire/Klasa: `commands/` folder). */
+/** User-facing command piece (`commands/` folder). */
 export abstract class Command extends Unit<CommandOptions> {
   readonly description: string;
   readonly kinds: CommandKind[];
@@ -154,7 +154,7 @@ export abstract class Command extends Unit<CommandOptions> {
   abstract execute(ctx: CommandContext): Promise<Outcome<unknown>>;
 
   /**
-   * Called when {@link execute} returns `err()` or throws (B4).
+   * Called when {@link execute} returns `err()` or throws.
    * Default logs via `client.container.logger`. Override to customize or no-op.
    */
   async onCommandError(error: unknown, _ctx: CommandContext): Promise<void> {

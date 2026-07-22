@@ -1,4 +1,4 @@
-/** Maps a user's command message id → the bot reply created for it (B6). */
+/** Maps a user's command message id → the bot reply created for it. */
 export interface TrackedPrefixReply {
   channelId: string;
   replyId: string;
