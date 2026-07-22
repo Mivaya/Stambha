@@ -138,7 +138,7 @@ if (target?.kind === "signal") {
 
 ## Related
 
-- [Components](/features/components) — builders + `registerPersistentSignals`
+- [Components](/features/components) — classic builders, Components V2, `registerPersistentSignals`
 - [Sequences](/features/sequences) — multi-step flows using `stambha:seq:` ids
 - [Extensions](/extensions/) — `@stambha/pagination` for embed pages
 - [Pagination](/extensions/pagination) — prev / next / dismiss helper
