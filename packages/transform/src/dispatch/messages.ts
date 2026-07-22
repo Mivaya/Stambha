@@ -33,14 +33,16 @@ function userFromDiscord(user: DiscordUserPayload | undefined) {
 
 export function messageFromDispatch(data: unknown): StambhaMessage | null {
   const m = data as DiscordMessagePayload;
+  if (typeof m.content !== "string") return null;
   const author = userFromDiscord(m.author);
-  if (!author || typeof m.content !== "string") return null;
+  // MESSAGE_UPDATE may omit author; allow id+content through for edit-tracking.
+  if (!author && !m.id) return null;
   return {
     id: m.id ?? null,
     content: m.content,
     channelId: m.channel_id ?? null,
     guildId: m.guild_id ?? null,
-    author,
+    author: author ?? { id: "" },
   };
 }
 
