@@ -53,6 +53,7 @@ Wire hub events into `InboundRouter` and `SignalRouter`:
 | `autocomplete` | `true` | Route autocomplete interactions to `Command.autocomplete()` |
 | `scouts` | `true` | Run scouts on `messageCreate` / `messageUpdate` |
 | `mentionCommands` | `false` | Route `@Bot ping` via `createMentionPrefixResolver` on `ready` |
+| `editTracking` | `false` | Re-run prefix commands on `messageUpdate` and PATCH the prior bot reply |
 | `resolvePrefix` | — | Per-guild prefix resolver; sets `client.resolvePrefix` for attach lifetime |
 | `applicationId` | — | Discord app id for slash `editReply` when missing from interaction payloads |
 
@@ -62,10 +63,21 @@ import { createMentionPrefixResolver } from "@stambha/core";
 attachStambhaClient(hub, client, {
   applicationId: process.env.DISCORD_APPLICATION_ID,
   mentionCommands: true, // @Bot ping — needs ready user id
+  editTracking: true, // !ping edits update the bot reply
   resolvePrefix: async ({ guildId }) => (guildId ? await fetchPrefix(guildId) : "!"),
   signals: true,
 });
 ```
+
+### Prefix edit-tracking (`editTracking`)
+
+When enabled:
+
+1. On `messageCreate`, successful `ctx.reply` / `replyEphemeral` stores the created Discord message id against the user's message id.
+2. On `messageUpdate`, if the edited content is still a prefix command, Stambha re-invokes the command and **PATCHes** the stored reply (instead of posting a new message).
+3. If the edit is no longer a command, the stored bot reply is **deleted**.
+
+Requires message ids on create/update payloads (`StambhaMessage.id`) and a `restPort`. Partial `MESSAGE_UPDATE` payloads without `author` still work when the message was tracked on create.
 
 `mentionCommands` wires `client.resolvePrefix` on gateway `ready` using the bot user id. Pass an explicit `resolvePrefix` to override. For mention-only bots, use `createMentionPrefixResolver(botId, "")` with a prefix that does not match normal messages, or disable `prefixCommands`.
 
