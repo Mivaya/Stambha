@@ -21,7 +21,7 @@ const gated = createStambhaBot({ desiredProperties: gatesDesiredProperties });
 const slim = createStambhaBot({ desiredProperties: minimalDesiredProperties });
 ```
 
-`client.desiredProperties` is a frozen mask. `@stambha/transform` applies it when building {@link CommandContext} via `slimCommandContext`.
+`client.desiredProperties` is a frozen mask. `@stambha/transform` applies it when building `CommandContext` via `slimCommandContext`. Set `context.installContext: false` to drop `interactionContext` / `authorizingIntegrationOwners`.
 
 ### Presets
 
@@ -36,7 +36,14 @@ const slim = createStambhaBot({ desiredProperties: minimalDesiredProperties });
 ```ts
 createStambhaBot({
   desiredProperties: {
-    context: { meta: true, raw: false, argsText: true, slashOptions: true, slashPath: true },
+    context: {
+      meta: true,
+      raw: false,
+      argsText: true,
+      slashOptions: true,
+      slashPath: true,
+      installContext: true,
+    },
     meta: { channelType: true, memberPermissions: true, channelNsfw: false, clientPermissions: false },
   },
 });

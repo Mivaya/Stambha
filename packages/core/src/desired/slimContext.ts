@@ -18,6 +18,12 @@ export function slimMeta(
   if (desired.clientPermissions && meta.clientPermissions !== undefined) {
     out.clientPermissions = meta.clientPermissions;
   }
+  if (desired.memberRoleIds && meta.memberRoleIds !== undefined) {
+    out.memberRoleIds = meta.memberRoleIds;
+  }
+  if (desired.guildOwnerId && meta.guildOwnerId !== undefined) {
+    out.guildOwnerId = meta.guildOwnerId;
+  }
 
   return Object.keys(out).length > 0 ? out : undefined;
 }
@@ -41,6 +47,15 @@ export function slimCommandContext(
   if (desired.context.meta) {
     const meta = slimMeta(ctx.meta, desired.meta);
     if (meta !== undefined) Object.assign(slim, { meta });
+  }
+
+  if (desired.context.installContext) {
+    if (ctx.interactionContext !== undefined) {
+      Object.assign(slim, { interactionContext: ctx.interactionContext });
+    }
+    if (ctx.authorizingIntegrationOwners !== undefined) {
+      Object.assign(slim, { authorizingIntegrationOwners: ctx.authorizingIntegrationOwners });
+    }
   }
 
   if (desired.context.argsText && ctx.argsText !== undefined) {
