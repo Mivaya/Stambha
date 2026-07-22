@@ -61,5 +61,16 @@ export {
   userAvatarUrl,
   userDisplayName,
 } from "./resources.js";
+export {
+  type CreatePollOptions,
+  type FetchPollAnswerVotersQuery,
+  type PollAnswer,
+  type PollCreateRequest,
+  type PollMedia,
+  createPoll,
+  endPoll,
+  fetchPollAnswerVoters,
+  sendPollMessage,
+} from "./polls.js";
 export type { RateLimitQueueListener, RestTelemetry } from "./telemetry.js";
 export { createRestTelemetryListener } from "./telemetry.js";

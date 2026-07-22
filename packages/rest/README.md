@@ -87,6 +87,25 @@ await sendChannelMessage(client.restPort!, channelId, {
 
 Use with `defineArgResolver` from `@stambha/args` when you need REST-backed entity parsing.
 
+### Polls
+
+```ts
+import { createPoll, endPoll, sendPollMessage } from "@stambha/rest";
+
+const poll = createPoll({
+  question: "Ship it?",
+  answers: ["Yes", "No", { text: "Later", emoji: "⏳" }],
+  durationHours: 24,
+});
+
+await sendPollMessage(rest, channelId, { content: "Team vote", poll });
+// or via command context: await ctx.reply({ poll });
+
+await endPoll(rest, channelId, messageId);
+```
+
+See [Polls](../../docs/features/polls.md).
+
 ---
 
 ## Key exports
@@ -103,6 +122,7 @@ Use with `defineArgResolver` from `@stambha/args` when you need REST-backed enti
 | `shouldDeploySlashCommands` | Guard for multi-process sharding |
 | `formatDeployDiff` | Log diff summary |
 | `fetchUser`, `fetchGuild`, `fetchGuildMember`, … | Common REST resource helpers |
+| `createPoll`, `sendPollMessage`, `endPoll`, `fetchPollAnswerVoters` | Native Discord polls |
 | `createRestTelemetryListener` | Hook metrics into the queue |
 
 ---

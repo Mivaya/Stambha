@@ -26,6 +26,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
       { text: "Signals", link: "/features/signals" },
       { text: "Collectors", link: "/features/collectors" },
       { text: "Components", link: "/features/components" },
+      { text: "Polls", link: "/features/polls" },
       { text: "Arguments", link: "/features/args" },
       { text: "Help", link: "/features/help" },
       { text: "Command tree", link: "/features/command-tree" },

@@ -127,6 +127,7 @@ hub.on("entitlementCreate", (payload) => {
 | `messageCreate` / `messageUpdate` | `StambhaMessage` |
 | `interactionCreate` | `StambhaInteraction` |
 | `messageReactionAdd` | `GatewayMessageReactionAdd` |
+| `messagePollVoteAdd` / `messagePollVoteRemove` | `GatewayMessagePollVote` |
 | `guildMemberAdd` | `GatewayGuildMemberAdd` |
 | `channelCreate` | `GatewayChannelCreate` |
 | `inviteCreate` | `GatewayInviteCreate` |

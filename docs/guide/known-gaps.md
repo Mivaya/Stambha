@@ -46,6 +46,7 @@ Use this stack for new bots:
 | **G3** | Gateway dispatch normalization (all events) | Tier 1–4 on main → **1.4.0** / **1.5.0** (catalog complete) |
 | **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Shipped (#81) — typed `hub.on` / `once` / `off` |
 | **Collectors** | Message/reaction/interaction collectors | **In progress** — `@stambha/gateway` hub collectors |
+| **POLL-DX** | Poll create/end + vote handlers | **In progress** — `createPoll` / `endPoll` + hub vote docs |
 
 ---
 
