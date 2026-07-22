@@ -26,6 +26,7 @@
     "@stambha/core": "workspace:*",
     "@stambha/gateway": "workspace:*",
     "@stambha/gates": "workspace:*",
+    "@stambha/help": "workspace:*",
     "@stambha/loader": "workspace:*",
     "@stambha/plugins": "workspace:*",
     "@stambha/rest": "workspace:*",

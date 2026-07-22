@@ -9,7 +9,20 @@ export {
   argOk,
   unwrapArg,
 } from "./errors.js";
-export { joinFrom, tokenize } from "./lexer.js";
+export {
+  type AsyncArgResolver,
+  type ResolvedUser,
+  resolveUser,
+  userArg,
+} from "./entities.js";
+export { hybridArgsFromContext, HybridArgs } from "./hybrid.js";
+export {
+  type FlagValue,
+  joinFrom,
+  type ParsedPrefixArgs,
+  parsePrefixArgs,
+  tokenize,
+} from "./lexer.js";
 export { replyArgError, replyIfArgError } from "./reply.js";
 
 export {
