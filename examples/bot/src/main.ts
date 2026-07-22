@@ -25,6 +25,7 @@ const hub = createGatewayEventHub();
 attachStambhaClient(hub, client, {
   applicationId: process.env.DISCORD_APPLICATION_ID,
   mentionCommands: true,
+  editTracking: true,
 });
 client.setBridge(hub);
 

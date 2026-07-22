@@ -35,6 +35,7 @@ const client = createStambhaBot({ restPort: createNativeRestPort(token) });
 const hub = createGatewayEventHub();
 attachStambhaClient(hub, client, {
   // resolvePrefix: async ({ guildId }) => fetchPrefix(guildId) ?? "!",
+  // editTracking: true, // PATCH bot reply when user edits !command
 });
 client.setBridge(hub);
 
