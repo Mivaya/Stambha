@@ -30,6 +30,7 @@ interface DiscordChannelPayload {
 interface DiscordMemberPayload {
   user?: DiscordUserPayload;
   permissions?: string;
+  roles?: string[];
 }
 
 interface DiscordOptionPayload {
@@ -189,6 +190,10 @@ export function metaFromDiscordInteraction(
     } catch {
       // ignore invalid bitfield
     }
+  }
+
+  if (payload.member?.roles && payload.member.roles.length > 0) {
+    meta.memberRoleIds = [...payload.member.roles];
   }
 
   if (payload.app_permissions) {
