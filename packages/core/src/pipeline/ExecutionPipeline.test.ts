@@ -117,4 +117,39 @@ describe("ExecutionPipeline", () => {
     await client.invoke("ping", mockCtx());
     expect(onSuccess).toHaveBeenCalledOnce();
   });
+
+  it("triggers typing when command.typing is true and restPort is set", async () => {
+    const request = vi.fn().mockResolvedValue(undefined);
+    const client = new StambhaClient({ restPort: { request } });
+    const ping = new PingCommand(client.registries.commands, { name: "ping", typing: true });
+    client.register(ping);
+
+    await client.invoke("ping", mockCtx({ channelId: "ch-9" }));
+    expect(request).toHaveBeenCalledWith({
+      method: "POST",
+      route: "/channels/ch-9/typing",
+    });
+    expect(ping.execute).toHaveBeenCalledOnce();
+  });
+
+  it("still runs command when typing request fails", async () => {
+    const request = vi.fn().mockRejectedValue(new Error("rate limited"));
+    const client = new StambhaClient({ restPort: { request } });
+    const ping = new PingCommand(client.registries.commands, { name: "ping", typing: true });
+    client.register(ping);
+
+    const outcome = await client.invoke("ping", mockCtx());
+    expect(isOk(outcome)).toBe(true);
+    expect(ping.execute).toHaveBeenCalledOnce();
+  });
+
+  it("skips typing when typing is false", async () => {
+    const request = vi.fn().mockResolvedValue(undefined);
+    const client = new StambhaClient({ restPort: { request } });
+    const ping = new PingCommand(client.registries.commands, { name: "ping" });
+    client.register(ping);
+
+    await client.invoke("ping", mockCtx());
+    expect(request).not.toHaveBeenCalled();
+  });
 });

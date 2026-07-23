@@ -104,6 +104,21 @@ export type { ArgsText, ParsedSlashOptionType, SlashOption } from "./context/arg
 export type { AutocompleteChoice, AutocompleteContext } from "./context/autocomplete.js";
 export type { ChannelType, CommandContextMeta } from "./context/meta.js";
 export { isGuildChannelType } from "./context/meta.js";
+export type {
+  AuthorizingIntegrationOwners,
+  IntegrationTypeName,
+  IntegrationTypeValue,
+  InteractionContextName,
+  InteractionContextTypeValue,
+} from "./context/installContext.js";
+export {
+  IntegrationType,
+  InteractionContextType,
+  authorizingIntegrationOwnersFromApi,
+  integrationTypesToApi,
+  interactionContextFromApi,
+  interactionContextsToApi,
+} from "./context/installContext.js";
 export type { ReplyPayload } from "./context/reply.js";
 export { normalizeReplyData } from "./context/reply.js";
 export type { SignalContext } from "./context/SignalContext.js";
