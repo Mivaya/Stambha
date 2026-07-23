@@ -43,6 +43,8 @@ export interface MessageDetail {
 export interface ChannelMessageBody {
   content?: string;
   embeds?: unknown[];
+  /** Discord poll create request (snake_case). Prefer `createPoll()` from `./polls.js`. */
+  poll?: unknown;
   message_reference?: { message_id: string; channel_id?: string };
 }
 

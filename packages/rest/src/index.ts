@@ -68,6 +68,17 @@ export {
   userDisplayName,
 } from "./resources.js";
 export {
+  type CreatePollOptions,
+  type FetchPollAnswerVotersQuery,
+  type PollAnswer,
+  type PollCreateRequest,
+  type PollMedia,
+  createPoll,
+  endPoll,
+  fetchPollAnswerVoters,
+  sendPollMessage,
+} from "./polls.js";
+export {
   type ApiEntitlement,
   type ApiSku,
   consumeEntitlement,
