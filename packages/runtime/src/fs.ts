@@ -32,7 +32,7 @@ export async function readDir(dirPath: string): Promise<DirEntry[]> {
 
   try {
     const { readdir } = await import("node:fs/promises");
-    return readdir(dirPath, { withFileTypes: true });
+    return await readdir(dirPath, { withFileTypes: true });
   } catch {
     return [];
   }

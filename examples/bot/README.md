@@ -1,6 +1,10 @@
-# Starter bot example
+# Advanced bot example
 
-Full piece layout on the **native** Stambha stack (`@stambha/gateway`, `@stambha/rest`, `@stambha/transform`). Use this as your first clone target — not a minimal stub.
+**Feature-complete** Stambha starter on the native stack (`@stambha/gateway`, `@stambha/rest`, `@stambha/transform`). Conventional piece folders, vault, capabilities, signals, polls, Components V2, monetization demos, and optional tier-split workers.
+
+- Smaller Discord bot → [`../basic`](../basic)
+- Enterprise / tier-split first → [`../bigbot`](../bigbot) (self-contained; does not require this folder)
+- Pipeline smoke (no Discord) → [`../minimal`](../minimal)
 
 ## Try without a token
 
@@ -27,9 +31,10 @@ pnpm start
 | `DISCORD_APPLICATION_ID` | for slash deploy / `editReply` | Application id from the Discord developer portal |
 | `DISCORD_GUILD_ID` | optional | Guild-scoped slash deploy while testing |
 | `BOT_USER_ID` | optional (demo) | Bot user id for mention-prefix demos without `ready` |
-| `OWNER_ID` | optional | Used by owner gate demos |
+| `BOT_OWNER_ID` / `OWNER_ID` | optional | Bot owners for authz / owner gate |
 | `ENFORCE_OWNER` | optional | `1` to enable owner-only mode |
 | `MAINTENANCE` | optional | `1` to enable maintenance barrier |
+| `PREMIUM_SKU_ID` | optional | Entitlement gate demo |
 | `DEMO` | set by `pnpm demo` | Simulated events, no gateway |
 
 Tier-split vars (`REST_WORKER_URL`, `BOT_WORKER_URL`, …) are documented in `.env.example` and [deployment](../../docs/deployment/tier-split.md).
@@ -38,9 +43,9 @@ Tier-split vars (`REST_WORKER_URL`, `BOT_WORKER_URL`, …) are documented in `.e
 
 ```text
 src/
-  commands/General/     Ping, say, confirm, menu, echo, help, config
-  commands/Admin/       Setup, lock (bitfield), purge (permission levels)
-  listeners/            Ready hook
+  commands/General/     Ping, say, confirm, menu, panel, poll, premium, help, config, …
+  commands/Admin/       Setup, lock (bits), purge (capability), setcap
+  listeners/            Ready, reaction, poll vote
   scouts/               Mention logger
   barriers/             Maintenance mode
   gates/                Owner-only mode (optional)
@@ -48,13 +53,24 @@ src/
   epilogues/            Audit trail
   signals/              Button confirm handler
   tasks/                Heartbeat cron
-  schemas/              Vault guild blueprint
+  schemas/              Vault guild blueprint (capability claims)
   plugins/              Logging plugin (wired in setup)
-  lib/setup.ts          Shared client + vault + loadPieces + persistent signals
-  lib/ColorMenuSignal   Persistent select (registerPersistentSignals)
+  lib/setup.ts          Shared client + vault + authz + loadPieces
   workers/              Optional multi-process workers
   main.ts
 ```
+
+## What this demos
+
+| Area | Commands / pieces |
+|------|-------------------|
+| Args | `say`, `echo` |
+| Signals / components | `confirm`, `menu`, `panel` (V2) |
+| Polls | `poll`, `endpoll` + vote listener |
+| Authz | `purge` + `setcap` (`@stambha/authz`) |
+| Monetization | `premium` (`entitlementGate`) |
+| Vault | `config` |
+| Gates / barriers | `lock`, owner gate, maintenance |
 
 ## Split processes (optional)
 
@@ -65,4 +81,6 @@ pnpm split:gateway   # terminal 3
 # or single-process: pnpm split:demo
 ```
 
-See [deployment — process split](../../docs/deployment/tier-split.md).
+Prefer [`../bigbot`](../bigbot) when tier-split is your primary goal (self-contained; scale checklist + `DESIRED=`).
+
+See [deployment — process split](../../docs/deployment/tier-split.md) and [Examples by scale](../../docs/guide/examples.md).
