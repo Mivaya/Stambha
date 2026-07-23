@@ -90,6 +90,12 @@ export interface CommandOptions extends UnitOptions {
    */
   dmPermission?: boolean;
   /**
+   * When true, after gates pass the pipeline sends a typing indicator in
+   * `ctx.channelId` (requires `client.restPort`). Failures are ignored so
+   * the command still runs. Use for long-running handlers.
+   */
+  typing?: boolean;
+  /**
    * Installation contexts this command supports: `guild` and/or `user`.
    * Maps to Discord `integration_types` on deploy.
    */
@@ -128,6 +134,7 @@ export abstract class Command extends Unit<CommandOptions> {
   readonly slashSubcommand?: string;
   readonly defaultMemberPermissions?: bigint;
   readonly dmPermission?: boolean;
+  readonly typing: boolean;
   readonly integrationTypes?: readonly import("../context/installContext.js").IntegrationTypeName[];
   readonly contexts?: readonly import("../context/installContext.js").InteractionContextName[];
 
@@ -166,6 +173,7 @@ export abstract class Command extends Unit<CommandOptions> {
       this.defaultMemberPermissions = options.defaultMemberPermissions;
     }
     if (options.dmPermission !== undefined) this.dmPermission = options.dmPermission;
+    this.typing = options.typing === true;
     if (options.integrationTypes !== undefined) {
       this.integrationTypes = options.integrationTypes;
     }
