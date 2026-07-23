@@ -231,6 +231,12 @@ export function commandContextFromStambhaSlashViaRest(
     guildId: interaction.guildId,
     channelId,
     ...(interaction.meta ? { meta: interaction.meta } : {}),
+    ...(interaction.interactionContext !== undefined
+      ? { interactionContext: interaction.interactionContext }
+      : {}),
+    ...(interaction.authorizingIntegrationOwners !== undefined
+      ? { authorizingIntegrationOwners: interaction.authorizingIntegrationOwners }
+      : {}),
     slashPath: interaction.slashPath,
     slashOptions: interaction.slashOptions,
     raw: interaction,
@@ -287,6 +293,12 @@ export function signalContextFromStambhaInteraction(
     channelId: interaction.channelId,
     customId: interaction.customId,
     values: interaction.kind === "component" ? interaction.values : [],
+    ...(interaction.interactionContext !== undefined
+      ? { interactionContext: interaction.interactionContext }
+      : {}),
+    ...(interaction.authorizingIntegrationOwners !== undefined
+      ? { authorizingIntegrationOwners: interaction.authorizingIntegrationOwners }
+      : {}),
     raw: interaction,
     reply: callbacks.reply,
     replyEphemeral: callbacks.replyEphemeral,

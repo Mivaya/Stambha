@@ -52,6 +52,10 @@ export interface ApplicationCommandJSON {
   options?: ApplicationCommandOptionJSON[];
   default_member_permissions?: string | null;
   dm_permission?: boolean;
+  /** Discord `integration_types` — `0` guild install, `1` user install. */
+  integration_types?: number[];
+  /** Discord `contexts` — `0` guild, `1` bot DM, `2` private channel. */
+  contexts?: number[];
 }
 
 export interface ApplicationCommandOptionJSON {
