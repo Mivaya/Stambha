@@ -36,13 +36,18 @@ export {
   type RestClientOptions,
 } from "./RestClient.js";
 export {
+  type ApiApplication,
   type ApiUser,
+  type ApplicationOwner,
+  type ApplicationTeam,
+  type ApplicationTeamMember,
   addGuildMemberRole,
   type ChannelMessageBody,
   type ChannelSummary,
   ChannelType,
   deleteChannelMessage,
   editChannelMessage,
+  fetchApplication,
   fetchChannel,
   fetchChannelMessage,
   fetchGuild,
@@ -58,6 +63,7 @@ export {
   PermissionBits,
   sendChannelMessage,
   timeoutGuildMember,
+  triggerTyping,
   userAvatarUrl,
   userDisplayName,
 } from "./resources.js";
