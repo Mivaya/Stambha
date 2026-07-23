@@ -92,6 +92,8 @@ export class ExecutionPipeline {
       return { ok: false, error: denied };
     }
 
+    await this.maybeTriggerTyping(command, ctx);
+
     let outcome: Outcome<unknown>;
     try {
       outcome = await command.execute(ctx);
@@ -174,6 +176,22 @@ export class ExecutionPipeline {
       }
     }
     return null;
+  }
+
+  /** Best-effort typing indicator before `execute` when `command.typing` is set. */
+  private async maybeTriggerTyping(command: Command, ctx: CommandContext): Promise<void> {
+    if (!command.typing) return;
+    const rest = this.client.restPort;
+    const channelId = ctx.channelId;
+    if (!rest || !channelId) return;
+    try {
+      await rest.request({
+        method: "POST",
+        route: `/channels/${channelId}/typing`,
+      });
+    } catch {
+      // Typing is advisory — never block or fail the command.
+    }
   }
 
   private async runEpilogues(epilogueCtx: EpilogueContext): Promise<void> {

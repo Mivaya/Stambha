@@ -85,6 +85,8 @@ See `examples/bot` (`pnpm split:gateway`) for a full tier-split relay.
 | `createMessageCollector`, `awaitMessages`, … | One-shot hub collectors (messages / reactions / interactions) |
 | `createNativeGatewayClient` | Bundled WebSocket shard client (0.3.0) |
 | `attachStambhaClient` | Wire hub to `InboundRouter` |
+| `createHttpInteractionHandler` | Discord Interactions Endpoint (no WebSocket) |
+| `verifyDiscordInteractionRequest` | Ed25519 signature check |
 | `ShardManager`, `createShardManager` | Shard lifecycle |
 | `buildIdentifyPayload`, `buildResumePayload` | Gateway session payloads |
 | `GatewayIntent`, `combineIntents` | Intent bitfields |
