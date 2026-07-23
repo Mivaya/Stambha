@@ -3,7 +3,10 @@ import { fileURLToPath } from "node:url";
 import type { RestPort, RestRequest, StambhaClient } from "@stambha/core";
 import { createStambhaBot, HttpRestPort, registerPersistentSignals } from "@stambha/core";
 import { attachGateDeniedReply } from "@stambha/gates";
-import { attachVaultLevelOverrides } from "@stambha/levels";
+import {
+  attachVaultCapabilityClaims,
+  defineCapability,
+} from "@stambha/authz";
 import { loadPieces } from "@stambha/loader";
 import { attachPlugins } from "@stambha/plugins";
 import { createNativeRestPort } from "@stambha/rest";
@@ -72,10 +75,21 @@ export async function setupBot(options: BotSetupOptions = {}): Promise<BotSetupR
   attachGateDeniedReply(client);
 
   const owners = process.env.BOT_OWNER_ID ? [process.env.BOT_OWNER_ID] : [];
-  attachVaultLevelOverrides(vault, {
-    levels: {
+
+  defineCapability("mod.purge", {
+    discordPermissions: 1n << 13n, // ManageMessages
+    allowGuildOwner: true,
+    // roleIds: ["YOUR_MOD_ROLE_ID"],
+  });
+  defineCapability("admin.config", {
+    discordPermissions: 1n << 5n, // ManageGuild
+    allowGuildOwner: true,
+  });
+
+  attachVaultCapabilityClaims(vault, {
+    authz: {
       botOwners: owners,
-      // moderatorRoleIds / administratorRoleIds — set for your guilds
+      // roleCapabilities: { ROLE_MOD: ["mod.purge"] },
     },
   });
 
