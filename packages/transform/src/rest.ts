@@ -6,6 +6,8 @@ export interface MessageBody {
   embeds?: unknown[];
   components?: unknown[];
   flags?: number;
+  /** Discord poll create request (snake_case). */
+  poll?: unknown;
 }
 
 const EPHEMERAL = 1 << 6;

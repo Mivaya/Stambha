@@ -49,6 +49,7 @@ Use this stack for new bots:
 | **Collectors** | Message/reaction/interaction collectors | **In progress** — `@stambha/gateway` hub collectors |
 | **HTTP-INTERACTIONS** | Interaction endpoint (no gateway) | **In progress** — Ed25519 verify + `createHttpInteractionHandler` |
 | **MONETIZE-1** | SKU / entitlement DX | **In progress** — `entitlementGate` + REST list helpers |
+| **POLL-DX** | Poll create/end + vote handlers | **In progress** — `createPoll` / `endPoll` + hub vote docs |
 
 ---
 

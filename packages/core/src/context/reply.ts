@@ -9,6 +9,11 @@ export interface ReplyPayload {
    * Combined with {@link ephemeral} when building REST bodies.
    */
   flags?: number;
+  /**
+   * Native Discord poll create request (snake_case wire shape).
+   * Prefer `createPoll()` from `@stambha/rest`.
+   */
+  poll?: unknown;
   /** Slash only — uses ephemeral flag (64) on interaction callbacks. */
   ephemeral?: boolean;
 }
@@ -19,6 +24,7 @@ export function normalizeReplyData(message: string | ReplyPayload): {
   embeds?: unknown[];
   components?: unknown[];
   flags?: number;
+  poll?: unknown;
 } {
   if (typeof message === "string") {
     return { content: message };
@@ -28,6 +34,7 @@ export function normalizeReplyData(message: string | ReplyPayload): {
     embeds?: unknown[];
     components?: unknown[];
     flags?: number;
+    poll?: unknown;
   } = {};
   if (message.content !== undefined) data.content = message.content;
   if (message.embeds && message.embeds.length > 0) {
@@ -39,7 +46,13 @@ export function normalizeReplyData(message: string | ReplyPayload): {
   if (typeof message.flags === "number" && message.flags !== 0) {
     data.flags = message.flags;
   }
-  if (data.content === undefined && !data.embeds?.length && !data.components?.length) {
+  if (message.poll !== undefined) data.poll = message.poll;
+  if (
+    data.content === undefined &&
+    !data.embeds?.length &&
+    !data.components?.length &&
+    data.poll === undefined
+  ) {
     data.content = " ";
   }
   return data;
