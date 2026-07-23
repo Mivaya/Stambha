@@ -16,6 +16,7 @@ export {
   isGuildSoundboardSoundCreatePayload,
   isIntegrationCreatePayload,
   isInviteCreatePayload,
+  isMessagePollVotePayload,
   isMessageReactionAddPayload,
   isStageInstanceCreatePayload,
   isSubscriptionCreatePayload,

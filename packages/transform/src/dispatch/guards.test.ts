@@ -21,6 +21,7 @@ import {
   isGuildSoundboardSoundCreatePayload,
   isIntegrationCreatePayload,
   isInviteCreatePayload,
+  isMessagePollVotePayload,
   isMessageReactionAddPayload,
   isStageInstanceCreatePayload,
   isSubscriptionCreatePayload,
@@ -40,6 +41,29 @@ describe("dispatch/guards", () => {
       expect(payload.guildId).toBe("g1");
       expect(payload.emoji.name).toBe("wave");
     }
+  });
+
+  it("recognizes camelized poll vote payloads", () => {
+    const payload = camelizeDispatch({
+      user_id: "u1",
+      channel_id: "c1",
+      message_id: "m1",
+      guild_id: "g1",
+      answer_id: 2,
+    });
+    expect(isMessagePollVotePayload(payload)).toBe(true);
+    if (isMessagePollVotePayload(payload)) {
+      expect(payload.answerId).toBe(2);
+      expect(payload.userId).toBe("u1");
+    }
+    expect(
+      isMessagePollVotePayload({
+        user_id: "u1",
+        channel_id: "c1",
+        message_id: "m1",
+        answer_id: 1,
+      }),
+    ).toBe(false);
   });
 
   it("recognizes camelized guild member add payloads", () => {
