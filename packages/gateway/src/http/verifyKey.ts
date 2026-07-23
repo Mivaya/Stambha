@@ -3,7 +3,8 @@
  * Uses Web Crypto so the same code works in Node 20+ and Workers.
  */
 
-function hexToBytes(hex: string): Uint8Array {
+/** Web Crypto `BufferSource` requires `ArrayBuffer`-backed views (not SharedArrayBuffer). */
+function hexToBytes(hex: string): Uint8Array<ArrayBuffer> {
   const cleaned = hex.trim();
   if (cleaned.length % 2 !== 0) throw new Error("Invalid hex length");
   const out = new Uint8Array(cleaned.length / 2);
@@ -13,13 +14,17 @@ function hexToBytes(hex: string): Uint8Array {
   return out;
 }
 
-function toBytes(value: string | Uint8Array | ArrayBuffer): Uint8Array {
+function toBytes(value: string | Uint8Array | ArrayBuffer): Uint8Array<ArrayBuffer> {
   if (typeof value === "string") return new TextEncoder().encode(value);
-  if (value instanceof Uint8Array) return value;
+  if (value instanceof Uint8Array) {
+    const copy = new Uint8Array(value.byteLength);
+    copy.set(value);
+    return copy;
+  }
   return new Uint8Array(value);
 }
 
-function concatBytes(a: Uint8Array, b: Uint8Array): Uint8Array {
+function concatBytes(a: Uint8Array, b: Uint8Array): Uint8Array<ArrayBuffer> {
   const out = new Uint8Array(a.length + b.length);
   out.set(a, 0);
   out.set(b, a.length);
