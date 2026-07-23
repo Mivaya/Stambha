@@ -38,12 +38,29 @@ export {
   type ButtonComponent,
   type ButtonOptions,
   type ButtonStyleId,
+  collectCustomIds,
   type ComponentEmoji,
+  componentsV2,
+  type ComponentsV2Options,
   ComponentType,
   type ComponentTypeId,
   confirmCancelRow,
+  container,
+  type ContainerChild,
+  type ContainerComponent,
+  type ContainerOptions,
+  fileComponent,
+  type FileComponent,
+  type FileComponentOptions,
   linkButton,
   type LinkButtonOptions,
+  mediaGallery,
+  type MediaGalleryComponent,
+  type MediaGalleryItem,
+  type MediaGalleryOptions,
+  type MessageComponentV2,
+  type MessageFlag,
+  MessageFlags,
   modal,
   type ModalComponent,
   type ModalOptions,
@@ -51,16 +68,32 @@ export {
   registerPersistentSignals,
   type ActionRowChild,
   type ActionRowComponent,
+  section,
+  type SectionAccessory,
+  type SectionComponent,
+  type SectionOptions,
   type SelectOption,
   selectRow,
+  separator,
+  type SeparatorComponent,
+  type SeparatorOptions,
+  SeparatorSpacing,
+  type SeparatorSpacingId,
   stringSelect,
   type StringSelectComponent,
   type StringSelectOptions,
+  textDisplay,
+  type TextDisplayComponent,
+  type TextDisplayOptions,
   textInput,
   type TextInputComponent,
   type TextInputOptions,
   TextInputStyle,
   type TextInputStyleId,
+  thumbnail,
+  type ThumbnailComponent,
+  type ThumbnailOptions,
+  type UnfurledMediaItem,
 } from "./components/index.js";
 // Piece paths (default project layout)
 export { type PiecePathKey, PiecePaths } from "./constants/piecePaths.js";
@@ -69,8 +102,23 @@ export { DefaultStambhaContainer } from "./container/DefaultStambhaContainer.js"
 export type { StambhaContainerLike, StambhaLogger } from "./container/types.js";
 export type { ArgsText, ParsedSlashOptionType, SlashOption } from "./context/args.js";
 export type { AutocompleteChoice, AutocompleteContext } from "./context/autocomplete.js";
-export type { ChannelType, CommandContextMeta } from "./context/meta.js";
+export type { ChannelType, CommandContextMeta, EntitlementSummary } from "./context/meta.js";
 export { isGuildChannelType } from "./context/meta.js";
+export type {
+  AuthorizingIntegrationOwners,
+  IntegrationTypeName,
+  IntegrationTypeValue,
+  InteractionContextName,
+  InteractionContextTypeValue,
+} from "./context/installContext.js";
+export {
+  IntegrationType,
+  InteractionContextType,
+  authorizingIntegrationOwnersFromApi,
+  integrationTypesToApi,
+  interactionContextFromApi,
+  interactionContextsToApi,
+} from "./context/installContext.js";
 export type { ReplyPayload } from "./context/reply.js";
 export { normalizeReplyData } from "./context/reply.js";
 export type { SignalContext } from "./context/SignalContext.js";

@@ -22,6 +22,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
       { text: "Barriers", link: "/features/barriers" },
       { text: "Gates", link: "/features/gates" },
       { text: "Permission levels", link: "/features/levels" },
+      { text: "Monetization", link: "/features/monetization" },
       { text: "Epilogues", link: "/features/epilogues" },
       { text: "Signals", link: "/features/signals" },
       { text: "Collectors", link: "/features/collectors" },

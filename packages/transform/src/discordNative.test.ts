@@ -36,6 +36,62 @@ describe("interactionFromDispatch", () => {
     expect(interaction.meta?.channelType).toBe("guild_text");
   });
 
+  it("maps interaction entitlements onto meta", () => {
+    const interaction = interactionFromDispatch({
+      id: "i-ent",
+      token: "tok",
+      type: 2,
+      application_id: "app",
+      user: { id: "u1" },
+      channel_id: "c1",
+      entitlements: [
+        {
+          id: "e1",
+          sku_id: "sku-premium",
+          application_id: "app",
+          user_id: "u1",
+          type: 8,
+          deleted: false,
+          ends_at: null,
+        },
+      ],
+      data: { name: "premium" },
+    });
+
+    expect(interaction?.kind).toBe("slash");
+    if (interaction?.kind !== "slash") return;
+    expect(interaction.meta?.entitlements).toEqual([
+      {
+        id: "e1",
+        skuId: "sku-premium",
+        applicationId: "app",
+        userId: "u1",
+        type: 8,
+        deleted: false,
+        endsAt: null,
+      },
+    ]);
+  });
+
+  it("parses interaction context and authorizing integration owners", () => {
+    const interaction = interactionFromDispatch({
+      id: "i5",
+      token: "tok5",
+      type: 2,
+      application_id: "app",
+      context: 1,
+      authorizing_integration_owners: { "1": "user-installer" },
+      user: { id: "u1" },
+      channel_id: "c1",
+      data: { name: "profile" },
+    });
+
+    expect(interaction?.kind).toBe("slash");
+    if (interaction?.kind !== "slash") return;
+    expect(interaction.interactionContext).toBe("bot_dm");
+    expect(interaction.authorizingIntegrationOwners).toEqual({ userInstall: "user-installer" });
+  });
+
   it("parses autocomplete interactions", () => {
     const interaction = interactionFromDispatch({
       id: "i2",
