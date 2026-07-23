@@ -50,6 +50,7 @@ Use this stack for new bots:
 | **HTTP-INTERACTIONS** | Interaction endpoint (no gateway) | **In progress** — Ed25519 verify + `createHttpInteractionHandler` |
 | **MONETIZE-1** | SKU / entitlement DX | **In progress** — `entitlementGate` + REST list helpers |
 | **POLL-DX** | Poll create/end + vote handlers | **In progress** — `createPoll` / `endPoll` + hub vote docs |
+| **REST-SURFACE** | High-level REST for modern resources | **In progress** — scheduled events, automod CRUD, soundboard |
 
 ---
 
