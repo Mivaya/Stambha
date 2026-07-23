@@ -58,8 +58,10 @@ For production wiring (REST + gateway), see [`examples/bot`](https://github.com/
 Inbound events flow through pieces in order:
 
 ```
-Conduit → Barrier → Gate → Command → Epilogue
+Conduit → Barrier → Gate → (optional typing) → Command → Epilogue
 ```
+
+Set `typing: true` on a `Command` to send a channel typing indicator after gates pass (needs `restPort` + `channelId`).
 
 | Piece | Folder | Role |
 |-------|--------|------|

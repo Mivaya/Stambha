@@ -77,13 +77,26 @@ if (shouldDeploySlashCommands({ shardId: 0 })) {
 Thin wrappers over `RestPort.request` for common bot operations — no discord.js required:
 
 ```ts
-import { fetchUser, fetchGuildMember, sendChannelMessage } from "@stambha/rest";
+import {
+  fetchApplication,
+  fetchUser,
+  fetchGuildMember,
+  sendChannelMessage,
+  triggerTyping,
+} from "@stambha/rest";
 
 const user = await fetchUser(client.restPort!, userId);
 await sendChannelMessage(client.restPort!, channelId, {
   embeds: [{ title: "Hello" }],
 });
+
+const app = await fetchApplication(client.restPort!);
+// app?.owner, app?.team — from GET /oauth2/applications/@me
+
+await triggerTyping(client.restPort!, channelId);
 ```
+
+Commands can also set `typing: true` so the core pipeline triggers typing automatically after gates pass.
 
 Use with `defineArgResolver` from `@stambha/args` when you need REST-backed entity parsing.
 
@@ -103,6 +116,8 @@ Use with `defineArgResolver` from `@stambha/args` when you need REST-backed enti
 | `shouldDeploySlashCommands` | Guard for multi-process sharding |
 | `formatDeployDiff` | Log diff summary |
 | `fetchUser`, `fetchGuild`, `fetchGuildMember`, … | Common REST resource helpers |
+| `fetchApplication` | Current bot application (`owner` / `team`) |
+| `triggerTyping` | Channel typing indicator |
 | `createRestTelemetryListener` | Hook metrics into the queue |
 
 ---
