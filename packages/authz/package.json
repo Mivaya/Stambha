@@ -1,14 +1,14 @@
 {
-  "name": "@stambha/levels",
+  "name": "@stambha/authz",
   "version": "1.2.1",
-  "description": "Numeric permission levels for Stambha \u2014 ladder + permissionLevelGate",
+  "description": "Named capability authorization for Stambha — Discord permission floor, role grants, Vault claims",
   "author": "Mivaya",
   "license": "MIT",
-  "homepage": "https://github.com/mivaya/Stambha/tree/main/packages/levels#readme",
+  "homepage": "https://github.com/mivaya/Stambha/tree/main/packages/authz#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mivaya/Stambha.git",
-    "directory": "packages/levels"
+    "directory": "packages/authz"
   },
   "bugs": {
     "url": "https://github.com/mivaya/Stambha/issues"
@@ -17,7 +17,8 @@
     "discord",
     "discord-bot",
     "stambha",
-    "levels",
+    "authz",
+    "capabilities",
     "permissions"
   ],
   "type": "module",

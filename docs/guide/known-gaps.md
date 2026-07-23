@@ -16,7 +16,7 @@ Use this stack for new bots:
 | Transform | `@stambha/transform` | Normalized hub events (`StambhaMessage`, `StambhaInteraction`), dispatch catalog |
 | Loader | `@stambha/loader` | Auto-load pieces from `src/` folders |
 | Gates | `@stambha/gates` | Cooldowns, permissions, channel checks |
-| Levels | `@stambha/levels` | Numeric staff hierarchy (C1) |
+| Authz | `@stambha/authz` | Named capabilities (`capabilityGate`) |
 
 **Routing (0.3.5+):** `attachStambhaClient` handles prefix commands, slash commands (with options and `ctx.meta`), autocomplete, signals (buttons/selects/modals), and scouts — when the gateway emits normalized payloads.
 
@@ -39,8 +39,8 @@ Use this stack for new bots:
 | **B5** | Component UI builders, persistent views | Shipped (#86) — builders + `registerPersistentSignals` |
 | **COMP-V2** | Components V2 layouts | **In progress** — `componentsV2` / Container / Text Display + Signal buttons |
 | **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | Shipped (#87) — `editTracking` on `attachStambhaClient` |
-| **C1** | Numeric permission levels (`@stambha/levels`) | Shipped (#88) — ladder + `permissionLevelGate` |
-| **C2** | Vault level overrides | Shipped (#89) — guild `permissionLevels` + `setlevel` |
+| **C1** / **C2** | Numeric permission levels + Vault overrides | **Superseded** — replaced by **AUTHZ-CAP** (`@stambha/authz`); not shipping levels |
+| **AUTHZ-CAP** | Named capabilities + Vault claims | **In progress** — Discord floor + `capabilityGate` + Vault grants/denies |
 | **A1** | Redis cache (`@stambha/cache-redis`) | **In progress** — shared `Cache` across workers |
 | **A2** | Shared Redis cooldown store | Memory `CooldownStore` default; Redis driver planned |
 | **G1** | Auto resharding threshold | Shipped (#82) — `ReshardController.check` / `createAutoReshardMonitor` |
@@ -132,8 +132,8 @@ A1 / A2 / collectors are on `main` (release cut pending). Branch from `main` per
 | **B4** | Piece lifecycle + error hooks | `onLoad` / `onUnload` / `Command.onCommandError` (#85) |
 | **B5** | Components + persistent signals | Builders + `registerPersistentSignals` (#86) |
 | **B6** | Prefix edit-tracking | `editTracking` on `attachStambhaClient` (#87) |
-| **C1** | Permission levels | `@stambha/levels` + `permissionLevelGate` (#88) |
-| **C2** | Vault level overrides | Guild `permissionLevels` + `setlevel` (#89) |
+| **C1** / **C2** | Numeric levels (superseded) | Replaced by `@stambha/authz` capabilities — do not ship `@stambha/levels` |
+| **AUTHZ-CAP** | Capabilities | `@stambha/authz` — `capabilityGate` + Vault `capabilityClaims` |
 | **G3-p3** | Tier 3 camelCase | Invites, integrations, stage, scheduled events, typing, webhooks, emoji/sticker → **1.4.0** (#78) |
 | **G3-p4** | Tier 4 camelCase | Automod, soundboard, entitlements, subscriptions, … → **1.5.0** (#79) |
 | **ADAPTERS-1.5** | Remove legacy adapters | discord.js / Discordeno shape converters removed (#80) |
