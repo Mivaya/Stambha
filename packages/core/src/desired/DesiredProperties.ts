@@ -8,6 +8,8 @@ export interface DesiredContextFields {
   slashOptions?: boolean;
   /** Slash command path (root / group / sub). Default `true`. */
   slashPath?: boolean;
+  /** Interaction context + authorizing install owners. Default `true`. */
+  installContext?: boolean;
   /** Original transport object on `raw`. Default `true`. */
   raw?: boolean;
 }
@@ -18,6 +20,8 @@ export interface DesiredMetaFields {
   channelNsfw?: boolean;
   memberPermissions?: boolean;
   clientPermissions?: boolean;
+  memberRoleIds?: boolean;
+  guildOwnerId?: boolean;
 }
 
 /** Client-level mask for context slimming. */
@@ -36,6 +40,7 @@ const DEFAULT_CONTEXT: Required<DesiredContextFields> = {
   argsText: true,
   slashOptions: true,
   slashPath: true,
+  installContext: true,
   raw: true,
 };
 
@@ -44,9 +49,11 @@ const DEFAULT_META: Required<DesiredMetaFields> = {
   channelNsfw: true,
   memberPermissions: true,
   clientPermissions: true,
+  memberRoleIds: true,
+  guildOwnerId: true,
 };
 
-/** Full context — default for discord.js bots and local development. */
+/** Full context — default for local development and most bots. */
 export const defaultDesiredProperties: ResolvedDesiredProperties = Object.freeze({
   context: DEFAULT_CONTEXT,
   meta: DEFAULT_META,
@@ -54,19 +61,42 @@ export const defaultDesiredProperties: ResolvedDesiredProperties = Object.freeze
 
 /** Drop `raw` and gate metadata — lower RAM, commands still run. */
 export const minimalDesiredProperties: DesiredProperties = Object.freeze({
-  context: { meta: false, argsText: true, slashOptions: true, slashPath: true, raw: false },
+  context: {
+    meta: false,
+    argsText: true,
+    slashOptions: true,
+    slashPath: true,
+    installContext: false,
+    raw: false,
+  },
   meta: {
     channelType: false,
     channelNsfw: false,
     memberPermissions: false,
     clientPermissions: false,
+    memberRoleIds: false,
+    guildOwnerId: false,
   },
 });
 
 /** Only fields required by `@stambha/gates`. */
 export const gatesDesiredProperties: DesiredProperties = Object.freeze({
-  context: { meta: true, argsText: true, slashOptions: true, slashPath: true, raw: false },
-  meta: { channelType: true, channelNsfw: true, memberPermissions: true, clientPermissions: true },
+  context: {
+    meta: true,
+    argsText: true,
+    slashOptions: true,
+    slashPath: true,
+    installContext: false,
+    raw: false,
+  },
+  meta: {
+    channelType: true,
+    channelNsfw: true,
+    memberPermissions: true,
+    clientPermissions: true,
+    memberRoleIds: false,
+    guildOwnerId: false,
+  },
 });
 
 export function resolveDesiredProperties(overrides?: DesiredProperties): ResolvedDesiredProperties {

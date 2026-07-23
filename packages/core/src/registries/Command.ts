@@ -84,6 +84,10 @@ export interface CommandOptions extends UnitOptions {
   slashGroupDescription?: string;
   slashSubcommand?: string;
   defaultMemberPermissions?: bigint;
+  /**
+   * Whether the command appears in DMs (legacy Discord field).
+   * Prefer {@link CommandOptions.contexts} for user-installable apps.
+   */
   dmPermission?: boolean;
   /**
    * When true, after gates pass the pipeline sends a typing indicator in
@@ -91,6 +95,17 @@ export interface CommandOptions extends UnitOptions {
    * the command still runs. Use for long-running handlers.
    */
   typing?: boolean;
+  /**
+   * Installation contexts this command supports: `guild` and/or `user`.
+   * Maps to Discord `integration_types` on deploy.
+   */
+  integrationTypes?: readonly import("../context/installContext.js").IntegrationTypeName[];
+  /**
+   * Interaction surfaces where this command can be used:
+   * `guild` | `bot_dm` | `private_channel`.
+   * Maps to Discord `contexts` on deploy. `private_channel` requires `user` in {@link CommandOptions.integrationTypes}.
+   */
+  contexts?: readonly import("../context/installContext.js").InteractionContextName[];
 }
 
 /** User-facing command piece (`commands/` folder). */
@@ -120,6 +135,8 @@ export abstract class Command extends Unit<CommandOptions> {
   readonly defaultMemberPermissions?: bigint;
   readonly dmPermission?: boolean;
   readonly typing: boolean;
+  readonly integrationTypes?: readonly import("../context/installContext.js").IntegrationTypeName[];
+  readonly contexts?: readonly import("../context/installContext.js").InteractionContextName[];
 
   constructor(registry: Registry<Command>, options: CommandOptions) {
     super(registry, options);
@@ -157,6 +174,10 @@ export abstract class Command extends Unit<CommandOptions> {
     }
     if (options.dmPermission !== undefined) this.dmPermission = options.dmPermission;
     this.typing = options.typing === true;
+    if (options.integrationTypes !== undefined) {
+      this.integrationTypes = options.integrationTypes;
+    }
+    if (options.contexts !== undefined) this.contexts = options.contexts;
   }
 
   abstract execute(ctx: CommandContext): Promise<Outcome<unknown>>;

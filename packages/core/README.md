@@ -86,6 +86,7 @@ Auto-load folders with [`@stambha/loader`](../loader).
 | `createStambhaBot`, `StambhaClient` | Bot client and lifecycle |
 | `button`, `selectRow`, `registerPersistentSignals`, … | Component builders |
 | `Command`, `Hook`, `Gate`, `Scout`, … | Piece base classes |
+| `integrationTypes` / `contexts` on `Command` | User-installable slash commands |
 | `ExecutionPipeline` | Run conduit → command flow |
 | `InboundRouter`, `SignalRouter` | Dispatch commands and components |
 | `sequence`, `SequenceBuilder` | Multi-step UI flows |
