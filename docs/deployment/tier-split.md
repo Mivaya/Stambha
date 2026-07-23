@@ -92,26 +92,26 @@ Discord → gateway worker → worker bus → bot worker (attachStambhaClient)
 
 See [Known gaps](/guide/known-gaps) for distributed Chron (**2.0**) — scheduled tasks today assume a single bot process.
 
-## Example: `examples/bot`
+## Example: `examples/bigbot` / `examples/bot`
 
-Full piece-based layout plus optional split workers in `src/workers/`.
+Prefer **bigbot** when tier-split is the goal (scale checklist + `DESIRED=`). It is **self-contained** — copy only `examples/bigbot` if you want; it does not import sibling examples.
 
 Three processes:
 
 ```bash
-cd examples/bot && pnpm split:rest    # terminal 1
-cd examples/bot && pnpm split:bot     # terminal 2
-cd examples/bot && pnpm split:gateway # terminal 3
+cd examples/bigbot && pnpm split:rest    # terminal 1
+cd examples/bigbot && pnpm split:bot     # terminal 2 — REST_WORKER_URL=http://127.0.0.1:4000
+cd examples/bigbot && pnpm split:gateway # terminal 3 — BOT_WORKER_URL=http://127.0.0.1:5000
 ```
 
-Monolith (all folders):
+Feature demos without enterprise knobs also live under `examples/bot`:
 
 ```bash
 cd examples/bot && pnpm demo    # no token — simulates commands
 cd examples/bot && pnpm start   # with DISCORD_TOKEN
 ```
 
-Copy `.env.example` → `.env` before running with a real token.
+Copy `.env.example` → `.env` before running with a real token. See [Examples by scale](/guide/examples) and [Deployment overview](/deployment/overview).
 
 ## Core APIs
 

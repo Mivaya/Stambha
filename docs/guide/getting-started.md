@@ -1,20 +1,21 @@
 # Getting started
 
-Build a minimal Stambha bot on the **native stack** (`@stambha/rest`, `@stambha/gateway`, `@stambha/transform`).
+Build a Stambha bot on the **native stack** (`@stambha/rest`, `@stambha/gateway`, `@stambha/transform`).
+
+Pick an example by size → [Examples by scale](/guide/examples).
 
 ## Fastest path — no token
 
-Clone the **starter bot** and run the demo pipeline:
+| Goal | Command |
+|------|---------|
+| Small Discord-shaped demo | `cd examples/basic && pnpm install && pnpm demo` |
+| Serverless slash (no gateway) | `cd examples/http-interactions && pnpm install && pnpm demo` |
+| Full feature demo | `cd examples/bot && pnpm install && pnpm demo` |
+| Pipeline unit smoke | `cd examples/minimal && pnpm install && pnpm start` |
 
-```bash
-cd examples/bot
-pnpm install
-pnpm demo
-```
+No Discord token required for `demo` / minimal. You’ll see prefix commands (and on `bot`, signals + mentions) against the real pipeline.
 
-No Discord token required. You’ll see prefix commands, a confirm button signal, and mention routing against the real stack. Details: [examples/bot](https://github.com/mivaya/Stambha/tree/main/examples/bot) (full piece layout — use this as your first clone target).
-
-When you’re ready for a live bot, continue below.
+When you’re ready for a live bot, continue below — or copy `examples/basic` as your greenfield layout.
 
 ## Prerequisites
 
@@ -27,7 +28,14 @@ When you’re ready for a live bot, continue below.
 pnpm add @stambha/core @stambha/rest @stambha/gateway @stambha/transform @stambha/loader @stambha/gates @stambha/args
 ```
 
-Optional: `@stambha/vault` for typed guild config; extensions from [Stambha-plugins](https://github.com/Mivaya/Stambha-plugins) — start at [Extensions](/extensions/) ([Pagination](/extensions/pagination), [Metrics](/extensions/metrics), …).
+Common next packages:
+
+| Package | When |
+|---------|------|
+| `@stambha/authz` | Staff capabilities (not numeric levels) |
+| `@stambha/vault` | Typed guild config |
+| `@stambha/help` | Help catalog |
+| Extensions | [Pagination](/extensions/pagination), [Metrics](/extensions/metrics), … — [Extensions hub](/extensions/) |
 
 > **CommonJS:** Pin `@stambha/*@0.2.1` or newer for `require()`. ESM projects can use current versions.
 
@@ -131,6 +139,8 @@ export class SayCommand extends Command {
 
 On the native stack, slash interactions populate `ctx.meta` (permissions, channel type) for gates — no manual bridge code.
 
+Staff hierarchy beyond Discord bits → [Capabilities](/features/capabilities) (`capabilityGate`), not numeric levels.
+
 ## 4. Signals (buttons)
 
 ```ts
@@ -164,7 +174,7 @@ await ctx.reply({
 });
 ```
 
-`attachStambhaClient` routes `interactionCreate` with `stambha:` custom ids to your signal pieces. See [Signals](/features/signals).
+`attachStambhaClient` routes `interactionCreate` with `stambha:` custom ids to your signal pieces. See [Signals](/features/signals). Prefer builders from [Components](/features/components) for production UI.
 
 ## 5. Deploy slash commands
 
@@ -182,21 +192,22 @@ For guild-scoped testing, pass `guildId`. In sharded bots, deploy from shard 0 o
 
 User-installable commands: set `integrationTypes` / `contexts` on the Command — see [Command tree](/features/command-tree#installation--interaction-contexts).
 
-## 6. Run the starter example against Discord
+## 6. Grow beyond basic
 
-```bash
-cd examples/bot
-cp .env.example .env   # set DISCORD_TOKEN and DISCORD_APPLICATION_ID
-pnpm install
-pnpm start
-```
-
-The example demonstrates slash options (`/say`), a confirm button (`/confirm` → `ConfirmSignal`), and permission gates (`/lock`).
+| Next need | Guide / example |
+|-----------|-----------------|
+| Vault, authz, polls, V2 panels | [`examples/bot`](https://github.com/Mivaya/Stambha/tree/main/examples/bot) |
+| REST worker / multi-process | [Tier split](/deployment/tier-split), [`examples/bigbot`](https://github.com/Mivaya/Stambha/tree/main/examples/bigbot) |
+| Many shards | [Resharding](/deployment/resharding) |
+| HTTP-only / Workers | [`examples/http-interactions`](https://github.com/Mivaya/Stambha/tree/main/examples/http-interactions), [HTTP interactions](/deployment/http-interactions) |
+| Premium SKUs | [Monetization](/features/monetization) |
+| Polls / scheduled events / automod | [Polls](/features/polls), [REST surface](/features/rest-surface) |
 
 ## Next steps
 
+- [Examples by scale](/guide/examples) — minimal → basic → advanced → bigbot → http-interactions
 - [Architecture](/guide/architecture) — how events flow through the native stack
 - [Project structure](/guide/project-structure) — folder layout
 - [Pieces & pipeline](/guide/pieces) — scouts, conduits, barriers, gates, epilogues
-- [Known gaps](/guide/known-gaps) — what is planned for 1.x / 2.0
-- [Tier split](/deployment/tier-split) — multi-process deployment
+- [Deployment overview](/deployment/overview) — monolith vs tier-split
+- [Known gaps](/guide/known-gaps) — what is still missing

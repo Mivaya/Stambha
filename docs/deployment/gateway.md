@@ -377,7 +377,7 @@ See [Cache](/extensions/cache) for options (`keyPrefix`, TTL). Redis is optional
 | Gateway worker | `@stambha/gateway` | WebSocket shards, relay events |
 | Bot worker | `@stambha/core` + `@stambha/transform` | Commands, vault, sequences |
 
-See [Tier split](/deployment/tier-split) and `examples/bot` for the three-process layout.
+See [Tier split](/deployment/tier-split) and `examples/bigbot` (or `examples/bot`) for the three-process layout.
 
 ## Related
 

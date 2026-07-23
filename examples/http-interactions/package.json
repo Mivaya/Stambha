@@ -1,0 +1,33 @@
+{
+  "name": "@stambha/example-http-interactions",
+  "version": "0.2.1",
+  "private": true,
+  "description": "Serverless slash — Discord Interactions Endpoint (no WebSocket gateway)",
+  "author": "Mivaya",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mivaya/Stambha.git",
+    "directory": "examples/http-interactions"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "demo": "DEMO=1 tsx src/main.ts",
+    "deploy:slash": "tsx scripts/deploy-slash.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@stambha/args": "workspace:*",
+    "@stambha/core": "workspace:*",
+    "@stambha/gateway": "workspace:*",
+    "@stambha/loader": "workspace:*",
+    "@stambha/rest": "workspace:*",
+    "@stambha/transform": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "tsx": "^4.23.1",
+    "typescript": "^6.0.3"
+  }
+}
