@@ -12,7 +12,7 @@ Many production bots already use **Prisma, Drizzle, or SQL** for economy, quests
 | Guild prefix, module toggles, log channels       | Custom `GuildConfig` table + validation + cache | Blueprint + `record.get` / `set`                  |
 | Per-guild settings (`prefix`, channels, toggles) | Custom tables + validation + cache              | Ledgers + drivers                                 |
 | Dashboard editing config                         | Ad-hoc JSON routes                              | Typed blueprints + [`@stambha/api`](/extensions/api) OAuth settings routes (bring your own UI) |
-| Permission level overrides per guild             | Hardcoded or extra SQL columns                  | Guild blueprint + `@stambha/levels`               |
+| Capability claims per guild                      | Hardcoded or extra SQL columns                  | Guild blueprint + `@stambha/authz`                |
 | Tests without Postgres                           | Mock Prisma or spin up DB                       | `MemoryDriver`                                    |
 | Split-tier workers sharing config                | In-memory Maps or custom Redis glue             | Shared Vault driver (SQL / Redis)                 |
 
@@ -36,7 +36,7 @@ await loadPieces(client, {
 | Guild config         | `prefix`, `modLogChannel`, `disabledModules`, nested toggles     |
 | User / member config | Per-user prefs; per-guild member XP/points **as simple ledgers** |
 | Feature flags        | Module on/off, beta flags                                        |
-| Level overrides      | `permissionLevels: [{ userId, level }]` + `attachVaultLevelOverrides` (**C2**) |
+| Capability claims    | `capabilityClaims: [{ userId, grants, denies }]` + `attachVaultCapabilityClaims` |
 | Setup wizards        | Sequences writing to Vault records                               |
 
 
@@ -156,7 +156,7 @@ vault.on("recordDelete", ({ ledger, id }) => {});
 - [ ] Discord field types + `record.resolve()` (channel, role, user ids)
 - [ ] Array update ops (`add` / `remove` / `overwrite` / index) for settings arrays
 - [ ] Guild settings attach ergonomics (`ctx` / client integration)
-- [x] 1.x — guild blueprint level overrides (**C2**) via `permissionLevels` + `attachVaultLevelOverrides`
+- [x] 1.x — guild blueprint capability claims via `capabilityClaims` + `attachVaultCapabilityClaims`
 - [ ] Plugins — hosted dashboard UI on top of [`@stambha/api`](/extensions/api); optional `vault-redis` for split tier
 - [x] Plugins — [`@stambha/api`](/extensions/api) Discord OAuth + `/guilds/…/settings`
 
