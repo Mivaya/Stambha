@@ -37,6 +37,7 @@ Use this stack for new bots:
 | **B3** | Help system (`@stambha/help`) | Shipped (#84) — category catalog + `detailedDescription` / `hidden` |
 | **B4** | Piece lifecycle + error hooks | Shipped (#85) — `onLoad` / `onUnload` / `onCommandError` |
 | **B5** | Component UI builders, persistent views | Shipped (#86) — builders + `registerPersistentSignals` |
+| **COMP-V2** | Components V2 layouts | **In progress** — `componentsV2` / Container / Text Display + Signal buttons |
 | **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | Shipped (#87) — `editTracking` on `attachStambhaClient` |
 | **C1** | Numeric permission levels (`@stambha/levels`) | Shipped (#88) — ladder + `permissionLevelGate` |
 | **C2** | Vault level overrides | Shipped (#89) — guild `permissionLevels` + `setlevel` |
