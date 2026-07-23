@@ -72,3 +72,4 @@ Wire via `restMetricsToTelemetry(collector)` passed to `createNativeRestWorker({
 
 - [Transport](/reference/transport) — session info and route primitives
 - [Tier split](/deployment/tier-split) — split tier overview
+- [REST surface](/features/rest-surface) — polls, scheduled events, automod, soundboard

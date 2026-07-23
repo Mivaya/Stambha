@@ -104,6 +104,7 @@ Example bot: `!poll Question? | A | B`, `!endpoll <message_id>`, plus `PollVoteL
 
 ## Related
 
+- [REST surface](/features/rest-surface) — scheduled events, automod, soundboard
 - [Gateway](/deployment/gateway) — typed hub events
 - [Hooks](/features/hooks) — piece-based listeners
 - [Discord poll resource](https://docs.discord.com/developers/resources/poll)
