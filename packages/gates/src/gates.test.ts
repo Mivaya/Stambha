@@ -14,6 +14,7 @@ import { nsfwGate } from "./nsfwGate.js";
 import { combinePermissions, hasPermissions, Permission } from "./permissions.js";
 import { permissionsGate, userPermissionsGate } from "./permissionsGate.js";
 import { guildOnlyGate, RunIn, runInGate } from "./runInGate.js";
+import { entitlementGate, hasEntitlement } from "./entitlementGate.js";
 
 function ctx(overrides: Partial<CommandContext> = {}): CommandContext {
   return {
@@ -186,5 +187,41 @@ describe("declarative Command options", () => {
     });
     const names = commandGatesForRun(client, command).map((g) => g.name);
     expect(names).toEqual(["cooldown(userGuild)", "runIn(dm)", "cooldown(userGuild)"]);
+  });
+});
+
+describe("entitlementGate", () => {
+  it("hasEntitlement checks sku and expiry", () => {
+    expect(
+      hasEntitlement(
+        [{ id: "e1", skuId: "premium", deleted: false, endsAt: null }],
+        "premium",
+      ),
+    ).toBe(true);
+    expect(hasEntitlement([{ id: "e1", skuId: "premium", deleted: true }], "premium")).toBe(false);
+  });
+
+  it("allows when meta entitlements match", async () => {
+    const gate = entitlementGate({ skuIds: "premium" });
+    const allowed = await gate.check(
+      ctx({
+        meta: {
+          entitlements: [{ id: "e1", skuId: "premium", deleted: false }],
+        },
+      }),
+    );
+    expect(allowed.allow).toBe(true);
+  });
+
+  it("uses lookup when meta is empty", async () => {
+    const gate = entitlementGate({
+      skuIds: ["premium"],
+      lookup: async () => true,
+    });
+    const allowed = await gate.check(ctx());
+    expect(allowed.allow).toBe(true);
+
+    const denied = await entitlementGate({ skuIds: "premium" }).check(ctx());
+    expect(denied.allow).toBe(false);
   });
 });
