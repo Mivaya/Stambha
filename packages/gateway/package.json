@@ -1,7 +1,7 @@
 {
   "name": "@stambha/gateway",
   "version": "1.2.1",
-  "description": "Gateway shard manager, resharding, worker bus, GatewayEventHub, and native Stambha routing",
+  "description": "Gateway shard manager, resharding, worker bus, GatewayEventHub, HTTP interactions endpoint, and native Stambha routing",
   "author": "Mivaya",
   "license": "MIT",
   "homepage": "https://github.com/mivaya/Stambha/tree/main/packages/gateway#readme",
