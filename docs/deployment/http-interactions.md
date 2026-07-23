@@ -88,6 +88,7 @@ Many bots use **both**: gateway for messages, or HTTP-only for slash-centric app
 
 ## See also
 
+- [`examples/http-interactions`](https://github.com/Mivaya/Stambha/tree/main/examples/http-interactions) — runnable Node server + `pnpm demo` (no token)
 - [Gateway](/deployment/gateway) — WebSocket attach path
 - [Native REST](/deployment/native-rest) — `RestPort` for follow-ups
 - [Discord: receiving and responding](https://docs.discord.com/developers/interactions/receiving-and-responding)

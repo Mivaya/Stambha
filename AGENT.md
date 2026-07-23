@@ -111,8 +111,11 @@ import { createNativeRestPort } from "@stambha/rest";
 |----------|------|
 | Architecture (this file) | `AGENT.md` |
 | Contributing | `.github/CONTRIBUTING.md` |
-| Full example bot | `examples/bot/` |
+| Full example bot (advanced) | `examples/bot/` |
+| Basic Discord bot | `examples/basic/` |
+| Enterprise / tier-split | `examples/bigbot/` |
 | Minimal mock bot | `examples/minimal/` |
+| Examples by scale (docs) | `docs/guide/examples.md` |
 | Getting started | `docs/guide/getting-started.md` |
 | Project structure | `docs/guide/project-structure.md` |
 | Known gaps (public) | `docs/guide/known-gaps.md` |

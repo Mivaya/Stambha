@@ -113,7 +113,7 @@ client.registries.hooks.register(new ReadyListener(client.registries.hooks));
 client.registries.scouts.register(new MentionScout(client.registries.scouts));
 ```
 
-See [`examples/bot`](../../examples/bot) for a complete native bot using auto-load.
+See [`examples/basic`](../../examples/basic) for a small live bot, [`examples/bot`](../../examples/bot) for the full piece layout, and [Examples by scale](/guide/examples) for the matrix.
 
 ## Next
 

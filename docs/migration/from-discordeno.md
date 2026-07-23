@@ -69,11 +69,11 @@ import { createNativeRestWorker } from "@stambha/rest";
 await createNativeRestWorker({ token, port: 4000, secret });
 ```
 
-Example: `examples/bot`.
+Example: `examples/bot` (advanced) or `examples/bigbot` (tier-split + desired properties).
 
 ### Tier split (gateway relay + bot worker)
 
-Three processes — see [Tier split](/deployment/tier-split) and `examples/bot` (`pnpm split:rest`, `split:bot`, `split:gateway`):
+Three processes — see [Tier split](/deployment/tier-split) and `examples/bigbot` (`pnpm split:rest`, `split:bot`, `split:gateway`):
 
 1. **REST** — `pnpm split:rest`
 2. **Bot worker** — `createWorkerServer` + StambhaClient

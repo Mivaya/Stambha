@@ -44,14 +44,16 @@ console.log(worker.url); // http://127.0.0.1:4000
 
 ---
 
-## Run the bot example
+## Run the examples
 
 ```bash
-cd examples/bot
+cd examples/bigbot   # or examples/bot
 pnpm split:rest
 ```
 
-Or monolith: `pnpm start` / `pnpm demo`.
+Monolith: `cd examples/basic && pnpm start` / `cd examples/bot && pnpm demo`.
+
+See [Examples by scale](/guide/examples).
 
 ---
 
