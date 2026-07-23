@@ -180,6 +180,8 @@ await deployCommands({
 
 For guild-scoped testing, pass `guildId`. In sharded bots, deploy from shard 0 only — see [Slash deploy](/deployment/slash-deploy).
 
+User-installable commands: set `integrationTypes` / `contexts` on the Command — see [Command tree](/features/command-tree#installation--interaction-contexts).
+
 ## 6. Run the starter example against Discord
 
 ```bash

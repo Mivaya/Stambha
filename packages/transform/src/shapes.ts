@@ -1,4 +1,10 @@
-import type { CommandContextMeta, CommandSlashPath, SlashOption } from "@stambha/core";
+import type {
+  AuthorizingIntegrationOwners,
+  CommandContextMeta,
+  CommandSlashPath,
+  InteractionContextName,
+  SlashOption,
+} from "@stambha/core";
 
 /** Transport-agnostic user slice. */
 export interface StambhaUser {
@@ -24,6 +30,10 @@ export interface StambhaInteractionBase {
   readonly guildId: string | null;
   readonly channelId: string | null;
   readonly meta?: CommandContextMeta;
+  /** Discord interaction `context` (guild / bot DM / private channel). */
+  readonly interactionContext?: InteractionContextName;
+  /** Discord `authorizing_integration_owners` for user/guild installs. */
+  readonly authorizingIntegrationOwners?: AuthorizingIntegrationOwners;
   readonly raw: unknown;
 }
 

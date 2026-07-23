@@ -73,6 +73,25 @@ describe("interactionFromDispatch", () => {
     ]);
   });
 
+  it("parses interaction context and authorizing integration owners", () => {
+    const interaction = interactionFromDispatch({
+      id: "i5",
+      token: "tok5",
+      type: 2,
+      application_id: "app",
+      context: 1,
+      authorizing_integration_owners: { "1": "user-installer" },
+      user: { id: "u1" },
+      channel_id: "c1",
+      data: { name: "profile" },
+    });
+
+    expect(interaction?.kind).toBe("slash");
+    if (interaction?.kind !== "slash") return;
+    expect(interaction.interactionContext).toBe("bot_dm");
+    expect(interaction.authorizingIntegrationOwners).toEqual({ userInstall: "user-installer" });
+  });
+
   it("parses autocomplete interactions", () => {
     const interaction = interactionFromDispatch({
       id: "i2",

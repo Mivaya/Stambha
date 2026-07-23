@@ -1,8 +1,8 @@
 # Components
 
-Helpers for Discord **message components** and **modals** — action rows, buttons, string selects, text inputs — plus `registerPersistentSignals()` for long-lived `stambha:` UIs.
+Helpers for Discord **message components** and **modals** — classic action rows plus **Components V2** layouts (Containers, Sections, Text Display) — and `registerPersistentSignals()` for long-lived `stambha:` UIs.
 
-## Builders
+## Classic builders
 
 ```ts
 import {
@@ -23,21 +23,6 @@ await ctx.reply({
   content: "Continue?",
   components: [confirmCancelRow(signal)],
 });
-
-await ctx.reply({
-  content: "Pick one:",
-  components: [
-    selectRow(
-      stringSelect({
-        customId: signal.customId(), // stambha:confirm
-        options: [
-          { label: "A", value: "a" },
-          { label: "B", value: "b" },
-        ],
-      }),
-    ),
-  ],
-});
 ```
 
 | Helper | Output |
@@ -49,6 +34,61 @@ await ctx.reply({
 | `textInput` / `modal` | Modal layout |
 
 Custom ids should come from `signal.customId(suffix?)` so [`SignalRouter`](/features/signals) can route them.
+
+## Components V2
+
+V2 messages set `MessageFlags.IsComponentsV2` (`1 << 15`). With that flag, Discord does **not** use top-level `content` / `embeds` — put copy in `textDisplay` instead.
+
+```ts
+import {
+  button,
+  ButtonStyle,
+  buttonRow,
+  componentsV2,
+  container,
+  separator,
+  textDisplay,
+} from "@stambha/core";
+
+const signal = client.registries.signals.get("confirm")!;
+
+await ctx.reply(
+  componentsV2({
+    components: [
+      container({
+        accentColor: 0x5865f2,
+        components: [
+          textDisplay({ content: "# Hello" }),
+          separator(),
+          textDisplay({ content: "Pick an action." }),
+          buttonRow(
+            button({
+              customId: signal.customId("yes"),
+              label: "OK",
+              style: ButtonStyle.Success,
+            }),
+          ),
+        ],
+      }),
+    ],
+  }),
+);
+```
+
+| Helper | Type | Role |
+|--------|------|------|
+| `componentsV2({ components })` | reply helper | Sets `IS_COMPONENTS_V2` |
+| `container` | 17 | Accent group; nests rows / text / media |
+| `textDisplay` | 10 | Markdown text |
+| `section` | 9 | Text + button/thumbnail accessory |
+| `thumbnail` | 11 | Section accessory image |
+| `mediaGallery` | 12 | Image grid |
+| `separator` | 14 | Divider / padding |
+| `fileComponent` | 13 | `attachment://…` file display |
+
+**Signals:** nest `buttonRow` / `selectRow` inside a container (or top-level). Interactive children still use `stambha:` custom ids — no special router mode.
+
+Example bot: `!panel` / `/panel`.
 
 ## Persistent signals
 
@@ -72,4 +112,4 @@ Select handlers read `ctx.values` (from the interaction payload).
 
 - [Signals](/features/signals) — routing and `SignalContext`
 - [Pagination](/extensions/pagination) — session-scoped component ids
-- [Examples bot](https://github.com/Mivaya/Stambha/tree/main/examples/bot) — `!confirm`, `!menu`
+- [Examples bot](https://github.com/Mivaya/Stambha/tree/main/examples/bot) — `!confirm`, `!menu`, `!panel`

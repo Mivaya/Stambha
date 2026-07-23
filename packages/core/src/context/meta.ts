@@ -23,7 +23,7 @@ export interface CommandContextMeta {
   memberPermissions?: bigint;
   /** Bot permissions in the current channel. */
   clientPermissions?: bigint;
-  /** Guild member role ids (role → gate / authz mapping). */
+  /** Guild member role ids (role-based gates / staff maps / authz). */
   memberRoleIds?: readonly string[];
   /**
    * Guild owner user id when known (gateway/REST enrichment).
