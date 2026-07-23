@@ -1,5 +1,9 @@
 import type { CommandSlashPath } from "../command/slashTypes.js";
 import type { ArgsText, SlashOption } from "./args.js";
+import type {
+  AuthorizingIntegrationOwners,
+  InteractionContextName,
+} from "./installContext.js";
 import type { CommandContextMeta } from "./meta.js";
 import type { ReplyPayload } from "./reply.js";
 
@@ -21,6 +25,16 @@ export interface CommandContext {
   readonly channelId: string | null;
   /** Populated by transport bridges for permission / channel gates. */
   readonly meta?: CommandContextMeta;
+  /**
+   * Surface where the interaction ran (slash / components).
+   * `guild` | `bot_dm` (DM with the bot) | `private_channel` (other DMs / group DMs).
+   */
+  readonly interactionContext?: InteractionContextName;
+  /**
+   * Install authorizers for this interaction (`authorizing_integration_owners`).
+   * Use to distinguish the installing user from the invoking user on user-installed apps.
+   */
+  readonly authorizingIntegrationOwners?: AuthorizingIntegrationOwners;
   /** Prefix commands: raw argument string after the command name. */
   readonly argsText?: ArgsText;
   /** Slash commands: normalized option values from the interaction. */

@@ -33,6 +33,7 @@ describe("desired properties", () => {
     const r = resolveDesiredProperties(minimalDesiredProperties);
     expect(r.context.raw).toBe(false);
     expect(r.context.meta).toBe(false);
+    expect(r.context.installContext).toBe(false);
   });
 
   it("slims meta fields", () => {

@@ -111,6 +111,51 @@ defaultMemberPermissions: Permission.BanMembers,
 dmPermission: false,
 ```
 
+Prefer `contexts` for user-installable apps (see below). `dmPermission` remains supported as Discord’s legacy field.
+
+## Installation & interaction contexts
+
+Discord apps can be installed to a **guild**, a **user**, or both. Each slash command can declare:
+
+| Option | Discord field | Values |
+|--------|---------------|--------|
+| `integrationTypes` | `integration_types` | `"guild"` · `"user"` |
+| `contexts` | `contexts` | `"guild"` · `"bot_dm"` · `"private_channel"` |
+
+`private_channel` (other DMs / group DMs) requires `"user"` in `integrationTypes`.
+
+```ts
+super(registry, {
+  name: "profile",
+  description: "Your profile",
+  kinds: ["slash"],
+  integrationTypes: ["user"],
+  contexts: ["guild", "bot_dm", "private_channel"],
+});
+```
+
+At runtime, slash and signal contexts expose:
+
+| Field | Meaning |
+|-------|---------|
+| `ctx.interactionContext` | Where the command ran (`guild` / `bot_dm` / `private_channel`) |
+| `ctx.authorizingIntegrationOwners` | Install authorizers (`guildInstall` / `userInstall` ids) |
+
+Example — ephemeral profile when not in the bot DM:
+
+```ts
+async execute(ctx: CommandContext) {
+  if (ctx.interactionContext !== "bot_dm") {
+    await ctx.replyEphemeral("Your profile…");
+    return ok(undefined);
+  }
+  await ctx.reply("Your profile…");
+  return ok(undefined);
+}
+```
+
+Enable **User Install** (and scopes) on the [Discord Developer Portal](https://discord.com/developers/applications) Installation page so user-context commands appear for users.
+
 ## Context fields
 
 | Field | Description |
@@ -119,9 +164,12 @@ dmPermission: false,
 | `slashPath.group` | Subcommand group (if any) |
 | `slashPath.subcommand` | Subcommand name (if any) |
 | `commandName` | Same as `slashPath.root` for slash |
+| `interactionContext` | Interaction surface (slash / signals) |
+| `authorizingIntegrationOwners` | User/guild install authorizers |
 
 ## See also
 
 - [Arguments](/features/args) — option parsing
-- [Gates](/features/gates) — preconditions
+- [Gates](/features/gates) — pre-command checks
 - [Plugins](/features/plugins) — lifecycle hooks and container
+- [Desired properties](/features/desired-properties) — slim `installContext` via `desired.context.installContext`
