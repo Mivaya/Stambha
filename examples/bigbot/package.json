@@ -1,0 +1,42 @@
+{
+  "name": "@stambha/example-bigbot",
+  "version": "0.2.1",
+  "private": true,
+  "description": "Enterprise-oriented Stambha example — tier-split workers, desired properties, scale checklist",
+  "author": "Mivaya",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mivaya/Stambha.git",
+    "directory": "examples/bigbot"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "demo": "DEMO=1 tsx src/main.ts",
+    "split:rest": "tsx src/workers/rest.ts",
+    "split:bot": "tsx src/workers/bot.ts",
+    "split:gateway": "tsx src/workers/gateway.ts",
+    "split:demo": "tsx src/workers/in-memory.ts",
+    "deploy:dry-run": "tsx scripts/deploy-dry-run.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@stambha/args": "workspace:*",
+    "@stambha/authz": "workspace:*",
+    "@stambha/core": "workspace:*",
+    "@stambha/gateway": "workspace:*",
+    "@stambha/gates": "workspace:*",
+    "@stambha/help": "workspace:*",
+    "@stambha/loader": "workspace:*",
+    "@stambha/plugins": "workspace:*",
+    "@stambha/rest": "workspace:*",
+    "@stambha/transform": "workspace:*",
+    "@stambha/vault": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "tsx": "^4.23.1",
+    "typescript": "^6.0.3"
+  }
+}

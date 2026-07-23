@@ -34,10 +34,10 @@ features:
 ## Try it now
 
 ```bash
-cd examples/bot && pnpm install && pnpm demo
+cd examples/basic && pnpm install && pnpm demo
 ```
 
-No Discord token required — starter bot, real pipeline, simulated events. Full walkthrough: [Getting started](/guide/getting-started).
+No Discord token required — small Discord-shaped bot, real pipeline. Feature-complete demo: `examples/bot`. Scale matrix: [Examples by scale](/guide/examples). Walkthrough: [Getting started](/guide/getting-started).
 
 ## Quick install
 
@@ -45,7 +45,7 @@ No Discord token required — starter bot, real pipeline, simulated events. Full
 pnpm add @stambha/core @stambha/rest @stambha/gateway @stambha/transform @stambha/loader
 ```
 
-Requires **Node.js 20+**. Working sample: [`examples/bot`](https://github.com/mivaya/Stambha/tree/main/examples/bot).
+Requires **Node.js 20+**. Samples: [`examples/basic`](https://github.com/mivaya/Stambha/tree/main/examples/basic) → [`examples/bot`](https://github.com/mivaya/Stambha/tree/main/examples/bot) → [`examples/bigbot`](https://github.com/mivaya/Stambha/tree/main/examples/bigbot) · serverless: [`examples/http-interactions`](https://github.com/mivaya/Stambha/tree/main/examples/http-interactions).
 
 ## Migrating?
 

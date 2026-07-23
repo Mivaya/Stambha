@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { randomUUID } from "./crypto.js";
 import { detectRuntime, isNode } from "./detect.js";
+import { readDir } from "./fs.js";
 import { basename, extname, join, pathToFileURL, resolve } from "./path.js";
 import { sleep } from "./timers.js";
 
@@ -26,6 +27,10 @@ describe("@stambha/runtime", () => {
     const url = pathToFileURL("/tmp/test.js");
     expect(url.protocol).toBe("file:");
     expect(url.pathname).toContain("test.js");
+  });
+
+  it("readDir returns [] for missing paths", async () => {
+    expect(await readDir("/tmp/stambha-no-such-dir-" + randomUUID())).toEqual([]);
   });
 
   it("sleeps via timers", async () => {

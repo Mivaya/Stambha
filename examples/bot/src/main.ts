@@ -118,7 +118,10 @@ if (demo) {
     emoji: { id: null, name: "wave" },
   });
 
+  await new Promise((r) => setTimeout(r, 150));
   console.log("\n--- end demo ---\n");
+  await client.stop();
+  process.exit(0);
 } else if (token) {
   const gatewayOptions = {
     token,
