@@ -24,6 +24,9 @@ export function slimMeta(
   if (desired.guildOwnerId && meta.guildOwnerId !== undefined) {
     out.guildOwnerId = meta.guildOwnerId;
   }
+  if (desired.entitlements && meta.entitlements !== undefined) {
+    out.entitlements = meta.entitlements;
+  }
 
   return Object.keys(out).length > 0 ? out : undefined;
 }

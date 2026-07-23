@@ -211,6 +211,7 @@ Listens to `commandDenied` and sends the gate's reason. Prefix commands use `rep
 
 ## See also
 
+- [Monetization](/features/monetization) — SKU entitlements (`entitlementGate`)
 - [Permission levels](/features/levels) — numeric hierarchy (`@stambha/levels`)
 - [Project structure](/guide/project-structure) — `gates/` folder
 - [Barriers](/features/barriers) — global blockers before gates

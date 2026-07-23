@@ -67,5 +67,18 @@ export {
   userAvatarUrl,
   userDisplayName,
 } from "./resources.js";
+export {
+  type ApiEntitlement,
+  type ApiSku,
+  consumeEntitlement,
+  type CreateEntitlementLookupOptions,
+  createEntitlementLookup,
+  fetchEntitlement,
+  hasEntitlementForSku,
+  isEntitlementActive,
+  type ListEntitlementsQuery,
+  listEntitlements,
+  listSkus,
+} from "./monetization.js";
 export type { RateLimitQueueListener, RestTelemetry } from "./telemetry.js";
 export { createRestTelemetryListener } from "./telemetry.js";
