@@ -30,6 +30,86 @@ importers:
         specifier: ^3.5.39
         version: 3.5.39(typescript@7.0.2)
 
+  examples/basic:
+    dependencies:
+      '@stambha/args':
+        specifier: workspace:*
+        version: link:../../packages/args
+      '@stambha/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@stambha/gates':
+        specifier: workspace:*
+        version: link:../../packages/gates
+      '@stambha/gateway':
+        specifier: workspace:*
+        version: link:../../packages/gateway
+      '@stambha/loader':
+        specifier: workspace:*
+        version: link:../../packages/loader
+      '@stambha/rest':
+        specifier: workspace:*
+        version: link:../../packages/rest
+      '@stambha/transform':
+        specifier: workspace:*
+        version: link:../../packages/transform
+    devDependencies:
+      '@types/node':
+        specifier: ^26.1.1
+        version: 26.1.1
+      tsx:
+        specifier: ^4.23.1
+        version: 4.23.1
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
+  examples/bigbot:
+    dependencies:
+      '@stambha/args':
+        specifier: workspace:*
+        version: link:../../packages/args
+      '@stambha/authz':
+        specifier: workspace:*
+        version: link:../../packages/authz
+      '@stambha/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@stambha/gates':
+        specifier: workspace:*
+        version: link:../../packages/gates
+      '@stambha/gateway':
+        specifier: workspace:*
+        version: link:../../packages/gateway
+      '@stambha/help':
+        specifier: workspace:*
+        version: link:../../packages/help
+      '@stambha/loader':
+        specifier: workspace:*
+        version: link:../../packages/loader
+      '@stambha/plugins':
+        specifier: workspace:*
+        version: link:../../packages/plugins
+      '@stambha/rest':
+        specifier: workspace:*
+        version: link:../../packages/rest
+      '@stambha/transform':
+        specifier: workspace:*
+        version: link:../../packages/transform
+      '@stambha/vault':
+        specifier: workspace:*
+        version: link:../../packages/vault
+    devDependencies:
+      '@types/node':
+        specifier: ^26.1.1
+        version: 26.1.1
+      tsx:
+        specifier: ^4.23.1
+        version: 4.23.1
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   examples/bot:
     dependencies:
       '@stambha/args':
@@ -66,6 +146,37 @@ importers:
         specifier: workspace:*
         version: link:../../packages/vault
     devDependencies:
+      tsx:
+        specifier: ^4.23.1
+        version: 4.23.1
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
+  examples/http-interactions:
+    dependencies:
+      '@stambha/args':
+        specifier: workspace:*
+        version: link:../../packages/args
+      '@stambha/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@stambha/gateway':
+        specifier: workspace:*
+        version: link:../../packages/gateway
+      '@stambha/loader':
+        specifier: workspace:*
+        version: link:../../packages/loader
+      '@stambha/rest':
+        specifier: workspace:*
+        version: link:../../packages/rest
+      '@stambha/transform':
+        specifier: workspace:*
+        version: link:../../packages/transform
+    devDependencies:
+      '@types/node':
+        specifier: ^26.1.1
+        version: 26.1.1
       tsx:
         specifier: ^4.23.1
         version: 4.23.1
@@ -204,27 +315,6 @@ importers:
       '@stambha/core':
         specifier: workspace:*
         version: link:../core
-      '@types/node':
-        specifier: ^26.1.1
-        version: 26.1.1
-      tsup:
-        specifier: ^8.3.6
-        version: 8.5.1(postcss@8.5.19)(tsx@4.23.1)(typescript@6.0.3)
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      vitest:
-        specifier: ^4.1.10
-        version: 4.1.10(@types/node@26.1.1)(vite@7.3.3(@types/node@26.1.1)(tsx@4.23.1))
-
-  packages/levels:
-    devDependencies:
-      '@stambha/core':
-        specifier: workspace:*
-        version: link:../core
-      '@stambha/vault':
-        specifier: workspace:*
-        version: link:../vault
       '@types/node':
         specifier: ^26.1.1
         version: 26.1.1

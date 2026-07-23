@@ -88,3 +88,4 @@ Used by `@stambha/transform` after building a full context.
 - [Gates](/features/gates) — requires `meta` for permission / NSFW / RunIn checks
 - [Transport](/reference/transport) — native package map
 - [Gateway](/deployment/gateway) — `attachStambhaClient`
+- [`examples/bigbot`](https://github.com/Mivaya/Stambha/tree/main/examples/bigbot) — `DESIRED=gates|minimal` on start / split workers

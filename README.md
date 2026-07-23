@@ -16,12 +16,12 @@ No Discord token required:
 
 ```bash
 git clone https://github.com/mivaya/Stambha.git
-cd Stambha/examples/bot
+cd Stambha/examples/basic
 pnpm install
 pnpm demo
 ```
 
-You’ll see prefix commands, a button signal, and mention routing simulated against the real pipeline. With a token: copy `.env.example` → `.env`, then `pnpm start`.
+Small Discord-shaped bot (ping/say). Full feature demo: `cd examples/bot && pnpm demo`. Scale guide: [Examples by scale](docs/guide/examples.md).
 
 ---
 
@@ -137,10 +137,15 @@ Official path is the **native stack only** — not discord.js owning the gateway
 
 ## Examples
 
-| Example | What it is |
-|---------|------------|
-| [`examples/bot`](examples/bot) | **Starter bot** — full piece layout; `pnpm demo` without a token |
-| [`examples/minimal`](examples/minimal) | MockBridge smoke test |
+| Example | Scale | What it is |
+|---------|-------|------------|
+| [`examples/minimal`](examples/minimal) | Smoke | `MockBridge` pipeline only |
+| [`examples/basic`](examples/basic) | Basic | Native gateway + REST, ping/say |
+| [`examples/bot`](examples/bot) | Advanced | Full piece layout; `pnpm demo` without a token |
+| [`examples/bigbot`](examples/bigbot) | Enterprise | Self-contained tier-split + desired properties + scale checklist |
+| [`examples/http-interactions`](examples/http-interactions) | Serverless slash | Interactions Endpoint URL — no WebSocket |
+
+Docs: [Examples by scale](docs/guide/examples.md) · [Deployment overview](docs/deployment/overview.md).
 
 ---
 
@@ -168,10 +173,12 @@ Optional extensions ([`Stambha-plugins`](https://github.com/Mivaya/Stambha-plugi
 | | |
 |---|---|
 | [Getting started](docs/guide/getting-started.md) | First bot |
+| [Examples by scale](docs/guide/examples.md) | minimal → basic → advanced → bigbot |
 | [Architecture](docs/guide/architecture.md) | How events flow |
 | [Extensions](docs/extensions/index.md) | Stambha-plugins hub |
 | [Why Stambha](docs/guide/why-stambha.md) | Design choices |
 | [Migration](docs/migration/) | From other stacks |
+| [Known gaps](docs/guide/known-gaps.md) | What is still missing |
 
 Local docs site: `pnpm docs:dev`.
 
