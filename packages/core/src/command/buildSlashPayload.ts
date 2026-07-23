@@ -1,5 +1,11 @@
 import type { Command } from "../registries/Command.js";
 import {
+  integrationTypesToApi,
+  interactionContextsToApi,
+  type IntegrationTypeName,
+  type InteractionContextName,
+} from "../context/installContext.js";
+import {
   type ApplicationCommandJSON,
   type ApplicationCommandOptionJSON,
   type SlashOptionDefinition,
@@ -48,6 +54,8 @@ interface RootAccumulator {
   description: string;
   defaultMemberPermissions?: bigint;
   dmPermission?: boolean;
+  integrationTypes?: readonly IntegrationTypeName[];
+  contexts?: readonly InteractionContextName[];
   topLevelOptions: SlashOptionDefinition[];
   subcommands: Map<string, SubcommandDefinition>;
   groups: Map<string, SubcommandGroupDefinition>;
@@ -97,8 +105,23 @@ function rootToJson(root: RootAccumulator): ApplicationCommandJSON {
     json.default_member_permissions = root.defaultMemberPermissions.toString();
   }
   if (root.dmPermission !== undefined) json.dm_permission = root.dmPermission;
+  if (root.integrationTypes !== undefined && root.integrationTypes.length > 0) {
+    json.integration_types = integrationTypesToApi(root.integrationTypes);
+  }
+  if (root.contexts !== undefined && root.contexts.length > 0) {
+    json.contexts = interactionContextsToApi(root.contexts);
+  }
 
   return json;
+}
+
+function applyCommandInstallOptions(root: RootAccumulator, command: Command): void {
+  if (command.defaultMemberPermissions !== undefined) {
+    root.defaultMemberPermissions = command.defaultMemberPermissions;
+  }
+  if (command.dmPermission !== undefined) root.dmPermission = command.dmPermission;
+  if (command.integrationTypes !== undefined) root.integrationTypes = command.integrationTypes;
+  if (command.contexts !== undefined) root.contexts = command.contexts;
 }
 
 /** Build Discord application command payloads from registered {@link Command} pieces. */
@@ -114,10 +137,7 @@ export function buildApplicationCommands(commands: Iterable<Command>): Applicati
         command.name,
         command.slashRootDescription ?? command.description ?? command.name,
       );
-      if (command.defaultMemberPermissions !== undefined) {
-        root.defaultMemberPermissions = command.defaultMemberPermissions;
-      }
-      if (command.dmPermission !== undefined) root.dmPermission = command.dmPermission;
+      applyCommandInstallOptions(root, command);
 
       for (const sub of command.subcommands) {
         root.subcommands.set(sub.name, sub);
@@ -134,10 +154,7 @@ export function buildApplicationCommands(commands: Iterable<Command>): Applicati
     if (command.slashRoot) {
       const rootName = command.slashRoot;
       const root = getOrCreateRoot(roots, rootName, command.slashRootDescription ?? rootName);
-      if (command.defaultMemberPermissions !== undefined) {
-        root.defaultMemberPermissions = command.defaultMemberPermissions;
-      }
-      if (command.dmPermission !== undefined) root.dmPermission = command.dmPermission;
+      applyCommandInstallOptions(root, command);
 
       const subName = command.slashSubcommand ?? command.name;
       const sub: SubcommandDefinition = {
@@ -165,10 +182,7 @@ export function buildApplicationCommands(commands: Iterable<Command>): Applicati
     }
 
     const root = getOrCreateRoot(roots, command.name, command.description ?? command.name);
-    if (command.defaultMemberPermissions !== undefined) {
-      root.defaultMemberPermissions = command.defaultMemberPermissions;
-    }
-    if (command.dmPermission !== undefined) root.dmPermission = command.dmPermission;
+    applyCommandInstallOptions(root, command);
     for (const opt of command.slashOptions) {
       root.topLevelOptions.push(opt);
     }

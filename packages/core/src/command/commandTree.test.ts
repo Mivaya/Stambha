@@ -93,6 +93,29 @@ describe("buildApplicationCommands", () => {
     expect(body[0]!.options?.length).toBe(2);
   });
 
+  it("emits integration_types and contexts for user-installable commands", () => {
+    const client = new StambhaClient();
+    client.register(
+      new (class extends Command {
+        constructor(r: Registry<Command>) {
+          super(r, {
+            name: "profile",
+            description: "Your profile",
+            kinds: ["slash"],
+            integrationTypes: ["user"],
+            contexts: ["guild", "bot_dm", "private_channel"],
+          });
+        }
+        execute = async () => ok(undefined);
+      })(client.registries.commands),
+    );
+
+    const body = buildApplicationCommands(client.registries.commands.values());
+    expect(body).toHaveLength(1);
+    expect(body[0]!.integration_types).toEqual([1]);
+    expect(body[0]!.contexts).toEqual([0, 1, 2]);
+  });
+
   it("builds inline subcommands", () => {
     const client = new StambhaClient();
     client.register(new ConfigCommand(client.registries.commands));
