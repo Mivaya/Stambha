@@ -43,7 +43,48 @@ export interface MessageDetail {
 export interface ChannelMessageBody {
   content?: string;
   embeds?: unknown[];
+  /** Discord poll create request (snake_case). Prefer `createPoll()` from `./polls.js`. */
+  poll?: unknown;
   message_reference?: { message_id: string; channel_id?: string };
+}
+
+/** Partial user on application owner / team member payloads. */
+export interface ApplicationOwner {
+  id: string;
+  username?: string;
+  global_name?: string | null;
+  avatar?: string | null;
+  discriminator?: string;
+  bot?: boolean;
+}
+
+export interface ApplicationTeamMember {
+  membership_state: number;
+  team_id: string;
+  user: ApplicationOwner;
+  role?: string;
+}
+
+export interface ApplicationTeam {
+  id: string;
+  name: string;
+  icon: string | null;
+  owner_user_id: string;
+  members?: ApplicationTeamMember[];
+}
+
+/** Bot application from `GET /oauth2/applications/@me`. */
+export interface ApiApplication {
+  id: string;
+  name: string;
+  icon: string | null;
+  description: string;
+  bot_public: boolean;
+  bot_require_code_grant: boolean;
+  verify_key: string;
+  owner?: ApplicationOwner;
+  team: ApplicationTeam | null;
+  flags?: number;
 }
 
 async function tryRequest<T>(
@@ -218,5 +259,21 @@ export async function timeoutGuildMember(
       communication_disabled_until: until,
       ...(reason ? { reason } : {}),
     },
+  });
+}
+
+/** Show the bot typing indicator in a channel (`POST /channels/{id}/typing`). */
+export async function triggerTyping(rest: RestPort, channelId: string): Promise<void> {
+  await rest.request({
+    method: "POST",
+    route: `/channels/${channelId}/typing`,
+  });
+}
+
+/** Current bot application, including owner and team when present. */
+export async function fetchApplication(rest: RestPort): Promise<ApiApplication | null> {
+  return tryRequest<ApiApplication>(rest, {
+    method: "GET",
+    route: "/oauth2/applications/@me",
   });
 }

@@ -37,6 +37,7 @@ Use this stack for new bots:
 | **B3** | Help system (`@stambha/help`) | Shipped (#84) — category catalog + `detailedDescription` / `hidden` |
 | **B4** | Piece lifecycle + error hooks | Shipped (#85) — `onLoad` / `onUnload` / `onCommandError` |
 | **B5** | Component UI builders, persistent views | Shipped (#86) — builders + `registerPersistentSignals` |
+| **COMP-V2** | Components V2 layouts | **In progress** — `componentsV2` / Container / Text Display + Signal buttons |
 | **B6** | Prefix edit-tracking (re-run on `messageUpdate`) | Shipped (#87) — `editTracking` on `attachStambhaClient` |
 | **C1** / **C2** | Numeric permission levels + Vault overrides | **Superseded** — replaced by **AUTHZ-CAP** (`@stambha/authz`); not shipping levels |
 | **AUTHZ-CAP** | Named capabilities + Vault claims | **In progress** — Discord floor + `capabilityGate` + Vault grants/denies |
@@ -46,6 +47,10 @@ Use this stack for new bots:
 | **G3** | Gateway dispatch normalization (all events) | Tier 1–4 on main → **1.4.0** / **1.5.0** (catalog complete) |
 | **G3a** | Typed `GatewayEventMap` on `GatewayEventHub` | Shipped (#81) — typed `hub.on` / `once` / `off` |
 | **Collectors** | Message/reaction/interaction collectors | **In progress** — `@stambha/gateway` hub collectors |
+| **HTTP-INTERACTIONS** | Interaction endpoint (no gateway) | **In progress** — Ed25519 verify + `createHttpInteractionHandler` |
+| **MONETIZE-1** | SKU / entitlement DX | **In progress** — `entitlementGate` + REST list helpers |
+| **POLL-DX** | Poll create/end + vote handlers | **In progress** — `createPoll` / `endPoll` + hub vote docs |
+| **REST-SURFACE** | High-level REST for modern resources | **In progress** — scheduled events, automod CRUD, soundboard |
 
 ---
 
@@ -105,15 +110,17 @@ These topics are covered at a high level in 1.0.0; deeper guides land in 1.x:
 
 ---
 
-## Planned next (after 1.3.0 train)
+## Planned next — Discord platform DX
 
-Path: **A1** (in progress) → **A2** → collectors. Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
+A1 / A2 / collectors are on `main` (release cut pending). Branch from `main` per [CONTRIBUTING](https://github.com/Mivaya/Stambha/blob/main/.github/CONTRIBUTING.md).
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| **A1** | Redis cache | **In progress** — `@stambha/cache-redis` |
-| **A2** | Redis cooldown store | Gates `CooldownStore` + plugins driver |
-| **Collectors** | Interaction/message collectors | — |
+| **USER-INSTALL** | User-installable apps + contexts | `integrationTypes` / `contexts` on Command + runtime fields |
+| **COMP-V2** | Components V2 builders + Signals | Discord layout components |
+| **HTTP-INTERACTIONS** | Interaction endpoint (no gateway) | Serverless / HTTP-only bots |
+| **AUTHZ-CAP** | Capability / policy authorization | Replaces unreleased numeric levels before release |
+| **MONETIZE-1** / **TYPING** / **REST-app** / … | Follow-ons | See project board |
 
 ## Shipped after 1.3.0 train (on main; release cut pending)
 

@@ -77,15 +77,59 @@ if (shouldDeploySlashCommands({ shardId: 0 })) {
 Thin wrappers over `RestPort.request` for common bot operations — no discord.js required:
 
 ```ts
-import { fetchUser, fetchGuildMember, sendChannelMessage } from "@stambha/rest";
+import {
+  createEntitlementLookup,
+  fetchApplication,
+  fetchUser,
+  fetchGuildMember,
+  listEntitlements,
+  listSkus,
+  sendChannelMessage,
+  triggerTyping,
+} from "@stambha/rest";
 
 const user = await fetchUser(client.restPort!, userId);
 await sendChannelMessage(client.restPort!, channelId, {
   embeds: [{ title: "Hello" }],
 });
+
+const app = await fetchApplication(client.restPort!);
+// app?.owner, app?.team — from GET /oauth2/applications/@me
+
+await triggerTyping(client.restPort!, channelId);
+
+const skus = await listSkus(client.restPort!, applicationId);
+const ents = await listEntitlements(client.restPort!, applicationId, {
+  userId,
+  excludeEnded: true,
+});
+
+// Wire into entitlementGate for prefix commands:
+createEntitlementLookup(client.restPort!, applicationId, "SKU_ID");
 ```
 
-Use with `defineArgResolver` from `@stambha/args` when you need REST-backed entity parsing.
+Commands can also set `typing: true` so the core pipeline triggers typing automatically after gates pass.
+
+Use with `defineArgResolver` from `@stambha/args` when you need REST-backed entity parsing. See [Monetization](https://github.com/mivaya/Stambha/blob/main/docs/features/monetization.md).
+
+### Polls
+
+```ts
+import { createPoll, endPoll, sendPollMessage } from "@stambha/rest";
+
+const poll = createPoll({
+  question: "Ship it?",
+  answers: ["Yes", "No", { text: "Later", emoji: "⏳" }],
+  durationHours: 24,
+});
+
+await sendPollMessage(rest, channelId, { content: "Team vote", poll });
+// or via command context: await ctx.reply({ poll });
+
+await endPoll(rest, channelId, messageId);
+```
+
+See [Polls](../../docs/features/polls.md) and [REST surface](../../docs/features/rest-surface.md) (scheduled events, automod, soundboard).
 
 ---
 
@@ -103,6 +147,13 @@ Use with `defineArgResolver` from `@stambha/args` when you need REST-backed enti
 | `shouldDeploySlashCommands` | Guard for multi-process sharding |
 | `formatDeployDiff` | Log diff summary |
 | `fetchUser`, `fetchGuild`, `fetchGuildMember`, … | Common REST resource helpers |
+| `fetchApplication` | Current bot application (`owner` / `team`) |
+| `triggerTyping` | Channel typing indicator |
+| `listEntitlements`, `listSkus`, `createEntitlementLookup` | Monetization / SKU helpers |
+| `createPoll`, `sendPollMessage`, `endPoll`, `fetchPollAnswerVoters` | Native Discord polls |
+| `createGuildScheduledEvent`, `listGuildScheduledEvents`, … | Guild scheduled events |
+| `createAutoModerationRule`, `listAutoModerationRules`, … | Auto Moderation CRUD |
+| `listGuildSoundboardSounds`, `sendSoundboardSound`, … | Soundboard |
 | `createRestTelemetryListener` | Hook metrics into the queue |
 
 ---

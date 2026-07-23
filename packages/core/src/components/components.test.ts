@@ -6,14 +6,22 @@ import {
   button,
   buttonRow,
   ButtonStyle,
+  collectCustomIds,
+  componentsV2,
   ComponentType,
   confirmCancelRow,
+  container,
+  MessageFlags,
   modal,
   registerPersistentSignals,
+  section,
   selectRow,
+  separator,
   stringSelect,
+  textDisplay,
   textInput,
   TextInputStyle,
+  thumbnail,
 } from "./index.js";
 
 describe("component builders", () => {
@@ -60,7 +68,9 @@ describe("component builders", () => {
     const m = modal({
       customId: "stambha:note",
       title: "Note",
-      components: [actionRow(textInput({ customId: "body", label: "Body", style: TextInputStyle.Paragraph }))],
+      components: [
+        actionRow(textInput({ customId: "body", label: "Body", style: TextInputStyle.Paragraph })),
+      ],
     });
     expect(m.custom_id).toBe("stambha:note");
     expect(m.components[0]?.components[0]).toMatchObject({
@@ -77,6 +87,63 @@ describe("component builders", () => {
         stringSelect({ customId: "s", options: [{ label: "x", value: "x" }] }),
       ),
     ).toThrow(/alone/);
+  });
+});
+
+describe("Components V2 builders", () => {
+  it("builds container with text, separator, and signal buttons", () => {
+    const client = new StambhaClient();
+    const signal = new (class extends Signal {
+      run = async () => {};
+    })(client.registries.signals, { name: "panel" });
+
+    const panel = container({
+      accentColor: 0x5865f2,
+      components: [
+        textDisplay({ content: "# Panel" }),
+        separator(),
+        textDisplay({ content: "Choose an action." }),
+        buttonRow(
+          button({
+            customId: signal.customId("go"),
+            label: "Go",
+            style: ButtonStyle.Primary,
+          }),
+        ),
+      ],
+    });
+
+    expect(panel).toMatchObject({
+      type: ComponentType.Container,
+      accent_color: 0x5865f2,
+    });
+    expect(panel.components).toHaveLength(4);
+
+    const reply = componentsV2({ components: [panel] });
+    expect(reply.flags).toBe(MessageFlags.IsComponentsV2);
+    expect(collectCustomIds(reply.components!)).toEqual(["stambha:panel:go"]);
+  });
+
+  it("builds section with thumbnail accessory", () => {
+    const s = section({
+      text: [textDisplay({ content: "# Title" }), textDisplay({ content: "Body" })],
+      accessory: thumbnail({ url: "https://example.com/a.png", description: "Art" }),
+    });
+    expect(s.type).toBe(ComponentType.Section);
+    expect(s.accessory).toMatchObject({
+      type: ComponentType.Thumbnail,
+      media: { url: "https://example.com/a.png" },
+    });
+  });
+
+  it("rejects empty containers and oversized sections", () => {
+    expect(() => container({ components: [] })).toThrow(/at least one/);
+    expect(() =>
+      section({
+        text: [],
+        accessory: thumbnail({ url: "https://example.com/a.png" }),
+      }),
+    ).toThrow(/1–3/);
   });
 });
 

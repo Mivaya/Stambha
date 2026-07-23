@@ -1,3 +1,4 @@
+import type { GatewayMessagePollVote } from "./GatewayEventMap.js";
 import type {
   GatewayGuildCreate,
   GatewayGuildMemberAdd,
@@ -47,6 +48,18 @@ export function isMessageReactionAddPayload(value: unknown): value is GatewayMes
   if (typeof value.channelId !== "string") return false;
   if (typeof value.messageId !== "string") return false;
   if (!isRecord(value.emoji) || typeof value.emoji.name !== "string") return false;
+  return true;
+}
+
+/** Type guard for `messagePollVoteAdd` / `messagePollVoteRemove` hub payloads. */
+export function isMessagePollVotePayload(value: unknown): value is GatewayMessagePollVote {
+  if (!isRecord(value)) return false;
+  if (typeof value.userId !== "string") return false;
+  if (typeof value.channelId !== "string") return false;
+  if (typeof value.messageId !== "string") return false;
+  if (typeof value.answerId !== "number") return false;
+  // Reject wire snake_case.
+  if ("user_id" in value || "answer_id" in value) return false;
   return true;
 }
 
