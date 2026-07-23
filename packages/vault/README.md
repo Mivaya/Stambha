@@ -14,7 +14,7 @@ Vault and Prisma solve **different** problems:
 |---------------|----------------------|
 | Prefix, module toggles, log channel ids | Economy, shops, inventories |
 | Feature flags, dashboard config | Quests, achievements, complex relations |
-| Permission level overrides (with `@stambha/levels`) | Large mod-log tables & analytics |
+| Permission / capability overrides (with `@stambha/authz`) | Large mod-log tables & analytics |
 | Tests with `MemoryDriver` | Existing `schema.prisma` domain models |
 
 ```ts
