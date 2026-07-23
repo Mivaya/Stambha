@@ -22,6 +22,7 @@ export interface DesiredMetaFields {
   clientPermissions?: boolean;
   memberRoleIds?: boolean;
   guildOwnerId?: boolean;
+  entitlements?: boolean;
 }
 
 /** Client-level mask for context slimming. */
@@ -51,6 +52,7 @@ const DEFAULT_META: Required<DesiredMetaFields> = {
   clientPermissions: true,
   memberRoleIds: true,
   guildOwnerId: true,
+  entitlements: true,
 };
 
 /** Full context — default for local development and most bots. */
@@ -76,6 +78,7 @@ export const minimalDesiredProperties: DesiredProperties = Object.freeze({
     clientPermissions: false,
     memberRoleIds: false,
     guildOwnerId: false,
+    entitlements: false,
   },
 });
 
@@ -96,6 +99,7 @@ export const gatesDesiredProperties: DesiredProperties = Object.freeze({
     clientPermissions: true,
     memberRoleIds: false,
     guildOwnerId: false,
+    entitlements: true,
   },
 });
 

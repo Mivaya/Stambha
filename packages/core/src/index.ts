@@ -102,7 +102,7 @@ export { DefaultStambhaContainer } from "./container/DefaultStambhaContainer.js"
 export type { StambhaContainerLike, StambhaLogger } from "./container/types.js";
 export type { ArgsText, ParsedSlashOptionType, SlashOption } from "./context/args.js";
 export type { AutocompleteChoice, AutocompleteContext } from "./context/autocomplete.js";
-export type { ChannelType, CommandContextMeta } from "./context/meta.js";
+export type { ChannelType, CommandContextMeta, EntitlementSummary } from "./context/meta.js";
 export { isGuildChannelType } from "./context/meta.js";
 export type {
   AuthorizingIntegrationOwners,

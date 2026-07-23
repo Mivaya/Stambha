@@ -23,13 +23,32 @@ export interface CommandContextMeta {
   memberPermissions?: bigint;
   /** Bot permissions in the current channel. */
   clientPermissions?: bigint;
-  /** Guild member role ids (role-based gates / staff maps). */
+  /** Guild member role ids (role-based gates / staff maps / authz). */
   memberRoleIds?: readonly string[];
   /**
    * Guild owner user id when known (gateway/REST enrichment).
    * Interactions do not include this — set via worker or leave unset.
    */
   guildOwnerId?: string;
+  /**
+   * Entitlements from the interaction payload (slash / components).
+   * Used by monetization gates (`entitlementGate`) via SKU ids.
+   */
+  entitlements?: readonly EntitlementSummary[];
+}
+
+/** Slim entitlement slice for command gates (camelCase). */
+export interface EntitlementSummary {
+  id: string;
+  skuId: string;
+  applicationId?: string;
+  userId?: string;
+  guildId?: string;
+  type?: number;
+  deleted?: boolean;
+  startsAt?: string | null;
+  endsAt?: string | null;
+  consumed?: boolean;
 }
 
 /** Returns true when the channel type is any guild channel (not DM / group DM). */
