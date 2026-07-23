@@ -37,6 +37,29 @@ describe("rest payloads", () => {
     });
   });
 
+  it("ORs Components V2 flag with ephemeral", () => {
+    const components = [{ type: 10, content: "Hi" }];
+    expect(
+      interactionReplyBody({
+        components,
+        flags: 1 << 15,
+        ephemeral: true,
+      }),
+    ).toEqual({
+      type: 4,
+      data: { components, flags: (1 << 15) | 64 },
+    });
+    expect(
+      channelMessageBody({
+        components,
+        flags: 1 << 15,
+      }),
+    ).toEqual({
+      components,
+      flags: 1 << 15,
+    });
+  });
+
   it("passes components through interaction and channel bodies", () => {
     const row = { type: 1, components: [{ type: 2, style: 1, label: "OK", custom_id: "stambha:ok" }] };
     expect(interactionReplyBody({ content: "Pick", components: [row] })).toEqual({

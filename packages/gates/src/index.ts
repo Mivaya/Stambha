@@ -32,6 +32,11 @@ export {
   userPermissionsGate,
 } from "./permissionsGate.js";
 export {
+  type EntitlementGateOptions,
+  entitlementGate,
+  hasEntitlement,
+} from "./entitlementGate.js";
+export {
   dmOnlyGate,
   GUILD_TYPES,
   guildOnlyGate,

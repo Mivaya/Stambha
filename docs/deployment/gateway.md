@@ -381,6 +381,7 @@ See [Tier split](/deployment/tier-split) and `examples/bot` for the three-proces
 
 ## Related
 
+- [HTTP interactions](/deployment/http-interactions) — Interactions Endpoint URL (no WebSocket)
 - [Transport](/reference/transport) — session info and REST routes
 - [Cross-runtime](/deployment/cross-runtime) — Node, Bun, Deno support
 - [Resharding](/deployment/resharding) — threshold resharding, identify budget, operator API
