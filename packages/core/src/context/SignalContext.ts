@@ -9,6 +9,16 @@ export interface SignalContext {
   readonly customId: string;
   /** Selected values for select menus (empty for buttons / modals). */
   readonly values: readonly string[];
+  /**
+   * Surface where the component was used.
+   * @see CommandContext.interactionContext
+   */
+  readonly interactionContext?: import("./installContext.js").InteractionContextName;
+  /**
+   * Install authorizers for this interaction.
+   * @see CommandContext.authorizingIntegrationOwners
+   */
+  readonly authorizingIntegrationOwners?: import("./installContext.js").AuthorizingIntegrationOwners;
   readonly raw: unknown;
   reply(message: string | ReplyPayload): Promise<void>;
   replyEphemeral(message: string | ReplyPayload): Promise<void>;

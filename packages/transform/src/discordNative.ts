@@ -5,7 +5,11 @@ import type {
   ParsedSlashOptionType,
   SlashOption,
 } from "@stambha/core";
-import { SlashOptionType } from "@stambha/core";
+import {
+  SlashOptionType,
+  authorizingIntegrationOwnersFromApi,
+  interactionContextFromApi,
+} from "@stambha/core";
 import type {
   StambhaAutocompleteInteraction,
   StambhaComponentInteraction,
@@ -62,6 +66,8 @@ interface DiscordInteractionPayload {
   channel_id?: string;
   channel?: DiscordChannelPayload;
   app_permissions?: string;
+  context?: number;
+  authorizing_integration_owners?: Record<string, string>;
 }
 
 function userFromDiscord(user: DiscordUserPayload | undefined): StambhaUser | null {
@@ -212,6 +218,10 @@ function baseInteraction(
   user: StambhaUser,
 ): Omit<StambhaSlashInteraction, "kind" | "commandName" | "slashPath" | "slashOptions"> {
   const meta = metaFromDiscordInteraction(payload);
+  const interactionContext = interactionContextFromApi(payload.context);
+  const authorizingIntegrationOwners = authorizingIntegrationOwnersFromApi(
+    payload.authorizing_integration_owners,
+  );
   return {
     id: payload.id ?? null,
     token: payload.token ?? null,
@@ -220,6 +230,8 @@ function baseInteraction(
     guildId: payload.guild_id ?? null,
     channelId: payload.channel_id ?? null,
     ...(meta ? { meta } : {}),
+    ...(interactionContext !== undefined ? { interactionContext } : {}),
+    ...(authorizingIntegrationOwners !== undefined ? { authorizingIntegrationOwners } : {}),
     raw: payload,
   };
 }
