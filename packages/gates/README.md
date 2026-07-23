@@ -86,6 +86,7 @@ attachGateDeniedReply(client);
 | `nsfwGate` | NSFW channel requirement |
 | `guildOnlyGate` / `dmOnlyGate` | Channel type restriction |
 | `runInGate` / `RunIn` | Run in specific channel types |
+| `entitlementGate` | Active SKU entitlement (monetization) |
 
 Combine custom gates in `@stambha/core` with `gateAnd()` / `gateOr()`.
 
@@ -99,6 +100,7 @@ Combine custom gates in `@stambha/core` with `gateAnd()` / `gateOr()`.
 | `permissionsGate`, `Permission` | Discord permission math |
 | `nsfwGate` | Age-restricted channels |
 | `guildOnlyGate`, `dmOnlyGate`, `runInGate` | Where commands may run |
+| `entitlementGate`, `hasEntitlement` | SKU entitlement checks |
 | `resolveCommandGates` | Build gates from Command options |
 | `attachGateDeniedReply` | User-facing denial messages |
 
