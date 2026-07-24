@@ -4,13 +4,13 @@ Optional packages ship from **[Stambha-plugins](https://github.com/Mivaya/Stambh
 
 The plugin **host** (`definePlugin`, lifecycle, container) stays in core: [Plugins & container](/features/plugins).
 
-Current plugins line: packages ship independently. **`@stambha/api` is at 1.2.0** (file-based `src/routes/`); other packages remain on **1.0.0** unless noted. Peers on Stambha core **^1.2.0** where applicable.
+Current plugins line: packages ship independently. **`@stambha/api` is at 1.2.0** (file-based `src/routes/`); **`@stambha/pagination` is at 1.1.0** (Components V2); other packages remain on **1.0.0** unless noted. Peers on Stambha core **^1.2.0** (pagination needs **^1.2.2**).
 
 ## Guides
 
 | You need… | Guide |
 |-----------|--------|
-| Paginated embeds (prev / next / dismiss) | [Pagination](/extensions/pagination) |
+| Paginated V2 messages (prev / next / dismiss) | [Pagination](/extensions/pagination) |
 | HTTP routes / Discord OAuth admin API (`src/routes/` in 1.2.0+) | [HTTP API](/extensions/api) |
 | Prometheus scrape endpoint | [Metrics](/extensions/metrics) |
 | In-process or shared Redis guild/entity cache | [Cache](/extensions/cache) |

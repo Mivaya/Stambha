@@ -47,6 +47,7 @@ export async function loadPieces(
   client: StambhaClient,
   options: LoadPiecesOptions = {},
 ): Promise<LoadPiecesResult> {
+  await client.initialize();
   const basePath = options.basePath ?? cwd();
   applyLoaderBindings(client.binder, options.bindings);
   const ctx: LoaderContext = buildLoaderContext(
