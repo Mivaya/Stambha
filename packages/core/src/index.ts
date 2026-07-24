@@ -179,7 +179,7 @@ export { Registry, type UnitConstructor } from "./pieces/Registry.js";
 export { Unit, type UnitOptions } from "./pieces/Unit.js";
 // Pipeline
 export { ExecutionPipeline, type PipelineRunOptions } from "./pipeline/ExecutionPipeline.js";
-export type { PluginHookName, PluginLifecycle } from "./plugins/types.js";
+export type { PluginHookName, PluginLifecycle, PluginContext, StambhaPlugin } from "./plugins/types.js";
 export { Barrier, type BarrierOptions, type BarrierResult } from "./registries/Barrier.js";
 export { Chron, type ChronOptions, type ChronSchedule } from "./registries/Chron.js";
 // Registries (unit types)

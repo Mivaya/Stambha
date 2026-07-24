@@ -43,6 +43,10 @@ export interface MessageDetail {
 export interface ChannelMessageBody {
   content?: string;
   embeds?: unknown[];
+  /** Action rows / Components V2 layout. */
+  components?: unknown[];
+  /** Discord message flags (e.g. IS_COMPONENTS_V2). */
+  flags?: number;
   /** Discord poll create request (snake_case). Prefer `createPoll()` from `./polls.js`. */
   poll?: unknown;
   message_reference?: { message_id: string; channel_id?: string };
@@ -151,7 +155,7 @@ export async function editChannelMessage(
   rest: RestPort,
   channelId: string,
   messageId: string,
-  body: { content?: string; embeds?: unknown[] },
+  body: ChannelMessageBody,
 ): Promise<void> {
   await rest.request({
     method: "PATCH",
