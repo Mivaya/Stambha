@@ -8,7 +8,7 @@ import type {
   ScoutContext,
   SignalContext,
 } from "@stambha/core";
-import { Signal, slimCommandContext, slimMeta } from "@stambha/core";
+import { Signal, slimCommandContext, slimMeta, componentsV2 } from "@stambha/core";
 import {
   autocompleteCallbackBody,
   channelMessageBody,
@@ -206,6 +206,9 @@ export function commandContextFromStambhaMessageViaRest(
           : { ...messageOrPayload, ephemeral: true };
       await sendOrEdit(payload);
     },
+    replyV2: async (content, options) => {
+      await sendOrEdit(componentsV2(content, options));
+    },
   };
   return finalize(full, desired);
 }
@@ -242,6 +245,14 @@ export function commandContextFromStambhaSlashViaRest(
     raw: interaction,
     reply: callbacks.reply,
     replyEphemeral: callbacks.replyEphemeral,
+    replyV2: async (content, options) => {
+      const payload = componentsV2(content, options);
+      if (options?.ephemeral) {
+        await callbacks.replyEphemeral(payload);
+      } else {
+        await callbacks.reply(payload);
+      }
+    },
     deferReply: callbacks.deferReply,
     ...(callbacks.editReply ? { editReply: callbacks.editReply } : {}),
   };
