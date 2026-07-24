@@ -94,6 +94,7 @@ export {
   type ThumbnailComponent,
   type ThumbnailOptions,
   type UnfurledMediaItem,
+  V2Builder,
 } from "./components/index.js";
 // Piece paths (default project layout)
 export { type PiecePathKey, PiecePaths } from "./constants/piecePaths.js";

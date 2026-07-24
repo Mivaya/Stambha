@@ -178,16 +178,74 @@ export function container(options: ContainerOptions): ContainerComponent {
  * Do not send top-level `content` / `embeds` with this flag — use {@link textDisplay} instead.
  * Buttons / selects inside still use `signal.customId()` for SignalRouter.
  */
-export function componentsV2(options: ComponentsV2Options): ReplyPayload {
-  if (options.components.length < 1 || options.components.length > 40) {
+export function componentsV2(
+  contentOrOptions: string | ComponentsV2Options,
+  extraOptions?: { accentColor?: number; ephemeral?: boolean },
+): ReplyPayload {
+  if (typeof contentOrOptions === "string") {
+    const accentColor = extraOptions?.accentColor ?? 0x5865f2;
+    const comp = container({
+      accentColor,
+      components: [textDisplay({ content: contentOrOptions })],
+    });
+    const payload: ReplyPayload = {
+      components: [comp],
+      flags: MessageFlags.IsComponentsV2,
+    };
+    if (extraOptions?.ephemeral) payload.ephemeral = true;
+    return payload;
+  }
+
+  if (contentOrOptions.components.length < 1 || contentOrOptions.components.length > 40) {
     throw new Error("componentsV2 requires 1–40 top-level components.");
   }
   const payload: ReplyPayload = {
-    components: [...options.components],
+    components: [...contentOrOptions.components],
     flags: MessageFlags.IsComponentsV2,
   };
-  if (options.ephemeral) payload.ephemeral = true;
+  if (contentOrOptions.ephemeral) payload.ephemeral = true;
   return payload;
+}
+
+export class V2Builder {
+  private containers: ContainerComponent[] = [];
+  private currentContainer: ContainerComponent | null = null;
+  private isEphemeral = false;
+
+  public setEphemeral(ephemeral = true): this {
+    this.isEphemeral = ephemeral;
+    return this;
+  }
+
+  public container(accentColor?: number): this {
+    this.currentContainer = {
+      type: ComponentType.Container,
+      components: [],
+    };
+    if (accentColor !== undefined) {
+      this.currentContainer.accent_color = accentColor;
+    }
+    this.containers.push(this.currentContainer);
+    return this;
+  }
+
+  public text(content: string): this {
+    if (!this.currentContainer) {
+      this.container();
+    }
+    this.currentContainer!.components.push({
+      type: ComponentType.TextDisplay,
+      content,
+    });
+    return this;
+  }
+
+  public build(): ReplyPayload {
+    return componentsV2({
+      components: this.containers,
+      ephemeral: this.isEphemeral,
+    });
+  }
 }
 
 /** Collect `custom_id` values from nested V2 / action-row trees (tests / debugging). */
