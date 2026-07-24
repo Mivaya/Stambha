@@ -22,6 +22,7 @@ import {
   textInput,
   TextInputStyle,
   thumbnail,
+  V2Builder,
 } from "./index.js";
 
 describe("component builders", () => {
@@ -144,6 +145,46 @@ describe("Components V2 builders", () => {
         accessory: thumbnail({ url: "https://example.com/a.png" }),
       }),
     ).toThrow(/1–3/);
+  });
+
+  it("auto-wraps simple string in componentsV2", () => {
+    const payload = componentsV2("Hello V2", { accentColor: 0xff0000, ephemeral: true });
+    expect(payload.flags).toBe(MessageFlags.IsComponentsV2);
+    expect(payload.ephemeral).toBe(true);
+    expect(payload.components).toHaveLength(1);
+    
+    const wrapper = payload.components![0] as any;
+    expect(wrapper).toMatchObject({
+      type: ComponentType.Container,
+      accent_color: 0xff0000,
+    });
+    expect(wrapper.components).toHaveLength(1);
+    expect(wrapper.components![0]).toMatchObject({
+      type: ComponentType.TextDisplay,
+      content: "Hello V2",
+    });
+  });
+
+  it("builds component tree sequentially via V2Builder", () => {
+    const payload = new V2Builder()
+      .container(0x5865f2)
+      .text("Line A")
+      .text("Line B")
+      .setEphemeral(true)
+      .build();
+
+    expect(payload.flags).toBe(MessageFlags.IsComponentsV2);
+    expect(payload.ephemeral).toBe(true);
+    expect(payload.components).toHaveLength(1);
+
+    const c = payload.components![0] as any;
+    expect(c).toMatchObject({
+      type: ComponentType.Container,
+      accent_color: 0x5865f2,
+    });
+    expect(c.components).toHaveLength(2);
+    expect(c.components![0]).toMatchObject({ type: ComponentType.TextDisplay, content: "Line A" });
+    expect(c.components![1]).toMatchObject({ type: ComponentType.TextDisplay, content: "Line B" });
   });
 });
 

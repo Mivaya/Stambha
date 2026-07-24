@@ -111,4 +111,35 @@ describe("slash callbacks", () => {
       body: { type: 5, data: { flags: 64 } },
     });
   });
+
+  it("sends a V2 component via replyV2", async () => {
+    const request = vi.fn().mockResolvedValue(undefined);
+    const rest: RestPort = { request };
+
+    const ctx = commandContextFromStambhaSlashViaRest(slashInteraction, rest);
+    await ctx.replyV2?.("ping pong V2", { accentColor: 0xff0000, ephemeral: true });
+
+    expect(request).toHaveBeenCalledWith({
+      method: "POST",
+      route: "/interactions/i1/tok/callback",
+      body: {
+        type: 4,
+        data: {
+          components: [
+            {
+              type: 17,
+              components: [
+                {
+                  type: 10,
+                  content: "ping pong V2",
+                },
+              ],
+              accent_color: 0xff0000,
+            },
+          ],
+          flags: (1 << 15) | 64,
+        },
+      },
+    });
+  });
 });

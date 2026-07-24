@@ -45,6 +45,11 @@ export interface CommandContext {
   /** Text or rich payload (content, embeds). Prefix: channel message. Slash: interaction callback. */
   reply(message: string | ReplyPayload): Promise<void>;
   replyEphemeral(message: string | ReplyPayload): Promise<void>;
+  /** Direct Components V2 message helper (auto-wrapped). */
+  replyV2?(
+    content: string,
+    options?: { accentColor?: number; ephemeral?: boolean },
+  ): Promise<void>;
   /** Slash only — edit the initial deferred interaction response (requires application id on the client). */
   editReply?(payload: ReplyPayload): Promise<void>;
   /** Slash only — acknowledge with a deferred response (type 5) before `editReply`. */
