@@ -17,6 +17,8 @@ export interface StambhaClientOptions {
   container?: StambhaContainerLike;
   /** Context field mask for bridges (defaults to full context). */
   desiredProperties?: import("../desired/DesiredProperties.js").DesiredProperties;
+  /** Registered plugins to extend the client's behavior. */
+  plugins?: import("../plugins/types.js").StambhaPlugin[];
 }
 
 export interface CreateStambhaBotOptions extends StambhaClientOptions {
