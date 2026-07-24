@@ -12,7 +12,7 @@ import { resolveCommandGates } from "../gates/resolveCommandGates.js";
 import type { Outcome } from "../outcome/Outcome.js";
 import { Registry } from "../pieces/Registry.js";
 import { ExecutionPipeline } from "../pipeline/ExecutionPipeline.js";
-import type { PluginLifecycle } from "../plugins/types.js";
+import type { PluginHookName, PluginLifecycle, StambhaPlugin } from "../plugins/types.js";
 import type { Barrier } from "../registries/Barrier.js";
 import type { Chron } from "../registries/Chron.js";
 import type { Command } from "../registries/Command.js";
@@ -29,7 +29,7 @@ import type { PrefixResolver } from "./prefix.js";
 import { SignalRouter } from "./SignalRouter.js";
 import type { StambhaClientEvents, StambhaClientOptions, StambhaRegistries } from "./types.js";
 
-export class StambhaClient extends EventEmitter {
+export class StambhaClient extends EventEmitter implements PluginLifecycle {
   readonly tier: Tier;
   readonly workerRole: WorkerRole;
   readonly restPort: RestPort | null;
@@ -44,15 +44,17 @@ export class StambhaClient extends EventEmitter {
   readonly commandIndex: CommandIndex;
   readonly desiredProperties: ResolvedDesiredProperties;
   readonly registries: StambhaRegistries;
+  readonly plugins: StambhaPlugin[] = [];
 
   bridge: Bridge | null = null;
   prefix: string;
   resolvePrefix: PrefixResolver | null;
   botUserId: string | null = null;
-  /** Set via {@link createPluginManager} from `@stambha/plugins`. */
-  pluginLifecycle: PluginLifecycle | null = null;
+  /** Defaults to the client itself running hooks on natively registered plugins. */
+  pluginLifecycle: PluginLifecycle = this;
   private started = false;
   private hooksBound = false;
+  private initialized = false;
 
   constructor(options: StambhaClientOptions = {}) {
     super();
@@ -84,6 +86,12 @@ export class StambhaClient extends EventEmitter {
       signals: new Registry<Signal>(this, "signals"),
       chrons: new Registry<Chron>(this, "chrons"),
     };
+
+    if (options.plugins) {
+      for (const plugin of options.plugins) {
+        this.registerPlugin(plugin);
+      }
+    }
   }
 
   get isReady(): boolean {
@@ -126,6 +134,28 @@ export class StambhaClient extends EventEmitter {
   /** Validate {@link CommandOptions.gateNames} against the gate registry. Called by {@link loadPieces}. */
   resolveCommandGates(): void {
     resolveCommandGates(this);
+  }
+
+  registerPlugin(plugin: StambhaPlugin): this {
+    this.plugins.push(plugin);
+    return this;
+  }
+
+  async initialize(): Promise<void> {
+    if (this.initialized) return;
+    this.initialized = true;
+    await this.runHook("preInit");
+    await this.runHook("postInit");
+  }
+
+  async runHook(name: PluginHookName): Promise<void> {
+    const ctx = { client: this, container: this.container };
+    for (const plugin of this.plugins) {
+      const hook = plugin.hooks?.[name];
+      if (hook) {
+        await hook(ctx);
+      }
+    }
   }
 
   getCommand(name: string): Command | undefined {
@@ -174,6 +204,7 @@ export class StambhaClient extends EventEmitter {
 
   async stop(): Promise<void> {
     this.chronScheduler.stop();
+    await this.pluginLifecycle?.runHook("onShutdown");
     if (this.bridge) {
       await this.bridge.disconnect();
     }

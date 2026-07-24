@@ -536,6 +536,49 @@ export class PingCommand extends Command {
     }),
   },
 
+  B8: {
+    title: "B8 — Native registerPlugin & onShutdown",
+    status: "In Progress",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.3",
+    lane: "Standard",
+    priority: "high",
+    body: ticketBody({
+      userStory: "As a bot author, I want to register plugins natively in the client constructor or options, and have them clean up via onShutdown.",
+      summary: "Add native `registerPlugin` & `plugins` option to StambhaClient; add `onShutdown` lifecycle hook.",
+      acceptance: [
+        "StambhaClient constructor accepts options.plugins",
+        "registerPlugin(plugin) dynamically registers plugins",
+        "onShutdown hook executed in client.stop()",
+        "Vitest unit tests cover all hooks including onShutdown",
+      ],
+      meta: { ID: "B8", Pillar: "B", Release: "1.3", Epic: "EPIC-B", Branch: "feature/native-plugins" },
+    }),
+  },
+
+  B9: {
+    title: "B9 — TypeScript interface augmentation",
+    status: "In Progress",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.3",
+    lane: "Standard",
+    priority: "high",
+    body: ticketBody({
+      userStory: "As a plugin author, I want to extend StambhaClientOptions and global container options via TypeScript declaration merging.",
+      summary: "Ensure types are exported and structured to support module augmentation for client options & container.",
+      acceptance: [
+        "TypeScript declarations compile correctly",
+        "Example of declaration merging in tests or docs",
+      ],
+      meta: { ID: "B9", Pillar: "B", Release: "1.3", Epic: "EPIC-B" },
+    }),
+  },
+
+
   C1: {
     title: "C1 — Permission levels",
     status: "Backlog",
@@ -1281,6 +1324,8 @@ export class PingCommand extends Command {
         { id: "B4", title: "Piece lifecycle + error hooks", shipped: false },
         { id: "B5", title: "Component builder + persistent signals", shipped: false },
         { id: "B6", title: "Prefix edit-tracking", shipped: false },
+        { id: "B8", title: "Native registerPlugin & onShutdown", shipped: false },
+        { id: "B9", title: "TypeScript interface augmentation", shipped: false },
         { id: "TYPING", title: "Typing indicator", shipped: false },
         { id: "P1", title: "Pagination plugin (@stambha/pagination)", shipped: true },
       ],
@@ -1608,6 +1653,10 @@ export const TITLE_TO_ID = {
   B6: "B6",
   "B6 — Prefix edit-tracking": "B6",
   "B7 — Mention-as-prefix": "B7",
+  B8: "B8",
+  "B8 — Native registerPlugin & onShutdown": "B8",
+  B9: "B9",
+  "B9 — TypeScript interface augmentation": "B9",
   C1: "C1",
   "C1 — Permission levels": "C1",
   C2: "C2",
