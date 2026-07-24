@@ -47,6 +47,10 @@ export function slimCommandContext(
     replyEphemeral: ctx.replyEphemeral,
   };
 
+  if (ctx.replyV2) {
+    Object.assign(slim, { replyV2: ctx.replyV2 });
+  }
+
   if (desired.context.meta) {
     const meta = slimMeta(ctx.meta, desired.meta);
     if (meta !== undefined) Object.assign(slim, { meta });

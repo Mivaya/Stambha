@@ -68,4 +68,5 @@ export {
   type TextDisplayOptions,
   thumbnail,
   type ThumbnailOptions,
+  V2Builder,
 } from "./v2Builders.js";
