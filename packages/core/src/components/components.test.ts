@@ -3,24 +3,27 @@ import { StambhaClient } from "../client/StambhaClient.js";
 import { Signal } from "../registries/Signal.js";
 import {
   actionRow,
+  ButtonStyle,
   button,
   buttonRow,
-  ButtonStyle,
+  ComponentType,
   collectCustomIds,
   componentsV2,
-  ComponentType,
   confirmCancelRow,
   container,
+  EmbedBuilder,
   MessageFlags,
   modal,
+  PanelBuilder,
+  panel,
   registerPersistentSignals,
   section,
   selectRow,
   separator,
   stringSelect,
+  TextInputStyle,
   textDisplay,
   textInput,
-  TextInputStyle,
   thumbnail,
   V2Builder,
 } from "./index.js";
@@ -152,7 +155,7 @@ describe("Components V2 builders", () => {
     expect(payload.flags).toBe(MessageFlags.IsComponentsV2);
     expect(payload.ephemeral).toBe(true);
     expect(payload.components).toHaveLength(1);
-    
+
     const wrapper = payload.components![0] as any;
     expect(wrapper).toMatchObject({
       type: ComponentType.Container,
@@ -207,5 +210,113 @@ describe("registerPersistentSignals", () => {
     ]);
     expect(second.map((s) => s.name)).toEqual(["panel-b"]);
     expect(client.registries.signals.size).toBe(2);
+  });
+});
+
+describe("EmbedBuilder", () => {
+  it("builds classic Discord embed JSON using fluent chaining", () => {
+    const embed = new EmbedBuilder()
+      .setTitle("Command: !ping")
+      .setDescription("Check bot responsiveness")
+      .setUrl("https://stambha.dev")
+      .setColor(0x57f287)
+      .setAuthor({ name: "Mivaya", iconUrl: "https://stambha.dev/icon.png" })
+      .setThumbnail("https://stambha.dev/thumb.png")
+      .setImage("https://stambha.dev/banner.png")
+      .setFooter({ text: "Requested by User", iconUrl: "https://stambha.dev/user.png" })
+      .setTimestamp(new Date("2026-07-29T12:00:00Z"))
+      .addFields(
+        { name: "Module", value: "General", inline: true },
+        { name: "Aliases", value: "!pong", inline: true },
+      )
+      .toJSON();
+
+    expect(embed).toEqual({
+      title: "Command: !ping",
+      description: "Check bot responsiveness",
+      url: "https://stambha.dev",
+      color: 0x57f287,
+      author: { name: "Mivaya", icon_url: "https://stambha.dev/icon.png" },
+      thumbnail: { url: "https://stambha.dev/thumb.png" },
+      image: { url: "https://stambha.dev/banner.png" },
+      footer: { text: "Requested by User", icon_url: "https://stambha.dev/user.png" },
+      timestamp: "2026-07-29T12:00:00.000Z",
+      fields: [
+        { name: "Module", value: "General", inline: true },
+        { name: "Aliases", value: "!pong", inline: true },
+      ],
+    });
+  });
+
+  it("handles field modification via spliceFields and setFields", () => {
+    const builder = new EmbedBuilder().addFields(
+      { name: "A", value: "1" },
+      { name: "B", value: "2" },
+    );
+
+    builder.spliceFields(1, 1, { name: "C", value: "3" });
+    expect(builder.toJSON().fields).toEqual([
+      { name: "A", value: "1" },
+      { name: "C", value: "3" },
+    ]);
+
+    builder.setFields([{ name: "D", value: "4" }]);
+    expect(builder.toJSON().fields).toEqual([{ name: "D", value: "4" }]);
+  });
+});
+
+describe("panel() and PanelBuilder", () => {
+  it("constructs a Components V2 panel payload with fields, footer, and accent color", () => {
+    const payload = panel({
+      title: "Command: !ping",
+      description: "Check bot responsiveness and API latency.",
+      color: 0x57f287,
+      fields: [
+        { name: "Module", value: "General", inline: true },
+        { name: "Aliases", value: "!pong", inline: true },
+        { name: "Usage", value: "`!ping`", inline: false },
+      ],
+      footer: { text: "Requested by User" },
+      timestamp: 1700000000,
+      ephemeral: true,
+    });
+
+    expect(payload.flags).toBe(MessageFlags.IsComponentsV2);
+    expect(payload.ephemeral).toBe(true);
+    expect(payload.components).toHaveLength(1);
+
+    const cont = payload.components![0] as any;
+    expect(cont.type).toBe(ComponentType.Container);
+    expect(cont.accent_color).toBe(0x57f287);
+    expect(cont.components.length).toBeGreaterThan(0);
+  });
+
+  it("builds identical payload using PanelBuilder class", () => {
+    const payloadFromFn = panel({
+      title: "Title",
+      description: "Desc",
+      color: 0xff0000,
+    });
+
+    const payloadFromBuilder = new PanelBuilder()
+      .setTitle("Title")
+      .setDescription("Desc")
+      .setColor(0xff0000)
+      .build();
+
+    expect(payloadFromBuilder).toEqual(payloadFromFn);
+  });
+
+  it("handles header with thumbnail accessory", () => {
+    const payload = panel({
+      title: "Header with Thumb",
+      thumbnail: "https://example.com/thumb.png",
+    });
+
+    const cont = payload.components![0] as any;
+    const headerSection = cont.components[0];
+    expect(headerSection.type).toBe(ComponentType.Section);
+    expect(headerSection.accessory.type).toBe(ComponentType.Thumbnail);
+    expect(headerSection.accessory.media.url).toBe("https://example.com/thumb.png");
   });
 });

@@ -84,7 +84,7 @@ describe("ExecutionPipeline", () => {
 
     await client.invoke("ping", mockCtx());
     expect(audit.run).toHaveBeenCalledOnce();
-    expect(audit.run.mock.calls[0]![0].phase).toBe("completed");
+    expect((audit.run.mock.calls as any)[0][0].phase).toBe("completed");
   });
 
   it("runs denied epilogues when a gate blocks", async () => {
@@ -95,7 +95,7 @@ describe("ExecutionPipeline", () => {
     });
     client.registries.epilogues.register(denied);
 
-    const gate = new DenyGate(client.registries.gates, { name: "deny" });
+    const gate = new DenyGate(client.registries.gates);
     client.registries.gates.register(gate);
 
     const ping = new PingCommand(client.registries.commands, { name: "ping", gateNames: ["deny"] });
@@ -103,7 +103,7 @@ describe("ExecutionPipeline", () => {
 
     await client.invoke("ping", mockCtx());
     expect(denied.run).toHaveBeenCalledOnce();
-    expect(denied.run.mock.calls[0]![0].phase).toBe("denied");
+    expect((denied.run.mock.calls as any)[0][0].phase).toBe("denied");
   });
 
   it("attachCommandLifecycleEpilogues wires success handler", async () => {

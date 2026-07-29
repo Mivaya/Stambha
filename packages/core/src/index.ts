@@ -31,68 +31,83 @@ export type {
 export { SlashOptionType } from "./command/slashTypes.js";
 // Components (message / modal builders)
 export {
+  type ActionRowChild,
+  type ActionRowComponent,
   actionRow,
-  button,
-  buttonRow,
-  ButtonStyle,
   type ButtonComponent,
   type ButtonOptions,
+  ButtonStyle,
   type ButtonStyleId,
-  collectCustomIds,
+  button,
+  buttonRow,
   type ComponentEmoji,
-  componentsV2,
   type ComponentsV2Options,
   ComponentType,
   type ComponentTypeId,
-  confirmCancelRow,
-  container,
   type ContainerChild,
   type ContainerComponent,
   type ContainerOptions,
-  fileComponent,
+  collectCustomIds,
+  componentsV2,
+  confirmCancelRow,
+  container,
+  type DiscordEmbedAuthor,
+  type DiscordEmbedField,
+  type DiscordEmbedFooter,
+  type DiscordEmbedImage,
+  type DiscordEmbedJSON,
+  type DiscordEmbedProvider,
+  type DiscordEmbedThumbnail,
+  type DiscordEmbedVideo,
+  EmbedBuilder,
   type FileComponent,
   type FileComponentOptions,
-  linkButton,
+  fileComponent,
   type LinkButtonOptions,
-  mediaGallery,
+  linkButton,
   type MediaGalleryComponent,
   type MediaGalleryItem,
   type MediaGalleryOptions,
   type MessageComponentV2,
   type MessageFlag,
   MessageFlags,
-  modal,
   type ModalComponent,
   type ModalOptions,
+  mediaGallery,
+  modal,
+  PanelBuilder,
+  type PanelField,
+  type PanelFooter,
+  type PanelOptions,
+  type PanelThumbnail,
   type PersistentSignalFactory,
+  panel,
   registerPersistentSignals,
-  type ActionRowChild,
-  type ActionRowComponent,
-  section,
   type SectionAccessory,
   type SectionComponent,
   type SectionOptions,
   type SelectOption,
-  selectRow,
-  separator,
   type SeparatorComponent,
   type SeparatorOptions,
   SeparatorSpacing,
   type SeparatorSpacingId,
-  stringSelect,
   type StringSelectComponent,
   type StringSelectOptions,
-  textDisplay,
+  section,
+  selectRow,
+  separator,
+  stringSelect,
   type TextDisplayComponent,
   type TextDisplayOptions,
-  textInput,
   type TextInputComponent,
   type TextInputOptions,
   TextInputStyle,
   type TextInputStyleId,
-  thumbnail,
   type ThumbnailComponent,
   type ThumbnailOptions,
+  textDisplay,
+  textInput,
+  thumbnail,
   type UnfurledMediaItem,
   V2Builder,
 } from "./components/index.js";
@@ -103,8 +118,6 @@ export { DefaultStambhaContainer } from "./container/DefaultStambhaContainer.js"
 export type { StambhaContainerLike, StambhaLogger } from "./container/types.js";
 export type { ArgsText, ParsedSlashOptionType, SlashOption } from "./context/args.js";
 export type { AutocompleteChoice, AutocompleteContext } from "./context/autocomplete.js";
-export type { ChannelType, CommandContextMeta, EntitlementSummary } from "./context/meta.js";
-export { isGuildChannelType } from "./context/meta.js";
 export type {
   AuthorizingIntegrationOwners,
   IntegrationTypeName,
@@ -113,13 +126,15 @@ export type {
   InteractionContextTypeValue,
 } from "./context/installContext.js";
 export {
+  authorizingIntegrationOwnersFromApi,
   IntegrationType,
   InteractionContextType,
-  authorizingIntegrationOwnersFromApi,
   integrationTypesToApi,
   interactionContextFromApi,
   interactionContextsToApi,
 } from "./context/installContext.js";
+export type { ChannelType, CommandContextMeta, EntitlementSummary } from "./context/meta.js";
+export { isGuildChannelType } from "./context/meta.js";
 export type { ReplyPayload } from "./context/reply.js";
 export { normalizeReplyData } from "./context/reply.js";
 export type { SignalContext } from "./context/SignalContext.js";
@@ -158,11 +173,11 @@ export {
 export {
   clearDeclarativeGatesResolver,
   commandGatesForRun,
+  type DeclarativeGatesResolver,
   globalGates,
   registerDeclarativeGatesResolver,
   resolveCommandGates,
   resolveNamedGates,
-  type DeclarativeGatesResolver,
 } from "./gates/resolveCommandGates.js";
 // Outcome
 export {
@@ -180,7 +195,12 @@ export { Registry, type UnitConstructor } from "./pieces/Registry.js";
 export { Unit, type UnitOptions } from "./pieces/Unit.js";
 // Pipeline
 export { ExecutionPipeline, type PipelineRunOptions } from "./pipeline/ExecutionPipeline.js";
-export type { PluginHookName, PluginLifecycle, PluginContext, StambhaPlugin } from "./plugins/types.js";
+export type {
+  PluginContext,
+  PluginHookName,
+  PluginLifecycle,
+  StambhaPlugin,
+} from "./plugins/types.js";
 export { Barrier, type BarrierOptions, type BarrierResult } from "./registries/Barrier.js";
 export { Chron, type ChronOptions, type ChronSchedule } from "./registries/Chron.js";
 // Registries (unit types)
