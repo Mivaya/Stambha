@@ -1,5 +1,11 @@
 /** Plugin lifecycle hook names. */
-export type PluginHookName = "preInit" | "postInit" | "preStart" | "postStart" | "postLoad" | "onShutdown";
+export type PluginHookName =
+  | "preInit"
+  | "postInit"
+  | "preStart"
+  | "postStart"
+  | "postLoad"
+  | "onShutdown";
 
 export interface PluginContext {
   client: import("../client/StambhaClient.js").StambhaClient;
@@ -17,4 +23,3 @@ export interface StambhaPlugin {
 export interface PluginLifecycle {
   runHook(name: PluginHookName): Promise<void>;
 }
-
