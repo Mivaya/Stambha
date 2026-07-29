@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { StambhaClient } from "./StambhaClient.js";
 import { MockBridge } from "../bridge/MockBridge.js";
 import type { StambhaPlugin } from "../plugins/types.js";
+import { StambhaClient } from "./StambhaClient.js";
 
 describe("StambhaClient Plugin Enhancements", () => {
   it("should register plugins via constructor and registerPlugin", () => {
@@ -43,9 +43,15 @@ describe("StambhaClient Plugin Enhancements", () => {
     const plugin: StambhaPlugin = {
       name: "test-lifecycle",
       hooks: {
-        preStart: () => { hooksRun.push("preStart"); },
-        postStart: () => { hooksRun.push("postStart"); },
-        onShutdown: () => { hooksRun.push("onShutdown"); },
+        preStart: () => {
+          hooksRun.push("preStart");
+        },
+        postStart: () => {
+          hooksRun.push("postStart");
+        },
+        onShutdown: () => {
+          hooksRun.push("onShutdown");
+        },
       },
     };
 

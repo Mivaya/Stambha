@@ -43,9 +43,10 @@ describe("InboundRouter.parsePrefixCommand", () => {
     });
     client.register(new PingCommand(client.registries.commands, { name: "ping" }));
 
-    expect(
-      await client.router.parsePrefixCommand(`<@${botId}> ping`, { userId: "1" }),
-    ).toEqual({ name: "ping", args: "" });
+    expect(await client.router.parsePrefixCommand(`<@${botId}> ping`, { userId: "1" })).toEqual({
+      name: "ping",
+      args: "",
+    });
     expect(
       await client.router.parsePrefixCommand(`<@!${botId}> ping args`, { userId: "1" }),
     ).toEqual({ name: "ping", args: "args" });

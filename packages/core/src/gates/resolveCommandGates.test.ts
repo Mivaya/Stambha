@@ -11,6 +11,7 @@ function mockCtx(): CommandContext {
     kind: "slash",
     commandName: "ping",
     userId: "1",
+    guildId: "2",
     channelId: "2",
     raw: {},
     reply: vi.fn(),

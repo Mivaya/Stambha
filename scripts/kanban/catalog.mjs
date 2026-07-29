@@ -578,6 +578,28 @@ export class PingCommand extends Command {
     }),
   },
 
+  B10: {
+    title: "B10 — Native EmbedBuilder and PanelBuilder / panel()",
+    status: "In Progress",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.3",
+    lane: "Standard",
+    priority: "high",
+    body: ticketBody({
+      userStory: "As a bot developer, I want high-level builder abstractions (EmbedBuilder and panel() / PanelBuilder) so I can construct structured content and Components V2 replies without manual boilerplate.",
+      summary: "Add native high-level content builders (EmbedBuilder for classic embeds, panel() / PanelBuilder for Components V2 container layouts) to @stambha/core.",
+      acceptance: [
+        "EmbedBuilder class for classic Discord embed JSON payloads",
+        "panel() helper function and PanelBuilder class for Components V2 containers",
+        "Exported from @stambha/core",
+        "Unit tests in @stambha/core covering all builders",
+      ],
+      meta: { ID: "B10", Pillar: "B", Release: "1.3", Epic: "EPIC-B", Branch: "feature/native-embed-panel-builders" },
+    }),
+  },
+
 
   C1: {
     title: "C1 — Permission levels",

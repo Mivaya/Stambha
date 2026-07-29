@@ -25,7 +25,11 @@ export type CommandCooldownOption =
     };
 
 /** Where a command may run — `'guild'` / `'dm'` shortcuts or channel-type list. */
-export type CommandRunInOption = "guild" | "dm" | ChannelType | readonly (ChannelType | "guild_any")[];
+export type CommandRunInOption =
+  | "guild"
+  | "dm"
+  | ChannelType
+  | readonly (ChannelType | "guild_any")[];
 
 export interface CommandOptions extends UnitOptions {
   description?: string;
