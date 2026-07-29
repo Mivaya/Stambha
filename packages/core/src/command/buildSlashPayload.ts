@@ -1,10 +1,10 @@
-import type { Command } from "../registries/Command.js";
 import {
-  integrationTypesToApi,
-  interactionContextsToApi,
   type IntegrationTypeName,
   type InteractionContextName,
+  integrationTypesToApi,
+  interactionContextsToApi,
 } from "../context/installContext.js";
+import type { Command } from "../registries/Command.js";
 import {
   type ApplicationCommandJSON,
   type ApplicationCommandOptionJSON,

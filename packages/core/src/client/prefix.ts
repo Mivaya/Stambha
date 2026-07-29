@@ -12,10 +12,7 @@ export type PrefixResolver = (ctx: PrefixResolveContext) => string | Promise<str
  * Prefix resolver that treats `<@botId>` / `<@!botId>` as the command prefix,
  * falling back to {@link textPrefix} (default `"!"`) for classic text prefixes.
  */
-export function createMentionPrefixResolver(
-  botUserId: string,
-  textPrefix = "!",
-): PrefixResolver {
+export function createMentionPrefixResolver(botUserId: string, textPrefix = "!"): PrefixResolver {
   const mention = `<@${botUserId}>`;
   const nickMention = `<@!${botUserId}>`;
 
@@ -25,4 +22,3 @@ export function createMentionPrefixResolver(
     return textPrefix;
   };
 }
-
