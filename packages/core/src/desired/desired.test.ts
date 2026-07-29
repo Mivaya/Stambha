@@ -20,7 +20,7 @@ function baseCtx(): CommandContext {
       memberPermissions: 8n,
       clientPermissions: 16n,
     },
-    slashOptions: [{ name: "q", type: 3, value: "hi" }],
+    slashOptions: [{ name: "q", type: 3 as any, value: "hi" }],
     slashPath: { root: "ping" },
     raw: { big: true },
     reply: async () => {},

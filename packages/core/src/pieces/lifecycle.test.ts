@@ -3,10 +3,12 @@ import { StambhaClient } from "../client/StambhaClient.js";
 import type { CommandContext } from "../context/types.js";
 import { err, isOk, ok } from "../outcome/Outcome.js";
 import { Command } from "../registries/Command.js";
+import { Gate } from "../registries/Gate.js";
 import type { Registry } from "./Registry.js";
-import { Unit } from "./Unit.js";
 
-class LifecycleUnit extends Unit {
+class LifecycleUnit extends Gate {
+  check = async () => ({ allow: true });
+  evaluate = async () => ok(undefined);
   onLoad = vi.fn(async () => {});
   onUnload = vi.fn(async () => {});
 }
@@ -88,7 +90,7 @@ describe("piece lifecycle", () => {
     const outcome = await client.invoke("boom", mockCtx());
     expect(isOk(outcome)).toBe(false);
     expect(boom.onCommandError).toHaveBeenCalledOnce();
-    expect(boom.onCommandError.mock.calls[0]![0]).toBeInstanceOf(Error);
+    expect((boom.onCommandError.mock.calls as any)[0][0]).toBeInstanceOf(Error);
   });
 
   it("default onCommandError logs via container logger", async () => {

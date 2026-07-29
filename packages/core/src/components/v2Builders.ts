@@ -1,8 +1,8 @@
 import type { ReplyPayload } from "../context/reply.js";
 import {
+  ComponentType,
   type ContainerChild,
   type ContainerComponent,
-  ComponentType,
   type FileComponent,
   type MediaGalleryComponent,
   type MediaGalleryItem,
