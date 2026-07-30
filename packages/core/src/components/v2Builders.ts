@@ -1,12 +1,12 @@
 import type { ReplyPayload } from "../context/reply.js";
 import {
   ComponentType,
+  type ActionRowComponent,
   type ContainerChild,
   type ContainerComponent,
   type FileComponent,
   type MediaGalleryComponent,
   type MediaGalleryItem,
-  type MessageComponentV2,
   MessageFlags,
   type SectionAccessory,
   type SectionComponent,
@@ -16,7 +16,10 @@ import {
   type TextDisplayComponent,
   type ThumbnailComponent,
   type UnfurledMediaItem,
+  type MessageComponentV2,
 } from "./types.js";
+
+// ─── Functional Options ──────────────────────────────────────────────────────
 
 export interface TextDisplayOptions {
   content: string;
@@ -42,12 +45,15 @@ export interface MediaGalleryOptions {
   id?: number;
 }
 
-export interface FileComponentOptions {
+export interface FileOptions {
   /** Must use `attachment://filename` for uploaded files. */
   url: string;
   spoiler?: boolean;
   id?: number;
 }
+
+/** @deprecated Use {@link FileOptions} */
+export type FileComponentOptions = FileOptions;
 
 export interface SeparatorOptions {
   divider?: boolean;
@@ -69,9 +75,13 @@ export interface ComponentsV2Options {
   ephemeral?: boolean;
 }
 
+// ─── Internal helpers ─────────────────────────────────────────────────────────
+
 function media(url: string): UnfurledMediaItem {
   return { url };
 }
+
+// ─── Functional builders (quick/shorthand) ────────────────────────────────────
 
 /** Markdown text block (Components V2). */
 export function textDisplay(options: TextDisplayOptions): TextDisplayComponent {
@@ -134,7 +144,7 @@ export function mediaGallery(options: MediaGalleryOptions): MediaGalleryComponen
 }
 
 /** Display an uploaded attachment (`attachment://…`). */
-export function fileComponent(options: FileComponentOptions): FileComponent {
+export function file(options: FileOptions): FileComponent {
   const component: FileComponent = {
     type: ComponentType.File,
     file: media(options.url),
@@ -143,6 +153,12 @@ export function fileComponent(options: FileComponentOptions): FileComponent {
   if (options.id !== undefined) component.id = options.id;
   return component;
 }
+
+/**
+ * @deprecated Use {@link file} instead.
+ * Kept for backward compatibility.
+ */
+export const fileComponent = file;
 
 /** Vertical padding / divider between V2 components. */
 export function separator(options: SeparatorOptions = {}): SeparatorComponent {
@@ -207,6 +223,404 @@ export function componentsV2(
   return payload;
 }
 
+// ─── Fluent Builder Classes (1:1 Discord official API) ────────────────────────
+// Naming and method signatures match discord.js ContainerBuilder conventions.
+
+/**
+ * Fluent builder for a **Text Display** component (type 10).
+ * Renders markdown text inside a Components V2 message.
+ *
+ * @example
+ * ```ts
+ * new TextDisplayBuilder().setContent('Hello **world**').build()
+ * ```
+ */
+export class TextDisplayBuilder {
+  private _content = "";
+  private _id?: number;
+
+  /** Set the markdown content. */
+  public setContent(content: string): this {
+    this._content = content;
+    return this;
+  }
+
+  /** Set the optional 32-bit component id. */
+  public setId(id: number): this {
+    this._id = id;
+    return this;
+  }
+
+  public build(): TextDisplayComponent {
+    return textDisplay({ content: this._content, ...(this._id !== undefined && { id: this._id }) });
+  }
+
+  public toJSON(): TextDisplayComponent {
+    return this.build();
+  }
+}
+
+/**
+ * Fluent builder for a **Thumbnail** component (type 11).
+ * Used as an `accessory` inside a {@link SectionBuilder}.
+ *
+ * @example
+ * ```ts
+ * new ThumbnailBuilder().setMedia('https://example.com/img.png').setDescription('Alt').build()
+ * ```
+ */
+export class ThumbnailBuilder {
+  private _url = "";
+  private _description?: string | null;
+  private _spoiler?: boolean;
+  private _id?: number;
+
+  /** Set the image URL (or `attachment://filename`). */
+  public setMedia(url: string): this {
+    this._url = url;
+    return this;
+  }
+
+  /** Set alt text / caption. Pass `null` to explicitly clear. */
+  public setDescription(description: string | null): this {
+    this._description = description;
+    return this;
+  }
+
+  /** Mark the thumbnail as a spoiler (blurred until clicked). */
+  public setSpoiler(spoiler: boolean): this {
+    this._spoiler = spoiler;
+    return this;
+  }
+
+  public setId(id: number): this {
+    this._id = id;
+    return this;
+  }
+
+  public build(): ThumbnailComponent {
+    return thumbnail({
+      url: this._url,
+      ...(this._description !== undefined && { description: this._description }),
+      ...(this._spoiler !== undefined && { spoiler: this._spoiler }),
+      ...(this._id !== undefined && { id: this._id }),
+    });
+  }
+
+  public toJSON(): ThumbnailComponent {
+    return this.build();
+  }
+}
+
+/**
+ * Fluent builder for a **Separator** component (type 14).
+ * Adds vertical padding (and an optional visible divider line) between V2 components.
+ *
+ * @example
+ * ```ts
+ * new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacing.Large).build()
+ * ```
+ */
+export class SeparatorBuilder {
+  private _divider?: boolean;
+  private _spacing?: SeparatorSpacingId;
+  private _id?: number;
+
+  /** Show (or hide) the visible horizontal divider line. */
+  public setDivider(divider: boolean): this {
+    this._divider = divider;
+    return this;
+  }
+
+  /** Set the vertical spacing. `SeparatorSpacing.Small` (1) or `SeparatorSpacing.Large` (2). */
+  public setSpacing(spacing: SeparatorSpacingId): this {
+    this._spacing = spacing;
+    return this;
+  }
+
+  public setId(id: number): this {
+    this._id = id;
+    return this;
+  }
+
+  public build(): SeparatorComponent {
+    return separator({
+      ...(this._divider !== undefined && { divider: this._divider }),
+      ...(this._spacing !== undefined && { spacing: this._spacing }),
+      ...(this._id !== undefined && { id: this._id }),
+    });
+  }
+
+  public toJSON(): SeparatorComponent {
+    return this.build();
+  }
+}
+
+/**
+ * Fluent builder for a **File** component (type 13).
+ * Displays an uploaded attachment inline.
+ *
+ * @example
+ * ```ts
+ * new FileBuilder().setFile('attachment://report.pdf').setSpoiler(false).build()
+ * ```
+ */
+export class FileBuilder {
+  private _url = "";
+  private _spoiler?: boolean;
+  private _id?: number;
+
+  /** Set the file URL. Must use `attachment://filename` for uploaded files. */
+  public setFile(url: string): this {
+    this._url = url;
+    return this;
+  }
+
+  /** Blur the file attachment until the user clicks. */
+  public setSpoiler(spoiler: boolean): this {
+    this._spoiler = spoiler;
+    return this;
+  }
+
+  public setId(id: number): this {
+    this._id = id;
+    return this;
+  }
+
+  public build(): FileComponent {
+    return file({
+      url: this._url,
+      ...(this._spoiler !== undefined && { spoiler: this._spoiler }),
+      ...(this._id !== undefined && { id: this._id }),
+    });
+  }
+
+  public toJSON(): FileComponent {
+    return this.build();
+  }
+}
+
+/**
+ * Fluent builder for a **Media Gallery** component (type 12).
+ * Displays a grid of images / videos (1–10 items).
+ *
+ * @example
+ * ```ts
+ * new MediaGalleryBuilder()
+ *   .addItem('https://example.com/a.png', 'Caption')
+ *   .addItem('https://example.com/b.png')
+ *   .build()
+ * ```
+ */
+export class MediaGalleryBuilder {
+  private _items: MediaGalleryItem[] = [];
+  private _id?: number;
+
+  /**
+   * Add a single media item.
+   * @param url      Image / video URL (or `attachment://filename`).
+   * @param description  Optional alt text / caption.
+   * @param spoiler  Whether the item is blurred as a spoiler.
+   */
+  public addItem(url: string, description?: string | null, spoiler?: boolean): this {
+    const item: MediaGalleryItem = { media: { url } };
+    if (description !== undefined) item.description = description;
+    if (spoiler !== undefined) item.spoiler = spoiler;
+    this._items.push(item);
+    return this;
+  }
+
+  /** Add one or more pre-built {@link MediaGalleryItem} objects. */
+  public addItems(...items: MediaGalleryItem[]): this {
+    this._items.push(...items);
+    return this;
+  }
+
+  public setId(id: number): this {
+    this._id = id;
+    return this;
+  }
+
+  public build(): MediaGalleryComponent {
+    return mediaGallery({
+      items: this._items,
+      ...(this._id !== undefined && { id: this._id }),
+    });
+  }
+
+  public toJSON(): MediaGalleryComponent {
+    return this.build();
+  }
+}
+
+/**
+ * Fluent builder for a **Section** component (type 9).
+ * Displays 1–3 text displays on the left and a button or thumbnail accessory on the right.
+ *
+ * @example
+ * ```ts
+ * new SectionBuilder()
+ *   .addTextDisplayComponents(new TextDisplayBuilder().setContent('Title').build())
+ *   .setAccessory(new ThumbnailBuilder().setMedia('https://...').build())
+ *   .build()
+ * ```
+ */
+export class SectionBuilder {
+  private _texts: TextDisplayComponent[] = [];
+  private _accessory?: SectionAccessory;
+  private _id?: number;
+
+  /**
+   * Add one or more text display components to the section (max 3 total).
+   * Accepts pre-built components or {@link TextDisplayBuilder} instances.
+   */
+  public addTextDisplayComponents(...components: (TextDisplayComponent | TextDisplayBuilder)[]): this {
+    for (const c of components) {
+      const built = c instanceof TextDisplayBuilder ? c.build() : c;
+      this._texts.push(built);
+    }
+    return this;
+  }
+
+  /**
+   * Set the section's right-side accessory.
+   * Must be a {@link ThumbnailComponent} or {@link ButtonComponent}.
+   * Accepts pre-built components or {@link ThumbnailBuilder} instances.
+   */
+  public setAccessory(accessory: SectionAccessory | ThumbnailBuilder): this {
+    this._accessory = accessory instanceof ThumbnailBuilder ? accessory.build() : accessory;
+    return this;
+  }
+
+  public setId(id: number): this {
+    this._id = id;
+    return this;
+  }
+
+  public build(): SectionComponent {
+    if (this._texts.length < 1 || this._texts.length > 3) {
+      throw new Error("SectionBuilder requires 1–3 text display components.");
+    }
+    if (!this._accessory) {
+      throw new Error("SectionBuilder requires an accessory (thumbnail or button).");
+    }
+    return section({
+      text: this._texts,
+      accessory: this._accessory,
+      ...(this._id !== undefined && { id: this._id }),
+    });
+  }
+
+  public toJSON(): SectionComponent {
+    return this.build();
+  }
+}
+
+/**
+ * Fluent builder for a **Container** component (type 17).
+ * The primary layout block in Components V2. Can hold up to 10 child components.
+ * Supports an optional accent color bar and spoiler overlay.
+ *
+ * This is the Stambha equivalent of discord.js `ContainerBuilder` — 1:1 with the Discord API.
+ *
+ * @example
+ * ```ts
+ * new ContainerBuilder()
+ *   .setAccentColor(0x5865f2)
+ *   .addTextDisplayComponents(new TextDisplayBuilder().setContent('Hello!'))
+ *   .addSeparatorComponents(new SeparatorBuilder().setDivider(true))
+ *   .build()
+ * ```
+ */
+export class ContainerBuilder {
+  private _components: ContainerChild[] = [];
+  private _accentColor?: number | null;
+  private _spoiler?: boolean;
+  private _id?: number;
+
+  /** Set the accent bar color (left border). Pass an RGB integer (`0xRRGGBB`) or `null` to remove. */
+  public setAccentColor(color: number | null): this {
+    this._accentColor = color;
+    return this;
+  }
+
+  /** Blur the entire container behind a spoiler overlay. */
+  public setSpoiler(spoiler: boolean): this {
+    this._spoiler = spoiler;
+    return this;
+  }
+
+  public setId(id: number): this {
+    this._id = id;
+    return this;
+  }
+
+  /** Add one or more text display components. Accepts pre-built objects or {@link TextDisplayBuilder} instances. */
+  public addTextDisplayComponents(...components: (TextDisplayComponent | TextDisplayBuilder)[]): this {
+    for (const c of components) {
+      this._components.push(c instanceof TextDisplayBuilder ? c.build() : c);
+    }
+    return this;
+  }
+
+  /** Add one or more separator components. Accepts pre-built objects or {@link SeparatorBuilder} instances. */
+  public addSeparatorComponents(...components: (SeparatorComponent | SeparatorBuilder)[]): this {
+    for (const c of components) {
+      this._components.push(c instanceof SeparatorBuilder ? c.build() : c);
+    }
+    return this;
+  }
+
+  /** Add one or more section components. Accepts pre-built objects or {@link SectionBuilder} instances. */
+  public addSectionComponents(...components: (SectionComponent | SectionBuilder)[]): this {
+    for (const c of components) {
+      this._components.push(c instanceof SectionBuilder ? c.build() : c);
+    }
+    return this;
+  }
+
+  /** Add one or more media gallery components. Accepts pre-built objects or {@link MediaGalleryBuilder} instances. */
+  public addMediaGalleryComponents(...components: (MediaGalleryComponent | MediaGalleryBuilder)[]): this {
+    for (const c of components) {
+      this._components.push(c instanceof MediaGalleryBuilder ? c.build() : c);
+    }
+    return this;
+  }
+
+  /** Add one or more file components. Accepts pre-built objects or {@link FileBuilder} instances. */
+  public addFileComponents(...components: (FileComponent | FileBuilder)[]): this {
+    for (const c of components) {
+      this._components.push(c instanceof FileBuilder ? c.build() : c);
+    }
+    return this;
+  }
+
+  /** Add one or more action row components (for buttons/selects inside a container). */
+  public addActionRowComponents(...components: ActionRowComponent[]): this {
+    this._components.push(...components);
+    return this;
+  }
+
+  public build(): ContainerComponent {
+    return container({
+      components: this._components,
+      ...(this._accentColor !== undefined && { accentColor: this._accentColor }),
+      ...(this._spoiler !== undefined && { spoiler: this._spoiler }),
+      ...(this._id !== undefined && { id: this._id }),
+    });
+  }
+
+  public toJSON(): ContainerComponent {
+    return this.build();
+  }
+}
+
+/**
+ * Minimal top-level V2 message builder.
+ * Opens new containers; text blocks are appended into the current container.
+ *
+ * For full control prefer {@link ContainerBuilder} directly.
+ */
 export class V2Builder {
   private containers: ContainerComponent[] = [];
   private currentContainer: ContainerComponent | null = null;
@@ -233,10 +647,13 @@ export class V2Builder {
     if (!this.currentContainer) {
       this.container();
     }
-    this.currentContainer!.components.push({
-      type: ComponentType.TextDisplay,
-      content,
-    });
+    const current = this.currentContainer;
+    if (current) {
+      current.components.push({
+        type: ComponentType.TextDisplay,
+        content,
+      });
+    }
     return this;
   }
 

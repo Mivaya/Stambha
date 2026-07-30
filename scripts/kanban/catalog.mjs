@@ -579,7 +579,27 @@ export class PingCommand extends Command {
   },
 
   B10: {
-    title: "B10 — Native EmbedBuilder and PanelBuilder / panel()",
+    title: "B10 — Native EmbedBuilder (classic) + Components V2 builder layer",
+    status: "Done",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.3",
+    lane: "Standard",
+    priority: "high",
+    body: doneBody({
+      summary: "Shipped EmbedBuilder for classic embed JSON payloads, and initial panel() / PanelBuilder for Components V2 containers. Superseded by B10a which uses official Discord API naming and full builder classes.",
+      delivered: [
+        "EmbedBuilder — fluent builder for DiscordEmbedJSON",
+        "panel() / PanelBuilder — embed-compat Components V2 container helper (removed in B10a)",
+        "Component type constants, MessageFlags, SeparatorSpacing in @stambha/core",
+      ],
+      meta: { ID: "B10", Pillar: "B", Release: "1.3", Epic: "EPIC-B", Branch: "feature/native-embed-panel-builders" },
+    }),
+  },
+
+  B10a: {
+    title: "B10a — Components V2: official naming + full builder classes",
     status: "In Progress",
     track: "stambha",
     type: "Feature",
@@ -587,16 +607,20 @@ export class PingCommand extends Command {
     release: "1.3",
     lane: "Standard",
     priority: "high",
+    parent: "B10",
     body: ticketBody({
-      userStory: "As a bot developer, I want high-level builder abstractions (EmbedBuilder and panel() / PanelBuilder) so I can construct structured content and Components V2 replies without manual boilerplate.",
-      summary: "Add native high-level content builders (EmbedBuilder for classic embeds, panel() / PanelBuilder for Components V2 container layouts) to @stambha/core.",
+      userStory: "As a bot developer, I want fluent builder classes for every Components V2 component using official Discord API names so I can construct rich messages the same way discord.js ContainerBuilder works.",
+      summary: "Rework the Components V2 builder layer to use official Discord API names (ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, SectionBuilder, MediaGalleryBuilder, FileBuilder, ThumbnailBuilder). Add premiumButton() for ButtonStyle.Premium (type 6). Remove PanelBuilder/panel() (to be replanned as a plugin). Rename fileComponent()→file().",
       acceptance: [
-        "EmbedBuilder class for classic Discord embed JSON payloads",
-        "panel() helper function and PanelBuilder class for Components V2 containers",
-        "Exported from @stambha/core",
-        "Unit tests in @stambha/core covering all builders",
+        "ContainerBuilder fluent class (1:1 Discord API, matches discord.js ContainerBuilder pattern)",
+        "TextDisplayBuilder, ThumbnailBuilder, SeparatorBuilder, SectionBuilder, MediaGalleryBuilder, FileBuilder fluent classes",
+        "premiumButton({ skuId }) builder + ButtonStyle.Premium = 6",
+        "file() function (renamed from fileComponent(), deprecated alias kept)",
+        "PanelBuilder and panel() removed from @stambha/core",
+        "All builders exported from @stambha/core",
+        "Unit tests for all new builder classes",
       ],
-      meta: { ID: "B10", Pillar: "B", Release: "1.3", Epic: "EPIC-B", Branch: "feature/native-embed-panel-builders" },
+      meta: { ID: "B10a", Pillar: "B", Release: "1.3", Epic: "EPIC-B", Branch: "feature/components-v2-builders" },
     }),
   },
 

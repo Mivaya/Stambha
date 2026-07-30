@@ -8,6 +8,8 @@ export {
   linkButton,
   type ModalOptions,
   modal,
+  type PremiumButtonOptions,
+  premiumButton,
   type StringSelectOptions,
   selectRow,
   stringSelect,
@@ -25,14 +27,6 @@ export {
   type DiscordEmbedVideo,
   EmbedBuilder,
 } from "./embedBuilder.js";
-export {
-  PanelBuilder,
-  type PanelField,
-  type PanelFooter,
-  type PanelOptions,
-  type PanelThumbnail,
-  panel,
-} from "./panelBuilder.js";
 export {
   type PersistentSignalFactory,
   registerPersistentSignals,
@@ -70,13 +64,27 @@ export {
   type UnfurledMediaItem,
 } from "./types.js";
 export {
+  // Fluent builder classes (1:1 Discord official API)
+  ContainerBuilder,
+  FileBuilder,
+  MediaGalleryBuilder,
+  SectionBuilder,
+  SeparatorBuilder,
+  TextDisplayBuilder,
+  ThumbnailBuilder,
+  // Top-level orchestrator
+  V2Builder,
+  // Functional shorthand helpers
   type ComponentsV2Options,
   type ContainerOptions,
   collectCustomIds,
   componentsV2,
   container,
-  type FileComponentOptions,
+  file,
+  /** @deprecated Use file() */
   fileComponent,
+  type FileComponentOptions,
+  type FileOptions,
   type MediaGalleryOptions,
   mediaGallery,
   type SectionOptions,
@@ -87,5 +95,4 @@ export {
   type ThumbnailOptions,
   textDisplay,
   thumbnail,
-  V2Builder,
 } from "./v2Builders.js";
