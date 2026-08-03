@@ -53,9 +53,9 @@
   "devDependencies": {
     "@stambha/core": "workspace:*",
     "@stambha/vault": "workspace:*",
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.1.2",
     "tsup": "^8.3.6",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vitest": "^4.1.10"
   },
   "engines": {
