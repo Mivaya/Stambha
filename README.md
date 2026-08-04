@@ -109,7 +109,7 @@ Three things that matter when you ship a bot:
 
 ### Commands, organized
 
-Familiar folders — `commands/`, `listeners/`, `gates/`, `signals/` — loaded by `@stambha/loader`. Slash, prefix, and `@mention` in one `Command` class. Gates and hooks keep checks and side effects out of your handlers.
+Familiar folders — `commands/`, `listeners/`, `gates/`, `signals/` — loaded by `@stambha/loader`. Slash, prefix, and `@mention` in one `Command` class — optional **kind hooks** (`slash` / `prefix` / `menu`) and `subcommandMethods` when you want method-per-kind dispatch. Gates and hooks keep checks and side effects out of your handlers. Classic buttons/selects and **Components V2** builders live in `@stambha/core`.
 
 ### Scale on your terms
 
@@ -141,7 +141,7 @@ Official path is the **native stack only** — not discord.js owning the gateway
 |---------|-------|------------|
 | [`examples/minimal`](examples/minimal) | Smoke | `MockBridge` pipeline only |
 | [`examples/basic`](examples/basic) | Basic | Native gateway + REST, ping/say |
-| [`examples/bot`](examples/bot) | Advanced | Full piece layout; `pnpm demo` without a token |
+| [`examples/bot`](examples/bot) | Advanced | Full piece layout — vault, authz, signals, entity selects, Components V2; `pnpm demo` without a token |
 | [`examples/bigbot`](examples/bigbot) | Enterprise | Self-contained tier-split + desired properties + scale checklist |
 | [`examples/http-interactions`](examples/http-interactions) | Serverless slash | Interactions Endpoint URL — no WebSocket |
 
@@ -173,7 +173,9 @@ Optional extensions ([`Stambha-plugins`](https://github.com/Mivaya/Stambha-plugi
 | | |
 |---|---|
 | [Getting started](docs/guide/getting-started.md) | First bot |
+| [What's new in 1.3.0](docs/guide/whats-new-1.3.md) | Upgrade map since 1.2.1 |
 | [Examples by scale](docs/guide/examples.md) | minimal → basic → advanced → bigbot |
+| [Components & embeds](docs/features/components.md) | Classic UI, entity selects, Components V2 |
 | [Architecture](docs/guide/architecture.md) | How events flow |
 | [Extensions](docs/extensions/index.md) | Stambha-plugins hub |
 | [Why Stambha](docs/guide/why-stambha.md) | Design choices |

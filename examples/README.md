@@ -8,7 +8,7 @@ Pick a scale — details in [Examples by scale](../docs/guide/examples.md).
 |-----------|-------|---------|
 | [`minimal/`](./minimal) | Smoke | `MockBridge` pipeline only — no Discord |
 | [`basic/`](./basic) | Basic | Native gateway + REST, ping/say, slash deploy |
-| [`bot/`](./bot) | Advanced | Full piece layout — vault, authz, signals, polls, Components V2 |
+| [`bot/`](./bot) | Advanced | Full piece layout — vault, authz, signals, entity selects, Components V2 |
 | [`bigbot/`](./bigbot) | Enterprise | Self-contained — same features + tier-split + desired properties |
 | [`http-interactions/`](./http-interactions) | Serverless slash | Interactions Endpoint URL — no WebSocket |
 

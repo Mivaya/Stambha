@@ -36,7 +36,7 @@ The [`examples/bot`](https://github.com/Mivaya/Stambha/tree/main/examples/bot) p
 | Commands | Prefix + slash, hybrid args, help |
 | Authz | `@stambha/authz` capabilities + Vault claims (`setcap`, `purge`) |
 | Gates / barriers | Owner gate, Discord bits, entitlements, maintenance |
-| UI | Signals, persistent selects, Components V2 panel, polls |
+| UI | Signals, persistent string + entity selects, Components V2 container, polls |
 | Config | Vault guild blueprint |
 | Lifecycle | Hooks, scouts, conduits, epilogues, chron task, plugins |
 | Deploy | Slash deploy on ready + `deploy:dry-run` |
