@@ -18,7 +18,7 @@ hero:
 
 features:
   - title: Commands, organized
-    details: Familiar folders — commands, gates, signals, hooks — loaded from disk. Slash, prefix, and @mention in one Command class.
+    details: Familiar folders — commands, gates, signals, hooks — loaded from disk. Slash, prefix, and @mention in one Command class, with optional kind hooks and Components V2 builders.
   - title: Scale on your terms
     details: One process today. Split gateway, REST, and bot workers tomorrow — same pipeline.
   - title: Native REST & gateway
