@@ -1,4 +1,5 @@
 import type { ReplyPayload } from "../context/reply.js";
+import { type ColorInput, hexColor, resolveColor } from "./color.js";
 import {
   ComponentType,
   type ActionRowComponent,
@@ -223,8 +224,8 @@ export function componentsV2(
   return payload;
 }
 
-// ─── Fluent Builder Classes (1:1 Discord official API) ────────────────────────
-// Naming and method signatures match discord.js ContainerBuilder conventions.
+// ─── Fluent Builder Classes (Discord API types, Stambha ergonomics) ───────────
+// Official component type names; fluent API is Stambha-owned (not a discord.js port).
 
 /**
  * Fluent builder for a **Text Display** component (type 10).
@@ -518,18 +519,15 @@ export class SectionBuilder {
 
 /**
  * Fluent builder for a **Container** component (type 17).
- * The primary layout block in Components V2. Can hold up to 10 child components.
- * Supports an optional accent color bar and spoiler overlay.
- *
- * This is the Stambha equivalent of discord.js `ContainerBuilder` — 1:1 with the Discord API.
+ * Primary layout block in Components V2 — optional accent bar and spoiler.
  *
  * @example
  * ```ts
  * new ContainerBuilder()
- *   .setAccentColor(0x5865f2)
- *   .addTextDisplayComponents(new TextDisplayBuilder().setContent('Hello!'))
+ *   .setAccentColor("#5865f2")
+ *   .addTextDisplayComponents(new TextDisplayBuilder().setContent("Hello!"))
  *   .addSeparatorComponents(new SeparatorBuilder().setDivider(true))
- *   .build()
+ *   .toView()
  * ```
  */
 export class ContainerBuilder {
@@ -538,20 +536,49 @@ export class ContainerBuilder {
   private _spoiler?: boolean;
   private _id?: number;
 
-  /** Set the accent bar color (left border). Pass an RGB integer (`0xRRGGBB`) or `null` to remove. */
-  public setAccentColor(color: number | null): this {
-    this._accentColor = color;
+  static from(source: ContainerComponent | ContainerView | ContainerBuilder): ContainerBuilder {
+    if (source instanceof ContainerBuilder) {
+      return ContainerBuilder.from(source.toJSON());
+    }
+    if (source instanceof ContainerView) {
+      return ContainerBuilder.from(source.toJSON());
+    }
+    const b = new ContainerBuilder();
+    b._components = [...source.components];
+    if (source.accent_color !== undefined) b._accentColor = source.accent_color;
+    if (source.spoiler !== undefined) b._spoiler = source.spoiler;
+    if (source.id !== undefined) b._id = source.id;
+    return b;
+  }
+
+  /** Set the accent bar color. Accepts RGB int, `#RRGGBB`, or `[r,g,b]`. Pass `null` to clear. */
+  public setAccentColor(color: ColorInput | null): this {
+    this._accentColor = color === null ? null : resolveColor(color);
+    return this;
+  }
+
+  public clearAccentColor(): this {
+    this._accentColor = null;
     return this;
   }
 
   /** Blur the entire container behind a spoiler overlay. */
-  public setSpoiler(spoiler: boolean): this {
+  public setSpoiler(spoiler = true): this {
     this._spoiler = spoiler;
     return this;
   }
 
-  public setId(id: number): this {
+  public setId(id: number | null): this {
+    if (id === null) {
+      delete this._id;
+      return this;
+    }
     this._id = id;
+    return this;
+  }
+
+  public clearId(): this {
+    delete this._id;
     return this;
   }
 
@@ -601,6 +628,28 @@ export class ContainerBuilder {
     return this;
   }
 
+  /** Remove, replace, or insert children (Array.splice semantics). */
+  public spliceComponents(index: number, deleteCount: number, ...components: ContainerChild[]): this {
+    this._components.splice(index, deleteCount, ...components);
+    return this;
+  }
+
+  public equals(other: ContainerComponent | ContainerView | ContainerBuilder): boolean {
+    return this.toView().equals(other);
+  }
+
+  public toView(): ContainerView {
+    return new ContainerView(this.toJSON());
+  }
+
+  /** Components V2 reply with this container as the sole top-level component. */
+  public toReply(extras: { ephemeral?: boolean } = {}): ReplyPayload {
+    return componentsV2({
+      components: [this.build()],
+      ...(extras.ephemeral ? { ephemeral: true } : {}),
+    });
+  }
+
   public build(): ContainerComponent {
     return container({
       components: this._components,
@@ -612,6 +661,66 @@ export class ContainerBuilder {
 
   public toJSON(): ContainerComponent {
     return this.build();
+  }
+}
+
+/**
+ * Readonly view over a Components V2 **Container** (type 17).
+ * Use {@link ContainerBuilder} to mutate; use this to inspect gateway/REST payloads.
+ */
+export class ContainerView {
+  private readonly data: ContainerComponent;
+
+  constructor(data: ContainerComponent) {
+    this.data = {
+      ...data,
+      components: [...data.components],
+    };
+  }
+
+  static from(source: ContainerComponent | ContainerView | ContainerBuilder): ContainerView {
+    if (source instanceof ContainerView) return new ContainerView(source.toJSON());
+    if (source instanceof ContainerBuilder) return source.toView();
+    return new ContainerView(source);
+  }
+
+  get accentColor(): number | null {
+    return this.data.accent_color ?? null;
+  }
+
+  get hexAccentColor(): string | null {
+    return hexColor(this.data.accent_color);
+  }
+
+  get spoiler(): boolean {
+    return this.data.spoiler === true;
+  }
+
+  get id(): number | null {
+    return this.data.id ?? null;
+  }
+
+  get components(): readonly ContainerChild[] {
+    return this.data.components;
+  }
+
+  get childCount(): number {
+    return this.data.components.length;
+  }
+
+  equals(other: ContainerComponent | ContainerView | ContainerBuilder): boolean {
+    return JSON.stringify(this.toJSON()) === JSON.stringify(ContainerView.from(other).toJSON());
+  }
+
+  toJSON(): ContainerComponent {
+    return {
+      ...this.data,
+      components: [...this.data.components],
+    };
+  }
+
+  toBuilder(): ContainerBuilder {
+    return ContainerBuilder.from(this);
   }
 }
 

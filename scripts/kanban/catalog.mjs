@@ -624,6 +624,172 @@ export class PingCommand extends Command {
     }),
   },
 
+  B10b: {
+    title: "B10b — EmbedView + ContainerView (Stambha display primitives)",
+    status: "Done",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.3",
+    lane: "Expedite",
+    priority: "high",
+    parent: "B10a",
+    body: doneBody({
+      summary:
+        "Readonly EmbedView/ContainerView plus Stambha-native builder ergonomics (from, length, equals, resolveColor, toReply).",
+      delivered: [
+        "EmbedBuilder + EmbedView + embed()",
+        "ContainerBuilder + ContainerView",
+        "resolveColor / hexColor",
+        "components.md updated; Managers deferred to EPIC-DISPLAY",
+      ],
+      meta: { ID: "B10b", Pillar: "B", Release: "1.3", Epic: "EPIC-B", Branch: "feature/native-embed-panel-builders" },
+    }),
+  },
+
+  "EPIC-DISPLAY": {
+    title: "EPIC-DISPLAY — @stambha/display (plugins)",
+    status: "Backlog",
+    track: "stambha-plugins",
+    type: "Epic",
+    pillar: "Plugins",
+    release: "1.4",
+    lane: "Standard",
+    priority: "high",
+    body: epicBody({
+      objective:
+        "Opinionated display DX on top of core builders — Managers, embed→container migration, templates — without bloating @stambha/core.",
+      architecture: [
+        "Peers on @stambha/core EmbedBuilder/ContainerBuilder + Views",
+        "Stambha-plugins package @stambha/display",
+      ],
+      outcomes: [
+        "EmbedManager + ContainerManager",
+        "Classic embed options → Components V2 container (ex-panel)",
+        "Optional templates / reply helpers",
+      ],
+      childTickets: [
+        { id: "DISPLAY-managers", title: "EmbedManager + ContainerManager", shipped: false },
+        { id: "DISPLAY-migrate", title: "embed → container migration helper", shipped: false },
+      ],
+      successCriteria: [
+        "Core stays Discord-API-shaped builders + Views only",
+        "Plugin documented on extensions hub",
+      ],
+      meta: { ID: "EPIC-DISPLAY", Track: "stambha-plugins", Release: "1.4" },
+    }),
+  },
+
+  "DISPLAY-managers": {
+    title: "DISPLAY-managers — EmbedManager + ContainerManager",
+    status: "Backlog",
+    track: "stambha-plugins",
+    type: "Feature",
+    pillar: "Plugins",
+    release: "1.4",
+    lane: "Standard",
+    priority: "high",
+    body: ticketBody({
+      summary:
+        "Orchestration layer: validate, template, toReply, length budgets, accent presets. Built on core EmbedView/ContainerView.",
+      acceptance: [
+        "Package scaffold in Stambha-plugins",
+        "EmbedManager / ContainerManager public API + docs",
+        "Does not re-export Panel*",
+      ],
+      meta: { ID: "DISPLAY-managers", Track: "stambha-plugins", Epic: "EPIC-DISPLAY" },
+      dependencies: "B10b",
+    }),
+  },
+
+  "DISPLAY-migrate": {
+    title: "DISPLAY-migrate — Classic embed → Container (ex-panel)",
+    status: "Backlog",
+    track: "stambha-plugins",
+    type: "Feature",
+    pillar: "Plugins",
+    release: "1.4",
+    lane: "Standard",
+    priority: "medium",
+    body: ticketBody({
+      summary:
+        "Reintroduce former panel() behavior as ContainerManager.fromEmbed / fromClassicOptions — title/fields/footer → TextDisplay + Section + Container.",
+      acceptance: [
+        "Parity with removed PanelOptions fields",
+        "Returns componentsV2 reply payload",
+        "Migration note from PanelBuilder",
+      ],
+      meta: { ID: "DISPLAY-migrate", Track: "stambha-plugins", Epic: "EPIC-DISPLAY" },
+      dependencies: "DISPLAY-managers",
+    }),
+  },
+
+  ATTACH: {
+    title: "ATTACH — AttachmentBuilder (files + spoilers)",
+    status: "Backlog",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.4",
+    lane: "Standard",
+    priority: "medium",
+    body: ticketBody({
+      summary:
+        "Fluent attachment helper for REST message payloads (name, description, spoiler, voice waveform/duration).",
+      acceptance: ["AttachmentBuilder in core or rest", "Works with multipart upload path", "Docs"],
+      meta: { ID: "ATTACH", Pillar: "B", Release: "1.4" },
+    }),
+  },
+
+  FORMAT: {
+    title: "FORMAT — @stambha/format (mentions, time, code)",
+    status: "Backlog",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.4",
+    lane: "Standard",
+    priority: "medium",
+    body: ticketBody({
+      summary:
+        "Small formatter utilities (user/channel/role mentions, timestamps, code blocks) — Stambha-owned, not a discord.js formatters fork.",
+      acceptance: ["Package or core module", "Unit tests", "Docs link from getting-started"],
+      meta: { ID: "FORMAT", Pillar: "B", Release: "1.4" },
+    }),
+  },
+
+  "MODAL-V2": {
+    title: "MODAL-V2 — Label, File Upload, Radio/Checkbox groups",
+    status: "Icebox",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.5",
+    lane: "Standard",
+    priority: "low",
+    body: ticketBody({
+      summary:
+        "Newer Discord modal layout components (Label type 18, File Upload, Radio/Checkbox groups) once bots need them.",
+      acceptance: ["Builders + types", "Signal routing if needed", "Docs"],
+      meta: { ID: "MODAL-V2", Pillar: "B", Release: "1.5" },
+    }),
+  },
+
+  SELECTS: {
+    title: "SELECTS — Typed entity select builders",
+    status: "Backlog",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.3",
+    lane: "Standard",
+    priority: "high",
+    body: ticketBody({
+      summary: "userSelect / roleSelect / channelSelect / mentionableSelect builders + Signal routing.",
+      acceptance: ["Builders exported", "Signals route component types", "components.md"],
+      meta: { ID: "SELECTS", Pillar: "B", Release: "1.3", Epic: "EPIC-B" },
+    }),
+  },
 
   C1: {
     title: "C1 — Permission levels",
@@ -1703,6 +1869,26 @@ export const TITLE_TO_ID = {
   "B8 — Native registerPlugin & onShutdown": "B8",
   B9: "B9",
   "B9 — TypeScript interface augmentation": "B9",
+  B10: "B10",
+  "B10 — Native EmbedBuilder (classic) + Components V2 builder layer": "B10",
+  B10a: "B10a",
+  "B10a — Components V2: official naming + full builder classes": "B10a",
+  B10b: "B10b",
+  "B10b — EmbedView + ContainerView (Stambha display primitives)": "B10b",
+  "EPIC-DISPLAY": "EPIC-DISPLAY",
+  "EPIC-DISPLAY — @stambha/display (plugins)": "EPIC-DISPLAY",
+  "DISPLAY-managers": "DISPLAY-managers",
+  "DISPLAY-managers — EmbedManager + ContainerManager": "DISPLAY-managers",
+  "DISPLAY-migrate": "DISPLAY-migrate",
+  "DISPLAY-migrate — Classic embed → Container (ex-panel)": "DISPLAY-migrate",
+  ATTACH: "ATTACH",
+  "ATTACH — AttachmentBuilder (files + spoilers)": "ATTACH",
+  FORMAT: "FORMAT",
+  "FORMAT — @stambha/format (mentions, time, code)": "FORMAT",
+  "MODAL-V2": "MODAL-V2",
+  "MODAL-V2 — Label, File Upload, Radio/Checkbox groups": "MODAL-V2",
+  SELECTS: "SELECTS",
+  "SELECTS — Typed entity select builders": "SELECTS",
   C1: "C1",
   "C1 — Permission levels": "C1",
   C2: "C2",

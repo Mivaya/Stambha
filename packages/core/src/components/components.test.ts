@@ -12,6 +12,7 @@ import {
   confirmCancelRow,
   container,
   ContainerBuilder,
+  ContainerView,
   EmbedBuilder,
   file,
   fileComponent,
@@ -232,7 +233,7 @@ describe("registerPersistentSignals", () => {
 
 describe("EmbedBuilder", () => {
   it("builds classic Discord embed JSON using fluent chaining", () => {
-    const embed = new EmbedBuilder()
+    const embedJson = new EmbedBuilder()
       .setTitle("Command: !ping")
       .setDescription("Check bot responsiveness")
       .setUrl("https://stambha.dev")
@@ -248,7 +249,7 @@ describe("EmbedBuilder", () => {
       )
       .toJSON();
 
-    expect(embed).toEqual({
+    expect(embedJson).toEqual({
       title: "Command: !ping",
       description: "Check bot responsiveness",
       url: "https://stambha.dev",
@@ -279,6 +280,28 @@ describe("EmbedBuilder", () => {
 
     builder.setFields([{ name: "D", value: "4" }]);
     expect(builder.toJSON().fields).toEqual([{ name: "D", value: "4" }]);
+  });
+
+  it("resolves #hex and RGB tuple colors", () => {
+    expect(new EmbedBuilder().setColor("#5865f2").toJSON().color).toBe(0x5865f2);
+    expect(new EmbedBuilder().setColor([88, 101, 242]).toJSON().color).toBe(0x5865f2);
+  });
+
+  it("round-trips through EmbedView", () => {
+    const built = new EmbedBuilder().setTitle("Hi").setColor("#ff0000").addField("a", "b");
+    const view = built.toView();
+    expect(view.title).toBe("Hi");
+    expect(view.hexColor).toBe("#ff0000");
+    expect(view.fields).toEqual([{ name: "a", value: "b" }]);
+    expect(view.length).toBe("Hi".length + "a".length + "b".length);
+    expect(view.equals(built)).toBe(true);
+    expect(view.toBuilder().toJSON()).toEqual(built.toJSON());
+  });
+
+  it("toReply wraps embeds for classic messages", () => {
+    const payload = new EmbedBuilder().setTitle("T").toReply({ content: "x" });
+    expect(payload.content).toBe("x");
+    expect(payload.embeds?.[0]).toEqual({ title: "T" });
   });
 });
 
@@ -426,6 +449,28 @@ describe("ContainerBuilder", () => {
     });
     expect(c.components).toHaveLength(1);
     expect(c.components[0]).toMatchObject({ type: ComponentType.TextDisplay, content: "Hello" });
+  });
+
+  it("accepts hex accent colors and round-trips ContainerView", () => {
+    const built = new ContainerBuilder()
+      .setAccentColor("#5865f2")
+      .setSpoiler(true)
+      .addTextDisplayComponents(new TextDisplayBuilder().setContent("Hi"));
+    const view = built.toView();
+    expect(view.accentColor).toBe(0x5865f2);
+    expect(view.hexAccentColor).toBe("#5865f2");
+    expect(view.spoiler).toBe(true);
+    expect(view.childCount).toBe(1);
+    expect(view.equals(built)).toBe(true);
+    expect(ContainerView.from(view.toJSON()).toBuilder().toJSON()).toEqual(built.toJSON());
+  });
+
+  it("toReply sets IS_COMPONENTS_V2", () => {
+    const payload = new ContainerBuilder()
+      .addTextDisplayComponents(new TextDisplayBuilder().setContent("x"))
+      .toReply({ ephemeral: true });
+    expect(payload.flags).toBe(MessageFlags.IsComponentsV2);
+    expect(payload.ephemeral).toBe(true);
   });
 
   it("chains all add* methods with builder and pre-built objects", () => {

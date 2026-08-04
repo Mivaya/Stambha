@@ -17,6 +17,11 @@ export {
   textInput,
 } from "./builders.js";
 export {
+  type ColorInput,
+  hexColor,
+  resolveColor,
+} from "./color.js";
+export {
   type DiscordEmbedAuthor,
   type DiscordEmbedField,
   type DiscordEmbedFooter,
@@ -25,7 +30,15 @@ export {
   type DiscordEmbedProvider,
   type DiscordEmbedThumbnail,
   type DiscordEmbedVideo,
+  type EmbedAssetData,
+  type EmbedAuthorData,
   EmbedBuilder,
+  type EmbedFieldData,
+  type EmbedFooterData,
+  type EmbedJSON,
+  type EmbedProviderData,
+  EmbedView,
+  embed,
 } from "./embedBuilder.js";
 export {
   type PersistentSignalFactory,
@@ -64,8 +77,9 @@ export {
   type UnfurledMediaItem,
 } from "./types.js";
 export {
-  // Fluent builder classes (1:1 Discord official API)
+  // Fluent builder classes (Discord API types, Stambha ergonomics)
   ContainerBuilder,
+  ContainerView,
   FileBuilder,
   MediaGalleryBuilder,
   SectionBuilder,
