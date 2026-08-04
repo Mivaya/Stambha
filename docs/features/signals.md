@@ -61,7 +61,7 @@ await ctx.reply({
 });
 ```
 
-Raw Discord shapes still work; prefer [Components](/features/components) for rows, selects, and modals.
+Raw Discord shapes still work; prefer [Components & embeds](/features/components) for rows, selects, and modals.
 
 ## Persistent signals
 
@@ -73,7 +73,7 @@ import { registerPersistentSignals } from "@stambha/core";
 registerPersistentSignals(client, (registry) => [new ColorMenuSignal(registry)]);
 ```
 
-See [Components — persistent signals](/features/components#persistent-signals). File-based `src/signals/` pieces loaded by `@stambha/loader` are also persistent across restarts.
+See [Components & embeds — persistent signals](/features/components#persistent-signals). File-based `src/signals/` pieces loaded by `@stambha/loader` are also persistent across restarts.
 
 ## SignalContext
 
@@ -138,7 +138,7 @@ if (target?.kind === "signal") {
 
 ## Related
 
-- [Components](/features/components) — classic builders, Components V2, `registerPersistentSignals`
+- [Components & embeds](/features/components) — classic builders, Components V2, `registerPersistentSignals`
 - [Sequences](/features/sequences) — multi-step flows using `stambha:seq:` ids
 - [Extensions](/extensions/) — `@stambha/pagination` for embed pages
 - [Pagination](/extensions/pagination) — prev / next / dismiss helper

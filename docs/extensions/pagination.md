@@ -2,7 +2,7 @@
 
 **Components V2 paginated messages** with prev / next / dismiss — without hand-rolling collectors.
 
-Ships as [`@stambha/pagination`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/pagination) from **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)** (independent semver). Built on core [Signals](/features/signals), [Components V2](/features/components#components-v2), and `stambha:` custom ids.
+Ships as [`@stambha/pagination`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/pagination) from **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)** (independent semver). Built on core [Signals](/features/signals), [Components & embeds](/features/components#components-v2), and `stambha:` custom ids.
 
 Current line: **1.1.0** · peer `@stambha/core@^1.2.2` (needs Components V2 builders).
 
@@ -163,7 +163,7 @@ await createPaginator({
 
 ## Related
 
-- [Components](/features/components) — V2 builders used by this package
+- [Components & embeds](/features/components) — V2 builders used by this package
 - [Signals](/features/signals) — how `stambha:` routing works
 - [Extensions](/extensions/) — other official add-ons
 - [Getting started](/guide/getting-started) — native bootstrap

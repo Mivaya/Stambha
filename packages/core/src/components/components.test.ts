@@ -11,20 +11,30 @@ import {
   componentsV2,
   confirmCancelRow,
   container,
+  ContainerBuilder,
+  ContainerView,
   EmbedBuilder,
+  file,
+  fileComponent,
+  FileBuilder,
+  MediaGalleryBuilder,
   MessageFlags,
   modal,
-  PanelBuilder,
-  panel,
+  premiumButton,
   registerPersistentSignals,
   section,
+  SectionBuilder,
   selectRow,
   separator,
+  SeparatorBuilder,
+  SeparatorSpacing,
   stringSelect,
+  TextDisplayBuilder,
   TextInputStyle,
   textDisplay,
   textInput,
   thumbnail,
+  ThumbnailBuilder,
   V2Builder,
 } from "./index.js";
 
@@ -94,14 +104,14 @@ describe("component builders", () => {
   });
 });
 
-describe("Components V2 builders", () => {
+describe("Components V2 functional builders", () => {
   it("builds container with text, separator, and signal buttons", () => {
     const client = new StambhaClient();
     const signal = new (class extends Signal {
       run = async () => {};
     })(client.registries.signals, { name: "panel" });
 
-    const panel = container({
+    const cont = container({
       accentColor: 0x5865f2,
       components: [
         textDisplay({ content: "# Panel" }),
@@ -117,13 +127,13 @@ describe("Components V2 builders", () => {
       ],
     });
 
-    expect(panel).toMatchObject({
+    expect(cont).toMatchObject({
       type: ComponentType.Container,
       accent_color: 0x5865f2,
     });
-    expect(panel.components).toHaveLength(4);
+    expect(cont.components).toHaveLength(4);
 
-    const reply = componentsV2({ components: [panel] });
+    const reply = componentsV2({ components: [cont] });
     expect(reply.flags).toBe(MessageFlags.IsComponentsV2);
     expect(collectCustomIds(reply.components!)).toEqual(["stambha:panel:go"]);
   });
@@ -166,6 +176,14 @@ describe("Components V2 builders", () => {
       type: ComponentType.TextDisplay,
       content: "Hello V2",
     });
+  });
+
+  it("builds file component and backward-compat alias", () => {
+    const f = file({ url: "attachment://test.pdf", spoiler: true });
+    expect(f).toEqual({ type: ComponentType.File, file: { url: "attachment://test.pdf" }, spoiler: true });
+    // deprecated alias should produce the same result
+    const f2 = fileComponent({ url: "attachment://test.pdf", spoiler: true });
+    expect(f2).toEqual(f);
   });
 
   it("builds component tree sequentially via V2Builder", () => {
@@ -215,7 +233,7 @@ describe("registerPersistentSignals", () => {
 
 describe("EmbedBuilder", () => {
   it("builds classic Discord embed JSON using fluent chaining", () => {
-    const embed = new EmbedBuilder()
+    const embedJson = new EmbedBuilder()
       .setTitle("Command: !ping")
       .setDescription("Check bot responsiveness")
       .setUrl("https://stambha.dev")
@@ -231,7 +249,7 @@ describe("EmbedBuilder", () => {
       )
       .toJSON();
 
-    expect(embed).toEqual({
+    expect(embedJson).toEqual({
       title: "Command: !ping",
       description: "Check bot responsiveness",
       url: "https://stambha.dev",
@@ -263,60 +281,275 @@ describe("EmbedBuilder", () => {
     builder.setFields([{ name: "D", value: "4" }]);
     expect(builder.toJSON().fields).toEqual([{ name: "D", value: "4" }]);
   });
+
+  it("resolves #hex and RGB tuple colors", () => {
+    expect(new EmbedBuilder().setColor("#5865f2").toJSON().color).toBe(0x5865f2);
+    expect(new EmbedBuilder().setColor([88, 101, 242]).toJSON().color).toBe(0x5865f2);
+  });
+
+  it("round-trips through EmbedView", () => {
+    const built = new EmbedBuilder().setTitle("Hi").setColor("#ff0000").addField("a", "b");
+    const view = built.toView();
+    expect(view.title).toBe("Hi");
+    expect(view.hexColor).toBe("#ff0000");
+    expect(view.fields).toEqual([{ name: "a", value: "b" }]);
+    expect(view.length).toBe("Hi".length + "a".length + "b".length);
+    expect(view.equals(built)).toBe(true);
+    expect(view.toBuilder().toJSON()).toEqual(built.toJSON());
+  });
+
+  it("toReply wraps embeds for classic messages", () => {
+    const payload = new EmbedBuilder().setTitle("T").toReply({ content: "x" });
+    expect(payload.content).toBe("x");
+    expect(payload.embeds?.[0]).toEqual({ title: "T" });
+  });
 });
 
-describe("panel() and PanelBuilder", () => {
-  it("constructs a Components V2 panel payload with fields, footer, and accent color", () => {
-    const payload = panel({
-      title: "Command: !ping",
-      description: "Check bot responsiveness and API latency.",
-      color: 0x57f287,
-      fields: [
-        { name: "Module", value: "General", inline: true },
-        { name: "Aliases", value: "!pong", inline: true },
-        { name: "Usage", value: "`!ping`", inline: false },
-      ],
-      footer: { text: "Requested by User" },
-      timestamp: 1700000000,
-      ephemeral: true,
-    });
+// ─── New fluent builder class tests ───────────────────────────────────────────
 
-    expect(payload.flags).toBe(MessageFlags.IsComponentsV2);
-    expect(payload.ephemeral).toBe(true);
-    expect(payload.components).toHaveLength(1);
-
-    const cont = payload.components![0] as any;
-    expect(cont.type).toBe(ComponentType.Container);
-    expect(cont.accent_color).toBe(0x57f287);
-    expect(cont.components.length).toBeGreaterThan(0);
+describe("TextDisplayBuilder", () => {
+  it("produces a TextDisplay component via fluent chaining", () => {
+    const td = new TextDisplayBuilder().setContent("Hello **world**").setId(1).build();
+    expect(td).toEqual({ type: ComponentType.TextDisplay, content: "Hello **world**", id: 1 });
   });
 
-  it("builds identical payload using PanelBuilder class", () => {
-    const payloadFromFn = panel({
-      title: "Title",
-      description: "Desc",
-      color: 0xff0000,
-    });
+  it("toJSON() is an alias for build()", () => {
+    const b = new TextDisplayBuilder().setContent("x");
+    expect(b.toJSON()).toEqual(b.build());
+  });
+});
 
-    const payloadFromBuilder = new PanelBuilder()
-      .setTitle("Title")
-      .setDescription("Desc")
-      .setColor(0xff0000)
+describe("ThumbnailBuilder", () => {
+  it("produces a Thumbnail component with all fields", () => {
+    const t = new ThumbnailBuilder()
+      .setMedia("https://example.com/img.png")
+      .setDescription("Alt text")
+      .setSpoiler(true)
+      .setId(2)
+      .build();
+    expect(t).toEqual({
+      type: ComponentType.Thumbnail,
+      media: { url: "https://example.com/img.png" },
+      description: "Alt text",
+      spoiler: true,
+      id: 2,
+    });
+  });
+
+  it("accepts null description", () => {
+    const t = new ThumbnailBuilder().setMedia("https://x.com/a.png").setDescription(null).build();
+    expect(t.description).toBeNull();
+  });
+});
+
+describe("SeparatorBuilder", () => {
+  it("produces Separator with divider and large spacing", () => {
+    const s = new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacing.Large).build();
+    expect(s).toEqual({ type: ComponentType.Separator, spacing: 2, divider: true });
+  });
+
+  it("defaults spacing to Small when not set", () => {
+    const s = new SeparatorBuilder().build();
+    expect(s.spacing).toBe(SeparatorSpacing.Small);
+  });
+});
+
+describe("FileBuilder", () => {
+  it("produces a File component with attachment URL and spoiler", () => {
+    const f = new FileBuilder().setFile("attachment://report.pdf").setSpoiler(true).setId(5).build();
+    expect(f).toEqual({
+      type: ComponentType.File,
+      file: { url: "attachment://report.pdf" },
+      spoiler: true,
+      id: 5,
+    });
+  });
+});
+
+describe("MediaGalleryBuilder", () => {
+  it("adds items via addItem and addItems", () => {
+    const gallery = new MediaGalleryBuilder()
+      .addItem("https://example.com/a.png", "Caption A")
+      .addItem("https://example.com/b.png", null, true)
+      .addItems({ media: { url: "https://example.com/c.png" } })
       .build();
 
-    expect(payloadFromBuilder).toEqual(payloadFromFn);
+    expect(gallery.type).toBe(ComponentType.MediaGallery);
+    expect(gallery.items).toHaveLength(3);
+    expect(gallery.items[0]).toMatchObject({ media: { url: "https://example.com/a.png" }, description: "Caption A" });
+    expect(gallery.items[1]).toMatchObject({ spoiler: true, description: null });
+    expect(gallery.items[2]).toMatchObject({ media: { url: "https://example.com/c.png" } });
   });
 
-  it("handles header with thumbnail accessory", () => {
-    const payload = panel({
-      title: "Header with Thumb",
-      thumbnail: "https://example.com/thumb.png",
-    });
+  it("rejects empty or oversized galleries (functional helper)", () => {
+    expect(() => new MediaGalleryBuilder().build()).toThrow(/1–10/);
+  });
+});
 
-    const cont = payload.components![0] as any;
-    const headerSection = cont.components[0];
-    expect(headerSection.type).toBe(ComponentType.Section);
-    expect(headerSection.accessory.type).toBe(ComponentType.Thumbnail);
-    expect(headerSection.accessory.media.url).toBe("https://example.com/thumb.png");
+describe("SectionBuilder", () => {
+  it("builds section from builder instances", () => {
+    const td = new TextDisplayBuilder().setContent("Title");
+    const thumb = new ThumbnailBuilder().setMedia("https://example.com/img.png");
+    const s = new SectionBuilder()
+      .addTextDisplayComponents(td)
+      .setAccessory(thumb)
+      .build();
+
+    expect(s.type).toBe(ComponentType.Section);
+    expect(s.components).toHaveLength(1);
+    expect(s.components[0]).toMatchObject({ type: ComponentType.TextDisplay, content: "Title" });
+    expect(s.accessory).toMatchObject({ type: ComponentType.Thumbnail });
+  });
+
+  it("accepts pre-built component objects", () => {
+    const td = textDisplay({ content: "Text" });
+    const thumb = thumbnail({ url: "https://x.com/a.png" });
+    const s = new SectionBuilder()
+      .addTextDisplayComponents(td)
+      .setAccessory(thumb)
+      .build();
+    expect(s.components[0]).toEqual(td);
+    expect(s.accessory).toEqual(thumb);
+  });
+
+  it("throws when no texts or no accessory", () => {
+    expect(() =>
+      new SectionBuilder()
+        .setAccessory(thumbnail({ url: "https://x.com/a.png" }))
+        .build(),
+    ).toThrow(/1–3/);
+    expect(() =>
+      new SectionBuilder()
+        .addTextDisplayComponents(new TextDisplayBuilder().setContent("x"))
+        .build(),
+    ).toThrow(/accessory/);
+  });
+
+  it("rejects more than 3 text displays", () => {
+    const b = new SectionBuilder().setAccessory(thumbnail({ url: "https://x.com/a.png" }));
+    for (let i = 0; i < 4; i++) {
+      b.addTextDisplayComponents(new TextDisplayBuilder().setContent(`line ${i}`));
+    }
+    expect(() => b.build()).toThrow(/1–3/);
+  });
+});
+
+describe("ContainerBuilder", () => {
+  it("builds an empty-free container with accent color and spoiler", () => {
+    const c = new ContainerBuilder()
+      .setAccentColor(0x5865f2)
+      .setSpoiler(false)
+      .addTextDisplayComponents(new TextDisplayBuilder().setContent("Hello"))
+      .build();
+
+    expect(c).toMatchObject({
+      type: ComponentType.Container,
+      accent_color: 0x5865f2,
+      spoiler: false,
+    });
+    expect(c.components).toHaveLength(1);
+    expect(c.components[0]).toMatchObject({ type: ComponentType.TextDisplay, content: "Hello" });
+  });
+
+  it("accepts hex accent colors and round-trips ContainerView", () => {
+    const built = new ContainerBuilder()
+      .setAccentColor("#5865f2")
+      .setSpoiler(true)
+      .addTextDisplayComponents(new TextDisplayBuilder().setContent("Hi"));
+    const view = built.toView();
+    expect(view.accentColor).toBe(0x5865f2);
+    expect(view.hexAccentColor).toBe("#5865f2");
+    expect(view.spoiler).toBe(true);
+    expect(view.childCount).toBe(1);
+    expect(view.equals(built)).toBe(true);
+    expect(ContainerView.from(view.toJSON()).toBuilder().toJSON()).toEqual(built.toJSON());
+  });
+
+  it("toReply sets IS_COMPONENTS_V2", () => {
+    const payload = new ContainerBuilder()
+      .addTextDisplayComponents(new TextDisplayBuilder().setContent("x"))
+      .toReply({ ephemeral: true });
+    expect(payload.flags).toBe(MessageFlags.IsComponentsV2);
+    expect(payload.ephemeral).toBe(true);
+  });
+
+  it("chains all add* methods with builder and pre-built objects", () => {
+    const gallery = new MediaGalleryBuilder().addItem("https://x.com/a.png").build();
+    const fileComp = new FileBuilder().setFile("attachment://f.pdf").build();
+    const sep = new SeparatorBuilder().setDivider(true).build();
+    const sect = new SectionBuilder()
+      .addTextDisplayComponents(textDisplay({ content: "Section text" }))
+      .setAccessory(thumbnail({ url: "https://x.com/t.png" }))
+      .build();
+    const row = buttonRow(button({ customId: "id:a", label: "Go" }));
+
+    const c = new ContainerBuilder()
+      .addTextDisplayComponents(textDisplay({ content: "Top" }))
+      .addSeparatorComponents(sep)
+      .addSectionComponents(sect)
+      .addMediaGalleryComponents(gallery)
+      .addFileComponents(fileComp)
+      .addActionRowComponents(row)
+      .build();
+
+    expect(c.components).toHaveLength(6);
+    expect(c.components[0]).toMatchObject({ type: ComponentType.TextDisplay });
+    expect(c.components[1]).toMatchObject({ type: ComponentType.Separator });
+    expect(c.components[2]).toMatchObject({ type: ComponentType.Section });
+    expect(c.components[3]).toMatchObject({ type: ComponentType.MediaGallery });
+    expect(c.components[4]).toMatchObject({ type: ComponentType.File });
+    expect(c.components[5]).toMatchObject({ type: ComponentType.ActionRow });
+  });
+
+  it("accepts builder instances in all add* methods", () => {
+    const c = new ContainerBuilder()
+      .addSeparatorComponents(new SeparatorBuilder().setDivider(true))
+      .addMediaGalleryComponents(new MediaGalleryBuilder().addItem("https://x.com/a.png"))
+      .addFileComponents(new FileBuilder().setFile("attachment://x.pdf"))
+      .addSectionComponents(
+        new SectionBuilder()
+          .addTextDisplayComponents(new TextDisplayBuilder().setContent("x"))
+          .setAccessory(new ThumbnailBuilder().setMedia("https://x.com/t.png")),
+      )
+      .build();
+
+    expect(c.components).toHaveLength(4);
+  });
+
+  it("toJSON() is an alias for build()", () => {
+    const b = new ContainerBuilder().addTextDisplayComponents(textDisplay({ content: "x" }));
+    expect(b.toJSON()).toEqual(b.build());
+  });
+
+  it("sets accent_color null to remove", () => {
+    const c = new ContainerBuilder()
+      .setAccentColor(null)
+      .addTextDisplayComponents(textDisplay({ content: "x" }))
+      .build();
+    expect(c.accent_color).toBeNull();
+  });
+});
+
+describe("premiumButton", () => {
+  it("produces a Premium button with sku_id and style 6", () => {
+    const btn = premiumButton({ skuId: "123456789" });
+    expect(btn).toEqual({
+      type: ComponentType.Button,
+      style: ButtonStyle.Premium,
+      sku_id: "123456789",
+    });
+    expect(btn.style).toBe(6);
+  });
+
+  it("accepts disabled and id options", () => {
+    const btn = premiumButton({ skuId: "abc", disabled: true, id: 99 });
+    expect(btn.disabled).toBe(true);
+    expect(btn.id).toBe(99);
+  });
+
+  it("has no custom_id or label", () => {
+    const btn = premiumButton({ skuId: "x" });
+    expect((btn as any).custom_id).toBeUndefined();
+    expect((btn as any).label).toBeUndefined();
   });
 });

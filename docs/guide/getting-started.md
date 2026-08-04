@@ -202,7 +202,7 @@ await ctx.reply({
 });
 ```
 
-`attachStambhaClient` routes `interactionCreate` with `stambha:` custom ids to your signal pieces. See [Signals](/features/signals). Prefer builders from [Components](/features/components) for production UI.
+`attachStambhaClient` routes `interactionCreate` with `stambha:` custom ids to your signal pieces. See [Signals](/features/signals). For production UI, read [Components & embeds](/features/components) — it separates **classic embeds**, **classic buttons**, and **Components V2** (Container is only one V2 type, not the whole mode).
 
 ## 5. Deploy slash commands
 

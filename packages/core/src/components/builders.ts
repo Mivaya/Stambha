@@ -175,3 +175,33 @@ export function modal(options: ModalOptions): ModalComponent {
     components: [...options.components],
   };
 }
+
+/** Options for a Premium button (ButtonStyle.Premium = 6). */
+export interface PremiumButtonOptions {
+  /** The SKU id to link. Required for Premium buttons. */
+  skuId: string;
+  disabled?: boolean;
+  /** Optional 32-bit component id for cross-message deduplication. */
+  id?: number;
+}
+
+/**
+ * Build a Premium/SKU purchase button (style 6).
+ * Premium buttons have no `custom_id` or `label` — Discord renders them with the SKU name.
+ * They do not fire interaction callbacks; they open the SKU purchase flow directly.
+ *
+ * @example
+ * ```ts
+ * premiumButton({ skuId: process.env.PREMIUM_SKU_ID! })
+ * ```
+ */
+export function premiumButton(options: PremiumButtonOptions): ButtonComponent {
+  const component: ButtonComponent = {
+    type: ComponentType.Button,
+    style: ButtonStyle.Premium,
+    sku_id: options.skuId,
+  };
+  if (options.disabled !== undefined) component.disabled = options.disabled;
+  if (options.id !== undefined) component.id = options.id;
+  return component;
+}
