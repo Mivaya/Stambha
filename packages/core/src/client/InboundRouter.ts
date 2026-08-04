@@ -2,6 +2,7 @@ import type { CommandSlashPath } from "../command/slashTypes.js";
 import type { AutocompleteContext } from "../context/autocomplete.js";
 import type { CommandContext, ScoutContext } from "../context/types.js";
 import type { Outcome } from "../outcome/Outcome.js";
+import { dispatchAutocomplete } from "../pipeline/dispatchCommand.js";
 import type { StambhaClient } from "./StambhaClient.js";
 
 /**
@@ -65,10 +66,10 @@ export class InboundRouter {
   async processAutocomplete(ctx: AutocompleteContext): Promise<void> {
     const path: CommandSlashPath = ctx.slashPath ?? { root: ctx.commandName };
     const command = this.client.commandIndex.resolveSlash(path);
-    if (!command?.autocomplete) return;
+    if (!command) return;
 
     try {
-      await command.autocomplete(ctx);
+      await dispatchAutocomplete(command, ctx);
     } catch (error) {
       this.client.emit("autocompleteError", { command: command.name, error, ctx });
       try {

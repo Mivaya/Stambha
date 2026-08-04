@@ -63,6 +63,34 @@ export class PingCommand extends Command {
 
 Return **`ok(value)`** or **`err(message)`** from `execute()` — the pipeline uses outcomes for epilogues and metrics. Uncaught throws are treated as failures.
 
+### Kind hooks (optional)
+
+Prefer separate handlers per invocation kind without Sapphire’s `chatInputRun` / `messageRun` names:
+
+```ts
+export class PingCommand extends Command {
+  constructor(registry: Registry<Command>) {
+    super(registry, {
+      name: "ping",
+      description: "Replies with Pong!",
+      kinds: ["slash", "prefix"],
+    });
+  }
+
+  async slash(ctx: CommandContext) {
+    await ctx.replyEphemeral("Pong!");
+    return ok(undefined);
+  }
+
+  async prefix(ctx: CommandContext) {
+    await ctx.reply("Pong!");
+    return ok(undefined);
+  }
+}
+```
+
+Dispatch order: **subcommand method** (when `subcommandMethods: true`) → **kind hook** (`slash` / `prefix` / `menu`) → **`execute`**. Context menus use `menu` (`ctx.kind === "contextMenu"`). Helpers: `isSlash`, `isPrefix`, `isMenu`.
+
 ## 2. Bootstrap the client
 
 ```ts
