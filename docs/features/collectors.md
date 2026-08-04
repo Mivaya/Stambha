@@ -4,7 +4,7 @@
 
 Ships in [`@stambha/gateway`](https://github.com/Mivaya/Stambha/tree/main/packages/gateway). Collectors subscribe to [`GatewayEventHub`](/deployment/gateway) (or any `{ on, off }` double).
 
-For **persistent** UI (menus that survive restarts), prefer [Signals](/features/signals) + [Components](/features/components). For multi-step button→modal flows, prefer [Sequences](/features/sequences). Automatic `runSequence` orchestration remains **2.0 D1**.
+For **persistent** UI (menus that survive restarts), prefer [Signals](/features/signals) + [Components & embeds](/features/components). For multi-step button→modal flows, prefer [Sequences](/features/sequences). Automatic `runSequence` orchestration remains **2.0 D1**.
 
 ## When to use
 

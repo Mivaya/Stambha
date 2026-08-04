@@ -43,6 +43,8 @@ export const ButtonStyle = {
   Success: 3,
   Danger: 4,
   Link: 5,
+  /** Renders a premium/SKU purchase button. Requires `sku_id`, no `custom_id` or `label`. */
+  Premium: 6,
 } as const;
 
 export type ButtonStyleId = (typeof ButtonStyle)[keyof typeof ButtonStyle];
@@ -72,6 +74,8 @@ export interface ButtonComponent {
   label?: string;
   custom_id?: string;
   url?: string;
+  /** Required for Premium buttons (`style: 6`). Must not be set for other styles. */
+  sku_id?: string;
   disabled?: boolean;
   emoji?: ComponentEmoji;
   id?: number;
