@@ -1,6 +1,6 @@
 # Advanced bot example
 
-**Feature-complete** Stambha starter on the native stack (`@stambha/gateway`, `@stambha/rest`, `@stambha/transform`). Conventional piece folders, vault, capabilities, signals, polls, Components V2, monetization demos, and optional tier-split workers.
+**Feature-complete** Stambha starter on the native stack (`@stambha/gateway`, `@stambha/rest`, `@stambha/transform`). Conventional piece folders, vault, capabilities, signals, entity selects, polls, Components V2, monetization demos, and optional tier-split workers.
 
 - Smaller Discord bot → [`../basic`](../basic)
 - Enterprise / tier-split first → [`../bigbot`](../bigbot) (self-contained; does not require this folder)
@@ -65,9 +65,9 @@ src/
 | Area | Commands / pieces |
 |------|-------------------|
 | Args | `say`, `echo` |
-| Signals / components | `confirm`, `menu`, `panel` (V2) |
+| Signals / components | `confirm`, `menu` (string + user/channel selects), `panel` (Components V2) |
 | Polls | `poll`, `endpoll` + vote listener |
-| Authz | `purge` + `setcap` (`@stambha/authz`) |
+| Authz | `purge` (capability ⊕ Manage Messages) + `setcap` (`@stambha/authz`) |
 | Monetization | `premium` (`entitlementGate`) |
 | Vault | `config` |
 | Gates / barriers | `lock`, owner gate, maintenance |
