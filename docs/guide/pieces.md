@@ -44,7 +44,9 @@ Every piece (`Unit`) can override:
 |------|------|
 | `onLoad()` | After `Registry.load` / `@stambha/loader` registers the piece |
 | `onUnload()` | Before `Registry.unload` removes it |
-| `Command.onCommandError(error, ctx)` | When `execute` returns `err()` or throws — **default logs** via `client.container.logger` |
+| `Command.onCommandError(error, ctx)` | When the command handler returns `err()` or throws — **default logs** via `client.container.logger` |
+
+Optional kind hooks on `Command`: `slash` / `prefix` / `menu` (context menu). With `subcommandMethods: true`, leaf `slashPath.subcommand` maps to a same-named method. See [Getting started](/guide/getting-started#kind-hooks-optional) and [Command tree](/features/command-tree#subcommand-methods).
 
 ```ts
 export class CacheCommand extends Command {

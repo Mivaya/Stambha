@@ -3,6 +3,7 @@ import type { CommandContext, EpilogueContext, ScoutContext } from "../context/t
 import { commandGatesForRun } from "../gates/resolveCommandGates.js";
 import { isOk, type Outcome, StambhaError } from "../outcome/Outcome.js";
 import type { Command } from "../registries/Command.js";
+import { dispatchCommand } from "./dispatchCommand.js";
 
 export interface PipelineRunOptions {
   /** Skip barriers marked skipOnHelp (e.g. rate limits while listing commands). */
@@ -96,7 +97,7 @@ export class ExecutionPipeline {
 
     let outcome: Outcome<unknown>;
     try {
-      outcome = await command.execute(ctx);
+      outcome = await dispatchCommand(command, ctx);
     } catch (error) {
       outcome = {
         ok: false,
