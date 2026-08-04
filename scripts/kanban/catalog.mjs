@@ -276,6 +276,61 @@ export const CARD_CATALOG = {
     }),
   },
 
+  "REL-1.3.0": {
+    title: "1.3.0-release",
+    status: "Review",
+    track: "stambha",
+    type: "Release",
+    pillar: "Ops",
+    release: "1.3",
+    lane: "Expedite",
+    priority: "blocker",
+    body: ticketBody({
+      summary: "Publish GitHub Release v1.3.0 → npm @stambha/*@1.3.0 + docs deploy.",
+      acceptance: [
+        "CHANGELOG [1.3.0] complete",
+        "Versions bumped to 1.3.0",
+        "pnpm docs:archive 1.3.0 <sha>",
+        "Tag v1.3.0 + published GitHub Release (not draft)",
+        "npm latest = 1.3.0 for all core packages",
+      ],
+      meta: { ID: "REL-1.3.0", Release: "1.3.0", Branch: "chore/release-1.3.0" },
+      references: ["CHANGELOG.md", ".github/PUBLISHING.md"],
+    }),
+  },
+
+  "DX-1": {
+    title: "DX-1 — Kind hooks: slash / prefix / menu",
+    status: "Review",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.3",
+    lane: "Expedite",
+    priority: "blocker",
+    body: doneBody({
+      summary: "Optional slash/prefix/menu hooks; pipeline dispatch; isSlash/isPrefix/isMenu.",
+      delivered: ["dispatchCommand", "docs getting-started + pieces", "PR #123"],
+      meta: { ID: "DX-1", Pillar: "B", Release: "1.3", Epic: "EPIC-B" },
+    }),
+  },
+
+  "DX-2": {
+    title: "DX-2 — Subcommand method dispatch",
+    status: "Review",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.3",
+    lane: "Expedite",
+    priority: "high",
+    body: doneBody({
+      summary: "subcommandMethods + leaf method / Autocomplete convention.",
+      delivered: ["dispatchCommand resolveSubcommandHandler", "command-tree.md", "PR #123"],
+      meta: { ID: "DX-2", Pillar: "B", Release: "1.3", Epic: "EPIC-B" },
+    }),
+  },
+
   "PLUGINS-1.0.0": {
     title: "plugins-1.0.0",
     status: "Done",
@@ -374,7 +429,7 @@ export const CARD_CATALOG = {
 
   B1: {
     title: "B1 — Declarative gates",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -413,7 +468,7 @@ export class PingCommand extends Command {
 
   B2: {
     title: "B2 — Bridge args, flags, entity resolvers",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -436,7 +491,7 @@ export class PingCommand extends Command {
 
   B3: {
     title: "B3 — Help system",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -456,7 +511,7 @@ export class PingCommand extends Command {
 
   B4: {
     title: "B4 — Piece lifecycle + error hooks",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -475,7 +530,7 @@ export class PingCommand extends Command {
 
   B5: {
     title: "B5 — Component builder + persistent signals",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -494,7 +549,7 @@ export class PingCommand extends Command {
 
   B6: {
     title: "B6 — Prefix edit-tracking",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -538,7 +593,7 @@ export class PingCommand extends Command {
 
   B8: {
     title: "B8 — Native registerPlugin & onShutdown",
-    status: "In Progress",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -580,7 +635,7 @@ export class PingCommand extends Command {
 
   B10: {
     title: "B10 — Native EmbedBuilder (classic) + Components V2 builder layer",
-    status: "Done",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -600,7 +655,7 @@ export class PingCommand extends Command {
 
   B10a: {
     title: "B10a — Components V2: official naming + full builder classes",
-    status: "In Progress",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -626,7 +681,7 @@ export class PingCommand extends Command {
 
   B10b: {
     title: "B10b — EmbedView + ContainerView (Stambha display primitives)",
-    status: "Done",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -793,7 +848,7 @@ export class PingCommand extends Command {
 
   C1: {
     title: "C1 — Permission levels",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "C",
@@ -813,7 +868,7 @@ export class PingCommand extends Command {
 
   C2: {
     title: "C2 — Vault level overrides",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "C",
@@ -1049,7 +1104,7 @@ export class PingCommand extends Command {
 
   G1: {
     title: "G1 — Auto resharding threshold",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -1129,7 +1184,7 @@ export class PingCommand extends Command {
 
   "G3-p2": {
     title: "G3-p2 — Tier 2 gateway dispatches",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -1146,7 +1201,7 @@ export class PingCommand extends Command {
 
   "G3-p3": {
     title: "G3-p3 — Tier 3 gateway dispatches",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -1161,7 +1216,7 @@ export class PingCommand extends Command {
 
   "G3-p4": {
     title: "G3-p4 — Tier 4 gateway dispatches",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -1176,7 +1231,7 @@ export class PingCommand extends Command {
 
   G3a: {
     title: "G3a — Typed GatewayEventMap",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -1194,7 +1249,7 @@ export class PingCommand extends Command {
 
   "REST-app": {
     title: "REST: fetchApplication + owner team",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -1212,7 +1267,7 @@ export class PingCommand extends Command {
 
   "ADAPTERS-1.5": {
     title: "1.5.0-adapters — Remove library adapters",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Release",
     pillar: "B",
@@ -1233,7 +1288,7 @@ export class PingCommand extends Command {
 
   TYPING: {
     title: "Typing indicator",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -1847,6 +1902,11 @@ export const TITLE_TO_ID = {
   "1.2.0-release-branch": "REL-1.2.0-branch",
   "1.2.0-release": "REL-1.2.0",
   "1.2.0-archive": "REL-1.2.0-archive",
+  "1.3.0-release": "REL-1.3.0",
+  "DX-1": "DX-1",
+  "DX-1 — Kind hooks: slash / prefix / menu": "DX-1",
+  "DX-2": "DX-2",
+  "DX-2 — Subcommand method dispatch": "DX-2",
   "plugins-1.0.0": "PLUGINS-1.0.0",
   "plugins-readme": "PLUGINS-README",
   "api-1.1.0-release": "PLUGINS-API-1.1.0",

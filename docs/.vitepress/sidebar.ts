@@ -7,6 +7,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
     items: [
       { text: "Why Stambha", link: "/guide/why-stambha" },
       { text: "Getting started", link: "/guide/getting-started" },
+      { text: "What's new in 1.3.0", link: "/guide/whats-new-1.3" },
       { text: "Examples by scale", link: "/guide/examples" },
       { text: "Architecture", link: "/guide/architecture" },
       { text: "Known gaps", link: "/guide/known-gaps" },
