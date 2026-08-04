@@ -80,12 +80,36 @@ await ctx.reply({
 | `button` / `linkButton` / `premiumButton` | Button (type 2; premium = style 6) |
 | `buttonRow` / `actionRow` | Action row (type 1) |
 | `stringSelect` / `selectRow` | String select in a row |
+| `userSelect` / `roleSelect` / `mentionableSelect` / `channelSelect` | Entity selects (types 5–8); use `selectRow(…)` |
+| `ChannelSelectChannelType` | Discord channel type ints for `channelSelect({ channelTypes })` |
 | `confirmCancelRow(signal)` | Success + secondary buttons |
 | `textInput` / `modal` | Modal layout |
 
-Custom ids should come from `signal.customId(suffix?)` so [`SignalRouter`](/features/signals) can route them.
+```ts
+import {
+  channelSelect,
+  ChannelSelectChannelType,
+  selectRow,
+  userSelect,
+} from "@stambha/core";
 
-Entity selects (user / role / channel / mentionable) are tracked separately — not all shipped as fluent builders yet.
+await ctx.reply({
+  content: "Pick a channel",
+  components: [
+    selectRow(
+      channelSelect({
+        customId: signal.customId("channel"),
+        channelTypes: [ChannelSelectChannelType.GuildText],
+      }),
+    ),
+  ],
+});
+
+// User select — values arrive on SignalContext.values like string selects
+selectRow(userSelect({ customId: signal.customId("users"), maxValues: 5 }));
+```
+
+Custom ids should come from `signal.customId(suffix?)` so [`SignalRouter`](/features/signals) can route them.
 
 ## Classic embeds
 

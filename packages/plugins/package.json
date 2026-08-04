@@ -1,6 +1,6 @@
 {
   "name": "@stambha/plugins",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Stambha plugin lifecycle hooks and container (definePlugin, StambhaContainer)",
   "author": "Mivaya",
   "license": "MIT",
