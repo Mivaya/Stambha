@@ -100,6 +100,69 @@ export interface StringSelectComponent {
   id?: number;
 }
 
+/** Default value entry for entity selects (`default_values`). */
+export interface SelectDefaultValue {
+  id: string;
+  type: "user" | "role" | "channel";
+}
+
+/**
+ * Discord channel type integers for {@link ChannelSelectComponent.channel_types}.
+ * @see https://discord.com/developers/docs/resources/channel#channel-object-channel-types
+ */
+export const ChannelSelectChannelType = {
+  GuildText: 0,
+  Dm: 1,
+  GuildVoice: 2,
+  GroupDm: 3,
+  GuildCategory: 4,
+  GuildAnnouncement: 5,
+  AnnouncementThread: 10,
+  PublicThread: 11,
+  PrivateThread: 12,
+  GuildStageVoice: 13,
+  GuildDirectory: 14,
+  GuildForum: 15,
+  GuildMedia: 16,
+} as const;
+
+export type ChannelSelectChannelTypeId =
+  (typeof ChannelSelectChannelType)[keyof typeof ChannelSelectChannelType];
+
+/** Shared fields for user / role / mentionable / channel selects. */
+export interface EntitySelectBase {
+  custom_id: string;
+  placeholder?: string;
+  min_values?: number;
+  max_values?: number;
+  disabled?: boolean;
+  default_values?: SelectDefaultValue[];
+  id?: number;
+}
+
+export interface UserSelectComponent extends EntitySelectBase {
+  type: typeof ComponentType.UserSelect;
+}
+
+export interface RoleSelectComponent extends EntitySelectBase {
+  type: typeof ComponentType.RoleSelect;
+}
+
+export interface MentionableSelectComponent extends EntitySelectBase {
+  type: typeof ComponentType.MentionableSelect;
+}
+
+export interface ChannelSelectComponent extends EntitySelectBase {
+  type: typeof ComponentType.ChannelSelect;
+  channel_types?: ChannelSelectChannelTypeId[];
+}
+
+export type EntitySelectComponent =
+  | UserSelectComponent
+  | RoleSelectComponent
+  | MentionableSelectComponent
+  | ChannelSelectComponent;
+
 export interface TextInputComponent {
   type: typeof ComponentType.TextInput;
   custom_id: string;
@@ -113,7 +176,11 @@ export interface TextInputComponent {
   id?: number;
 }
 
-export type ActionRowChild = ButtonComponent | StringSelectComponent | TextInputComponent;
+export type ActionRowChild =
+  | ButtonComponent
+  | StringSelectComponent
+  | EntitySelectComponent
+  | TextInputComponent;
 
 export interface ActionRowComponent {
   type: typeof ComponentType.ActionRow;

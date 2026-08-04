@@ -5,6 +5,102 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-08-04
+
+### Added
+
+#### Command pipeline & DX (`@stambha/core`, `@stambha/gates`, `@stambha/args`, `@stambha/help`)
+
+- **Kind hooks** — optional `Command.slash` / `prefix` / `menu`; dispatch order: subcommand method → kind hook → `execute`; helpers `isSlash` / `isPrefix` / `isMenu` (`#123`).
+- **`subcommandMethods: true`** — leaf `slashPath.subcommand` → same-named method; `${subcommand}Autocomplete` for autocomplete (`#123`).
+- **Declarative gates** — `cooldown`, `runIn`, `nsfw`, `userPermissions`, `clientPermissions` on `Command` options (`#74`).
+- **Hybrid args** — bridge/hybrid parsing + REST-backed user resolvers (`#83`).
+- **`@stambha/help`** — built-in help command / catalog (`#84`).
+- **Piece lifecycle** — `onLoad` / `onUnload`; `Command.onCommandError` (`#85`).
+- **Prefix edit-tracking** — edit as re-invoke path (`#87`).
+- **Native plugins** — `registerPlugin` / `onShutdown` on the client (`#103`).
+
+#### Components & embeds (`@stambha/core`)
+
+- Classic UI helpers — `button`, `buttonRow`, `stringSelect`, entity selects (`userSelect` / `roleSelect` / `mentionableSelect` / `channelSelect`), `modal`, `registerPersistentSignals` (`#86`).
+- **Components V2** — `componentsV2`, `replyV2`, `container` / `textDisplay` / `section` / `separator` / `mediaGallery` / `file`, fluent `*Builder` classes, `premiumButton` (`#96`, `#104`, `#122`).
+- **`EmbedBuilder` / `embed()` / `EmbedView`** — classic embeds with `resolveColor`, `toReply`, view round-trip (`#105`, `#122`).
+- **`ContainerBuilder` / `ContainerView`** — accent/spoiler, `toReply`, readonly inspection (`#122`).
+- Docs: [Components & embeds](/features/components) glossary (V2 mode ≠ Container) (`#122`).
+
+#### Authz & gates
+
+- **`@stambha/authz`** — named capabilities (capability gates) as the staff-auth model (`#101`).
+- Async **`CooldownStore`** for shared Redis-backed cooldown drivers (`#91`).
+- **Capability ⊕ permission composition** — `gateAnd` / `gateOr` with `capabilityGate` + `userPermissionsGate` ([Capabilities](/features/capabilities)).
+
+#### Docs (1.3.0 quality bar)
+
+- **TypeScript augmentation** — declaration merging for `StambhaClientOptions` / `StambhaContainerLike` ([guide](/features/typescript-augmentation)).
+- **REST & Gateway correctness** — rate limits, resume, identify, dispatch map ([docs](/deployment/correctness)).
+
+#### Gateway & transform (`@stambha/gateway`, `@stambha/transform`)
+
+- Tier 2–4 camelCase gateway dispatches + fixtures (`#73`, `#78`, `#79`).
+- Typed **`GatewayEventMap`** on `GatewayEventHub` (`#81`).
+- Auto-reshard threshold check + monitor (`#82`).
+- Resume URL, close-code classification, reconnect backoff (`#70`).
+- Identify budget / `max_concurrency` buckets (`#71`).
+- Guild backfill + availability events (`#72`).
+- **Collectors** — message, reaction, interaction (`#92`).
+- **HTTP interactions** — interaction endpoint without WebSocket (`#98`).
+
+#### REST & transport (`@stambha/rest`, `@stambha/transport`)
+
+- Typing indicator (`Command.typing` / REST) and **`fetchApplication`** (+ owner team) (`#95`).
+- Poll create/end + vote listener DX (`#99`).
+- Scheduled events, automod, soundboard helpers (`#100`).
+- Entitlement gate + SKU REST helpers (`#97`).
+- Global rate limit + 429 scope; major-parameter route keys; Cloudflare invalid-request guard (`#67`–`#69`).
+
+#### Install contexts & platform
+
+- User-installable apps — `integrationTypes` / `contexts` on commands (`#94`).
+
+#### Examples & docs
+
+- Scale matrix: `minimal` → `basic` → `bot` → `bigbot` + `http-interactions` (`#102`).
+- Extensions hub / cache-redis worker docs (`#90`).
+- Terminology pass across public docs (`#93`).
+
+### Changed
+
+- **Breaking — hub payloads:** more gateway events are camelCased (dispatch tiers 2–4). Migrate custom `hub.on` handlers or keep `dispatchNormalize: 'raw'` while updating.
+- **Breaking — transform adapters removed:** `messageFromDiscordJs` / Discordeno shape helpers deleted (`#80`). Use native `@stambha/rest` + `@stambha/gateway` + `@stambha/transform` only ([ADR 005](/decisions/005-native-only-migration)).
+- **Breaking — `PanelBuilder` / `panel()` removed** from `@stambha/core` (`#122`). Use `ContainerBuilder` + `textDisplay` / `componentsV2`, or wait for `@stambha/display` (plugins) embed→container helpers.
+- `Command.execute` is no longer abstract; kind-only commands may omit it (`#123`).
+- Prefer **capabilities** (`@stambha/authz`) for staff authorization; numeric “levels” package is not the long-term model.
+- Docs home / getting-started / components rewritten for V2 vs classic clarity.
+
+### Migration
+
+1. **CamelCase:** update listeners for newly normalized events, or set `dispatchNormalize: 'raw'` temporarily ([Gateway](/deployment/gateway)).
+2. **Adapters:** delete any `@stambha/transform` discord.js/Discordeno imports; bootstrap native ([Getting started](/guide/getting-started), [ADR 005](/decisions/005-native-only-migration)).
+3. **Panel → Container:** replace `panel({...})` with `ContainerBuilder` / `componentsV2` ([Components & embeds](/features/components)).
+4. **Peers:** pin `@stambha/*@1.3.0`; Stambha-plugins peers that required core `^1.2.2` for V2 should use `^1.3.0`.
+
+### Packages in this release
+
+| Package | Version |
+| ------- | ------- |
+| All publishable `@stambha/*` | 1.3.0 |
+
+### Not in 1.3.0 (follow-ups)
+
+| Item | Target |
+|------|--------|
+| `@stambha/display` Managers + embed→container helpers | 1.4 (plugins) |
+| Slash i18n, `create-stambha` CLI, prefix flags, facet rename | 1.4 |
+| Redis cache / cooldown driver packages | Independent plugins release |
+| Sequences orchestration, distributed Chron, gateway proxy, RabbitMQ | 2.0 |
+
+---
+
 ## [1.2.1] - 2026-07-17
 
 **Patch release** — dependency refresh, the `PiecePaths.routes` convention constant, and expanded extensions/decisions documentation. No gateway behavior or breaking API changes.
@@ -72,10 +168,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | Package                      | Version |
 | ---------------------------- | ------- |
 | All publishable `@stambha/*` | 1.2.0   |
-
-
-
-
 ## [1.1.0] - 2026-07-06
 
 **Mention-prefix commands and gateway dispatch foundation.** Additive minor — no breaking hub payload changes.

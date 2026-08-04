@@ -7,6 +7,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
     items: [
       { text: "Why Stambha", link: "/guide/why-stambha" },
       { text: "Getting started", link: "/guide/getting-started" },
+      { text: "What's new in 1.3.0", link: "/guide/whats-new-1.3" },
       { text: "Examples by scale", link: "/guide/examples" },
       { text: "Architecture", link: "/guide/architecture" },
       { text: "Known gaps", link: "/guide/known-gaps" },
@@ -28,6 +29,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
       { text: "Signals", link: "/features/signals" },
       { text: "Collectors", link: "/features/collectors" },
       { text: "Components & embeds", link: "/features/components" },
+      { text: "TypeScript augmentation", link: "/features/typescript-augmentation" },
       { text: "Polls", link: "/features/polls" },
       { text: "REST surface", link: "/features/rest-surface" },
       { text: "Arguments", link: "/features/args" },
@@ -58,6 +60,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
       { text: "Native REST", link: "/deployment/native-rest" },
       { text: "Gateway", link: "/deployment/gateway" },
       { text: "HTTP interactions", link: "/deployment/http-interactions" },
+      { text: "REST & Gateway correctness", link: "/deployment/correctness" },
       { text: "Slash deploy", link: "/deployment/slash-deploy" },
       { text: "Resharding", link: "/deployment/resharding" },
       { text: "Cross-runtime", link: "/deployment/cross-runtime" },

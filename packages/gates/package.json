@@ -1,7 +1,7 @@
 {
   "name": "@stambha/gates",
-  "version": "1.2.1",
-  "description": "Built-in Stambha gates \u2014 cooldown, permissions, NSFW, RunIn, and entitlements",
+  "version": "1.3.0",
+  "description": "Built-in Stambha gates — cooldown, permissions, NSFW, RunIn, and entitlements",
   "author": "Mivaya",
   "license": "MIT",
   "homepage": "https://github.com/mivaya/Stambha/tree/main/packages/gates#readme",
