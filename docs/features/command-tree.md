@@ -42,6 +42,42 @@ async execute(ctx: CommandContext) {
 }
 ```
 
+### Subcommand methods
+
+Opt in with `subcommandMethods: true` so each leaf maps to a method (and `${leaf}Autocomplete` for autocomplete):
+
+```ts
+export class ModCommand extends Command {
+  constructor(registry: Registry<Command>) {
+    super(registry, {
+      name: "mod",
+      description: "Moderation",
+      subcommandMethods: true,
+      subcommands: [
+        { name: "ban", description: "Ban a member" },
+        { name: "kick", description: "Kick a member" },
+      ],
+    });
+  }
+
+  async ban(ctx: CommandContext) {
+    await ctx.reply("Banned.");
+    return ok(undefined);
+  }
+
+  async kick(ctx: CommandContext) {
+    await ctx.reply("Kicked.");
+    return ok(undefined);
+  }
+
+  async banAutocomplete(ctx: AutocompleteContext) {
+    await ctx.respond([{ name: "example", value: "1" }]);
+  }
+}
+```
+
+Missing methods fall through to `slash` / `prefix` / `menu`, then `execute`.
+
 ### Leaf pieces (merged deploy)
 
 ```ts
