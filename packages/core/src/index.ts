@@ -194,6 +194,15 @@ export { Registry, type UnitConstructor } from "./pieces/Registry.js";
 // Pieces
 export { Unit, type UnitOptions } from "./pieces/Unit.js";
 // Pipeline
+export {
+  dispatchAutocomplete,
+  dispatchCommand,
+  isMenu,
+  isPrefix,
+  isSlash,
+  resolveCommandHandler,
+  resolveSubcommandHandler,
+} from "./pipeline/dispatchCommand.js";
 export { ExecutionPipeline, type PipelineRunOptions } from "./pipeline/ExecutionPipeline.js";
 export type {
   PluginContext,

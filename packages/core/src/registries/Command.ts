@@ -6,7 +6,7 @@ import type {
 import type { AutocompleteContext } from "../context/autocomplete.js";
 import type { ChannelType } from "../context/meta.js";
 import type { CommandContext, CommandKind } from "../context/types.js";
-import { type Outcome, ok } from "../outcome/Outcome.js";
+import { type Outcome, ok, StambhaError } from "../outcome/Outcome.js";
 import type { Registry } from "../pieces/Registry.js";
 import { Unit, type UnitOptions } from "../pieces/Unit.js";
 import type { GateLike } from "./Gate.js";
@@ -110,6 +110,12 @@ export interface CommandOptions extends UnitOptions {
    * Maps to Discord `contexts` on deploy. `private_channel` requires `user` in {@link CommandOptions.integrationTypes}.
    */
   contexts?: readonly import("../context/installContext.js").InteractionContextName[];
+  /**
+   * When true, slash leaf `slashPath.subcommand` dispatches to a same-named method
+   * on this class (e.g. `ban(ctx)`). Autocomplete uses `${subcommand}Autocomplete`.
+   * Falls back to kind hooks / {@link Command.execute} when the method is missing.
+   */
+  subcommandMethods?: boolean;
 }
 
 /** User-facing command piece (`commands/` folder). */
@@ -141,6 +147,7 @@ export abstract class Command extends Unit<CommandOptions> {
   readonly typing: boolean;
   readonly integrationTypes?: readonly import("../context/installContext.js").IntegrationTypeName[];
   readonly contexts?: readonly import("../context/installContext.js").InteractionContextName[];
+  readonly subcommandMethods: boolean;
 
   constructor(registry: Registry<Command>, options: CommandOptions) {
     super(registry, options);
@@ -182,12 +189,35 @@ export abstract class Command extends Unit<CommandOptions> {
       this.integrationTypes = options.integrationTypes;
     }
     if (options.contexts !== undefined) this.contexts = options.contexts;
+    this.subcommandMethods = options.subcommandMethods === true;
   }
 
-  abstract execute(ctx: CommandContext): Promise<Outcome<unknown>>;
+  /**
+   * Hybrid / default handler. Override this, or implement kind hooks
+   * ({@link slash} / {@link prefix} / {@link menu}). The pipeline prefers a kind
+   * hook when present for the invocation kind, then falls back here.
+   */
+  execute(ctx: CommandContext): Promise<Outcome<unknown>> {
+    return Promise.resolve({
+      ok: false,
+      error: new StambhaError(
+        `Command "${this.name}" has no handler for kind "${ctx.kind}" (define execute or a kind hook).`,
+        "COMMAND_HANDLER",
+      ),
+    });
+  }
+
+  /** Optional slash-only handler (`ctx.kind === "slash"`). */
+  slash?(ctx: CommandContext): Promise<Outcome<unknown>>;
+
+  /** Optional prefix-only handler (`ctx.kind === "prefix"`). */
+  prefix?(ctx: CommandContext): Promise<Outcome<unknown>>;
+
+  /** Optional context-menu handler (`ctx.kind === "contextMenu"`). */
+  menu?(ctx: CommandContext): Promise<Outcome<unknown>>;
 
   /**
-   * Called when {@link execute} returns `err()` or throws.
+   * Called when the command handler returns `err()` or throws.
    * Default logs via `client.container.logger`. Override to customize or no-op.
    */
   async onCommandError(error: unknown, _ctx: CommandContext): Promise<void> {
