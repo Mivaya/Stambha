@@ -28,7 +28,7 @@ features:
   - title: Sequences & signals
     details: Multi-step flows and button/modal/select routing without boilerplate state machines.
   - title: Extensions
-    details: Optional pagination, HTTP API, cache, metrics, and Vault SQL from Stambha-plugins — independent 1.0.0 line, peers on core ^1.2.0.
+    details: Optional pagination, HTTP API, cache, metrics, and Vault SQL from Stambha-plugins — independent 1.0.0+ line, peers on core **^1.3.0**.
 ---
 
 ## Try it now
