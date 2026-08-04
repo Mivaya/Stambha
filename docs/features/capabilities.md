@@ -106,7 +106,49 @@ Example bot: `!setcap` (requires `admin.config`).
 
 Prefix commands: enrich `CommandContext.meta` in your gateway worker, or rely on botOwners / Vault grants only.
 
-## With bitfield gates
+## Compose capability ⊕ Discord permissions (DX-4) {#capability-permission-composition}
+
+Use `gateAnd` / `gateOr` from `@stambha/core` when a command needs **both** a named capability and an extra Discord bit (or either).
+
+```ts
+import { Command, gateAnd, gateOr, ok, type Registry } from "@stambha/core";
+import { capabilityGate } from "@stambha/authz";
+import { userPermissionsGate, Permission } from "@stambha/gates";
+
+export class PurgeCommand extends Command {
+  constructor(registry: Registry<Command>) {
+    super(registry, {
+      name: "purge",
+      kinds: ["slash", "prefix"],
+      // Must hold mod.purge AND ManageMessages (defense in depth)
+      gates: [
+        gateAnd(
+          capabilityGate("mod.purge"),
+          userPermissionsGate(Permission.ManageMessages),
+        ),
+      ],
+    });
+  }
+
+  async execute(ctx) {
+    await ctx.reply("Purged (demo).");
+    return ok(undefined);
+  }
+}
+
+// Either capability OR Administrator bit:
+// gates: [gateOr(capabilityGate("admin.config"), userPermissionsGate(Permission.Administrator))]
+```
+
+| Pattern | Meaning |
+|---------|---------|
+| `gateAnd(capabilityGate(…), userPermissionsGate(…))` | Capability **and** Discord floor |
+| `gateOr(capabilityGate(…), userPermissionsGate(…))` | Capability **or** Discord bit |
+| Declarative `userPermissions` on `Command` + `gates: [capabilityGate(…)]` | Also AND’d via the gate pipeline — prefer explicit `gateAnd` when documenting intent |
+
+Fails still emit `commandDenied` / `attachGateDeniedReply` like any other gate.
+
+## With bitfield gates alone
 
 Prefer capabilities when many commands share the same staff policy. Keep `userPermissionsGate(Permission.…)` when a command needs a **one-off** Discord permission without a named capability.
 
@@ -114,9 +156,11 @@ Prefer capabilities when many commands share the same staff policy. Keep `userPe
 |------|-----|
 | Named staff action (`mod.purge`) | `capabilityGate("mod.purge")` |
 | Exact Discord bit only | `userPermissionsGate(Permission.ManageChannels)` |
+| Both | `gateAnd(capabilityGate(…), userPermissionsGate(…))` |
 
 ## See also
 
 - [Gates](/features/gates) — bitfields, cooldown, NSFW, RunIn
 - [Vault](/features/vault) — guild `capabilityClaims` + `attachVaultCapabilityClaims`
-- [Known gaps](/guide/known-gaps) — authorization
+- [TypeScript augmentation](/features/typescript-augmentation) — typed container services
+- [Known gaps](/guide/known-gaps)

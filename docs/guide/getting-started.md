@@ -37,7 +37,7 @@ Common next packages:
 | `@stambha/help` | Help catalog |
 | Extensions | [Pagination](/extensions/pagination), [Metrics](/extensions/metrics), … — [Extensions hub](/extensions/) |
 
-> **CommonJS:** Pin `@stambha/*@0.2.1` or newer for `require()`. ESM projects can use current versions.
+> **CommonJS:** Pin `@stambha/*@1.3.0` (or `^1.3.0`) for `require()`. ESM projects can use the same line.
 
 ## 1. Create a command
 

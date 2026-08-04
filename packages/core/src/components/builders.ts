@@ -4,14 +4,20 @@ import {
   type ButtonComponent,
   ButtonStyle,
   type ButtonStyleId,
+  type ChannelSelectChannelTypeId,
+  type ChannelSelectComponent,
   type ComponentEmoji,
   ComponentType,
+  type MentionableSelectComponent,
   type ModalComponent,
+  type RoleSelectComponent,
+  type SelectDefaultValue,
   type SelectOption,
   type StringSelectComponent,
   type TextInputComponent,
   TextInputStyle,
   type TextInputStyleId,
+  type UserSelectComponent,
 } from "./types.js";
 
 export interface ButtonOptions {
@@ -37,6 +43,24 @@ export interface StringSelectOptions {
   minValues?: number;
   maxValues?: number;
   disabled?: boolean;
+}
+
+/** Shared options for Discord entity selects (user / role / mentionable / channel). */
+export interface EntitySelectOptions {
+  customId: string;
+  placeholder?: string;
+  minValues?: number;
+  maxValues?: number;
+  disabled?: boolean;
+  /** Pre-selected entities (`default_values`). */
+  defaultValues?: readonly SelectDefaultValue[];
+  /** Optional 32-bit component id. */
+  id?: number;
+}
+
+export interface ChannelSelectOptions extends EntitySelectOptions {
+  /** Restrict selectable channel types (Discord channel type integers). */
+  channelTypes?: readonly ChannelSelectChannelTypeId[];
 }
 
 export interface TextInputOptions {
@@ -100,6 +124,71 @@ export function stringSelect(options: StringSelectOptions): StringSelectComponen
   return component;
 }
 
+function applyEntitySelectBase(
+  component: {
+    custom_id: string;
+    placeholder?: string;
+    min_values?: number;
+    max_values?: number;
+    disabled?: boolean;
+    default_values?: SelectDefaultValue[];
+    id?: number;
+  },
+  options: EntitySelectOptions,
+): void {
+  if (options.placeholder !== undefined) component.placeholder = options.placeholder;
+  if (options.minValues !== undefined) component.min_values = options.minValues;
+  if (options.maxValues !== undefined) component.max_values = options.maxValues;
+  if (options.disabled !== undefined) component.disabled = options.disabled;
+  if (options.defaultValues !== undefined) {
+    component.default_values = options.defaultValues.map((v) => ({ ...v }));
+  }
+  if (options.id !== undefined) component.id = options.id;
+}
+
+/** User select menu (type 5) — Discord populates options from the guild. */
+export function userSelect(options: EntitySelectOptions): UserSelectComponent {
+  const component: UserSelectComponent = {
+    type: ComponentType.UserSelect,
+    custom_id: options.customId,
+  };
+  applyEntitySelectBase(component, options);
+  return component;
+}
+
+/** Role select menu (type 6). */
+export function roleSelect(options: EntitySelectOptions): RoleSelectComponent {
+  const component: RoleSelectComponent = {
+    type: ComponentType.RoleSelect,
+    custom_id: options.customId,
+  };
+  applyEntitySelectBase(component, options);
+  return component;
+}
+
+/** Mentionable select (users + roles, type 7). */
+export function mentionableSelect(options: EntitySelectOptions): MentionableSelectComponent {
+  const component: MentionableSelectComponent = {
+    type: ComponentType.MentionableSelect,
+    custom_id: options.customId,
+  };
+  applyEntitySelectBase(component, options);
+  return component;
+}
+
+/** Channel select menu (type 8). */
+export function channelSelect(options: ChannelSelectOptions): ChannelSelectComponent {
+  const component: ChannelSelectComponent = {
+    type: ComponentType.ChannelSelect,
+    custom_id: options.customId,
+  };
+  applyEntitySelectBase(component, options);
+  if (options.channelTypes !== undefined) {
+    component.channel_types = [...options.channelTypes];
+  }
+  return component;
+}
+
 /** Build a modal text input. */
 export function textInput(options: TextInputOptions): TextInputComponent {
   const component: TextInputComponent = {
@@ -121,7 +210,14 @@ export function actionRow(...components: ActionRowChild[]): ActionRowComponent {
   if (components.length < 1 || components.length > 5) {
     throw new Error("actionRow requires 1–5 child components.");
   }
-  const hasSelect = components.some((c) => c.type === ComponentType.StringSelect);
+  const selectTypes = new Set<number>([
+    ComponentType.StringSelect,
+    ComponentType.UserSelect,
+    ComponentType.RoleSelect,
+    ComponentType.MentionableSelect,
+    ComponentType.ChannelSelect,
+  ]);
+  const hasSelect = components.some((c) => selectTypes.has(c.type));
   if (hasSelect && components.length !== 1) {
     throw new Error("A select menu must be alone in its action row.");
   }
@@ -140,8 +236,10 @@ export function buttonRow(...buttons: ButtonComponent[]): ActionRowComponent {
   return actionRow(...buttons);
 }
 
-/** Convenience: action row with a single select. */
-export function selectRow(select: StringSelectComponent): ActionRowComponent {
+/** Convenience: action row with a single select (string or entity). */
+export function selectRow(
+  select: StringSelectComponent | UserSelectComponent | RoleSelectComponent | MentionableSelectComponent | ChannelSelectComponent,
+): ActionRowComponent {
   return actionRow(select);
 }
 
