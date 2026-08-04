@@ -13,7 +13,7 @@ export class ColorMenuSignal extends Signal {
   }
 
   async run(ctx: SignalContext): Promise<void> {
-    const picked = ctx.values[0] ?? "nothing";
+    const picked = ctx.values.length > 0 ? ctx.values.join(", ") : "nothing";
     await ctx.reply(`You picked: \`${picked}\``);
   }
 }
