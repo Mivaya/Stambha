@@ -331,6 +331,67 @@ export const CARD_CATALOG = {
     }),
   },
 
+  "DX-3": {
+    title: "DX-3 — Merge/publish EmbedBuilder + Components V2 bump",
+    status: "Review",
+    track: "stambha",
+    type: "Task",
+    pillar: "B",
+    release: "1.3",
+    lane: "Expedite",
+    priority: "high",
+    body: doneBody({
+      summary:
+        "EmbedBuilder / Components V2 builders / Views merged on main (#122); close after v1.3.0 npm publish.",
+      delivered: [
+        "B10 / B10a / B10b on main",
+        "CHANGELOG 1.3.0 covers EmbedBuilder + ContainerBuilder + Views",
+        "Remaining: publish GitHub Release + npm for @stambha/*@1.3.0",
+      ],
+      meta: { ID: "DX-3", Pillar: "B", Release: "1.3", Epic: "EPIC-B" },
+      notes: ["Mark Done after npm latest = 1.3.0"],
+    }),
+  },
+
+  "DX-4": {
+    title: "DX-4 — Capability ⊕ permission composition docs",
+    status: "Review",
+    track: "stambha",
+    type: "Feature",
+    pillar: "Docs",
+    release: "1.3",
+    lane: "Standard",
+    priority: "high",
+    body: doneBody({
+      summary: "Document gateAnd/gateOr with capabilityGate + userPermissionsGate.",
+      delivered: [
+        "docs/features/capabilities.md composition section",
+        "gateAnd / gateOr + Permission bitfield examples",
+      ],
+      meta: { ID: "DX-4", Pillar: "Docs", Release: "1.3", Epic: "EPIC-DOCS" },
+    }),
+  },
+
+  F1: {
+    title: "F1 — REST & Gateway correctness documentation",
+    status: "Review",
+    track: "stambha",
+    type: "Feature",
+    pillar: "Docs",
+    release: "1.3",
+    lane: "Standard",
+    priority: "medium",
+    body: doneBody({
+      summary: "Operator-facing map of rate limits, resume, identify, dispatch correctness claims → code/tests.",
+      delivered: [
+        "docs/deployment/correctness.md",
+        "Sidebar under Deployment",
+        "Cross-links from known-gaps / CHANGELOG",
+      ],
+      meta: { ID: "F1", Pillar: "Docs", Release: "1.3", Epic: "EPIC-DOCS" },
+    }),
+  },
+
   "PLUGINS-1.0.0": {
     title: "plugins-1.0.0",
     status: "Done",
@@ -615,19 +676,20 @@ export class PingCommand extends Command {
 
   B9: {
     title: "B9 — TypeScript interface augmentation",
-    status: "In Progress",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
     release: "1.3",
     lane: "Standard",
     priority: "high",
-    body: ticketBody({
-      userStory: "As a plugin author, I want to extend StambhaClientOptions and global container options via TypeScript declaration merging.",
-      summary: "Ensure types are exported and structured to support module augmentation for client options & container.",
-      acceptance: [
-        "TypeScript declarations compile correctly",
-        "Example of declaration merging in tests or docs",
+    body: doneBody({
+      summary:
+        "Document + test declaration merging for StambhaClientOptions and StambhaContainerLike.",
+      delivered: [
+        "docs/features/typescript-augmentation.md",
+        "packages/core/src/client/augmentation.test.ts",
+        "Sidebar Features entry",
       ],
       meta: { ID: "B9", Pillar: "B", Release: "1.3", Epic: "EPIC-B" },
     }),
@@ -832,16 +894,21 @@ export class PingCommand extends Command {
 
   SELECTS: {
     title: "SELECTS — Typed entity select builders",
-    status: "Backlog",
+    status: "Review",
     track: "stambha",
     type: "Feature",
     pillar: "B",
     release: "1.3",
     lane: "Standard",
     priority: "high",
-    body: ticketBody({
-      summary: "userSelect / roleSelect / channelSelect / mentionableSelect builders + Signal routing.",
-      acceptance: ["Builders exported", "Signals route component types", "components.md"],
+    body: doneBody({
+      summary:
+        "userSelect / roleSelect / channelSelect / mentionableSelect + ChannelSelectChannelType; selectRow/actionRow enforce alone-in-row.",
+      delivered: [
+        "Builders + types exported from @stambha/core",
+        "components.test.ts coverage",
+        "docs/features/components.md entity select section",
+      ],
       meta: { ID: "SELECTS", Pillar: "B", Release: "1.3", Epic: "EPIC-B" },
     }),
   },
@@ -1592,8 +1659,12 @@ export class PingCommand extends Command {
         { id: "B5", title: "Component builder + persistent signals", shipped: false },
         { id: "B6", title: "Prefix edit-tracking", shipped: false },
         { id: "B8", title: "Native registerPlugin & onShutdown", shipped: false },
-        { id: "B9", title: "TypeScript interface augmentation", shipped: false },
-        { id: "TYPING", title: "Typing indicator", shipped: false },
+        { id: "B9", title: "TypeScript interface augmentation", shipped: true },
+        { id: "SELECTS", title: "Typed entity select builders", shipped: true },
+        { id: "DX-1", title: "Kind hooks", shipped: true },
+        { id: "DX-2", title: "Subcommand method dispatch", shipped: true },
+        { id: "DX-3", title: "EmbedBuilder / V2 publish bump", shipped: true },
+        { id: "TYPING", title: "Typing indicator", shipped: true },
         { id: "P1", title: "Pagination plugin (@stambha/pagination)", shipped: true },
       ],
       successCriteria: [
@@ -1747,7 +1818,7 @@ export class PingCommand extends Command {
     release: "1.x",
     body: epicBody({
       vision: "Public docs match 1.x capabilities.",
-      childFeatures: ["DOCS-tier2", "DOCS-sequences", "G3 migration guides"],
+      childFeatures: ["DOCS-tier2", "DOCS-sequences", "DX-4", "F1", "G3 migration guides"],
       meta: { ID: "EPIC-DOCS", Pillar: "Docs" },
     }),
   },
@@ -1907,6 +1978,12 @@ export const TITLE_TO_ID = {
   "DX-1 — Kind hooks: slash / prefix / menu": "DX-1",
   "DX-2": "DX-2",
   "DX-2 — Subcommand method dispatch": "DX-2",
+  "DX-3": "DX-3",
+  "DX-3 — Merge/publish EmbedBuilder + Components V2 bump": "DX-3",
+  "DX-4": "DX-4",
+  "DX-4 — Capability ⊕ permission composition docs": "DX-4",
+  F1: "F1",
+  "F1 — REST & Gateway correctness documentation": "F1",
   "plugins-1.0.0": "PLUGINS-1.0.0",
   "plugins-readme": "PLUGINS-README",
   "api-1.1.0-release": "PLUGINS-API-1.1.0",

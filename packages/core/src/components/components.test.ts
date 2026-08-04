@@ -6,6 +6,8 @@ import {
   ButtonStyle,
   button,
   buttonRow,
+  ChannelSelectChannelType,
+  channelSelect,
   ComponentType,
   collectCustomIds,
   componentsV2,
@@ -18,10 +20,12 @@ import {
   fileComponent,
   FileBuilder,
   MediaGalleryBuilder,
+  mentionableSelect,
   MessageFlags,
   modal,
   premiumButton,
   registerPersistentSignals,
+  roleSelect,
   section,
   SectionBuilder,
   selectRow,
@@ -35,6 +39,7 @@ import {
   textInput,
   thumbnail,
   ThumbnailBuilder,
+  userSelect,
   V2Builder,
 } from "./index.js";
 
@@ -76,6 +81,38 @@ describe("component builders", () => {
       custom_id: "stambha:colors",
       placeholder: "Pick",
     });
+  });
+
+  it("builds entity selects (user / role / mentionable / channel)", () => {
+    expect(userSelect({ customId: "u", minValues: 1, maxValues: 3 })).toMatchObject({
+      type: ComponentType.UserSelect,
+      custom_id: "u",
+      min_values: 1,
+      max_values: 3,
+    });
+    expect(roleSelect({ customId: "r", placeholder: "Role" })).toMatchObject({
+      type: ComponentType.RoleSelect,
+      custom_id: "r",
+      placeholder: "Role",
+    });
+    expect(mentionableSelect({ customId: "m" }).type).toBe(ComponentType.MentionableSelect);
+    const ch = channelSelect({
+      customId: "c",
+      channelTypes: [ChannelSelectChannelType.GuildText, ChannelSelectChannelType.GuildForum],
+      defaultValues: [{ id: "1", type: "channel" }],
+    });
+    expect(ch).toMatchObject({
+      type: ComponentType.ChannelSelect,
+      custom_id: "c",
+      channel_types: [0, 15],
+    });
+    expect(selectRow(ch).components).toHaveLength(1);
+  });
+
+  it("rejects mixing entity select with buttons in one row", () => {
+    expect(() =>
+      actionRow(userSelect({ customId: "u" }), button({ customId: "b", label: "x" })),
+    ).toThrow(/alone/);
   });
 
   it("builds modals with text inputs", () => {

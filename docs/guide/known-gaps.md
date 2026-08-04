@@ -1,24 +1,29 @@
 # Known gaps
 
-What Stambha **does not** ship yet — and where to go instead. For what *is* ready in **1.3.0**, see the [Changelog](https://github.com/Mivaya/Stambha/blob/main/CHANGELOG.md), [Getting started](/guide/getting-started), [Components & embeds](/features/components), and the [project board](https://github.com/orgs/Mivaya/projects/2).
+What Stambha **does not** ship yet — and where to go instead. For what *is* ready in **1.3.0**, see the [Changelog](https://github.com/Mivaya/Stambha/blob/main/CHANGELOG.md), [What's new in 1.3.0](/guide/whats-new-1.3), [Getting started](/guide/getting-started), [Components & embeds](/features/components), and the [project board](https://github.com/orgs/Mivaya/projects/2).
 
 ---
 
 ## Shipped in 1.3.0 (no longer gaps)
 
-These were open after **1.2.1** and are **closed** on `main` / the 1.3.0 release train:
+These were open after **1.2.1** and are **closed** on the 1.3.0 release train:
 
 | Topic | Notes |
 |-------|--------|
 | Declarative command gates | `cooldown`, `runIn`, permissions on `Command` options |
 | Hybrid args + help + lifecycle | `@stambha/args`, `@stambha/help`, `onLoad` / `onCommandError` |
 | Kind hooks / subcommand methods | `slash` / `prefix` / `menu`, `subcommandMethods` |
-| Components V2 + classic embeds | Builders + `EmbedView` / `ContainerView`; see [Components & embeds](/features/components) |
+| Entity select builders | `userSelect` / `roleSelect` / `mentionableSelect` / `channelSelect` |
+| Components V2 + classic embeds | Builders + `EmbedView` / `ContainerView` |
+| TS interface augmentation | [TypeScript augmentation](/features/typescript-augmentation) |
+| REST/Gateway correctness docs | [Correctness](/deployment/correctness) |
+| Capability ⊕ permission composition | [Capabilities](/features/capabilities#capability-permission-composition) |
+
 | G3 tiers 2–4 + `GatewayEventMap` + G1 reshard | CamelCase expansion; `dispatchNormalize: 'raw'` escape hatch |
 | Native-only transform | discord.js / Discordeno shape adapters **removed** |
 | User-install contexts, polls, SKUs, HTTP interactions | Platform DX on core REST/gateway |
 | Collectors, typing, `fetchApplication` | Gateway/REST helpers |
-| Capabilities authz | `@stambha/authz` — preferred over numeric levels |
+| Capabilities authz | `@stambha/authz` |
 
 ---
 
@@ -27,11 +32,8 @@ These were open after **1.2.1** and are **closed** on `main` / the 1.3.0 release
 
 | Gap | Status | Notes |
 | --- | ------ | ----- |
-| Typed entity select builders | Core backlog (**SELECTS**) | user/role/channel/mentionable fluent builders |
-| TS client interface augmentation examples | Core (**B9**) | Declaration merging docs/samples |
 | Slash name/description localizations | Core (**F2**) | Deploy-time locale maps |
 | `create-stambha` scaffolder | Core/ops (**F3**) | Project generator |
-| REST/Gateway correctness deep-dive docs | Docs (**F1**) | Buckets, zombies, resume — map to tests |
 | Prefix flags + prompt/retry | Core (**F7**) | Revisits WONT-prompting with an ADR |
 | Desired-properties rename | Core (**F9**) | Stambha metaphor vs Discordeno naming |
 | Embed→Container migration / Managers | Plugins (**EPIC-DISPLAY**) | Former `panel()` DX in `@stambha/display` |

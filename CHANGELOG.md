@@ -7,21 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.0] - 2026-08-04
 
-**Major minor after 1.2.1** — command & UI DX, full G3 camelCase tiers, native-only transform, monetization & HTTP interactions, REST/gateway hardening, and example scale matrix. Fixed versioning: all publishable `@stambha/*` packages → **1.3.0**.
-
-> **Release tag:** `v1.3.0`  
-> **Recommended title:** `v1.3.0 — Command DX, Components V2, native-only gateway`
-
-### Highlights
-
-| Area | What shipped |
-|------|----------------|
-| **Command DX** | Kind hooks (`slash` / `prefix` / `menu`), `subcommandMethods`, declarative gates, help, hybrid args, lifecycle |
-| **Components & embeds** | Classic builders + Components V2 (`ContainerBuilder`, …), `EmbedBuilder` / `EmbedView` / `ContainerView`; `PanelBuilder` removed |
-| **Gateway / transform** | G3 tiers 2–4 camelCase, `GatewayEventMap`, G1 auto-reshard, adapters removed |
-| **Platform** | User-install contexts, polls, SKUs/entitlements, HTTP interactions endpoint, collectors |
-| **Ops / REST** | Typing indicator, `fetchApplication`, rate-limit & Cloudflare guards, resume/identify/backfill |
-
 ### Added
 
 #### Command pipeline & DX (`@stambha/core`, `@stambha/gates`, `@stambha/args`, `@stambha/help`)
@@ -37,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Components & embeds (`@stambha/core`)
 
-- Classic UI helpers — `button`, `buttonRow`, `stringSelect`, `modal`, `registerPersistentSignals` (`#86`).
+- Classic UI helpers — `button`, `buttonRow`, `stringSelect`, entity selects (`userSelect` / `roleSelect` / `mentionableSelect` / `channelSelect`), `modal`, `registerPersistentSignals` (`#86`).
 - **Components V2** — `componentsV2`, `replyV2`, `container` / `textDisplay` / `section` / `separator` / `mediaGallery` / `file`, fluent `*Builder` classes, `premiumButton` (`#96`, `#104`, `#122`).
 - **`EmbedBuilder` / `embed()` / `EmbedView`** — classic embeds with `resolveColor`, `toReply`, view round-trip (`#105`, `#122`).
 - **`ContainerBuilder` / `ContainerView`** — accent/spoiler, `toReply`, readonly inspection (`#122`).
@@ -47,12 +32,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`@stambha/authz`** — named capabilities (capability gates) as the staff-auth model (`#101`).
 - Async **`CooldownStore`** for shared Redis-backed cooldown drivers (`#91`).
+- **Capability ⊕ permission composition** — `gateAnd` / `gateOr` with `capabilityGate` + `userPermissionsGate` ([Capabilities](/features/capabilities)).
+
+#### Docs (1.3.0 quality bar)
+
+- **TypeScript augmentation** — declaration merging for `StambhaClientOptions` / `StambhaContainerLike` ([guide](/features/typescript-augmentation)).
+- **REST & Gateway correctness** — rate limits, resume, identify, dispatch map ([docs](/deployment/correctness)).
 
 #### Gateway & transform (`@stambha/gateway`, `@stambha/transform`)
 
-- **G3-p2 / p3 / p4** — Tier 2–4 camelCase gateway dispatches + fixtures (`#73`, `#78`, `#79`).
-- **G3a** — typed `GatewayEventMap` on `GatewayEventHub` (`#81`).
-- **G1** — auto reshard threshold check + monitor (`#82`).
+- Tier 2–4 camelCase gateway dispatches + fixtures (`#73`, `#78`, `#79`).
+- Typed **`GatewayEventMap`** on `GatewayEventHub` (`#81`).
+- Auto-reshard threshold check + monitor (`#82`).
 - Resume URL, close-code classification, reconnect backoff (`#70`).
 - Identify budget / `max_concurrency` buckets (`#71`).
 - Guild backfill + availability events (`#72`).
@@ -79,8 +70,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Breaking — hub payloads:** more gateway events are camelCased (G3 tiers 2–4). Migrate custom `hub.on` handlers or keep `dispatchNormalize: 'raw'` while updating.
-- **Breaking — transform adapters removed:** `messageFromDiscordJs` / Discordeno shape helpers deleted (`#80`). Use native `@stambha/rest` + `@stambha/gateway` + `@stambha/transform` only (ADR 005).
+- **Breaking — hub payloads:** more gateway events are camelCased (dispatch tiers 2–4). Migrate custom `hub.on` handlers or keep `dispatchNormalize: 'raw'` while updating.
+- **Breaking — transform adapters removed:** `messageFromDiscordJs` / Discordeno shape helpers deleted (`#80`). Use native `@stambha/rest` + `@stambha/gateway` + `@stambha/transform` only ([ADR 005](/decisions/005-native-only-migration)).
 - **Breaking — `PanelBuilder` / `panel()` removed** from `@stambha/core` (`#122`). Use `ContainerBuilder` + `textDisplay` / `componentsV2`, or wait for `@stambha/display` (plugins) embed→container helpers.
 - `Command.execute` is no longer abstract; kind-only commands may omit it (`#123`).
 - Prefer **capabilities** (`@stambha/authz`) for staff authorization; numeric “levels” package is not the long-term model.
@@ -101,14 +92,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Not in 1.3.0 (follow-ups)
 
-| ID | Item | Target |
-|----|------|--------|
-| SELECTS | Typed entity select builders | 1.3.x / 1.4 |
-| B9 | TS interface augmentation docs/examples | 1.3.x |
-| EPIC-DISPLAY | `@stambha/display` Managers + embed→container | 1.4 (plugins) |
-| F1–F3, F7–F9 | Correctness docs, slash i18n, CLI, args flags, facet rename | 1.4 train |
-| A1 / A2 Redis drivers | Plugins | Independent plugins release |
-| D1 / D2 / G2 / A3 | Sequences orchestration, distributed Chron, gateway proxy, RabbitMQ | 2.0 |
+| Item | Target |
+|------|--------|
+| `@stambha/display` Managers + embed→container helpers | 1.4 (plugins) |
+| Slash i18n, `create-stambha` CLI, prefix flags, facet rename | 1.4 |
+| Redis cache / cooldown driver packages | Independent plugins release |
+| Sequences orchestration, distributed Chron, gateway proxy, RabbitMQ | 2.0 |
 
 ---
 

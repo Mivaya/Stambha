@@ -17,10 +17,11 @@ Release tag: **`v1.3.0`**. Full notes: [CHANGELOG](https://github.com/Mivaya/Sta
 ```text
 1.3.0
 ├── Command DX ………… kind hooks, subcommandMethods, declarative gates, help, args, lifecycle, plugins
-├── UI ………………… classic components, Components V2 builders, Embed/Container Views
-├── Authz …………… @stambha/authz capabilities (+ async CooldownStore)
+├── UI ………………… classic + entity selects, Components V2 builders, Embed/Container Views
+├── Authz …………… @stambha/authz capabilities (+ capability ⊕ permission docs)
 ├── Gateway ……… G3-p2..p4, GatewayEventMap, G1 reshard, collectors, HTTP interactions
 ├── REST …………… typing, fetchApplication, polls, SKUs, scheduled events / automod / soundboard
+├── Docs …………… TS augmentation, REST/Gateway correctness map
 └── Harden ……… global RL, route keys, Cloudflare guard, resume / identify / backfill
 ```
 
