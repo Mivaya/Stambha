@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import defineVersionedConfig from "vitepress-versioning-plugin";
+import { apiSidebar } from "./sidebars/api";
 import { mainSidebar } from "./sidebar";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -42,14 +43,16 @@ export default defineVersionedConfig(
         includeLatestVersion: true,
       },
       nav: [
-        { text: "Guide", link: "/guide/getting-started" },
+        { text: "Getting started", link: "/guide/getting-started" },
         { text: "Features", link: "/features/gates" },
+        { text: "API", link: "/api/" },
         { text: "Deployment", link: "/deployment/overview" },
         { text: "Migration", link: "/migration/" },
         { text: "GitHub", link: "https://github.com/mivaya/Stambha", process: false },
       ],
 
       sidebar: {
+        "/api/": apiSidebar,
         "/": mainSidebar,
       },
 

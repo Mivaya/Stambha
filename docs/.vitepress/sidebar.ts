@@ -70,6 +70,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
   {
     text: "Reference",
     items: [
+      { text: "API Reference", link: "/api/" },
       { text: "Transport", link: "/reference/transport" },
     ],
   },
