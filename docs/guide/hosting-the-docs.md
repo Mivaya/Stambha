@@ -64,8 +64,7 @@ Keep secrets and private URLs out of all docs folders.
 
 ## Future improvements
 
-- **Guide / API mode drawer** — navbar pill + mobile drawer (`docs/.vitepress/theme/`); API stubs under `docs/api/` until TypeDoc (`DOCS-api-reference`)
 - Custom domain — `docs.stambha.dev`
-- TypeDoc API reference linked from sidebar
+- Expand API reference to remaining `@stambha/*` packages
 - Link checker CI (reduce reliance on `ignoreDeadLinks`)
 - Algolia DocSearch if local search becomes insufficient

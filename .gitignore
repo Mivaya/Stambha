@@ -9,3 +9,11 @@ coverage/
 !.env.example
 data/
 *.db
+
+# Generated API reference (pnpm docs:api)
+docs/api/core/
+docs/api/loader/
+docs/api/gates/
+docs/api/vault/
+docs/api/rest/
+docs/api/gateway/

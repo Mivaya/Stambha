@@ -4,31 +4,30 @@ layout: doc
 
 # API Reference
 
-Generated **TypeScript API documentation** for `@stambha/*` packages — separate from the narrative [Guide](/guide/getting-started), reachable via the **Guide / API** switcher in the navbar.
+TypeScript API documentation for **`@stambha/*`** packages — separate from the narrative [Guide](/guide/getting-started). Use the **Guide | API** switcher in the navbar to move between them.
 
-## Status
+## Packages
 
-**Phase 0** — sidebar structure and mode switcher are live. Symbol pages below are **placeholders** until [TypeDoc](https://typedoc.org/) is wired in CI (`DOCS-api-reference`).
+| Package | Summary |
+|---------|---------|
+| [`@stambha/core`](/api/core/) | Client, command pipeline, registries, components |
+| [`@stambha/loader`](/api/loader/) | Auto-load commands, gates, hooks, and other pieces |
+| [`@stambha/gates`](/api/gates/) | Cooldowns, permissions, channel-type checks |
+| [`@stambha/vault`](/api/vault/) | Blueprint, Ledger, Record, drivers |
+| [`@stambha/rest`](/api/rest/) | Discord REST client, deploy helpers, rate limits |
+| [`@stambha/gateway`](/api/gateway/) | WebSocket shards, event hub, collectors |
 
-## Packages (planned)
+Additional packages (`@stambha/transform`, `@stambha/args`, `@stambha/authz`, …) are documented in the [transport map](/reference/transport) and feature guides until their reference pages are added.
 
-| Package | Role |
-|---------|------|
-| [`@stambha/core`](/api/core/command) | Client, command pipeline, registries |
-| [`@stambha/loader`](/api/loader/load-pieces) | Auto-load pieces from disk |
-| [`@stambha/gates`](/api/gates/overview) | Cooldowns, permissions, channel checks |
-| [`@stambha/vault`](/api/vault/vault) | Blueprint, Ledger, Record |
-| [`@stambha/rest`](/api/rest/create-native-rest-port) | Discord REST client |
-| [`@stambha/gateway`](/api/gateway/attach-stambha-client) | WebSocket shards, event hub |
-| [`@stambha/transform`](/reference/transport) | Payload normalization |
-| [`@stambha/args`](/reference/transport) | Prefix/slash argument parsing |
-| [`@stambha/authz`](/features/capabilities) | Capability gates |
+## How to read these pages
 
-Until generation ships, use [Transport map](/reference/transport), package READMEs on [GitHub](https://github.com/mivaya/Stambha/tree/main/packages), and feature guides under **Guide** mode.
+Each package index lists **classes**, **functions**, **interfaces**, and **type aliases** extracted from source. Symbol pages include signatures, parameters, and links to related types.
+
+For tutorials and architecture, switch to **Guide** mode — start at [Getting started](/guide/getting-started).
 
 ## Switch modes
 
-- **Desktop** — **Guide | API** pill in the top bar  
-- **Mobile** — floating button (bottom-right) opens the mode drawer  
+- **Desktop** — **Guide | API** pill in the top bar
+- **Mobile** — floating button (bottom-right) opens the mode drawer
 
-Your last mode is stored in `localStorage` (`stambha-docs-mode`).
+Your last selected mode is stored in the browser (`stambha-docs-mode`).

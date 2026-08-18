@@ -39,6 +39,7 @@
     "typecheck": "pnpm -r run typecheck",
     "demo": "pnpm --filter @stambha/example-bot demo",
     "example:bot": "pnpm --filter @stambha/example-bot start",
+    "docs:api": "pnpm --filter @stambha/docs api",
     "docs:dev": "pnpm --filter @stambha/docs dev",
     "docs:build": "pnpm --filter @stambha/docs build",
     "docs:preview": "pnpm --filter @stambha/docs preview",

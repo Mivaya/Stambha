@@ -51,7 +51,7 @@ Set `MAINTENANCE=1` in the environment and use a barrier that checks it (see `ex
 
 ### Resharding barrier (1.x)
 
-Automatic resharding during live traffic is **not** built in for 1.0.0. Use `ReshardController` APIs manually — see [Resharding](/deployment/resharding) and [Known gaps](/guide/known-gaps) (**G1**).
+Automatic resharding during live traffic is **not** built in for 1.0.0. Use `ReshardController` APIs manually — see [Resharding](/deployment/resharding) and [Known gaps](/guide/known-gaps).
 
 ## Options
 

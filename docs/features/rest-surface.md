@@ -6,7 +6,7 @@ Prefer these over hand-written `rest.request({ route: … })` calls.
 
 ## Polls
 
-Shipped with **POLL-DX** — see [Polls](/features/polls).
+Shipped with poll create/end REST helpers — see [Polls](/features/polls).
 
 ```ts
 import { createPoll, endPoll } from "@stambha/rest";

@@ -40,6 +40,8 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Build packages (types for API reference)
+        run: pnpm build
       - name: Build VitePress site
         run: pnpm --filter @stambha/docs build
       - uses: actions/configure-pages@v6

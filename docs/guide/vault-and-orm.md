@@ -2,7 +2,7 @@
 
 Stambha ships **`@stambha/vault`** for settings-shaped documents. Most production bots also run **Prisma, Drizzle, or raw SQL** for relational domain data. Both together is the **recommended** pattern — not a migration failure.
 
-See also: [Vault](/features/vault) · [ADR 004 — Vault scope and ORM coexistence](https://github.com/mivaya/Stambha/blob/main/docs/decisions/004-vault-scope-orm-coexistence.md)
+See also: [Vault](/features/vault) — includes scope notes on using Vault alongside Prisma or SQL.
 
 ---
 
