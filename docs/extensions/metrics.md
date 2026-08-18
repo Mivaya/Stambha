@@ -4,7 +4,7 @@
 
 Ships from **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)** — independent semver from core.
 
-Current line: **`@stambha/metrics@1.0.0`** · peer `@stambha/core@^1.2.0`. Also install `prom-client` (peer).
+Current line: **`@stambha/metrics@1.0.1`** · peer `@stambha/core@^1.3.0`. Also install `prom-client` (peer).
 
 ## When to use it
 

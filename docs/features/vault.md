@@ -20,6 +20,8 @@ Many production bots already use **Prisma, Drizzle, or SQL** for economy, quests
 **Use Vault** for settings-shaped and bot-shaped documents (guild, user, member, feature flags).  
 **Use your ORM** for heavy relational domain (transactions, quest graphs, large mod-log tables, BI).
 
+Walkthrough: [Vault and your ORM](/guide/vault-and-orm).
+
 Both together is the **recommended** pattern for large bots:
 
 ```ts
@@ -166,7 +168,7 @@ vault.on("recordDelete", ({ ledger, id }) => {});
 
 ## SQL drivers
 
-Persist Vault ledgers with SQLite or PostgreSQL via [`@stambha/vault-sql`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/vault-sql) (Stambha-plugins **1.0.0**, peer `@stambha/vault@^1.2.0`).
+Persist Vault ledgers with SQLite or PostgreSQL via [`@stambha/vault-sql`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/vault-sql) (Stambha-plugins **1.0.1**, peer `@stambha/vault@^1.3.0`).
 
 ```bash
 pnpm add @stambha/vault-sql @stambha/vault

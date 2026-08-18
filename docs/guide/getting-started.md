@@ -33,7 +33,7 @@ Common next packages:
 | Package | When |
 |---------|------|
 | `@stambha/authz` | Staff capabilities (not numeric levels) |
-| `@stambha/vault` | Typed guild config |
+| `@stambha/vault` | Typed guild config — often alongside Prisma/Drizzle ([guide](/guide/vault-and-orm)) |
 | `@stambha/help` | Help catalog |
 | Extensions | [Pagination](/extensions/pagination), [Metrics](/extensions/metrics), … — [Extensions hub](/extensions/) |
 

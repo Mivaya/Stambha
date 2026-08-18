@@ -4,7 +4,7 @@ HTTP endpoint for your bot so external services (admin SPA, ops tools) can talk 
 
 Ships as [`@stambha/api`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/api) from **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)**. Optional wiring through core [`@stambha/plugins`](/features/plugins) and [`@stambha/vault`](/features/vault).
 
-Current line: **`@stambha/api@1.2.0`**. Peers: `@stambha/core@^1.2.0`, optional `@stambha/plugins@^1.2.0`, optional `@stambha/vault@^1.2.0`.
+Current line: **`@stambha/api@1.2.1`**. Peers: `@stambha/core@^1.3.0`, optional `@stambha/plugins@^1.3.0`, optional `@stambha/vault@^1.3.0`.
 
 This package does **not** ship a hosted UI. Bring your own frontend.
 
@@ -20,7 +20,7 @@ This package does **not** ship a hosted UI. Bring your own frontend.
 ## Install
 
 ```bash
-pnpm add @stambha/api@1.2.0 @stambha/core @stambha/plugins
+pnpm add @stambha/api@^1.2.1 @stambha/core@^1.3.0 @stambha/plugins
 # for guild settings routes:
 pnpm add @stambha/vault
 ```

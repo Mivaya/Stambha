@@ -157,7 +157,7 @@ On the **native** path, `attachStambhaClient` auto-routes slash, autocomplete, a
 
 ## Official extensions (separate repo)
 
-**`@stambha/plugins` is the host** — hooks and DI only. Optional add-ons live in **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)** with independent semver (current line **1.0.0**, peers on core `^1.2.0` where applicable).
+**`@stambha/plugins` is the host** — hooks and DI only. Optional add-ons live in **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)** with independent semver (see [Extensions hub](/extensions/) for current package versions; peers on core **`^1.3.0`** where applicable).
 
 | Extension | Guide |
 |-----------|--------|

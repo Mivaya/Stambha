@@ -12,6 +12,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
       { text: "Architecture", link: "/guide/architecture" },
       { text: "Known gaps", link: "/guide/known-gaps" },
       { text: "Project structure", link: "/guide/project-structure" },
+      { text: "Vault and your ORM", link: "/guide/vault-and-orm" },
       { text: "Pieces & pipeline", link: "/guide/pieces" },
     ],
   },

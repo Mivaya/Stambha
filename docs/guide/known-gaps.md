@@ -78,7 +78,8 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release train:
 
 | Topic | Note |
 | ----- | ---- |
-| Versioned doc archives | Cut `docs/versions/1.3.0` when publishing the GitHub Release (`pnpm docs:archive 1.3.0 <sha>`) |
+| **1.3.0 doc archive** | Planned for **1.3.1** release — `pnpm docs:archive 1.3.0 f325f54` ([hosting guide](https://github.com/mivaya/Stambha/blob/main/docs/guide/hosting-the-docs.md)) |
+| Extension peer matrix | Updated on latest docs for core **^1.3.0** — see [Extensions](/extensions/) |
 | Live shard reconnect after reshard plan | [Resharding](/deployment/resharding) — reconnect loop stays in your worker |
 | Interaction fan-out on tier-split | Bot worker must receive every `interactionCreate` — [Tier split](/deployment/tier-split) |
 
@@ -88,5 +89,6 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release train:
 ## Related
 
 - [Examples by scale](/guide/examples) — minimal → basic → bot → bigbot + http-interactions
+- [Vault and your ORM](/guide/vault-and-orm) — settings vs relational domain
 - [Deployment overview](/deployment/overview) — monolith vs tier-split
 - [Changelog](https://github.com/Mivaya/Stambha/blob/main/CHANGELOG.md) — shipped releases

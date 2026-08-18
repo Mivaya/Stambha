@@ -26,7 +26,7 @@ export default defineVersionedConfig(
     lastUpdated: true,
 
     /** Not published to GitHub Pages. */
-    srcExclude: ["scripts/**", "decisions/**"],
+    srcExclude: ["scripts/**", "decisions/**", "guide/hosting-the-docs.md"],
 
     versioning: {
       latestVersion: readLatestVersionLabel(),

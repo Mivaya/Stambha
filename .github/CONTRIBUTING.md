@@ -40,6 +40,8 @@ Local docs preview:
 pnpm docs:dev
 ```
 
+Maintainer deploy and version archiving: [`docs/guide/hosting-the-docs.md`](../docs/guide/hosting-the-docs.md) (contributor-only; not on GitHub Pages).
+
 ### Run Tests
 
 ```bash
