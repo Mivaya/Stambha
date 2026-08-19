@@ -1,13 +1,34 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, withBase } from "vitepress";
+import { isApiDocsPath } from "../docsMode";
 
 const STORAGE_KEY = "stambha-docs-mode";
 const route = useRoute();
+const browserPath = ref("");
+
+function readBrowserPath(): string {
+  if (typeof window === "undefined") return "";
+  return window.location.pathname;
+}
+
+onMounted(() => {
+  browserPath.value = readBrowserPath();
+  window.addEventListener("popstate", syncBrowserPath);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("popstate", syncBrowserPath);
+});
+
+function syncBrowserPath() {
+  browserPath.value = readBrowserPath();
+}
 
 const mode = computed<"guide" | "api">(() => {
-  const path = route.path.replace(/\/$/, "") || "/";
-  return path === "/api" || path.startsWith("/api/") ? "api" : "guide";
+  const fromWindow = browserPath.value;
+  if (fromWindow) return isApiDocsPath(fromWindow) ? "api" : "guide";
+  return isApiDocsPath(route.path) ? "api" : "guide";
 });
 
 const guideHref = computed(() => withBase("/guide/getting-started"));

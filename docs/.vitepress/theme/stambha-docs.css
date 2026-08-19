@@ -16,6 +16,7 @@ html[data-stambha-docs-mode="api"] {
 
 .stambha-mode-switcher {
   position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: 1fr 1fr;
   flex-shrink: 0;
@@ -25,6 +26,7 @@ html[data-stambha-docs-mode="api"] {
   border: 1px solid var(--vp-c-divider);
   border-radius: 999px;
   background: var(--vp-c-bg-soft);
+  box-sizing: border-box;
 }
 
 .stambha-mode-switcher__pill {
@@ -75,6 +77,11 @@ html[data-stambha-docs-mode="api"] {
 
 .VPNavBarTitle {
   flex-shrink: 0;
+  min-width: 0;
+}
+
+.VPNavBarTitle.has-sidebar .title {
+  border-bottom: none;
 }
 
 .VPNavBar .title {
