@@ -1,71 +1,59 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRoute, useRouter, withBase } from "vitepress";
+import { useRoute, withBase } from "vitepress";
 
 const STORAGE_KEY = "stambha-docs-mode";
-
 const route = useRoute();
-const router = useRouter();
 
 const mode = computed<"guide" | "api">(() => {
-  const path = route.path;
+  const path = route.path.replace(/\/$/, "") || "/";
   return path === "/api" || path.startsWith("/api/") ? "api" : "guide";
 });
 
-function navigate(target: "guide" | "api") {
-  if (target === mode.value) return;
+const guideHref = computed(() => withBase("/guide/getting-started"));
+const apiHref = computed(() => withBase("/api/"));
 
-  const dest =
-    target === "api" ? withBase("/api/") : withBase("/guide/getting-started");
-
+function remember(target: "guide" | "api") {
   if (typeof localStorage !== "undefined") {
     localStorage.setItem(STORAGE_KEY, target);
   }
+}
 
-  const go = () => {
-    router.go(dest);
-  };
+function onGuideClick(event: MouseEvent) {
+  remember("guide");
+  if (mode.value === "guide") event.preventDefault();
+}
 
-  if (typeof document !== "undefined" && "startViewTransition" in document) {
-    (document as Document & { startViewTransition: (cb: () => void) => void }).startViewTransition(go);
-  } else {
-    go();
-  }
+function onApiClick(event: MouseEvent) {
+  remember("api");
+  if (mode.value === "api") event.preventDefault();
 }
 </script>
 
 <template>
-  <div
-    class="stambha-mode-switcher"
-    role="tablist"
-    aria-label="Documentation mode"
-  >
-    <button
-      type="button"
-      role="tab"
+  <nav class="stambha-mode-switcher" aria-label="Documentation mode">
+    <a
       class="stambha-mode-switcher__pill"
       :class="{ 'is-active': mode === 'guide' }"
-      :aria-selected="mode === 'guide'"
-      @click="navigate('guide')"
+      :href="guideHref"
+      :aria-current="mode === 'guide' ? 'page' : undefined"
+      @click="onGuideClick"
     >
-      <span class="stambha-mode-switcher__icon" aria-hidden="true">📖</span>
-      <span class="stambha-mode-switcher__label">Guide</span>
-    </button>
-    <button
-      type="button"
-      role="tab"
+      Guide
+    </a>
+    <a
       class="stambha-mode-switcher__pill"
       :class="{ 'is-active': mode === 'api' }"
-      :aria-selected="mode === 'api'"
-      @click="navigate('api')"
+      :href="apiHref"
+      :aria-current="mode === 'api' ? 'page' : undefined"
+      @click="onApiClick"
     >
-      <span class="stambha-mode-switcher__icon" aria-hidden="true">{ }</span>
-      <span class="stambha-mode-switcher__label">API</span>
-    </button>
+      API
+    </a>
     <span
       class="stambha-mode-switcher__indicator"
       :class="mode === 'api' ? 'is-api' : 'is-guide'"
       aria-hidden="true"
     />
-  </div>
+  </nav>
 </template>

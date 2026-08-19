@@ -29,7 +29,13 @@ Workflow: [`.github/workflows/docs.yml`](../../.github/workflows/docs.yml) · ma
 
 Site URL (project Pages): `https://mivaya.github.io/Stambha/`
 
-Set `base: '/Stambha/'` in `docs/.vitepress/config.ts` unless you move to a custom domain (`docs/public/CNAME` + DNS).
+Default VitePress `base` is `/Stambha/`. For a custom domain (`docs.stambha.dev`):
+
+1. Point DNS (CNAME) at GitHub Pages.
+2. Add `docs/public/CNAME` with the hostname.
+3. Build with `STAMBHA_DOCS_BASE=/` so asset URLs are root-relative.
+
+Until DNS is live, keep the GitHub Pages project base so `/Stambha/` links do not break.
 
 ## Versioned documentation
 
@@ -64,7 +70,6 @@ Keep secrets and private URLs out of all docs folders.
 
 ## Future improvements
 
-- Custom domain — `docs.stambha.dev`
-- Expand API reference to remaining `@stambha/*` packages
+- Custom domain cutover (`STAMBHA_DOCS_BASE=/` + `docs/public/CNAME`)
 - Link checker CI (reduce reliance on `ignoreDeadLinks`)
-- Algolia DocSearch if local search becomes insufficient
+- Combined Guide + API search index if local search becomes insufficient

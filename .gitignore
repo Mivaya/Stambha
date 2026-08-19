@@ -17,3 +17,9 @@ docs/api/gates/
 docs/api/vault/
 docs/api/rest/
 docs/api/gateway/
+docs/api/transform/
+docs/api/args/
+docs/api/authz/
+docs/api/plugins/
+docs/api/help/
+docs/api/transport/

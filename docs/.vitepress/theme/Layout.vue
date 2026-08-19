@@ -2,14 +2,13 @@
 import DefaultTheme from "vitepress/theme";
 import { computed, watch } from "vue";
 import { useRoute } from "vitepress";
-import MobileModeDrawer from "./components/MobileModeDrawer.vue";
 import ModeSwitcher from "./components/ModeSwitcher.vue";
 
 const { Layout: DefaultLayout } = DefaultTheme;
 const route = useRoute();
 
 const isApiMode = computed(() => {
-  const path = route.path;
+  const path = route.path.replace(/\/$/, "") || "/";
   return path === "/api" || path.startsWith("/api/");
 });
 
@@ -24,12 +23,9 @@ watch(
 </script>
 
 <template>
-  <div class="stambha-docs-root" :class="isApiMode ? 'mode-api' : 'mode-guide'">
-    <DefaultLayout>
-      <template #nav-bar-content-before>
-        <ModeSwitcher class="stambha-mode-switcher--desktop" />
-      </template>
-    </DefaultLayout>
-    <MobileModeDrawer />
-  </div>
+  <DefaultLayout>
+    <template #nav-bar-title-after>
+      <ModeSwitcher />
+    </template>
+  </DefaultLayout>
 </template>

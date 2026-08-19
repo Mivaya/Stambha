@@ -2,32 +2,45 @@
 layout: doc
 ---
 
-# API Reference
+# API reference
 
-TypeScript API documentation for **`@stambha/*`** packages — separate from the narrative [Guide](/guide/getting-started). Use the **Guide | API** switcher in the navbar to move between them.
+Generated TypeScript docs for **`@stambha/*`**. This is the signature layer — options, classes, and return types. For install and first-bot steps, switch to **Guide** (`Getting started`).
+
+## Start here
+
+| Task | Jump |
+|------|------|
+| Create the client | [`createStambhaBot`](/api/core/functions/createStambhaBot) |
+| Write a command | [`Command`](/api/core/classes/Command) · [`CommandOptions`](/api/core/interfaces/CommandOptions) |
+| Load `src/commands` | [`loadPieces`](/api/loader/functions/loadPieces) |
+| Attach gateway | [`attachStambhaClient`](/api/gateway/functions/attachStambhaClient) |
+| Discord REST | [`createNativeRestPort`](/api/rest/functions/createNativeRestPort) |
+| Guild settings | [`Vault`](/api/vault/classes/Vault) · [`defineBlueprint`](/api/vault/functions/defineBlueprint) |
+| Cooldowns / permissions | [`@stambha/gates`](/api/gates/) |
+| Staff capabilities | [`@stambha/authz`](/api/authz/) |
+| Prefix / slash args | [`@stambha/args`](/api/args/) |
 
 ## Packages
 
-| Package | Summary |
-|---------|---------|
-| [`@stambha/core`](/api/core/) | Client, command pipeline, registries, components |
-| [`@stambha/loader`](/api/loader/) | Auto-load commands, gates, hooks, and other pieces |
-| [`@stambha/gates`](/api/gates/) | Cooldowns, permissions, channel-type checks |
-| [`@stambha/vault`](/api/vault/) | Blueprint, Ledger, Record, drivers |
-| [`@stambha/rest`](/api/rest/) | Discord REST client, deploy helpers, rate limits |
-| [`@stambha/gateway`](/api/gateway/) | WebSocket shards, event hub, collectors |
+| Package | Use it for |
+|---------|------------|
+| [`@stambha/core`](/api/core/) | Client, pipeline, registries, components |
+| [`@stambha/loader`](/api/loader/) | Disk auto-load for pieces |
+| [`@stambha/gates`](/api/gates/) | Cooldowns, permissions, channel checks |
+| [`@stambha/vault`](/api/vault/) | Typed config documents |
+| [`@stambha/rest`](/api/rest/) | Discord HTTP, slash deploy, rate limits |
+| [`@stambha/gateway`](/api/gateway/) | Shards, event hub, collectors |
+| [`@stambha/transform`](/api/transform/) | Gateway payloads → `StambhaMessage` / `StambhaInteraction` |
+| [`@stambha/args`](/api/args/) | Prefix lexer and slash option accessors |
+| [`@stambha/authz`](/api/authz/) | Named capability grants / denies |
+| [`@stambha/plugins`](/api/plugins/) | Plugin lifecycle and container |
+| [`@stambha/help`](/api/help/) | Help catalog helpers |
+| [`@stambha/transport`](/api/transport/) | Session, route keys, rate-limit model |
 
-Additional packages (`@stambha/transform`, `@stambha/args`, `@stambha/authz`, …) are documented in the [transport map](/reference/transport) and feature guides until their reference pages are added.
+Optional add-ons from [Stambha-plugins](https://github.com/Mivaya/Stambha-plugins) (`@stambha/api`, pagination, cache, metrics, vault-sql) are documented under [Extensions](/extensions/) in Guide mode.
 
-## How to read these pages
+## How to read a symbol page
 
-Each package index lists **classes**, **functions**, **interfaces**, and **type aliases** extracted from source. Symbol pages include signatures, parameters, and links to related types.
+Each package index lists **classes**, **functions**, **interfaces**, and **type aliases**. Open a symbol for parameters, defaults, and source links on GitHub.
 
-For tutorials and architecture, switch to **Guide** mode — start at [Getting started](/guide/getting-started).
-
-## Switch modes
-
-- **Desktop** — **Guide | API** pill in the top bar
-- **Mobile** — floating button (bottom-right) opens the mode drawer
-
-Your last selected mode is stored in the browser (`stambha-docs-mode`).
+Tutorial context lives in the Guide — for example [Pieces & pipeline](/guide/pieces) pairs with [`Command`](/api/core/classes/Command), and [Vault](/features/vault) pairs with [`Vault`](/api/vault/classes/Vault).

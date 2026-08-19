@@ -22,6 +22,12 @@ const API_PACKAGES = [
   { dir: "vault", name: "@stambha/vault" },
   { dir: "rest", name: "@stambha/rest" },
   { dir: "gateway", name: "@stambha/gateway" },
+  { dir: "transform", name: "@stambha/transform" },
+  { dir: "args", name: "@stambha/args" },
+  { dir: "authz", name: "@stambha/authz" },
+  { dir: "plugins", name: "@stambha/plugins" },
+  { dir: "help", name: "@stambha/help" },
+  { dir: "transport", name: "@stambha/transport" },
 ];
 
 const typedocBin = path.join(
@@ -83,7 +89,11 @@ function runTypeDoc(pkg) {
       "**/*.test.ts",
       "--exclude",
       "**/*.spec.ts",
+      "--excludePrivate",
+      "--excludeInternal",
       "--skipErrorChecking",
+      "--logLevel",
+      "Error",
       "--sourceLinkTemplate",
       "https://github.com/mivaya/Stambha/blob/main/{path}#L{line}",
     ],
@@ -173,6 +183,13 @@ function main() {
   if (!fs.existsSync(typedocBin)) {
     console.error("typedoc not found — run pnpm install in docs/");
     process.exit(1);
+  }
+
+  const ifMissing = process.argv.includes("--if-missing");
+  const coreIndex = path.join(docsRoot, "api", "core", "index.md");
+  if (ifMissing && fs.existsSync(coreIndex)) {
+    console.log("API reference already generated — skip (run pnpm docs:api to refresh)");
+    return;
   }
 
   removeLegacyStubs();

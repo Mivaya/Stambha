@@ -20,7 +20,7 @@ Many production bots already use **Prisma, Drizzle, or SQL** for economy, quests
 **Use Vault** for settings-shaped and bot-shaped documents (guild, user, member, feature flags).  
 **Use your ORM** for heavy relational domain (transactions, quest graphs, large mod-log tables, BI).
 
-Walkthrough: [Vault and your ORM](/guide/vault-and-orm).
+Walkthrough: [Vault and your ORM](/guide/vault-and-orm). Types: [`Vault`](/api/vault/classes/Vault), [`defineBlueprint`](/api/vault/functions/defineBlueprint).
 
 Both together is the **recommended** pattern for large bots:
 
@@ -30,7 +30,7 @@ await loadPieces(client, {
 });
 ```
 
-## What Vault covers (Path B)
+## What Vault covers
 
 
 | In scope             | Examples                                                         |

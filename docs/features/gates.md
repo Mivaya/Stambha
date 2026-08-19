@@ -10,6 +10,8 @@ pnpm add @stambha/gates
 
 Requires `@stambha/core`. Gateway workers should populate `CommandContext.meta` for permission and channel checks. Importing `@stambha/gates` registers the declarative options resolver.
 
+Symbol pages: [`@stambha/gates`](/api/gates/) · [`CommandOptions`](/api/core/interfaces/CommandOptions).
+
 ## Quick start
 
 ### Declarative options

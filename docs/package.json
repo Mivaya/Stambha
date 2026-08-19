@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "api": "node scripts/generate-api-docs.mjs",
-    "dev": "node scripts/generate-api-docs.mjs && vitepress dev",
+    "dev": "node scripts/generate-api-docs.mjs --if-missing && vitepress dev",
     "build": "node scripts/generate-api-docs.mjs && vitepress build",
     "preview": "vitepress preview",
     "archive": "node scripts/archive-docs-version.mts"

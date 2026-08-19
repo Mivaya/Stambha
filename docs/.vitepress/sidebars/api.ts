@@ -16,6 +16,12 @@ export const apiSidebar: DefaultTheme.SidebarItem[] = [
       { text: "@stambha/vault", link: "/api/vault/" },
       { text: "@stambha/rest", link: "/api/rest/" },
       { text: "@stambha/gateway", link: "/api/gateway/" },
+      { text: "@stambha/transform", link: "/api/transform/" },
+      { text: "@stambha/args", link: "/api/args/" },
+      { text: "@stambha/authz", link: "/api/authz/" },
+      { text: "@stambha/plugins", link: "/api/plugins/" },
+      { text: "@stambha/help", link: "/api/help/" },
+      { text: "@stambha/transport", link: "/api/transport/" },
     ],
   },
   {

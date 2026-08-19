@@ -18,11 +18,20 @@ function readLatestVersionLabel(): string {
   return version;
 }
 
+/** GitHub Pages project site uses `/Stambha/`. Custom domain: `STAMBHA_DOCS_BASE=/`. */
+function readDocsBase(): string {
+  const fromEnv = process.env.STAMBHA_DOCS_BASE;
+  if (fromEnv && fromEnv.length > 0) {
+    return fromEnv.endsWith("/") ? fromEnv : `${fromEnv}/`;
+  }
+  return "/Stambha/";
+}
+
 export default defineVersionedConfig(
   {
     title: "Stambha",
     description: "Native Discord bot framework for Node.js and TypeScript",
-    base: "/Stambha/",
+    base: readDocsBase(),
     cleanUrls: true,
     lastUpdated: true,
 
@@ -43,12 +52,10 @@ export default defineVersionedConfig(
         includeLatestVersion: true,
       },
       nav: [
-        { text: "Getting started", link: "/guide/getting-started" },
+        { text: "Start", link: "/guide/getting-started" },
         { text: "Features", link: "/features/gates" },
-        { text: "API", link: "/api/" },
-        { text: "Deployment", link: "/deployment/overview" },
-        { text: "Migration", link: "/migration/" },
-        { text: "GitHub", link: "https://github.com/mivaya/Stambha", process: false },
+        { text: "Deploy", link: "/deployment/overview" },
+        { text: "Migrate", link: "/migration/" },
       ],
 
       sidebar: {

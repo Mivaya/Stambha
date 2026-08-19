@@ -2,6 +2,8 @@
 
 Build a Stambha bot on the **native stack** (`@stambha/rest`, `@stambha/gateway`, `@stambha/transform`).
 
+This page is a walkthrough. For TypeScript signatures, switch to **API** in the header — [`Command`](/api/core/classes/Command), [`createStambhaBot`](/api/core/functions/createStambhaBot), [`loadPieces`](/api/loader/functions/loadPieces).
+
 Pick an example by size → [Examples by scale](/guide/examples).
 
 ## Fastest path — no token

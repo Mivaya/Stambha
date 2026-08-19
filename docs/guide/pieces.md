@@ -12,17 +12,17 @@ Gateway event
 Signals (buttons / selects / modals) route in parallel via SignalRouter on interactionCreate
 ```
 
-| Piece | Folder | Purpose |
-|-------|--------|---------|
-| **Scout** | `src/scouts/` | Passive message watchers (before routing) |
-| **Command** | `src/commands/` | Slash, prefix, context menu |
-| **Hook** | `src/listeners/` | React to any gateway event |
-| **Barrier** | `src/barriers/` | Global command blockers |
-| **Gate** | `src/gates/` | Per-command checks |
-| **Conduit** | `src/conduits/` | Non-blocking middleware before gates |
-| **Epilogue** | `src/epilogues/` | Post-command hooks |
-| **Signal** | `src/signals/` | Buttons, selects, modals |
-| **Chron** | `src/tasks/` | Scheduled cron jobs |
+| Piece | Folder | Purpose | API |
+|-------|--------|---------|-----|
+| **Scout** | `src/scouts/` | Passive message watchers (before routing) | [`Scout`](/api/core/classes/Scout) |
+| **Command** | `src/commands/` | Slash, prefix, context menu | [`Command`](/api/core/classes/Command) |
+| **Hook** | `src/listeners/` | React to any gateway event | [`Hook`](/api/core/classes/Hook) |
+| **Barrier** | `src/barriers/` | Global command blockers | [`Barrier`](/api/core/classes/Barrier) |
+| **Gate** | `src/gates/` | Per-command checks | [`Gate`](/api/core/classes/Gate) · [guide](/features/gates) |
+| **Conduit** | `src/conduits/` | Non-blocking middleware before gates | [`Conduit`](/api/core/classes/Conduit) |
+| **Epilogue** | `src/epilogues/` | Post-command hooks | [`Epilogue`](/api/core/classes/Epilogue) |
+| **Signal** | `src/signals/` | Buttons, selects, modals | [`Signal`](/api/core/classes/Signal) |
+| **Chron** | `src/tasks/` | Scheduled cron jobs | [`Chron`](/api/core/classes/Chron) |
 
 Scouts and signals are **not** inside the conduit→epilogue chain — scouts run on messages before the router; signals run on component interactions via `attachStambhaClient`.
 
@@ -33,6 +33,8 @@ import { loadPieces } from "@stambha/loader";
 
 await loadPieces(client, { context: { client, vault } });
 ```
+
+See [`loadPieces`](/api/loader/functions/loadPieces).
 
 Defaults match `PiecePaths` in `@stambha/core` (`src/commands`, `src/listeners`, etc.). Gates load **before** commands so `gateNames` resolve at validation time. Each piece’s `onLoad()` is awaited as it is registered (see [lifecycle](#lifecycle-onload--onunload--oncommanderror)).
 

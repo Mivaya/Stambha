@@ -9,7 +9,7 @@ pnpm docs:api          # from repo root
 pnpm --filter @stambha/docs api
 ```
 
-Runs automatically before `docs:dev` and `docs:build`. Generated package folders are gitignored — CI runs `pnpm build` then docs build on deploy.
+Runs automatically before `docs:build`. `docs:dev` skips generation when `docs/api/core/index.md` already exists (`--if-missing`). Force a refresh with `pnpm docs:api`. Generated package folders are gitignored — CI runs `pnpm build` then docs build on deploy.
 
 ## `archive-docs-version.mts`
 
