@@ -966,16 +966,16 @@ export class PingCommand extends Command {
     track: "stambha",
     type: "Feature",
     pillar: "C",
-    release: "1.3",
+    release: "1.4",
     body: ticketBody({
       userStory: "As a bot operator, I want numeric permission levels (Everyone → Mod → Admin) without discord.js.",
-      summary: "`@stambha/levels` + permissionLevelGate — Klasa-style governance. Target **1.3.0** (out of 1.2.0; pick B1 or C1 with G3-p2).",
+      summary: "`@stambha/levels` + permissionLevelGate — Klasa-style governance. Target **1.4+** (not 1.3.1 patch; authz capabilities already cover staff auth).",
       acceptance: [
         "Default level ladder exported",
         "permissionLevelGate integrates with pipeline",
         "Document migration from role-only gates",
       ],
-      meta: { ID: "C1", Pillar: "C", Release: "1.3", Epic: "EPIC-C", Branch: "feature/permission-levels" },
+      meta: { ID: "C1", Pillar: "C", Release: "1.4", Epic: "EPIC-C", Branch: "feature/permission-levels" },
       references: ["docs/guide/known-gaps.md — C1"],
     }),
   },
@@ -1475,36 +1475,36 @@ export class PingCommand extends Command {
 
   "DOCS-tier2": {
     title: "Tier 2 doc expansion",
-    status: "Backlog",
+    status: "Done",
     track: "stambha",
     type: "Task",
     pillar: "Docs",
-    release: "1.x",
-    body: ticketBody({
-      summary: "Close Tier 2 public docs gaps listed on known-gaps page.",
-      acceptance: [
-        "Each Tier 2 topic has guide or explicit deferral",
-        "Sidebar links valid",
+    release: "1.3.1",
+    body: doneBody({
+      summary: "Closed leftover guide gaps for 1.3.1 via explicit deferrals (no scaffolder/i18n invent).",
+      delivered: [
+        "known-gaps: Not in 1.3.1 table for testing guide, Docker/PM2 recipes, scaffolder docs, i18n",
+        "Pointers to demo REST, MemoryDriver, deployment overview, examples",
       ],
-      meta: { ID: "DOCS-tier2", Pillar: "Docs", Epic: "EPIC-DOCS" },
-      references: ["docs/guide/known-gaps.md — Documentation gaps"],
+      meta: { ID: "DOCS-tier2", Pillar: "Docs", Epic: "EPIC-DOCS", Release: "1.3.1" },
+      references: ["docs/guide/known-gaps.md — Documentation follow-ups"],
     }),
   },
 
   "DOCS-sequences": {
     title: "Sequence docs/examples",
-    status: "Backlog",
+    status: "Done",
     track: "stambha",
     type: "Task",
     pillar: "Docs",
-    release: "1.x",
-    body: ticketBody({
-      summary: "Better public docs and examples/bot samples for manual sequence() + Signal wiring.",
-      acceptance: [
-        "features/sequences.md expanded with end-to-end example",
-        "examples/bot demonstrates multi-step flow",
+    release: "1.3.1",
+    body: doneBody({
+      summary: "End-to-end sequence() + Signal walkthrough and live examples/bot multi-step flow.",
+      delivered: [
+        "docs/features/sequences.md — waitForStep / completeStep pattern",
+        "examples/bot SetupCommand + SeqSignal (stambha:seq:)",
       ],
-      meta: { ID: "DOCS-sequences", Pillar: "Docs", Epic: "EPIC-DOCS" },
+      meta: { ID: "DOCS-sequences", Pillar: "Docs", Epic: "EPIC-DOCS", Release: "1.3.1" },
     }),
   },
 
