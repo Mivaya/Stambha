@@ -78,10 +78,22 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 
 | Topic | Note |
 | ----- | ---- |
-| Version archive for 1.3.0 | Ships with the next patch release (version dropdown) |
+| Version archive for 1.3.0 | Ships with the **1.3.1** patch (version dropdown) |
 | More API packages | `@stambha/transform`, `@stambha/args`, `@stambha/authz` — see [API overview](/api/) |
 | Live shard reconnect after reshard plan | [Resharding](/deployment/resharding) — reconnect loop stays in your worker |
 | Interaction fan-out on tier-split | Bot worker must receive every `interactionCreate` — [Tier split](/deployment/tier-split) |
+
+
+### Not in 1.3.1 (explicit deferrals)
+
+These leftover guide topics stay out of this patch — use the pointers below until dedicated pages land:
+
+| Topic | Status | Use instead |
+| ----- | ------ | ----------- |
+| Dedicated testing guide | **Deferred** — not in 1.3.1 | `examples/bot` `pnpm demo` (demo REST stub); Vault unit tests via [`MemoryDriver`](/features/vault); smoke with [`examples/minimal`](/guide/examples) |
+| Operator recipes (Docker / PM2) | **Deferred** — not in 1.3.1 | Process model in [Deployment overview](/deployment/overview) and [Tier split](/deployment/tier-split); host the VitePress site via [Hosting the docs](/guide/hosting-the-docs) (contributor) |
+| `create-stambha` scaffolder docs | **Deferred** (scaffolder itself is a core gap) | Copy [`examples/basic`](/guide/examples) or [`examples/bot`](/guide/examples) |
+| i18n / localization guide | **Deferred** (slash localizations still open) | Discord deploy-time locale maps when you add them yourself |
 
 
 ---
