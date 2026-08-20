@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@stambha/transform": "workspace:*",
-    "ws": "^8.18.3"
+    "ws": "^8.21.3"
   },
   "devDependencies": {
     "@stambha/core": "workspace:*",
