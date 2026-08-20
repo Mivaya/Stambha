@@ -1,0 +1,218 @@
+# Built-in gates (`@stambha/gates`)
+
+**Gates** are per-command checks — declarative Command options, inline `gates: [...]`, `gateNames` / `preconditions`, or `global: true` on gate pieces.
+
+## Installation
+
+```bash
+pnpm add @stambha/gates
+```
+
+Requires `@stambha/core`. Gateway workers should populate `CommandContext.meta` for permission and channel checks. Importing `@stambha/gates` registers the declarative options resolver.
+
+## Quick start
+
+### Declarative options
+
+```ts
+import { Command, ok, type CommandContext, type Registry } from "@stambha/core";
+import "@stambha/gates"; // enables cooldown / runIn / nsfw / permissions options
+import { attachGateDeniedReply, Permission } from "@stambha/gates";
+
+attachGateDeniedReply(client);
+
+export class PingCommand extends Command {
+  constructor(registry: Registry<Command>) {
+    super(registry, {
+      name: "ping",
+      kinds: ["slash", "prefix"],
+      cooldown: 5, // seconds, limit 1 — no gateNames / gates[] required
+      runIn: "guild",
+      // userPermissions: Permission.ManageGuild,
+    });
+  }
+
+  async execute(ctx: CommandContext) {
+    await ctx.reply("Pong!");
+    return ok(undefined);
+  }
+}
+```
+
+| Option | Effect |
+|--------|--------|
+| `cooldown: 5` | 5s delay, limit 1 (`userGuild` scope) |
+| `cooldown: { delay, limit, scope }` | Seconds (`delay`) or `delayMs` + limit/scope |
+| `runIn: "guild"` / `"dm"` | Guild-only or DM-only |
+| `runIn: "guild_text"` or `["guild_text", …]` | Channel-type allow-list |
+| `nsfw: true` | NSFW channel required |
+| `userPermissions` / `clientPermissions` | Bitfields / `Permission` flags |
+| `preconditions: ["mod-only"]` | Alias for `gateNames` |
+
+**Merge order:** global registry gates → `gateNames` / `preconditions` → declarative options → inline `gates[]`.
+
+### Inline gates
+
+```ts
+import { Command, ok, type CommandContext, type Registry } from "@stambha/core";
+import {
+  attachGateDeniedReply,
+  cooldownGate,
+  guildOnlyGate,
+  Permission,
+  userPermissionsGate,
+} from "@stambha/gates";
+
+// Auto-reply when a gate denies (optional)
+attachGateDeniedReply(client);
+
+export class BanCommand extends Command {
+  constructor(registry: Registry<Command>) {
+    super(registry, {
+      name: "ban",
+      description: "Ban a member",
+      kinds: ["slash"],
+      gates: [
+        guildOnlyGate(),
+        userPermissionsGate(Permission.BanMembers),
+        cooldownGate({ limit: 3, delay: 10_000, scope: "userGuild" }),
+      ],
+    });
+  }
+
+  async execute(ctx: CommandContext) {
+    await ctx.reply("Banned.");
+    return ok(undefined);
+  }
+}
+```
+
+## Available gates
+
+| Gate | Description |
+|------|-------------|
+| `cooldownGate()` | Rate limit by user / guild / global |
+| `permissionsGate()` | Bitfield checks on `meta` (member + bot) |
+| `userPermissionsGate()` | Shorthand member check |
+| `clientPermissionsGate()` | Shorthand bot check |
+| `nsfwGate()` | Requires NSFW channel |
+| `runInGate()` | Channel type allow-list |
+| `guildOnlyGate()` | No DMs |
+| `dmOnlyGate()` | DMs only |
+| `resolveCommandGates(command)` | Build declarative gates from Command options |
+
+Compose with core helpers: `gateAnd()`, `gateOr()`, `defineGate()`.
+
+## Permission flags
+
+```ts
+import { Permission, combinePermissions } from "@stambha/gates";
+
+const mod = combinePermissions(Permission.KickMembers, Permission.BanMembers);
+userPermissionsGate(mod);
+```
+
+## Cooldown scopes
+
+| Scope | Bucket key |
+|-------|------------|
+| `user` | user ID |
+| `guild` | guild ID |
+| `userGuild` | user + guild (default) |
+| `global` | entire bot |
+
+Custom store for multi-process / split-tier bots (async-capable):
+
+```ts
+import { createClient } from "redis";
+import { cooldownGate } from "@stambha/gates";
+import { createRedisCooldownStore } from "@stambha/cooldown-redis";
+
+const client = createClient({ url: process.env.REDIS_URL });
+await client.connect();
+
+const store = createRedisCooldownStore({ client });
+
+cooldownGate({ limit: 1, delay: 5000, store });
+```
+
+Monolith bots keep the default in-memory store. `CooldownStore.consume` may return a `Promise` — `cooldownGate` always awaits it.
+
+See [`@stambha/cooldown-redis`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cooldown-redis).
+
+## Context metadata
+
+`CommandContext.meta` fields:
+
+| Field | Used by |
+|-------|---------|
+| `channelType` | `runInGate`, `guildOnlyGate` |
+| `channelNsfw` | `nsfwGate` |
+| `memberPermissions` | `userPermissionsGate` |
+| `clientPermissions` | `clientPermissionsGate` |
+
+When metadata is missing:
+
+| Gate | Behavior without `meta` |
+|------|-------------------------|
+| Permission gates | **Deny** (missing bitfield treated as no permissions) |
+| `runInGate`, `nsfwGate` | **Allow** (graceful degradation) |
+
+On the **native** stack, `meta` is populated from gateway dispatch (`interactionFromDispatch`, 0.3.5+).
+
+## Registry gates (`gateNames`)
+
+Gate **pieces** in `src/gates/` register on `client.registries.gates`. They do **not** run on every command automatically — list them on each command via `gateNames`:
+
+```ts
+export class BanCommand extends Command {
+  constructor(registry: Registry<Command>) {
+    super(registry, {
+      name: "ban",
+      gateNames: ["mod-only", "global-slowdown"],
+      gates: [userPermissionsGate(Permission.BanMembers)],
+    });
+  }
+}
+```
+
+Load order: `@stambha/loader` loads `gates/` before `commands/` and validates `gateNames` after `loadPieces()`.
+
+## Global gates
+
+Set `global: true` on a gate piece to run it on **every** command (before `gateNames` and inline gates):
+
+```ts
+import { Gate } from "@stambha/core";
+import { cooldownGate } from "@stambha/gates";
+
+class GlobalSlowdown extends Gate {
+  constructor(registry: Registry<Gate>) {
+    super(registry, { name: "global-slowdown", priority: 10, global: true });
+  }
+
+  check(ctx: CommandContext) {
+    return cooldownGate({ limit: 5, delay: 1000, scope: "global" }).check(ctx);
+  }
+}
+
+client.registries.gates.register(new GlobalSlowdown(client.registries.gates));
+```
+
+Inline `gates: [...]` on each command remains the simplest option for one-off permission checks.
+
+## Denial UX
+
+```ts
+attachGateDeniedReply(client, { ephemeral: true });
+```
+
+Listens to `commandDenied` and sends the gate's reason. Prefix commands use `reply()`; slash commands use `replyEphemeral()` by default.
+
+## See also
+
+- [Capabilities](/features/capabilities) — named capability gates (`@stambha/authz`)
+- [Monetization](/features/monetization) — SKU entitlements (`entitlementGate`)
+- [Project structure](/guide/project-structure) — `gates/` folder
+- [Barriers](/features/barriers) — global blockers before gates
+- [Arguments](/features/args) — prefix and slash option parsing

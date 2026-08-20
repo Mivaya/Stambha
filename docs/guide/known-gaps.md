@@ -78,7 +78,7 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 
 | Topic | Note |
 | ----- | ---- |
-| Version archive for 1.3.0 | Ships with the **1.3.1** patch (version dropdown) |
+| Version archive for 1.3.0 | Shipped in **1.3.1** — use the version dropdown |
 | More API packages | `@stambha/transform`, `@stambha/args`, `@stambha/authz` — see [API overview](/api/) |
 | Live shard reconnect after reshard plan | [Resharding](/deployment/resharding) — reconnect loop stays in your worker |
 | Interaction fan-out on tier-split | Bot worker must receive every `interactionCreate` — [Tier split](/deployment/tier-split) |
