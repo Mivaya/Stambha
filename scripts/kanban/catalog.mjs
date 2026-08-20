@@ -350,6 +350,27 @@ export const CARD_CATALOG = {
     }),
   },
 
+  "REL-1.4.0": {
+    title: "1.4.0-release",
+    status: "Backlog",
+    track: "stambha",
+    type: "Release",
+    pillar: "Ops",
+    release: "1.4",
+    lane: "Expedite",
+    priority: "blocker",
+    body: ticketBody({
+      summary: "v1.4.0 — next minor. Scope TBD from Sprint Ready children (levels / format / display / vault).",
+      acceptance: [
+        "CHANGELOG [1.4.0] + pnpm version:bump 1.4.0",
+        "docs:archive 1.3.1 <release SHA>",
+        "GitHub Release v1.4.0 + npm publish",
+      ],
+      meta: { ID: "REL-1.4.0", Release: "1.4.0", Branch: "chore/release-1.4.0" },
+      dependencies: "C1 / FORMAT / ATTACH / EPIC-DISPLAY children as chosen",
+    }),
+  },
+
   "DX-1": {
     title: "DX-1 — Kind hooks: slash / prefix / menu",
     status: "Done",
@@ -988,31 +1009,33 @@ export class PingCommand extends Command {
 
   C1: {
     title: "C1 — Permission levels",
-    status: "Review",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "C",
     release: "1.4",
+    lane: "Expedite",
+    priority: "high",
     body: ticketBody({
       userStory: "As a bot operator, I want numeric permission levels (Everyone → Mod → Admin) without discord.js.",
-      summary: "`@stambha/levels` + permissionLevelGate — Klasa-style governance. Target **1.4+** (not 1.3.1 patch; authz capabilities already cover staff auth).",
+      summary: "`@stambha/levels` + permissionLevelGate — Klasa-style governance. Target **1.4** (authz capabilities already cover staff auth).",
       acceptance: [
         "Default level ladder exported",
         "permissionLevelGate integrates with pipeline",
         "Document migration from role-only gates",
       ],
       meta: { ID: "C1", Pillar: "C", Release: "1.4", Epic: "EPIC-C", Branch: "feature/permission-levels" },
-      references: ["docs/guide/known-gaps.md — C1"],
+      references: ["docs/guide/known-gaps.md"],
     }),
   },
 
   C2: {
     title: "C2 — Vault level overrides",
-    status: "Review",
+    status: "Backlog",
     track: "stambha",
     type: "Feature",
     pillar: "C",
-    release: "1.x",
+    release: "1.4",
     body: ticketBody({
       summary: "Guild member level ledger in Vault + admin commands for overrides.",
       acceptance: [
@@ -1020,7 +1043,7 @@ export class PingCommand extends Command {
         "Admin commands or API to set levels",
         "Integrates with C1 permissionLevelGate",
       ],
-      meta: { ID: "C2", Pillar: "C", Epic: "EPIC-C", Branch: "feature/levels-vault" },
+      meta: { ID: "C2", Pillar: "C", Release: "1.4", Epic: "EPIC-C", Branch: "feature/levels-vault" },
       dependencies: "C1",
     }),
   },
@@ -1110,80 +1133,81 @@ export class PingCommand extends Command {
 
   A1: {
     title: "A1 — Redis cache driver",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha-plugins",
     type: "Feature",
     pillar: "A",
-    release: "1.x",
+    release: "1.0.0",
     lane: "Standard",
     priority: "medium",
-    body: ticketBody({
-      userStory: "As a split-tier bot operator, I want shared cache across gateway/bot workers.",
-      summary: "`@stambha/cache-redis` implementing core Cache interface.",
-      acceptance: [
-        "Redis driver passes Cache interface tests",
-        "Document wiring in tier-split deployment",
-        "Monolith bots keep memory default",
+    body: doneBody({
+      summary: "`@stambha/cache-redis` — Redis driver for shared cache across workers.",
+      delivered: [
+        "Published `@stambha/cache-redis@1.0.0` (Stambha-plugins)",
+        "Docs: extensions/cache + tier-split wiring notes",
+        "Monolith keeps memory default via `@stambha/cache`",
       ],
-      meta: { ID: "A1", Pillar: "A", Epic: "EPIC-A", Track: "stambha-plugins" },
-      dependencies: "A1-core coordination",
+      meta: { ID: "A1", Pillar: "A", Epic: "EPIC-A", Track: "stambha-plugins", Release: "1.0.0" },
+      references: ["docs/extensions/cache.md", "https://github.com/Mivaya/Stambha-plugins"],
     }),
   },
 
   "A1-core": {
     title: "A1-core — Redis cache coordination",
-    status: "Backlog",
+    status: "Done",
     track: "stambha",
     type: "Task",
     pillar: "A",
-    release: "1.x",
-    body: ticketBody({
-      summary: "Core-side hooks/docs for plugging Redis cache driver (A1) into gateway and workers.",
-      acceptance: [
-        "Cache injection points documented",
-        "examples or tier-split guide updated",
+    release: "1.3.0",
+    body: doneBody({
+      summary: "Core-side hooks/docs for plugging Redis cache driver into gateway and workers.",
+      delivered: [
+        "Cache injection documented on extensions/cache + deployment/tier-split",
         "No mandatory Redis for monolith",
       ],
-      meta: { ID: "A1-core", Pillar: "A", Epic: "EPIC-A" },
-      dependencies: "A1 plugin driver",
+      meta: { ID: "A1-core", Pillar: "A", Epic: "EPIC-A", Release: "1.3.0" },
     }),
   },
 
   A2: {
     title: "A2 — Redis cooldown store (core)",
-    status: "Backlog",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "A",
-    release: "1.x",
-    body: ticketBody({
-      summary: "Shared CooldownStore interface in core; memory default; Redis driver in plugins.",
-      acceptance: [
-        "CooldownStore interface exported from @stambha/gates or core",
-        "gates work with injected store",
-        "Split-tier doc updated",
+    release: "1.3.0",
+    body: doneBody({
+      summary: "Shared CooldownStore interface in gates; memory default; Redis driver in plugins.",
+      delivered: [
+        "CooldownStore + MemoryCooldownStore in `@stambha/gates` (1.3.0)",
+        "cooldownGate accepts injected async store",
       ],
-      meta: { ID: "A2", Pillar: "A", Epic: "EPIC-A" },
-      dependencies: "A2-plugins driver",
+      meta: { ID: "A2", Pillar: "A", Epic: "EPIC-A", Release: "1.3.0" },
+      references: ["packages/gates", "docs/features/gates"],
     }),
   },
 
   "A2-plugins": {
     title: "A2-plugins — Redis cooldown extension",
-    status: "Backlog",
+    status: "Done",
     track: "stambha-plugins",
     type: "Feature",
     pillar: "A",
-    release: "1.x",
-    body: ticketBody({
-      summary: "Redis-backed cooldown store extension for @stambha/gates in Stambha-plugins.",
-      acceptance: [
-        "Implements CooldownStore from core",
-        "Integration test or example",
-        "Published to npm",
+    release: "1.0.1",
+    body: doneBody({
+      summary: "Redis-backed cooldown store for `@stambha/gates` in Stambha-plugins.",
+      delivered: [
+        "Published `@stambha/cooldown-redis@1.0.1`",
+        "Implements CooldownStore from core/gates",
       ],
-      meta: { ID: "A2-plugins", Pillar: "A", Epic: "EPIC-A", Track: "stambha-plugins" },
-      dependencies: "A2 core interface",
+      meta: {
+        ID: "A2-plugins",
+        Pillar: "A",
+        Epic: "EPIC-A",
+        Track: "stambha-plugins",
+        Release: "1.0.1",
+      },
+      references: ["https://github.com/Mivaya/Stambha-plugins/releases/tag/vcooldown-redis-1.0.1"],
     }),
   },
 
@@ -1815,11 +1839,11 @@ export class PingCommand extends Command {
     track: "stambha",
     type: "Epic",
     pillar: "C",
-    release: "1.x",
+    release: "1.4",
     body: epicBody({
       vision: "Numeric permission levels without discord.js.",
       childFeatures: ["C1", "C2"],
-      meta: { ID: "EPIC-C", Pillar: "C" },
+      meta: { ID: "EPIC-C", Pillar: "C", Release: "1.4" },
     }),
   },
 
@@ -2051,6 +2075,7 @@ export const TITLE_TO_ID = {
   "1.3.0-release": "REL-1.3.0",
   "1.3.0-archive": "REL-1.3.0-archive",
   "1.3.1-release": "REL-1.3.1",
+  "1.4.0-release": "REL-1.4.0",
   "plugins-core-1.3-peers": "PLUGINS-CORE-1.3",
   "PLUGINS-CORE-1.3": "PLUGINS-CORE-1.3",
   "DX-1": "DX-1",
