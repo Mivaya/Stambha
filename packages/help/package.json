@@ -1,6 +1,6 @@
 {
   "name": "@stambha/help",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Built-in Stambha help command — list commands by category",
   "author": "Mivaya",
   "license": "MIT",

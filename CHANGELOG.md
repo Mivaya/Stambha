@@ -5,6 +5,21 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-08-20
+
+### Documentation
+
+- **Guide | API mode switcher** — navbar pill with TypeDoc-generated API reference for `@stambha/*` packages; public-facing copy cleanup.
+- **Vault + ORM coexistence** guide and extension peer matrix for core **^1.3.0**.
+- **Sequences** — end-to-end `sequence()` + `SeqSignal` / `waitForStep` walkthrough; live multi-step `setup` flow in `examples/bot`.
+- **Known gaps** — explicit “not in 1.3.1” deferrals for testing guide and Docker/PM2 recipes.
+- **Version archive** — frozen docs snapshot for **1.3.0** in the version dropdown (`docs/versions/1.3.0`).
+
+### Dependencies
+
+- `pnpm/action-setup` 6 → 6.0.9; `actions/setup-node` 6 → 7.
+- Production: `cron-parser` ^5.10.0, `ws` ^8.21.3.
+
 ## [1.3.0] - 2026-08-04
 
 ### Added

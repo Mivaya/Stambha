@@ -1,6 +1,6 @@
 {
   "name": "@stambha/loader",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Auto-load Stambha pieces from conventional folders (commands, listeners, scouts, etc.)",
   "author": "Mivaya",
   "license": "MIT",

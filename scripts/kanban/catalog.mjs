@@ -305,22 +305,48 @@ export const CARD_CATALOG = {
 
   "REL-1.3.0-archive": {
     title: "1.3.0-archive",
-    status: "Backlog",
+    status: "Done",
     track: "stambha",
     type: "Task",
     pillar: "Docs",
-    release: "1.3",
+    release: "1.3.1",
     lane: "Tech debt",
     priority: "low",
-    body: ticketBody({
+    body: doneBody({
       summary: "Freeze public docs snapshot under docs/versions/1.3.0.",
-      acceptance: [
-        "`pnpm docs:archive 1.3.0` run for release SHA",
-        "Sidebar valid for archived snapshot",
-        "Live docs label latest as Next when snapshot exists",
+      delivered: [
+        "`pnpm docs:archive 1.3.0 f325f54`",
+        "Sidebar docs/.vitepress/sidebars/versioned/1.3.0.json",
+        "Shipped with v1.3.1",
       ],
-      meta: { ID: "REL-1.3.0-archive", Release: "1.3.0", Epic: "EPIC-DOCS" },
+      meta: { ID: "REL-1.3.0-archive", Release: "1.3.1", Epic: "EPIC-DOCS" },
       dependencies: "REL-1.3.0",
+    }),
+  },
+
+  "REL-1.3.1": {
+    title: "1.3.1-release",
+    status: "Done",
+    track: "stambha",
+    type: "Release",
+    pillar: "Ops",
+    release: "1.3.1",
+    lane: "Expedite",
+    priority: "blocker",
+    body: doneBody({
+      summary: "v1.3.1 — Docs-plus patch: Guide/API, sequences, 1.3.0 archive, Dependabot.",
+      delivered: [
+        "Guide/API switcher + TypeDoc API reference",
+        "Sequences walkthrough + examples/bot SetupCommand/SeqSignal",
+        "Known-gaps tier-2 deferrals; C1 retargeted to 1.4",
+        "docs:archive 1.3.0; Dependabot action/prod bumps",
+        "GitHub Release v1.3.1 + npm @stambha/*@1.3.1",
+      ],
+      meta: { ID: "REL-1.3.1", Release: "1.3.1", Branch: "chore/release-1.3.1" },
+      references: [
+        "https://github.com/Mivaya/Stambha/releases/tag/v1.3.1",
+        "CHANGELOG.md",
+      ],
     }),
   },
 
@@ -2024,6 +2050,7 @@ export const TITLE_TO_ID = {
   "1.2.0-archive": "REL-1.2.0-archive",
   "1.3.0-release": "REL-1.3.0",
   "1.3.0-archive": "REL-1.3.0-archive",
+  "1.3.1-release": "REL-1.3.1",
   "plugins-core-1.3-peers": "PLUGINS-CORE-1.3",
   "PLUGINS-CORE-1.3": "PLUGINS-CORE-1.3",
   "DX-1": "DX-1",
