@@ -4,6 +4,7 @@ import type { DefaultTheme } from "vitepress";
 export const mainSidebar: DefaultTheme.SidebarItem[] = [
   {
     text: "Introduction",
+    collapsed: false,
     items: [
       { text: "Why Stambha", link: "/guide/why-stambha" },
       { text: "Getting started", link: "/guide/getting-started" },
@@ -12,11 +13,13 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
       { text: "Architecture", link: "/guide/architecture" },
       { text: "Known gaps", link: "/guide/known-gaps" },
       { text: "Project structure", link: "/guide/project-structure" },
+      { text: "Vault and your ORM", link: "/guide/vault-and-orm" },
       { text: "Pieces & pipeline", link: "/guide/pieces" },
     ],
   },
   {
     text: "Features",
+    collapsed: true,
     items: [
       { text: "Hooks (listeners)", link: "/features/hooks" },
       { text: "Scouts", link: "/features/scouts" },
@@ -44,6 +47,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
   },
   {
     text: "Extensions",
+    collapsed: true,
     items: [
       { text: "Overview", link: "/extensions/" },
       { text: "Pagination", link: "/extensions/pagination" },
@@ -54,6 +58,7 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
   },
   {
     text: "Deployment",
+    collapsed: true,
     items: [
       { text: "Overview", link: "/deployment/overview" },
       { text: "Tier split", link: "/deployment/tier-split" },
@@ -68,12 +73,15 @@ export const mainSidebar: DefaultTheme.SidebarItem[] = [
   },
   {
     text: "Reference",
+    collapsed: true,
     items: [
-      { text: "Transport", link: "/reference/transport" },
+      { text: "API reference", link: "/api/" },
+      { text: "Transport map", link: "/reference/transport" },
     ],
   },
   {
     text: "Migration",
+    collapsed: true,
     items: [
       { text: "Overview", link: "/migration/" },
       { text: "Piece-based framework", link: "/migration/from-sapphire" },

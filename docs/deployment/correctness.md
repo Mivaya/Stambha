@@ -1,6 +1,6 @@
 # REST & Gateway correctness
 
-How Stambha behaves on Discord’s hard edges — rate limits, resumes, identify budget, and related guards — and where that lives in code/tests. This is the **F1** documentation surface for operators evaluating a native stack.
+How Stambha behaves on Discord’s hard edges — rate limits, resumes, identify budget, and related guards — and where that lives in code and tests. For operators evaluating a native stack.
 
 > Scope: **`@stambha/rest`**, **`@stambha/transport`**, **`@stambha/gateway`**. Behavior is covered by package Vitest suites; this page maps claims → implementation.
 

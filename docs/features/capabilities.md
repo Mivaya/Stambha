@@ -2,6 +2,8 @@
 
 Named capabilities (`mod.purge`, `economy.admin`) instead of a numeric staff ladder. Each check uses a **Discord permission floor**, then role / Vault grants, and **fails closed**.
 
+Types: [`@stambha/authz`](/api/authz/).
+
 ## Installation
 
 ```bash

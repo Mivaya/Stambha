@@ -16,7 +16,7 @@ Monolith bots keep **`MemoryCache`**. Use Redis only when multiple processes nee
 | Use cache when… | Prefer something else when… |
 |-----------------|-----------------------------|
 | Hot guild/member lookups in a worker | Durable settings — use [Vault](/features/vault) |
-| Short TTL for Discord entities | Cross-process **command** rate limits — see [Gates](/features/gates) / future Redis cooldown (**A2**) |
+| Short TTL for Discord entities | Cross-process **command** rate limits — see [Gates](/features/gates) and Redis cooldown driver in [Extensions](/extensions/) |
 | Shared snapshots across gateway + bot workers | Single-process bot — `MemoryCache` is enough |
 
 ## Install

@@ -2,7 +2,7 @@
 
 First-class helpers for Discord **native polls** — create/end via REST, listen for votes on the gateway hub.
 
-Vote events (`messagePollVoteAdd` / `messagePollVoteRemove`) have been camelCase since **1.2.0**. This page covers the create/end DX (`POLL-DX`).
+Vote events (`messagePollVoteAdd` / `messagePollVoteRemove`) have been camelCase since **1.2.0**. This page covers poll create/end helpers on `@stambha/rest`.
 
 ## Create a poll
 

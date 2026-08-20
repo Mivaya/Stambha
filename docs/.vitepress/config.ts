@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import defineVersionedConfig from "vitepress-versioning-plugin";
+import { apiSidebar } from "./sidebars/api";
 import { mainSidebar } from "./sidebar";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -17,16 +18,25 @@ function readLatestVersionLabel(): string {
   return version;
 }
 
+/** GitHub Pages project site uses `/Stambha/`. Custom domain: `STAMBHA_DOCS_BASE=/`. */
+function readDocsBase(): string {
+  const fromEnv = process.env.STAMBHA_DOCS_BASE;
+  if (fromEnv && fromEnv.length > 0) {
+    return fromEnv.endsWith("/") ? fromEnv : `${fromEnv}/`;
+  }
+  return "/Stambha/";
+}
+
 export default defineVersionedConfig(
   {
     title: "Stambha",
     description: "Native Discord bot framework for Node.js and TypeScript",
-    base: "/Stambha/",
+    base: readDocsBase(),
     cleanUrls: true,
     lastUpdated: true,
 
     /** Not published to GitHub Pages. */
-    srcExclude: ["scripts/**", "decisions/**"],
+    srcExclude: ["scripts/**", "decisions/**", "guide/hosting-the-docs.md"],
 
     versioning: {
       latestVersion: readLatestVersionLabel(),
@@ -42,14 +52,14 @@ export default defineVersionedConfig(
         includeLatestVersion: true,
       },
       nav: [
-        { text: "Guide", link: "/guide/getting-started" },
+        { text: "Start", link: "/guide/getting-started" },
         { text: "Features", link: "/features/gates" },
-        { text: "Deployment", link: "/deployment/overview" },
-        { text: "Migration", link: "/migration/" },
-        { text: "GitHub", link: "https://github.com/mivaya/Stambha", process: false },
+        { text: "Deploy", link: "/deployment/overview" },
+        { text: "Migrate", link: "/migration/" },
       ],
 
       sidebar: {
+        "/api/": apiSidebar,
         "/": mainSidebar,
       },
 

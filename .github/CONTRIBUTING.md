@@ -40,6 +40,8 @@ Local docs preview:
 pnpm docs:dev
 ```
 
+API reference is generated from TypeScript sources (`pnpm docs:api`). `pnpm docs:dev` reuses existing generated pages when present. Maintainer deploy notes: [`docs/guide/hosting-the-docs.md`](../docs/guide/hosting-the-docs.md) (contributor-only; not on GitHub Pages).
+
 ### Run Tests
 
 ```bash

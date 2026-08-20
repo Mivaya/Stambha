@@ -278,30 +278,55 @@ export const CARD_CATALOG = {
 
   "REL-1.3.0": {
     title: "1.3.0-release",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Release",
     pillar: "Ops",
     release: "1.3",
     lane: "Expedite",
     priority: "blocker",
-    body: ticketBody({
-      summary: "Publish GitHub Release v1.3.0 → npm @stambha/*@1.3.0 + docs deploy.",
-      acceptance: [
-        "CHANGELOG [1.3.0] complete",
-        "Versions bumped to 1.3.0",
-        "pnpm docs:archive 1.3.0 <sha>",
-        "Tag v1.3.0 + published GitHub Release (not draft)",
-        "npm latest = 1.3.0 for all core packages",
+    body: doneBody({
+      summary: "v1.3.0 — Command DX, Components V2, native-only gateway.",
+      delivered: [
+        "Command kind hooks, subcommandMethods, declarative gates, help, args, lifecycle, plugins",
+        "Components V2 builders, Embed/Container views, entity selects; PanelBuilder removed",
+        "G3 tiers 2–4 + GatewayEventMap + G1 reshard; adapters removed",
+        "Authz capabilities, collectors, HTTP interactions, polls, REST hardening",
+        "GitHub Release v1.3.0 + npm @stambha/*@1.3.0",
       ],
       meta: { ID: "REL-1.3.0", Release: "1.3.0", Branch: "chore/release-1.3.0" },
-      references: ["CHANGELOG.md", ".github/PUBLISHING.md"],
+      references: [
+        "https://github.com/Mivaya/Stambha/releases/tag/v1.3.0",
+        "CHANGELOG.md",
+        "docs/guide/whats-new-1.3.md",
+      ],
+    }),
+  },
+
+  "REL-1.3.0-archive": {
+    title: "1.3.0-archive",
+    status: "Backlog",
+    track: "stambha",
+    type: "Task",
+    pillar: "Docs",
+    release: "1.3",
+    lane: "Tech debt",
+    priority: "low",
+    body: ticketBody({
+      summary: "Freeze public docs snapshot under docs/versions/1.3.0.",
+      acceptance: [
+        "`pnpm docs:archive 1.3.0` run for release SHA",
+        "Sidebar valid for archived snapshot",
+        "Live docs label latest as Next when snapshot exists",
+      ],
+      meta: { ID: "REL-1.3.0-archive", Release: "1.3.0", Epic: "EPIC-DOCS" },
+      dependencies: "REL-1.3.0",
     }),
   },
 
   "DX-1": {
     title: "DX-1 — Kind hooks: slash / prefix / menu",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -317,7 +342,7 @@ export const CARD_CATALOG = {
 
   "DX-2": {
     title: "DX-2 — Subcommand method dispatch",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -333,7 +358,7 @@ export const CARD_CATALOG = {
 
   "DX-3": {
     title: "DX-3 — Merge/publish EmbedBuilder + Components V2 bump",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Task",
     pillar: "B",
@@ -355,7 +380,7 @@ export const CARD_CATALOG = {
 
   "DX-4": {
     title: "DX-4 — Capability ⊕ permission composition docs",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "Docs",
@@ -374,7 +399,7 @@ export const CARD_CATALOG = {
 
   F1: {
     title: "F1 — REST & Gateway correctness documentation",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "Docs",
@@ -469,6 +494,28 @@ export const CARD_CATALOG = {
     }),
   },
 
+  "PLUGINS-CORE-1.3": {
+    title: "plugins-core-1.3-peers",
+    status: "Done",
+    track: "stambha-plugins",
+    type: "Release",
+    pillar: "Plugins",
+    release: "1.3",
+    body: doneBody({
+      summary: "Stambha-plugins peer bump for core v1.3.0 (patch releases).",
+      delivered: [
+        "@stambha/api@1.2.1, pagination@1.1.1, metrics@1.0.1, vault-sql@1.0.1, cooldown-redis@1.0.1",
+        "Peers → ^1.3.0 on core / vault / gates / plugins",
+        "GitHub Releases published (vapi-1.2.1, vpagination-1.1.1, …)",
+      ],
+      meta: { ID: "PLUGINS-CORE-1.3", Track: "stambha-plugins", Release: "1.3" },
+      references: [
+        "https://github.com/Mivaya/Stambha-plugins/pull/36",
+        "https://github.com/Mivaya/Stambha-plugins/blob/main/CHANGELOG.md#core-130-peers---2026-08-04",
+      ],
+    }),
+  },
+
   "DOCS-EXTENSIONS": {
     title: "Extensions docs hub",
     status: "Done",
@@ -490,7 +537,7 @@ export const CARD_CATALOG = {
 
   B1: {
     title: "B1 — Declarative gates",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -529,7 +576,7 @@ export class PingCommand extends Command {
 
   B2: {
     title: "B2 — Bridge args, flags, entity resolvers",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -552,7 +599,7 @@ export class PingCommand extends Command {
 
   B3: {
     title: "B3 — Help system",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -572,7 +619,7 @@ export class PingCommand extends Command {
 
   B4: {
     title: "B4 — Piece lifecycle + error hooks",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -591,7 +638,7 @@ export class PingCommand extends Command {
 
   B5: {
     title: "B5 — Component builder + persistent signals",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -610,7 +657,7 @@ export class PingCommand extends Command {
 
   B6: {
     title: "B6 — Prefix edit-tracking",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -654,7 +701,7 @@ export class PingCommand extends Command {
 
   B8: {
     title: "B8 — Native registerPlugin & onShutdown",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -676,7 +723,7 @@ export class PingCommand extends Command {
 
   B9: {
     title: "B9 — TypeScript interface augmentation",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -697,7 +744,7 @@ export class PingCommand extends Command {
 
   B10: {
     title: "B10 — Native EmbedBuilder (classic) + Components V2 builder layer",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -717,7 +764,7 @@ export class PingCommand extends Command {
 
   B10a: {
     title: "B10a — Components V2: official naming + full builder classes",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -743,7 +790,7 @@ export class PingCommand extends Command {
 
   B10b: {
     title: "B10b — EmbedView + ContainerView (Stambha display primitives)",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -894,7 +941,7 @@ export class PingCommand extends Command {
 
   SELECTS: {
     title: "SELECTS — Typed entity select builders",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -1171,7 +1218,7 @@ export class PingCommand extends Command {
 
   G1: {
     title: "G1 — Auto resharding threshold",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -1251,7 +1298,7 @@ export class PingCommand extends Command {
 
   "G3-p2": {
     title: "G3-p2 — Tier 2 gateway dispatches",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -1268,7 +1315,7 @@ export class PingCommand extends Command {
 
   "G3-p3": {
     title: "G3-p3 — Tier 3 gateway dispatches",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -1283,7 +1330,7 @@ export class PingCommand extends Command {
 
   "G3-p4": {
     title: "G3-p4 — Tier 4 gateway dispatches",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -1298,7 +1345,7 @@ export class PingCommand extends Command {
 
   G3a: {
     title: "G3a — Typed GatewayEventMap",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -1316,7 +1363,7 @@ export class PingCommand extends Command {
 
   "REST-app": {
     title: "REST: fetchApplication + owner team",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -1334,7 +1381,7 @@ export class PingCommand extends Command {
 
   "ADAPTERS-1.5": {
     title: "1.5.0-adapters — Remove library adapters",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Release",
     pillar: "B",
@@ -1355,7 +1402,7 @@ export class PingCommand extends Command {
 
   TYPING: {
     title: "Typing indicator",
-    status: "Review",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -1652,14 +1699,15 @@ export class PingCommand extends Command {
       ],
       childTickets: [
         { id: "B7", title: "Mention-as-prefix", shipped: true },
-        { id: "B1", title: "Declarative gates", shipped: false },
-        { id: "B2", title: "Bridge args, flags, entity resolvers", shipped: false },
-        { id: "B3", title: "Help system", shipped: false },
-        { id: "B4", title: "Piece lifecycle + error hooks", shipped: false },
-        { id: "B5", title: "Component builder + persistent signals", shipped: false },
-        { id: "B6", title: "Prefix edit-tracking", shipped: false },
-        { id: "B8", title: "Native registerPlugin & onShutdown", shipped: false },
+        { id: "B1", title: "Declarative gates", shipped: true },
+        { id: "B2", title: "Bridge args, flags, entity resolvers", shipped: true },
+        { id: "B3", title: "Help system", shipped: true },
+        { id: "B4", title: "Piece lifecycle + error hooks", shipped: true },
+        { id: "B5", title: "Component builder + persistent signals", shipped: true },
+        { id: "B6", title: "Prefix edit-tracking", shipped: true },
+        { id: "B8", title: "Native registerPlugin & onShutdown", shipped: true },
         { id: "B9", title: "TypeScript interface augmentation", shipped: true },
+        { id: "B10", title: "EmbedBuilder + Components V2", shipped: true },
         { id: "SELECTS", title: "Typed entity select builders", shipped: true },
         { id: "DX-1", title: "Kind hooks", shipped: true },
         { id: "DX-2", title: "Subcommand method dispatch", shipped: true },
@@ -1702,13 +1750,14 @@ export class PingCommand extends Command {
       childTickets: [
         { id: "G3-spike", title: "Dispatch catalog & camelize", shipped: true },
         { id: "G3-p1", title: "Tier 1 gateway dispatches", shipped: true },
-        { id: "G3-p2", title: "Tier 2 gateway dispatches", shipped: false },
-        { id: "G3-p3", title: "Tier 3 gateway dispatches", shipped: false },
-        { id: "G3-p4", title: "Tier 4 gateway dispatches", shipped: false },
-        { id: "G3a", title: "Typed GatewayEventMap", shipped: false },
-        { id: "G1", title: "Auto resharding threshold", shipped: false },
+        { id: "G3-p2", title: "Tier 2 gateway dispatches", shipped: true },
+        { id: "G3-p3", title: "Tier 3 gateway dispatches", shipped: true },
+        { id: "G3-p4", title: "Tier 4 gateway dispatches", shipped: true },
+        { id: "G3a", title: "Typed GatewayEventMap", shipped: true },
+        { id: "G1", title: "Auto resharding threshold", shipped: true },
+        { id: "ADAPTERS-1.5", title: "Remove library adapters", shipped: true },
+        { id: "REST-app", title: "fetchApplication + owner team", shipped: true },
         { id: "G2", title: "Gateway proxy (2.0)", shipped: false },
-        { id: "REST-app", title: "fetchApplication + owner team", shipped: false },
       ],
       successCriteria: [
         "G3-p2 ships as breaking minor 1.3.0 with migration notes",
@@ -1818,7 +1867,7 @@ export class PingCommand extends Command {
     release: "1.x",
     body: epicBody({
       vision: "Public docs match 1.x capabilities.",
-      childFeatures: ["DOCS-tier2", "DOCS-sequences", "DX-4", "F1", "G3 migration guides"],
+      childFeatures: ["DOCS-tier2", "DOCS-sequences", "DX-4", "F1", "REL-1.3.0-archive", "G3 migration guides"],
       meta: { ID: "EPIC-DOCS", Pillar: "Docs" },
     }),
   },
@@ -1974,16 +2023,22 @@ export const TITLE_TO_ID = {
   "1.2.0-release": "REL-1.2.0",
   "1.2.0-archive": "REL-1.2.0-archive",
   "1.3.0-release": "REL-1.3.0",
+  "1.3.0-archive": "REL-1.3.0-archive",
+  "plugins-core-1.3-peers": "PLUGINS-CORE-1.3",
+  "PLUGINS-CORE-1.3": "PLUGINS-CORE-1.3",
   "DX-1": "DX-1",
   "DX-1 — Kind hooks: slash / prefix / menu": "DX-1",
   "DX-2": "DX-2",
   "DX-2 — Subcommand method dispatch": "DX-2",
   "DX-3": "DX-3",
   "DX-3 — Merge/publish EmbedBuilder + Components V2 bump": "DX-3",
+  "DX-3 — Merge & publish EmbedBuilder / B10a core bump": "DX-3",
   "DX-4": "DX-4",
   "DX-4 — Capability ⊕ permission composition docs": "DX-4",
+  "DX-4 — Capability ⊕ Discord permission composition docs": "DX-4",
   F1: "F1",
   "F1 — REST & Gateway correctness documentation": "F1",
+  "F1 — REST / Gateway correctness documentation + tests": "F1",
   "plugins-1.0.0": "PLUGINS-1.0.0",
   "plugins-readme": "PLUGINS-README",
   "api-1.1.0-release": "PLUGINS-API-1.1.0",
@@ -2123,6 +2178,10 @@ export function resolveCardId(title, body = "") {
   }
   if (t === "A2: Redis cooldown extension") return "A2-plugins";
   if (t.startsWith("1.5.0-adapters")) return "ADAPTERS-1.5";
+  if (t.startsWith("DX-3")) return "DX-3";
+  if (t.startsWith("DX-4")) return "DX-4";
+  if (t.startsWith("F1")) return "F1";
+  if (t.startsWith("TYPING") || t === "Typing indicator") return "TYPING";
   return null;
 }
 

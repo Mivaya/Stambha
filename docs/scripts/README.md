@@ -1,5 +1,16 @@
 # Docs scripts
 
+## `generate-api-docs.mjs`
+
+Builds TypeScript API reference markdown under `docs/api/<package>/` from `@stambha/*` sources (TypeDoc + typedoc-plugin-markdown). Updates `docs/.vitepress/sidebars/api.ts`.
+
+```bash
+pnpm docs:api          # from repo root
+pnpm --filter @stambha/docs api
+```
+
+Runs automatically before `docs:build`. `docs:dev` skips generation when `docs/api/core/index.md` already exists (`--if-missing`). Force a refresh with `pnpm docs:api`. Generated package folders are gitignored — CI runs `pnpm build` then docs build on deploy.
+
 ## `archive-docs-version.mts`
 
 Snapshots public docs from a git tag into `docs/versions/<semver>/` for the VitePress version switcher.

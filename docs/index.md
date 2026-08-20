@@ -10,11 +10,11 @@ hero:
       text: Get started
       link: /guide/getting-started
     - theme: alt
+      text: API reference
+      link: /api/
+    - theme: alt
       text: Why Stambha
       link: /guide/why-stambha
-    - theme: alt
-      text: View on GitHub
-      link: https://github.com/mivaya/Stambha
 
 features:
   - title: Commands, organized
@@ -46,6 +46,15 @@ pnpm add @stambha/core @stambha/rest @stambha/gateway @stambha/transform @stambh
 ```
 
 Requires **Node.js 20+**. Samples: [`examples/basic`](https://github.com/mivaya/Stambha/tree/main/examples/basic) → [`examples/bot`](https://github.com/mivaya/Stambha/tree/main/examples/bot) → [`examples/bigbot`](https://github.com/mivaya/Stambha/tree/main/examples/bigbot) · serverless: [`examples/http-interactions`](https://github.com/mivaya/Stambha/tree/main/examples/http-interactions).
+
+## Two ways to read the docs
+
+Use the **Guide | API** switcher next to the logo.
+
+| You want… | Open |
+|-----------|------|
+| Install, first command, folders, deploy, migrate | **Guide** — start at [Getting started](/guide/getting-started) |
+| Class names, options objects, function signatures | **API** — start at [API reference](/api/) |
 
 ## Migrating?
 

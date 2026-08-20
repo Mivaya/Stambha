@@ -10,6 +10,8 @@ pnpm add @stambha/args
 
 On the **native** stack, prefix commands populate `CommandContext.argsText` via `attachStambhaClient`. Slash options populate `CommandContext.slashOptions` from `interactionFromDispatch`.
 
+Types: [`@stambha/args`](/api/args/).
+
 ## Hybrid commands (`kinds: ['slash','prefix']`)
 
 Use `HybridArgs` so one `execute` reads the same option names for both kinds:

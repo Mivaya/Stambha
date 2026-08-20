@@ -4,7 +4,16 @@ Optional packages ship from **[Stambha-plugins](https://github.com/Mivaya/Stambh
 
 The plugin **host** (`definePlugin`, lifecycle, container) stays in core: [Plugins & container](/features/plugins).
 
-Current plugins line: packages ship independently. **`@stambha/api` is at 1.2.0** (file-based `src/routes/`); **`@stambha/pagination` is at 1.1.0** (Components V2); other packages remain on **1.0.0** unless noted. Peers on Stambha core **^1.2.0** (pagination needs **^1.2.2**).
+Current plugins line (post–core **1.3.0** peer bump):
+
+| Package | Version | Peer on `@stambha/core` |
+|---------|---------|-------------------------|
+| `@stambha/api` | **1.2.1** | `^1.3.0` |
+| `@stambha/pagination` | **1.1.1** | `^1.3.0` |
+| `@stambha/metrics` | **1.0.1** | `^1.3.0` |
+| `@stambha/vault-sql` | **1.0.1** | `@stambha/vault@^1.3.0` |
+| `@stambha/cooldown-redis` | **1.0.1** | `^1.3.0` |
+| `@stambha/cache` / `@stambha/cache-redis` | **1.0.0** | none |
 
 ## Guides
 
@@ -15,6 +24,7 @@ Current plugins line: packages ship independently. **`@stambha/api` is at 1.2.0*
 | Prometheus scrape endpoint | [Metrics](/extensions/metrics) |
 | In-process or shared Redis guild/entity cache | [Cache](/extensions/cache) |
 | Persist Vault to SQLite / Postgres | [Vault — SQL drivers](/features/vault#sql-drivers) |
+| Shared Redis cooldown store (split tier) | [Gates — CooldownStore](/features/gates) + `@stambha/cooldown-redis` README |
 
 Each guide is self-contained: when to use it, install, examples, options, and exports. Source and CHANGELOG live in [Stambha-plugins](https://github.com/Mivaya/Stambha-plugins).
 

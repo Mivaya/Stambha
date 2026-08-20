@@ -2,6 +2,8 @@
 
 Build a Stambha bot on the **native stack** (`@stambha/rest`, `@stambha/gateway`, `@stambha/transform`).
 
+This page is a walkthrough. For TypeScript signatures, switch to **API** in the header — [`Command`](/api/core/classes/Command), [`createStambhaBot`](/api/core/functions/createStambhaBot), [`loadPieces`](/api/loader/functions/loadPieces).
+
 Pick an example by size → [Examples by scale](/guide/examples).
 
 ## Fastest path — no token
@@ -33,7 +35,7 @@ Common next packages:
 | Package | When |
 |---------|------|
 | `@stambha/authz` | Staff capabilities (not numeric levels) |
-| `@stambha/vault` | Typed guild config |
+| `@stambha/vault` | Typed guild config — often alongside Prisma/Drizzle ([guide](/guide/vault-and-orm)) |
 | `@stambha/help` | Help catalog |
 | Extensions | [Pagination](/extensions/pagination), [Metrics](/extensions/metrics), … — [Extensions hub](/extensions/) |
 

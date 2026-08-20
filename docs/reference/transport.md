@@ -8,15 +8,15 @@ Stambha-owned Discord transport primitives — no third-party Discord library re
 
 | Package | Use when |
 |---------|----------|
-| `@stambha/core` | Always — client, pipeline, registries, `RestPort`, outcomes |
-| `@stambha/loader` | Auto-load `src/commands`, `gates/`, etc. |
-| `@stambha/gateway` | WebSocket shards, `GatewayEventHub`, `attachStambhaClient`, sharding |
-| `@stambha/rest` | Outbound Discord REST, rate-limit queue, slash deploy, REST worker |
+| `@stambha/core` | Always — client, pipeline, registries, `RestPort`, outcomes — [API](/api/core/) |
+| `@stambha/loader` | Auto-load `src/commands`, `gates/`, etc. — [API](/api/loader/) |
+| `@stambha/gateway` | WebSocket shards, `GatewayEventHub`, `attachStambhaClient`, sharding — [API](/api/gateway/) |
+| `@stambha/rest` | Outbound Discord REST, rate-limit queue, slash deploy, REST worker — [API](/api/rest/) |
 | `@stambha/transform` | Normalize gateway payloads → `StambhaMessage` / `StambhaInteraction`; REST reply bodies |
 | `@stambha/transport` | Session info, route keys, rate-limit bucket model (used by `@stambha/rest`) |
-| `@stambha/gates` | Cooldowns, permissions, channel-type checks |
+| `@stambha/gates` | Cooldowns, permissions, channel-type checks — [API](/api/gates/) |
 | `@stambha/args` | Prefix lexer + slash option accessors |
-| `@stambha/vault` | Typed guild/user/member config (not domain ORM) |
+| `@stambha/vault` | Typed guild/user/member config (not domain ORM) — [API](/api/vault/) |
 | `@stambha/plugins` | Plugin lifecycle + DI container |
 | `@stambha/runtime` | Cross-runtime helpers (Node / Bun / Deno) |
 

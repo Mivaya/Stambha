@@ -1,0 +1,130 @@
+/* Stambha Docs — Guide vs API chrome */
+
+:root {
+  --stambha-api-accent: #5b6cff;
+  --stambha-mode-duration: 0.28s;
+  --stambha-mode-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[data-stambha-docs-mode="api"] {
+  --vp-c-brand-1: var(--stambha-api-accent);
+  --vp-c-brand-2: #4f5ef0;
+  --vp-c-brand-3: #3d4cd6;
+}
+
+/* --- Mode switcher sits after the logo --- */
+
+.stambha-mode-switcher {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex-shrink: 0;
+  margin-left: 12px;
+  padding: 3px;
+  width: 148px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 999px;
+  background: var(--vp-c-bg-soft);
+  box-sizing: border-box;
+}
+
+.stambha-mode-switcher__pill {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 0;
+  border-radius: 999px;
+  color: var(--vp-c-text-2);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  transition: color var(--stambha-mode-duration) var(--stambha-mode-ease);
+}
+
+.stambha-mode-switcher__pill:hover {
+  color: var(--vp-c-text-1);
+}
+
+.stambha-mode-switcher__pill.is-active {
+  color: var(--vp-c-text-1);
+}
+
+.stambha-mode-switcher__pill:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+}
+
+.stambha-mode-switcher__indicator {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  border-radius: 999px;
+  background: var(--vp-c-bg);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
+  pointer-events: none;
+  transition: transform var(--stambha-mode-duration) var(--stambha-mode-ease);
+}
+
+.stambha-mode-switcher__indicator.is-api {
+  transform: translateX(100%);
+}
+
+.VPNavBarTitle {
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.VPNavBarTitle.has-sidebar .title {
+  border-bottom: none;
+}
+
+.VPNavBar .title {
+  flex-shrink: 0;
+}
+
+.VPNavBar .wrapper,
+.VPNavBar .container,
+.VPNavBar .content,
+.VPNavBar .content-body {
+  min-width: 0;
+}
+
+/* Keep the switcher; collapse the rest of the bar earlier than VitePress default. */
+@media (max-width: 1280px) {
+  .VPNavBar .VPNavBarMenu,
+  .VPNavBar .VPNavBarSocialLinks {
+    display: none !important;
+  }
+
+  .VPNavBar .VPNavBarHamburger {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .VPNavBarTitle .title {
+    display: none;
+  }
+
+  .stambha-mode-switcher {
+    width: 128px;
+    margin-left: 8px;
+  }
+}
+
+html[data-stambha-docs-mode="api"] .vp-doc h1 {
+  letter-spacing: -0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stambha-mode-switcher__indicator,
+  .stambha-mode-switcher__pill {
+    transition: none !important;
+  }
+}

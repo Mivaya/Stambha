@@ -4,7 +4,7 @@
 
 Ships as [`@stambha/pagination`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/pagination) from **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)** (independent semver). Built on core [Signals](/features/signals), [Components & embeds](/features/components#components-v2), and `stambha:` custom ids.
 
-Current line: **1.1.0** · peer `@stambha/core@^1.2.2` (needs Components V2 builders).
+Current line: **1.1.1** · peer `@stambha/core@^1.3.0` (needs Components V2 builders from core 1.3+).
 
 ## When to use it
 
@@ -17,7 +17,7 @@ Current line: **1.1.0** · peer `@stambha/core@^1.2.2` (needs Components V2 buil
 ## Install
 
 ```bash
-pnpm add @stambha/pagination@^1.1.0 @stambha/core@^1.2.2
+pnpm add @stambha/pagination@^1.1.1 @stambha/core@^1.3.0
 ```
 
 Requires **Node.js 20+**.
