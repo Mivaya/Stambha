@@ -1,14 +1,11 @@
 import {
-  createStambhaBot,
   type CreateStambhaBotOptions,
+  createStambhaBot,
   type RestPort,
   type StambhaClient,
 } from "@stambha/core";
 import { createNativeRestPort } from "@stambha/rest";
-import {
-  type AttachStambhaClientOptions,
-  attachStambhaClient,
-} from "./attachStambhaClient.js";
+import { type AttachStambhaClientOptions, attachStambhaClient } from "./attachStambhaClient.js";
 import { createGatewayEventHub, type GatewayEventHub } from "./GatewayEventHub.js";
 import {
   createNativeGatewayClient,
