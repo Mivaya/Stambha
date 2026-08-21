@@ -361,7 +361,7 @@ export const CARD_CATALOG = {
     priority: "blocker",
     body: ticketBody({
       summary:
-        "v1.4.0 — **adoption minor**: fluent native bootstrap, create-stambha, runSequence, vault-sql onboarding, publish cache-redis. Capability stretch (C1/FORMAT/ATTACH/display) only if Must lands early.",
+        "v1.4.0 — **adoption minor**: fluent native bootstrap, create-stambha, runSequence, vault-sql onboarding, publish cache-redis. Capability stretch (FORMAT/ATTACH/display) only if Must lands early. Staff auth = `@stambha/authz` (C1 numeric levels Won't).",
       acceptance: [
         "Must tickets Done (see 1.4 Sprint Ready lane)",
         "CHANGELOG [1.4.0] + pnpm version:bump 1.4.0",
@@ -1248,43 +1248,47 @@ export class PingCommand extends Command {
 
   C1: {
     title: "C1 — Permission levels",
-    status: "Backlog",
+    status: "Won't",
     track: "stambha",
     type: "Feature",
     pillar: "C",
-    release: "1.4",
+    release: "—",
     lane: "Standard",
-    priority: "medium",
+    priority: "low",
     body: ticketBody({
-      userStory: "As a bot operator, I want numeric permission levels (Everyone → Mod → Admin) without discord.js.",
       summary:
-        "`@stambha/levels` + permissionLevelGate. **1.4 stretch** — after adoption Must (bootstrap / scaffolder / runSequence). Authz capabilities already cover staff auth.",
+        "**Won't** — numeric `@stambha/levels` / `permissionLevelGate` ladder. Staff authorization is **`@stambha/authz`** (named capabilities + Discord floor + Vault claims). Sapphire migrants use capabilities, not Everyone→Mod→Admin numbers.",
       acceptance: [
-        "Default level ladder exported",
-        "permissionLevelGate integrates with pipeline",
-        "Document migration from role-only gates",
+        "No `@stambha/levels` package planned",
+        "Docs steer to [Capabilities](docs/features/capabilities.md) / `@stambha/authz`",
+        "Revisit only if strong demand for Sapphire-parity levels as an optional plugin",
       ],
-      meta: { ID: "C1", Pillar: "C", Release: "1.4", Epic: "EPIC-C", Branch: "feature/permission-levels" },
-      references: ["docs/guide/known-gaps.md"],
+      meta: { ID: "C1", Pillar: "C", Epic: "EPIC-C", Decision: "Won't — use authz" },
+      references: [
+        "docs/features/capabilities.md",
+        "docs/guide/getting-started.md — Staff hierarchy → capabilityGate",
+        "WONT-levels",
+      ],
     }),
   },
 
   C2: {
     title: "C2 — Vault level overrides",
-    status: "Backlog",
+    status: "Won't",
     track: "stambha",
     type: "Feature",
     pillar: "C",
-    release: "1.4",
+    release: "—",
     body: ticketBody({
-      summary: "Guild member level ledger in Vault + admin commands for overrides.",
+      summary:
+        "**Won't** as numeric level overrides. Equivalent need is covered by **Vault capability claims** via `attachVaultCapabilityClaims` in `@stambha/authz` (role / member grants on guild blueprints).",
       acceptance: [
-        "Vault schema for per-member level overrides",
-        "Admin commands or API to set levels",
-        "Integrates with C1 permissionLevelGate",
+        "Operators use Vault + authz claims, not a level ledger",
+        "No C1 dependency — ticket closed with C1",
       ],
-      meta: { ID: "C2", Pillar: "C", Release: "1.4", Epic: "EPIC-C", Branch: "feature/levels-vault" },
-      dependencies: "C1",
+      meta: { ID: "C2", Pillar: "C", Epic: "EPIC-C", Decision: "Won't — use authz Vault claims" },
+      dependencies: "Superseded by @stambha/authz",
+      references: ["docs/features/capabilities.md", "packages/authz"],
     }),
   },
 
@@ -2097,16 +2101,38 @@ export class PingCommand extends Command {
   },
 
   "EPIC-C": {
-    title: "EPIC-C — Pillar C: Permission levels",
-    status: "Backlog",
+    title: "EPIC-C — Pillar C: Staff authorization (authz)",
+    status: "Done",
     track: "stambha",
     type: "Epic",
     pillar: "C",
-    release: "1.4",
+    release: "1.3.0",
+    lane: "Standard",
     body: epicBody({
-      vision: "Numeric permission levels without discord.js.",
-      childFeatures: ["C1", "C2"],
-      meta: { ID: "EPIC-C", Pillar: "C", Release: "1.4" },
+      objective:
+        "Staff / operator authorization without a numeric permission ladder — shipped as `@stambha/authz` capabilities.",
+      vision:
+        "Named capabilities (`mod.purge`, …) with Discord permission floors, role grants, and Vault claims. **Not** Sapphire-style Everyone→Mod→Admin numbers.",
+      architecture: [
+        "`@stambha/authz` — defineCapability, capabilityGate, configureAuthz",
+        "Vault claims via attachVaultCapabilityClaims",
+        "Compose with `@stambha/gates` Discord permission gates when needed",
+      ],
+      childTickets: [
+        { id: "authz-shipped", title: "@stambha/authz capabilities (1.3)", shipped: true },
+        { id: "C1", title: "Numeric permission levels", shipped: false },
+        { id: "C2", title: "Vault level overrides", shipped: false },
+      ],
+      outcomes: [
+        "C1 / C2 Won't — use capabilities + Vault claims instead",
+        "Getting-started steers staff hierarchy to capabilityGate",
+      ],
+      successCriteria: [
+        "Public docs recommend authz over levels",
+        "No @stambha/levels package in core roadmap",
+      ],
+      meta: { ID: "EPIC-C", Pillar: "C", Release: "1.3.0" },
+      references: ["docs/features/capabilities.md", "WONT-levels"],
     }),
   },
 
@@ -2327,6 +2353,26 @@ export class PingCommand extends Command {
       meta: { ADR: "005" },
     }),
   },
+
+  "WONT-levels": {
+    title: "Numeric permission levels (@stambha/levels)",
+    status: "Won't",
+    track: "stambha",
+    type: "Decision",
+    pillar: "C",
+    body: decisionBody({
+      decision:
+        "Won't ship Sapphire/Klasa-style numeric permission levels (`@stambha/levels`, permissionLevelGate).",
+      rationale:
+        "Staff auth is `@stambha/authz` named capabilities + Discord floors + Vault claims. A second ladder duplicates policy and confuses greenfield authors. C1/C2 closed as Won't under EPIC-C.",
+      meta: { ID: "WONT-levels", Pillar: "C", Epic: "EPIC-C" },
+      references: [
+        "docs/features/capabilities.md",
+        "C1 — Permission levels",
+        "C2 — Vault level overrides",
+      ],
+    }),
+  },
 };
 
 /** Map board title (and aliases) → catalog ID */
@@ -2493,6 +2539,9 @@ export const TITLE_TO_ID = {
   "EPIC-G — Pillar G: Gateway & dispatch": "EPIC-G",
   "EPIC-A — Pillar A: Distributed infrastructure": "EPIC-A",
   "EPIC-C — Pillar C: Permission levels": "EPIC-C",
+  "EPIC-C — Pillar C: Staff authorization (authz)": "EPIC-C",
+  "Numeric permission levels (@stambha/levels)": "WONT-levels",
+  "WONT-levels": "WONT-levels",
   "EPIC-E — Pillar E: Dashboard HTTP API": "EPIC-E",
   "EPIC-D — Pillar D: Sequences & scale (2.0)": "EPIC-D",
   "EPIC-V — Vault evolution": "EPIC-V",
