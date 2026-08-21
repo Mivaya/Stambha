@@ -12,6 +12,13 @@
     "lineWidth": 100
   },
   "files": {
-    "includes": ["**", "!**/dist", "!**/node_modules", "!**/coverage", "!**/docs/versions/**"]
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/node_modules",
+      "!**/coverage",
+      "!**/docs/versions",
+      "!packages/create-stambha/templates"
+    ]
   }
 }

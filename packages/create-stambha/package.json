@@ -1,0 +1,50 @@
+{
+  "name": "create-stambha",
+  "version": "1.3.1",
+  "description": "Scaffold a new Stambha Discord bot — npm create stambha",
+  "author": "Mivaya",
+  "license": "MIT",
+  "homepage": "https://github.com/mivaya/Stambha/tree/main/packages/create-stambha#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mivaya/Stambha.git",
+    "directory": "packages/create-stambha"
+  },
+  "bugs": {
+    "url": "https://github.com/mivaya/Stambha/issues"
+  },
+  "keywords": [
+    "discord",
+    "discord-bot",
+    "stambha",
+    "scaffold",
+    "create-stambha"
+  ],
+  "type": "module",
+  "bin": {
+    "create-stambha": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "tsup": "^8.3.6",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}
