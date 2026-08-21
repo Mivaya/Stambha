@@ -33,16 +33,25 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 | Gap | Notes |
 | --- | ----- |
 | Slash name/description localizations | Deploy-time locale maps |
-| `create-stambha` scaffolder | Project generator CLI |
+| `create-stambha` scaffolder | Project generator CLI (1.4 — see F3) |
 | Prefix flags + prompt/retry | Interactive prefix parsing improvements |
 | Desired-properties naming | Stambha metaphor vs legacy Discordeno naming |
 | Embed→Container migration helpers | Former `panel()` DX in planned `@stambha/display` plugin |
-| Shared Redis cache across workers | [`@stambha/cache-redis`](/extensions/cache#redis-shared-workers) |
-| Redis cooldown driver package | Async store in core; dedicated Redis driver in plugins |
+| Shared Redis cache on npm | Code in Stambha-plugins — **awaiting A1 publish** of [`@stambha/cache-redis`](/extensions/cache#redis-shared-workers) |
 | Hot reload in dev | Planned `@stambha/dev-reload` |
 | Hosted admin dashboard UI | Out of core — HTTP settings via [`@stambha/api`](/extensions/api) |
 | Entity cache layer | Opt-in Guild/Channel/Member stores |
 | Voice package | Not in core — use Discord voice libraries directly if needed |
+
+
+---
+
+## Shipped since 1.3 (extensions / 1.4)
+
+| Topic | Notes |
+| ----- | ----- |
+| Redis cooldown store | [`@stambha/cooldown-redis`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cooldown-redis) on npm — [Gates](/features/gates) |
+| `runSequence` orchestration | Lands with **D1** / 1.4 — [Sequences](/features/sequences) |
 
 
 ---
@@ -52,7 +61,6 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 
 | Gap |
 | --- |
-| Automatic `runSequence` orchestration (today: `sequence()` + Signal wiring) |
 | RabbitMQ / distributed worker bus |
 | Distributed Chron across workers |
 | Gateway proxy for zero-downtime deploys |

@@ -5,9 +5,9 @@
 | Package | Role |
 |---------|------|
 | [`@stambha/cache`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cache) | `Cache` interface + in-process `MemoryCache` |
-| [`@stambha/cache-redis`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cache-redis) | Redis driver for shared cache across workers |
+| [`@stambha/cache-redis`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cache-redis) | Redis driver for shared cache across workers (**npm publish pending — A1**) |
 
-Both ship from **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)** (independent semver). Current line: **1.0.0**. No required peer on `@stambha/core`.
+Both ship from **[Stambha-plugins](https://github.com/Mivaya/Stambha-plugins)** (independent semver). `@stambha/cache` is on npm at **1.0.0**. `@stambha/cache-redis` source is ready in-repo; install from npm after the A1 release. No required peer on `@stambha/core`.
 
 Monolith bots keep **`MemoryCache`**. Use Redis only when multiple processes need the same hot keys.
 
