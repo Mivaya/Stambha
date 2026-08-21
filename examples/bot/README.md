@@ -13,7 +13,7 @@ pnpm install
 pnpm demo
 ```
 
-Simulates `!ping`, `!say`, `!confirm` + button click, and `@Bot` mention routing against the real pipeline. For the live multi-step sequence (`!setup` / `/setup` + `SeqSignal`), use `pnpm start` with a token.
+Simulates `!ping`, `!say`, `!confirm` + button click, and `@Bot` mention routing against the real pipeline. For the live multi-step sequence (`!setup` / `/setup` via `runSequence`), use `pnpm start` with a token.
 
 ## Run against Discord
 
@@ -51,7 +51,7 @@ src/
   gates/                Owner-only mode (optional)
   conduits/             Command logging
   epilogues/            Audit trail
-  signals/              Confirm + SeqSignal (multi-step setup)
+  signals/              ConfirmSignal (buttons); seq Signal is built into core
   tasks/                Heartbeat cron
   schemas/              Vault guild blueprint (capability claims)
   plugins/              Logging plugin (wired in setup)
@@ -66,7 +66,7 @@ src/
 |------|-------------------|
 | Args | `say`, `echo` |
 | Signals / components | `confirm`, `menu` (string + user/channel selects), `panel` (Components V2) |
-| Sequences | `setup` + `SeqSignal` (`sequence()` + `stambha:seq:` wait/complete) |
+| Sequences | `setup` via `runSequence` (`sequence()` + built-in `SeqSignal`) |
 | Polls | `poll`, `endpoll` + vote listener |
 | Authz | `purge` (capability ⊕ Manage Messages) + `setcap` (`@stambha/authz`) |
 | Monetization | `premium` (`entitlementGate`) |

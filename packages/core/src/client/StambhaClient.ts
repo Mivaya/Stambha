@@ -178,7 +178,8 @@ export class StambhaClient extends EventEmitter implements PluginLifecycle {
         error: new Error(`Command "${commandName}" does not support kind "${ctx.kind}"`),
       };
     }
-    return this.pipeline.runCommand(command, ctx);
+    const withClient: CommandContext = ctx.client === this ? ctx : { ...ctx, client: this };
+    return this.pipeline.runCommand(command, withClient);
   }
 
   async start(): Promise<void> {

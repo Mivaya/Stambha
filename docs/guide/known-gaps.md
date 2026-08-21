@@ -52,7 +52,6 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 
 | Gap |
 | --- |
-| Automatic `runSequence` orchestration (today: `sequence()` + Signal wiring) |
 | RabbitMQ / distributed worker bus |
 | Distributed Chron across workers |
 | Gateway proxy for zero-downtime deploys |
