@@ -89,5 +89,9 @@ export function slimCommandContext(
     Object.assign(slim, { deferReply: ctx.deferReply });
   }
 
+  if (ctx.client) {
+    Object.assign(slim, { client: ctx.client });
+  }
+
   return slim;
 }
