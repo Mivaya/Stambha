@@ -360,14 +360,259 @@ export const CARD_CATALOG = {
     lane: "Expedite",
     priority: "blocker",
     body: ticketBody({
-      summary: "v1.4.0 — next minor. Scope TBD from Sprint Ready children (levels / format / display / vault).",
+      summary:
+        "v1.4.0 — **adoption minor**: fluent native bootstrap, create-stambha, runSequence, vault-sql onboarding, publish cache-redis. Capability stretch (C1/FORMAT/ATTACH/display) only if Must lands early.",
       acceptance: [
+        "Must tickets Done (see 1.4 Sprint Ready lane)",
         "CHANGELOG [1.4.0] + pnpm version:bump 1.4.0",
         "docs:archive 1.3.1 <release SHA>",
-        "GitHub Release v1.4.0 + npm publish",
+        "GitHub Release v1.4.0 + npm @stambha/*@1.4.0",
+        "Plugins: cache-redis published if A1 in scope",
       ],
       meta: { ID: "REL-1.4.0", Release: "1.4.0", Branch: "chore/release-1.4.0" },
-      dependencies: "C1 / FORMAT / ATTACH / EPIC-DISPLAY children as chosen",
+      dependencies: "F3, DX-bootstrap, D1, DOCS-vault-persist, A1",
+      references: ["scripts/kanban/catalog.mjs — 1.4 picks"],
+    }),
+  },
+
+  F3: {
+    title: "F3 — create-stambha scaffolder",
+    status: "Sprint Ready",
+    track: "stambha",
+    type: "Feature",
+    pillar: "Docs",
+    release: "1.4",
+    lane: "Expedite",
+    priority: "blocker",
+    body: ticketBody({
+      userStory: "As a new developer, I want `pnpm create stambha` to scaffold a runnable bot without copying examples/",
+      summary:
+        "Official scaffolder CLI. Verified gap on known-gaps (post-1.3.1). Prompts: scale (monolith | split) + template (minimal | basic | bot).",
+      acceptance: [
+        "`pnpm create stambha@latest` (or `npm create stambha`) published",
+        "Emits tsconfig, Biome/eslint as repo standard, correct `@stambha/*` set",
+        "Working `pnpm dev` / `pnpm start` + optional `pnpm demo`",
+        "Docs: getting-started points to create, not only copy examples",
+      ],
+      outOfScope: ["Full bigbot enterprise scaffold", "i18n / levels plugins"],
+      meta: { ID: "F3", Pillar: "Docs", Release: "1.4", Branch: "feature/create-stambha" },
+      references: ["docs/guide/known-gaps.md", "docs/guide/examples.md"],
+    }),
+  },
+
+  "DX-bootstrap": {
+    title: "DX-bootstrap — Fluent native stack bootstrap",
+    status: "Sprint Ready",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.4",
+    lane: "Expedite",
+    priority: "blocker",
+    body: ticketBody({
+      userStory:
+        "As a greenfield author, I want a short happy-path bootstrap without seven imports across four packages.",
+      summary:
+        "Collapse attachStambhaClient + setBridge + createNativeGatewayClient (+ loadPieces?) into one fluent/helper API. Raw wiring stays for advanced/tier-split.",
+      problem:
+        "Getting started (1.3.1) still requires createStambhaBot → loadPieces → hub → attach → setBridge → createNativeGatewayClient → connect. createStambhaBot only constructs StambhaClient.",
+      developerSyntax:
+        "```ts\nconst { client, gateway } = await bootstrapNativeBot({\n  token,\n  applicationId,\n  prefix: \"!\",\n  intents: [...],\n});\nawait loadPieces(client);\nawait gateway.connect();\n```\n(Exact API TBD — must not break existing createStambhaBot / attachStambhaClient.)",
+      acceptance: [
+        "Documented happy path ≤ ~10 lines for monolith ping bot",
+        "Getting-started updated to prefer helper; advanced section keeps raw wiring",
+        "Tier-split / bigbot still use explicit workers",
+        "Unit or smoke test covering bootstrap helper",
+      ],
+      meta: { ID: "DX-bootstrap", Pillar: "B", Release: "1.4", Epic: "EPIC-B", Branch: "feature/native-bootstrap" },
+      references: ["docs/guide/getting-started.md", "packages/core createStambhaBot"],
+    }),
+  },
+
+  "DX-piece-factory": {
+    title: "DX-piece-factory — Reduce Registry constructor boilerplate",
+    status: "Backlog",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.4",
+    lane: "Standard",
+    priority: "high",
+    body: ticketBody({
+      userStory:
+        "As a command author, I want to declare a Command without `constructor(registry) { super(registry, opts) }` every time.",
+      summary:
+        "Should for 1.4: options-first / defineCommand / factory that loader can instantiate — without requiring decorators (optional later).",
+      acceptance: [
+        "At least one supported pattern without Registry ctor injection",
+        "loadPieces still discovers pieces",
+        "Docs + examples/basic migrate one command",
+        "No break of existing class-extends-Command pattern",
+      ],
+      outOfScope: ["Mandatory decorators", "Sapphire compatibility shims"],
+      meta: { ID: "DX-piece-factory", Pillar: "B", Release: "1.4", Epic: "EPIC-B" },
+      dependencies: "DX-bootstrap preferred first",
+    }),
+  },
+
+  "PKG-testing": {
+    title: "PKG-testing — @stambha/testing helpers",
+    status: "Backlog",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.4",
+    lane: "Standard",
+    priority: "high",
+    body: ticketBody({
+      userStory: "As a team, I want to unit-test Commands against mock context without Discord.",
+      summary:
+        "Package or core export: buildMockContext, MockBridge helpers, ok/err assertions. Showcase transport-agnostic testing.",
+      acceptance: [
+        "`@stambha/testing` package OR documented exports from core",
+        "Helpers for CommandContext + SignalContext",
+        "Vitest example in package README",
+        "examples/minimal or docs link",
+      ],
+      meta: { ID: "PKG-testing", Pillar: "B", Release: "1.4", Branch: "feature/stambha-testing" },
+      dependencies: "DOCS-testing can ship in same PR",
+    }),
+  },
+
+  "DOCS-testing": {
+    title: "DOCS-testing — Command testing guide",
+    status: "Backlog",
+    track: "stambha",
+    type: "Task",
+    pillar: "Docs",
+    release: "1.4",
+    lane: "Standard",
+    priority: "high",
+    body: ticketBody({
+      summary:
+        "Public testing guide — closes known-gaps “Dedicated testing guide” deferral from 1.3.1.",
+      acceptance: [
+        "docs/guide/testing.md (or features/testing) with Command isolation pattern",
+        "Sidebar link from Start / Guide",
+        "Points at MockBridge, demo REST, MemoryDriver, PKG-testing",
+      ],
+      meta: { ID: "DOCS-testing", Pillar: "Docs", Epic: "EPIC-DOCS", Release: "1.4" },
+      dependencies: "PKG-testing preferred",
+      references: ["docs/guide/known-gaps.md — Not in 1.3.1"],
+    }),
+  },
+
+  "DOCS-mental-model": {
+    title: "DOCS-mental-model — First-hour pipeline concept map",
+    status: "Backlog",
+    track: "stambha",
+    type: "Task",
+    pillar: "Docs",
+    release: "1.4",
+    lane: "Standard",
+    priority: "medium",
+    body: ticketBody({
+      summary:
+        "Single greenfield page: Scout → … → Epilogue + Signals/Sequences/Vault/Chron one-liners. Architecture exists for stack; this is vocabulary for newcomers (not only Sapphire migrants).",
+      acceptance: [
+        "New guide page or expanded why-stambha / pieces with one diagram of all piece types",
+        "Linked from getting-started",
+        "Does not rename public APIs",
+      ],
+      meta: { ID: "DOCS-mental-model", Pillar: "Docs", Epic: "EPIC-DOCS", Release: "1.4" },
+      references: ["docs/guide/architecture.md", "docs/guide/pieces.md"],
+    }),
+  },
+
+  "DOCS-vault-persist": {
+    title: "DOCS-vault-persist — Vault SQL on getting-started",
+    status: "Sprint Ready",
+    track: "stambha",
+    type: "Task",
+    pillar: "Docs",
+    release: "1.4",
+    lane: "Expedite",
+    priority: "high",
+    body: ticketBody({
+      summary:
+        "Getting started mentions `@stambha/vault` but not `@stambha/vault-sql`. MemoryDriver loses settings on restart — promote SQLite/Postgres as default next step (package stays in plugins per ADR 003).",
+      acceptance: [
+        "getting-started: install + one SQLite snippet after Vault intro",
+        "Link to vault-and-orm + extensions/vault-sql",
+        "Do not move vault-sql into core monorepo",
+      ],
+      meta: { ID: "DOCS-vault-persist", Pillar: "Docs", Epic: "EPIC-DOCS", Release: "1.4" },
+      references: [
+        "docs/guide/getting-started.md",
+        "npm @stambha/vault-sql@1.0.1 peer @stambha/vault@^1.3.0",
+      ],
+    }),
+  },
+
+  "DOCS-gaps-hygiene": {
+    title: "DOCS-gaps-hygiene — Fix stale known-gaps Redis rows",
+    status: "Sprint Ready",
+    track: "stambha",
+    type: "Task",
+    pillar: "Docs",
+    release: "1.4",
+    lane: "Expedite",
+    priority: "medium",
+    body: ticketBody({
+      summary:
+        "known-gaps still lists Redis cache driver + Redis cooldown as open. cooldown-redis is on npm; cache-redis is in-repo but unpublished (A1). Correct the table after A1 ships or mark cache-redis “publish pending”.",
+      acceptance: [
+        "Cooldown Redis row → shipped (link extensions)",
+        "Cache Redis row → accurate (published or “awaiting A1 publish”)",
+        "runSequence row moves when D1 ships",
+      ],
+      meta: { ID: "DOCS-gaps-hygiene", Pillar: "Docs", Epic: "EPIC-DOCS", Release: "1.4" },
+      dependencies: "A1 for cache-redis “shipped” wording",
+    }),
+  },
+
+  "SIGNAL-match": {
+    title: "SIGNAL-match — Pattern / match() Signal routing",
+    status: "Backlog",
+    track: "stambha",
+    type: "Feature",
+    pillar: "B",
+    release: "1.5",
+    lane: "Standard",
+    priority: "medium",
+    body: ticketBody({
+      userStory:
+        "As a UI author, I want Signals for `stambha:delete:user:*` vs `stambha:delete:guild:*` without one mega-handler.",
+      summary:
+        "Optional `match(customId): boolean` (or glob) alongside exact name routing. Exact name remains default.",
+      acceptance: [
+        "SignalRouter tries exact name then matchers",
+        "Document priority / first-match rules",
+        "Example signal using match",
+      ],
+      meta: { ID: "SIGNAL-match", Pillar: "B", Release: "1.5", Epic: "EPIC-B" },
+    }),
+  },
+
+  "CHRON-redis": {
+    title: "CHRON-redis — Redis Chron lock for tier-split",
+    status: "Backlog",
+    track: "stambha",
+    type: "Feature",
+    pillar: "D",
+    release: "1.5",
+    lane: "Standard",
+    priority: "medium",
+    body: ticketBody({
+      summary:
+        "Lite alternative to full 2.0 D2: ChronBus / distributed lock so only one worker runs a cron tick. Core interface + Redis driver in plugins. Keep D2 Icebox for richer leader election.",
+      acceptance: [
+        "Chron API unchanged for monolith (memory/no-op lock)",
+        "Redis lock driver in Stambha-plugins",
+        "Tier-split doc note",
+      ],
+      meta: { ID: "CHRON-redis", Pillar: "D", Release: "1.5", Epic: "EPIC-D" },
+      dependencies: "D2 remains Icebox 2.0 for fuller design",
     }),
   },
 
@@ -1009,16 +1254,17 @@ export class PingCommand extends Command {
 
   C1: {
     title: "C1 — Permission levels",
-    status: "Sprint Ready",
+    status: "Backlog",
     track: "stambha",
     type: "Feature",
     pillar: "C",
     release: "1.4",
-    lane: "Expedite",
-    priority: "high",
+    lane: "Standard",
+    priority: "medium",
     body: ticketBody({
       userStory: "As a bot operator, I want numeric permission levels (Everyone → Mod → Admin) without discord.js.",
-      summary: "`@stambha/levels` + permissionLevelGate — Klasa-style governance. Target **1.4** (authz capabilities already cover staff auth).",
+      summary:
+        "`@stambha/levels` + permissionLevelGate. **1.4 stretch** — after adoption Must (bootstrap / scaffolder / runSequence). Authz capabilities already cover staff auth.",
       acceptance: [
         "Default level ladder exported",
         "permissionLevelGate integrates with pipeline",
@@ -1133,22 +1379,30 @@ export class PingCommand extends Command {
 
   A1: {
     title: "A1 — Redis cache driver",
-    status: "Done",
+    status: "Sprint Ready",
     track: "stambha-plugins",
     type: "Feature",
     pillar: "A",
-    release: "1.0.0",
-    lane: "Standard",
-    priority: "medium",
-    body: doneBody({
-      summary: "`@stambha/cache-redis` — Redis driver for shared cache across workers.",
-      delivered: [
-        "Published `@stambha/cache-redis@1.0.0` (Stambha-plugins)",
-        "Docs: extensions/cache + tier-split wiring notes",
-        "Monolith keeps memory default via `@stambha/cache`",
+    release: "1.4",
+    lane: "Expedite",
+    priority: "high",
+    body: ticketBody({
+      userStory: "As a split-tier bot operator, I want shared cache across gateway/bot workers via npm.",
+      summary:
+        "`@stambha/cache-redis` exists in Stambha-plugins (v1.0.0 in-repo) but is **not on npm** (404 verified 2026-08-21). Docs already advertise it. Finish publish + peer matrix.",
+      problem:
+        "Core docs and extensions hub list `@stambha/cache-redis@1.0.0`, but `npm view @stambha/cache-redis` returns 404. `@stambha/cache@1.0.0` and `@stambha/cooldown-redis@1.0.1` are published.",
+      acceptance: [
+        "GitHub Release + npm publish `@stambha/cache-redis@1.0.0` (or next patch)",
+        "`npm view @stambha/cache-redis version` succeeds",
+        "Core docs peer/version matrix matches published package",
+        "Monolith keeps `@stambha/cache` memory default",
       ],
-      meta: { ID: "A1", Pillar: "A", Epic: "EPIC-A", Track: "stambha-plugins", Release: "1.0.0" },
-      references: ["docs/extensions/cache.md", "https://github.com/Mivaya/Stambha-plugins"],
+      meta: { ID: "A1", Pillar: "A", Epic: "EPIC-A", Track: "stambha-plugins", Release: "1.4" },
+      references: [
+        "packages/cache-redis in Stambha-plugins",
+        "docs/extensions/cache.md",
+      ],
     }),
   },
 
@@ -1602,22 +1856,32 @@ export class PingCommand extends Command {
 
   D1: {
     title: "D1 — Native runSequence",
-    status: "Icebox",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "D",
-    release: "2.0",
+    release: "1.4",
+    lane: "Expedite",
+    priority: "blocker",
     body: ticketBody({
-      userStory: "As a bot author, I want multi-step UI flows without manual Signal wiring (discord.js collectors parity).",
-      summary: "Native runSequence orchestration — 2.0 D1.",
+      userStory:
+        "As a bot author, I want multi-step button/select/modal flows without manual SeqSignal + waitForStep glue.",
+      summary:
+        "Framework-owned `runSequence` orchestration. **Pulled from 2.0 → 1.4** — Sequences are a differentiator but the 1.3.1 floor (command + SeqSignal + wrong_user handling) is too high for adoption.",
+      problem:
+        "Today: createSession → render step → waitForStep loop → SeqSignal.completeStep. Docs/examples/bot show the pattern; automatic routing is still listed under Deferred to 2.0 on known-gaps.",
+      developerSyntax:
+        "```ts\nconst result = await runSequence(ctx, sequence()\n  .button(\"role\", \"Pick:\", [{ id: \"mod\", label: \"Mod\" }])\n  .select(\"channel\", \"Channel:\", [...])\n  .build());\n```",
       acceptance: [
-        "runSequence API design approved",
-        "Implements message/reaction/interaction collectors on normalized G3 events",
-        "Honest scope vs Sequences store",
+        "runSequence(ctx, flow) owns session, step UI, wrong-user, timeout",
+        "Works for button + select at minimum; modal documented or supported",
+        "examples/bot SetupCommand uses runSequence (SeqSignal optional/internal)",
+        "docs/features/sequences.md + known-gaps: remove from 2.0 deferred",
+        "No breaking change to SequenceStore / sequence() builder",
       ],
-      meta: { ID: "D1", Pillar: "D", Release: "2.0", Epic: "EPIC-D" },
-      dependencies: "G3-p1+",
-      references: ["docs/guide/known-gaps.md — D1"],
+      meta: { ID: "D1", Pillar: "D", Release: "1.4", Epic: "EPIC-D", Branch: "feature/run-sequence" },
+      dependencies: "None (G3 already shipped)",
+      references: ["docs/features/sequences.md", "examples/bot SetupCommand + SeqSignal"],
     }),
   },
 
@@ -1764,13 +2028,19 @@ export class PingCommand extends Command {
         { id: "DX-3", title: "EmbedBuilder / V2 publish bump", shipped: true },
         { id: "TYPING", title: "Typing indicator", shipped: true },
         { id: "P1", title: "Pagination plugin (@stambha/pagination)", shipped: true },
+        { id: "DX-bootstrap", title: "Fluent native bootstrap", shipped: false },
+        { id: "DX-piece-factory", title: "Reduce Registry ctor boilerplate", shipped: false },
+        { id: "PKG-testing", title: "@stambha/testing helpers", shipped: false },
+        { id: "SIGNAL-match", title: "Signal match() routing", shipped: false },
+        { id: "FORMAT", title: "@stambha/format", shipped: false },
+        { id: "ATTACH", title: "AttachmentBuilder", shipped: false },
       ],
       successCriteria: [
-        "B1 or next scheduled B-pillar feature ships in a tagged core release",
+        "Adoption DX (bootstrap / piece factory) ships in 1.4 or is explicitly deferred",
         "Each child has acceptance criteria in catalog + known-gaps cross-link",
         "No discord.js in core hot path",
       ],
-      meta: { ID: "EPIC-B", Pillar: "B", Release: "1.x" },
+      meta: { ID: "EPIC-B", Pillar: "B", Release: "1.4+" },
       references: ["docs/guide/known-gaps.md", "docs/decisions/003-plugins-monorepo.md"],
     }),
   },
@@ -1881,16 +2151,16 @@ export class PingCommand extends Command {
   },
 
   "EPIC-D": {
-    title: "EPIC-D — Pillar D: Sequences & scale (2.0)",
-    status: "Icebox",
+    title: "EPIC-D — Pillar D: Sequences & scale",
+    status: "Backlog",
     track: "stambha",
     type: "Epic",
     pillar: "D",
-    release: "2.0",
+    release: "1.4",
     body: epicBody({
-      vision: "Stambha originals at multi-worker scale.",
-      childFeatures: ["D1", "D2", "D3-vault-seq", "D3-reshard-barrier"],
-      meta: { ID: "EPIC-D", Pillar: "D", Release: "2.0" },
+      vision: "Stambha originals — Sequences first (1.4), then multi-worker Chron / proxy (1.5–2.0).",
+      childFeatures: ["D1", "CHRON-redis", "D2", "D3-vault-seq", "D3-reshard-barrier"],
+      meta: { ID: "EPIC-D", Pillar: "D", Release: "1.4+" },
     }),
   },
 
@@ -1917,8 +2187,20 @@ export class PingCommand extends Command {
     release: "1.x",
     body: epicBody({
       vision: "Public docs match 1.x capabilities.",
-      childFeatures: ["DOCS-tier2", "DOCS-sequences", "DX-4", "F1", "REL-1.3.0-archive", "G3 migration guides"],
-      meta: { ID: "EPIC-DOCS", Pillar: "Docs" },
+      childFeatures: [
+        "DOCS-tier2",
+        "DOCS-sequences",
+        "DX-4",
+        "F1",
+        "F3",
+        "DOCS-testing",
+        "DOCS-mental-model",
+        "DOCS-vault-persist",
+        "DOCS-gaps-hygiene",
+        "REL-1.3.0-archive",
+        "G3 migration guides",
+      ],
+      meta: { ID: "EPIC-DOCS", Pillar: "Docs", Release: "1.4+" },
     }),
   },
 
@@ -2076,6 +2358,28 @@ export const TITLE_TO_ID = {
   "1.3.0-archive": "REL-1.3.0-archive",
   "1.3.1-release": "REL-1.3.1",
   "1.4.0-release": "REL-1.4.0",
+  F3: "F3",
+  "F3 — create-stambha scaffolder": "F3",
+  "F3 — create-stambha CLI / project scaffolder": "F3",
+  "create-stambha scaffolder": "F3",
+  "DX-bootstrap": "DX-bootstrap",
+  "DX-bootstrap — Fluent native stack bootstrap": "DX-bootstrap",
+  "DX-piece-factory": "DX-piece-factory",
+  "DX-piece-factory — Reduce Registry constructor boilerplate": "DX-piece-factory",
+  "PKG-testing": "PKG-testing",
+  "PKG-testing — @stambha/testing helpers": "PKG-testing",
+  "DOCS-testing": "DOCS-testing",
+  "DOCS-testing — Command testing guide": "DOCS-testing",
+  "DOCS-mental-model": "DOCS-mental-model",
+  "DOCS-mental-model — First-hour pipeline concept map": "DOCS-mental-model",
+  "DOCS-vault-persist": "DOCS-vault-persist",
+  "DOCS-vault-persist — Vault SQL on getting-started": "DOCS-vault-persist",
+  "DOCS-gaps-hygiene": "DOCS-gaps-hygiene",
+  "DOCS-gaps-hygiene — Fix stale known-gaps Redis rows": "DOCS-gaps-hygiene",
+  "SIGNAL-match": "SIGNAL-match",
+  "SIGNAL-match — Pattern / match() Signal routing": "SIGNAL-match",
+  "CHRON-redis": "CHRON-redis",
+  "CHRON-redis — Redis Chron lock for tier-split": "CHRON-redis",
   "plugins-core-1.3-peers": "PLUGINS-CORE-1.3",
   "PLUGINS-CORE-1.3": "PLUGINS-CORE-1.3",
   "DX-1": "DX-1",
