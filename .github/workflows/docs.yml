@@ -32,7 +32,7 @@ jobs:
         with:
           # Release → tag; repository_dispatch → main tip; workflow_dispatch → triggering ref.
           ref: ${{ github.event_name == 'repository_dispatch' && 'refs/heads/main' || github.event.release.tag_name || github.ref }}
-      - uses: pnpm/action-setup@v6.0.9
+      - uses: pnpm/action-setup@v6.0.10
       - uses: actions/setup-node@v7
         with:
           node-version: 22
