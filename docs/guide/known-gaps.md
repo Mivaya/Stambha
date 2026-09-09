@@ -33,11 +33,12 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 | Gap | Notes |
 | --- | ----- |
 | Slash name/description localizations | Deploy-time locale maps |
-| `create-stambha` scaffolder | Project generator CLI |
+| `create-stambha` scaffolder | Project generator CLI (open PR #136 — post–1.3.2 / 1.4) |
 | Prefix flags + prompt/retry | Interactive prefix parsing improvements |
 | Desired-properties naming | Stambha metaphor vs legacy Discordeno naming |
 | Embed→Container migration helpers | Former `panel()` DX in planned `@stambha/display` plugin |
-| Shared Redis cache across workers | [`@stambha/cache-redis`](/extensions/cache#redis-shared-workers) |
+| Session hooks / OAuth guilds cache | `@stambha/api` minor (Vyne #4/#5 — deferred past 1.3.2) |
+| Hub `shardDisconnect` / resume events | Core 1.4 (Vyne #7) |
 | Redis cooldown driver package | Async store in core; dedicated Redis driver in plugins |
 | Hot reload in dev | Planned `@stambha/dev-reload` |
 | Hosted admin dashboard UI | Out of core — HTTP settings via [`@stambha/api`](/extensions/api) |
