@@ -350,6 +350,96 @@ export const CARD_CATALOG = {
     }),
   },
 
+  "REL-1.3.2": {
+    title: "1.3.2-release",
+    status: "Done",
+    track: "stambha",
+    type: "Release",
+    pillar: "Ops",
+    release: "1.3.2",
+    lane: "Expedite",
+    priority: "blocker",
+    body: doneBody({
+      summary: "v1.3.2 — Vyne stability patch: gateway reconnect race + declarative cooldown store.",
+      delivered: [
+        "Gateway reconnect single-flight / ignoreClose until close (#143)",
+        "setDefaultCooldownStore for declarative cooldown (#144)",
+        "Companion: @stambha/api@1.2.2 CJS loadRoutes; cache-redis@1.0.0 publish (A1)",
+        "GitHub Release v1.3.2 + npm @stambha/*@1.3.2",
+      ],
+      meta: { ID: "REL-1.3.2", Release: "1.3.2", Branch: "chore/release-1.3.2" },
+      references: [
+        "https://github.com/Mivaya/Stambha/releases/tag/v1.3.2",
+        "CHANGELOG.md",
+      ],
+    }),
+  },
+
+  "G-reconnect-race": {
+    title: "G-reconnect-race — Gateway reconnect / 1005 storm",
+    status: "Done",
+    track: "stambha",
+    type: "Bug",
+    pillar: "G",
+    release: "1.3.2",
+    lane: "Expedite",
+    priority: "blocker",
+    body: doneBody({
+      summary: "Reconnect cleared ignoreClose before async close; nested onClose caused 1005 storms.",
+      delivered: [
+        "reconnectPromise single-flight",
+        "awaitSocketClose before clearing ignoreClose",
+        "onClose skips while reconnect in flight",
+        "Vitest: close during reconnect does not nest",
+        "PR #143",
+      ],
+      meta: { ID: "G-reconnect-race", Release: "1.3.2", Epic: "EPIC-G" },
+      references: ["packages/gateway/src/ws/GatewayShard.ts", "https://github.com/Mivaya/Stambha/pull/143"],
+    }),
+  },
+
+  "gates-default-cooldown-store": {
+    title: "gates-default-cooldown-store — setDefaultCooldownStore",
+    status: "Done",
+    track: "stambha",
+    type: "Bug",
+    pillar: "B",
+    release: "1.3.2",
+    lane: "Expedite",
+    priority: "high",
+    body: doneBody({
+      summary: "Declarative cooldown always used memory singleton; bots needed Redis without patching exports.",
+      delivered: [
+        "setDefaultCooldownStore / getDefaultCooldownStore / resetDefaultCooldownStore",
+        "cooldownGate resolves store per check",
+        "Docs + tests; PR #144",
+      ],
+      meta: { ID: "gates-default-cooldown-store", Release: "1.3.2" },
+      references: ["packages/gates/src/cooldownStore.ts", "https://github.com/Mivaya/Stambha/pull/144"],
+    }),
+  },
+
+  "api-loadRoutes-cjs": {
+    title: "api-loadRoutes-cjs — CJS nested default unwrap",
+    status: "Done",
+    track: "stambha-plugins",
+    type: "Bug",
+    pillar: "Ops",
+    release: "1.2.2",
+    lane: "Expedite",
+    priority: "high",
+    body: doneBody({
+      summary: "CommonJS interop nested default caused loadRoutes to miss Route classes (zero routes).",
+      delivered: [
+        "unwrapModuleExport + expandExportCandidates",
+        "Unit tests + README note",
+        "Stambha-plugins PR #39 → @stambha/api@1.2.2",
+      ],
+      meta: { ID: "api-loadRoutes-cjs", Track: "stambha-plugins", Release: "api-1.2.2" },
+      references: ["https://github.com/Mivaya/Stambha-plugins/pull/39"],
+    }),
+  },
+
   "DX-1": {
     title: "DX-1 — Kind hooks: slash / prefix / menu",
     status: "Done",
@@ -1110,23 +1200,29 @@ export class PingCommand extends Command {
 
   A1: {
     title: "A1 — Redis cache driver",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha-plugins",
     type: "Feature",
     pillar: "A",
-    release: "1.x",
-    lane: "Standard",
-    priority: "medium",
-    body: ticketBody({
-      userStory: "As a split-tier bot operator, I want shared cache across gateway/bot workers.",
-      summary: "`@stambha/cache-redis` implementing core Cache interface.",
-      acceptance: [
-        "Redis driver passes Cache interface tests",
-        "Document wiring in tier-split deployment",
-        "Monolith bots keep memory default",
+    release: "1.3.2",
+    lane: "Expedite",
+    priority: "high",
+    body: doneBody({
+      summary: "`@stambha/cache-redis` Redis Cache driver — shipped with 1.3.2 wave (plugins semver).",
+      delivered: [
+        "Source on main via Stambha-plugins #31",
+        "GitHub Release vcache-redis-1.0.0",
+        "Docs: extensions/cache + tier-split wiring",
+        "Monolith keeps MemoryCache default",
       ],
-      meta: { ID: "A1", Pillar: "A", Epic: "EPIC-A", Track: "stambha-plugins" },
-      dependencies: "A1-core coordination",
+      meta: { ID: "A1", Pillar: "A", Epic: "EPIC-A", Track: "stambha-plugins", Release: "1.0.0" },
+      references: [
+        "docs/extensions/cache.md",
+        "https://github.com/Mivaya/Stambha-plugins/releases/tag/vcache-redis-1.0.0",
+      ],
+      notes: [
+        "If npm still 404 after release, grant @stambha org create-package permission on NPM_TOKEN and re-run Publish npm.",
+      ],
     }),
   },
 
@@ -2051,6 +2147,14 @@ export const TITLE_TO_ID = {
   "1.3.0-release": "REL-1.3.0",
   "1.3.0-archive": "REL-1.3.0-archive",
   "1.3.1-release": "REL-1.3.1",
+  "1.3.2-release": "REL-1.3.2",
+  "REL-1.3.2": "REL-1.3.2",
+  "G-reconnect-race": "G-reconnect-race",
+  "G-reconnect-race — Gateway reconnect / 1005 storm": "G-reconnect-race",
+  "gates-default-cooldown-store": "gates-default-cooldown-store",
+  "gates-default-cooldown-store — setDefaultCooldownStore": "gates-default-cooldown-store",
+  "api-loadRoutes-cjs": "api-loadRoutes-cjs",
+  "api-loadRoutes-cjs — CJS nested default unwrap": "api-loadRoutes-cjs",
   "plugins-core-1.3-peers": "PLUGINS-CORE-1.3",
   "PLUGINS-CORE-1.3": "PLUGINS-CORE-1.3",
   "DX-1": "DX-1",
