@@ -6,9 +6,14 @@ import {
   StambhaClient,
   type Registry,
 } from "@stambha/core";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { cooldownGate } from "./cooldownGate.js";
-import { type CooldownStore, MemoryCooldownStore } from "./cooldownStore.js";
+import {
+  type CooldownStore,
+  MemoryCooldownStore,
+  resetDefaultCooldownStore,
+  setDefaultCooldownStore,
+} from "./cooldownStore.js";
 import { enableDeclarativeCommandGates, resolveCommandGates } from "./declarativeGates.js";
 import { nsfwGate } from "./nsfwGate.js";
 import { combinePermissions, hasPermissions, Permission } from "./permissions.js";
@@ -67,6 +72,10 @@ describe("permissionsGate", () => {
 });
 
 describe("cooldownGate", () => {
+  afterEach(() => {
+    resetDefaultCooldownStore();
+  });
+
   it("limits invocations per window", async () => {
     const store = new MemoryCooldownStore();
     const gate = cooldownGate({ limit: 2, delay: 60_000, store, scope: "user" });
@@ -102,6 +111,39 @@ describe("cooldownGate", () => {
     const denied = await gate.check(ctx());
     expect(denied.allow).toBe(false);
     expect(denied.reason).toContain("2 seconds");
+  });
+
+  it("uses setDefaultCooldownStore when store is omitted", async () => {
+    const store = new MemoryCooldownStore();
+    setDefaultCooldownStore(store);
+    const gate = cooldownGate({ limit: 1, delay: 60_000, scope: "user" });
+
+    expect((await gate.check(ctx())).allow).toBe(true);
+    expect((await gate.check(ctx())).allow).toBe(false);
+  });
+
+  it("declarative cooldown: uses the default store", () => {
+    const store = new MemoryCooldownStore();
+    setDefaultCooldownStore(store);
+
+    class Ping extends Command {
+      constructor(registry: Registry<Command>) {
+        super(registry, {
+          name: "ping",
+          description: "ping",
+          kinds: ["slash"],
+          cooldown: { delayMs: 60_000, limit: 1 },
+        });
+      }
+      async execute() {
+        return ok(undefined);
+      }
+    }
+
+    const client = new StambhaClient();
+    const cmd = new Ping(client.registries.commands);
+    const gates = resolveCommandGates(cmd);
+    expect(gates).toHaveLength(1);
   });
 });
 
