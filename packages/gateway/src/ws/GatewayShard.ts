@@ -78,6 +78,8 @@ export class GatewayShard {
   private reconnectAttempt = 0;
   /** Skip `onClose` while we intentionally tear down for reconnect. */
   private ignoreClose = false;
+  /** Coalesce concurrent reconnect() calls (close event must not start a second reconnect). */
+  private reconnectPromise: Promise<void> | null = null;
   /** URL used for the most recent socket open (tests / diagnostics). */
   private lastConnectUrl: string | null = null;
   /** Guild ids from the last READY (startup backfill set). */
@@ -374,14 +376,33 @@ export class GatewayShard {
 
   private async reconnect(options?: { resetSession?: boolean }): Promise<void> {
     if (this.closed) return;
+    if (this.reconnectPromise) return this.reconnectPromise;
+
+    this.reconnectPromise = this.reconnectExclusive(options).finally(() => {
+      this.reconnectPromise = null;
+    });
+    return this.reconnectPromise;
+  }
+
+  /**
+   * Tear down the socket, wait for the close event (or timeout), then reopen.
+   *
+   * Important: do **not** clear `ignoreClose` in the same turn as `socket.close()`.
+   * Node/`ws` often emits close asynchronously with code 1005; clearing the flag
+   * early lets `onClose` start a nested reconnect storm.
+   */
+  private async reconnectExclusive(options?: { resetSession?: boolean }): Promise<void> {
+    if (this.closed) return;
     this.clearHeartbeat();
     this.ignoreClose = true;
-    try {
-      this.socket?.close();
-    } finally {
-      this.ignoreClose = false;
-      this.socket = null;
+
+    const sock = this.socket;
+    this.socket = null;
+    if (sock) {
+      await this.awaitSocketClose(sock, 1_000);
     }
+
+    this.ignoreClose = false;
 
     if (options?.resetSession) {
       this.sessionId = null;
@@ -398,8 +419,34 @@ export class GatewayShard {
     }
   }
 
+  /** Wait until `sock` emits `close`, or `timeoutMs` elapses (whichever first). */
+  private awaitSocketClose(sock: GatewayWebSocket, timeoutMs: number): Promise<void> {
+    return new Promise((resolve) => {
+      let settled = false;
+      const done = () => {
+        if (settled) return;
+        settled = true;
+        try {
+          sock.removeEventListener("close", onClose);
+        } catch {
+          /* ignore */
+        }
+        resolve();
+      };
+      const onClose = () => done();
+      sock.addEventListener("close", onClose);
+      try {
+        sock.close(1000, "reconnect");
+      } catch {
+        done();
+        return;
+      }
+      setTimeout(done, timeoutMs);
+    });
+  }
+
   private onClose(event: unknown): void {
-    if (this.closed || this.ignoreClose) return;
+    if (this.closed || this.ignoreClose || this.reconnectPromise) return;
 
     const code =
       typeof event === "object" && event !== null && "code" in event
