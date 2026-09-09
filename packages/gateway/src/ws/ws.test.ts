@@ -67,6 +67,8 @@ class MockWebSocket implements GatewayWebSocket {
   private listeners = new Map<string, Set<(event: unknown) => void>>();
   readonly sent: string[] = [];
   readonly url: string;
+  /** When > 0, `close()` emits the close event asynchronously (real `ws` behavior). */
+  deferCloseMs = 0;
 
   constructor(
     private readonly scripted: GatewayPayload[],
@@ -81,8 +83,15 @@ class MockWebSocket implements GatewayWebSocket {
 
   close(code = 1000, reason = ""): void {
     this.readyState = 3;
-    for (const fn of this.listeners.get("close") ?? []) {
-      fn({ code, reason });
+    const emit = () => {
+      for (const fn of this.listeners.get("close") ?? []) {
+        fn({ code, reason });
+      }
+    };
+    if (this.deferCloseMs > 0) {
+      setTimeout(emit, this.deferCloseMs);
+    } else {
+      emit();
     }
   }
 
@@ -387,6 +396,51 @@ describe("GatewayShard", () => {
     await sockets[1]?.open();
     expect(shard.connectUrl).toBe(buildGatewayUrl("wss://resume.discord.test"));
 
+    await shard.disconnect();
+    vi.spyOn(Math, "random").mockRestore();
+    vi.useRealTimers();
+  });
+
+  it("does not nest reconnect when close arrives asynchronously (1005 storm)", async () => {
+    vi.useFakeTimers();
+    vi.spyOn(Math, "random").mockReturnValue(0);
+
+    const hub = createGatewayEventHub();
+    const sockets: MockWebSocket[] = [];
+
+    const createWebSocket: CreateGatewayWebSocket = (url) => {
+      const socket = new MockWebSocket([], url);
+      socket.deferCloseMs = 5;
+      sockets.push(socket);
+      return socket;
+    };
+
+    const shard = new GatewayShard({
+      session: createSession({ token: "test-token" }),
+      shardId: 0,
+      totalShards: 1,
+      intents: 1,
+      hub,
+      manager: createShardManager({ totalShards: 1 }),
+      gatewayUrl: "wss://gateway.test/?v=10&encoding=json",
+      createWebSocket,
+      reconnectDelayMs: 20,
+      reconnectMaxDelayMs: 20,
+    });
+
+    const connectPromise = shard.connect();
+    await sockets[0]?.open();
+    await connectPromise;
+
+    // Remote disconnect starts reconnect; async close from socket.close() must not nest.
+    sockets[0]?.emitClose(1006, "abnormal");
+    await vi.advanceTimersByTimeAsync(5);
+    await vi.advanceTimersByTimeAsync(20);
+    await vi.advanceTimersByTimeAsync(5);
+
+    expect(sockets.length).toBe(2);
+
+    await sockets[1]?.open();
     await shard.disconnect();
     vi.spyOn(Math, "random").mockRestore();
     vi.useRealTimers();
