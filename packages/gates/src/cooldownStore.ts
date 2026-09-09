@@ -48,4 +48,31 @@ export class MemoryCooldownStore implements CooldownStore {
   }
 }
 
-export const defaultCooldownStore = new MemoryCooldownStore();
+const memoryDefaultStore = new MemoryCooldownStore();
+
+/** Active default used by {@link cooldownGate} / declarative `cooldown:` when no `store` is passed. */
+let activeDefaultStore: CooldownStore = memoryDefaultStore;
+
+/**
+ * In-process memory store — initial {@link getDefaultCooldownStore} value.
+ * Prefer {@link getDefaultCooldownStore} / {@link setDefaultCooldownStore} for split-tier bots.
+ */
+export const defaultCooldownStore: CooldownStore = memoryDefaultStore;
+
+/** Current default store for gates that omit an explicit `store`. */
+export function getDefaultCooldownStore(): CooldownStore {
+  return activeDefaultStore;
+}
+
+/**
+ * Replace the default cooldown store (e.g. Redis for split-tier / multi-process).
+ * Affects declarative `cooldown:` options and {@link cooldownGate} calls without `store`.
+ */
+export function setDefaultCooldownStore(store: CooldownStore): void {
+  activeDefaultStore = store;
+}
+
+/** Restore the built-in memory store (tests / process reset). */
+export function resetDefaultCooldownStore(): void {
+  activeDefaultStore = memoryDefaultStore;
+}
