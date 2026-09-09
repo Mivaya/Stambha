@@ -6,6 +6,17 @@ This page is a walkthrough. For TypeScript signatures, switch to **API** in the 
 
 Pick an example by size → [Examples by scale](/guide/examples).
 
+## New project (scaffolder)
+
+Generate a runnable bot without copying `examples/`:
+
+```bash
+pnpm create stambha@latest my-bot
+cd my-bot && pnpm install && pnpm demo   # basic template — no token
+```
+
+Templates: **`basic`** (native gateway + loader, default) or **`minimal`** (MockBridge smoke). Use `pnpm create stambha my-bot --template minimal` for the smaller layout.
+
 ## Fastest path — no token
 
 | Goal | Command |
@@ -17,7 +28,7 @@ Pick an example by size → [Examples by scale](/guide/examples).
 
 No Discord token required for `demo` / minimal. You’ll see prefix commands (and on `bot`, signals + mentions) against the real pipeline.
 
-When you’re ready for a live bot, continue below — or copy `examples/basic` as your greenfield layout.
+When you’re ready for a live bot, continue below — or scaffold with `pnpm create stambha@latest`.
 
 ## Prerequisites
 

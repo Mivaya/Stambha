@@ -33,7 +33,6 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 | Gap | Notes |
 | --- | ----- |
 | Slash name/description localizations | Deploy-time locale maps |
-| `create-stambha` scaffolder | Project generator CLI |
 | Prefix flags + prompt/retry | Interactive prefix parsing improvements |
 | Desired-properties naming | Stambha metaphor vs legacy Discordeno naming |
 | Embed→Container migration helpers | Former `panel()` DX in planned `@stambha/display` plugin |
@@ -92,7 +91,7 @@ These leftover guide topics stay out of this patch — use the pointers below un
 | ----- | ------ | ----------- |
 | Dedicated testing guide | **Deferred** — not in 1.3.1 | `examples/bot` `pnpm demo` (demo REST stub); Vault unit tests via [`MemoryDriver`](/features/vault); smoke with [`examples/minimal`](/guide/examples) |
 | Operator recipes (Docker / PM2) | **Deferred** — not in 1.3.1 | Process model in [Deployment overview](/deployment/overview) and [Tier split](/deployment/tier-split); host the VitePress site via [Hosting the docs](/guide/hosting-the-docs) (contributor) |
-| `create-stambha` scaffolder docs | **Deferred** (scaffolder itself is a core gap) | Copy [`examples/basic`](/guide/examples) or [`examples/bot`](/guide/examples) |
+| `create-stambha` scaffolder docs | **Shipped** — [`create-stambha` package](https://github.com/mivaya/Stambha/tree/main/packages/create-stambha) | [Getting started — New project](/guide/getting-started#new-project-scaffolder) |
 | i18n / localization guide | **Deferred** (slash localizations still open) | Discord deploy-time locale maps when you add them yourself |
 
 
