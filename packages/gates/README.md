@@ -96,7 +96,7 @@ Combine custom gates in `@stambha/core` with `gateAnd()` / `gateOr()`.
 
 | Export | Purpose |
 |--------|---------|
-| `cooldownGate`, `MemoryCooldownStore`, `CooldownStore` | Rate-limit commands (inject Redis via `@stambha/cooldown-redis`) |
+| `cooldownGate`, `MemoryCooldownStore`, `CooldownStore`, `setDefaultCooldownStore` | Rate-limit commands (inject Redis via `@stambha/cooldown-redis`) |
 | `permissionsGate`, `Permission` | Discord permission math |
 | `nsfwGate` | Age-restricted channels |
 | `guildOnlyGate`, `dmOnlyGate`, `runInGate` | Where commands may run |
