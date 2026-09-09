@@ -89,7 +89,7 @@ Auto-load folders with [`@stambha/loader`](../loader).
 | `integrationTypes` / `contexts` on `Command` | User-installable slash commands |
 | `ExecutionPipeline` | Run conduit → command flow |
 | `InboundRouter`, `SignalRouter` | Dispatch commands and components |
-| `sequence`, `SequenceBuilder` | Multi-step UI flows |
+| `sequence`, `runSequence`, `SeqSignal` | Multi-step UI flows |
 | `RestPort`, `HttpRestPort` | Outbound API (tier split) |
 | `MockBridge` | Testing without Discord |
 | `ok`, `err`, `Outcome` | Typed command results |
