@@ -11,7 +11,10 @@ export {
   type CooldownConsumeResult,
   type CooldownStore,
   defaultCooldownStore,
+  getDefaultCooldownStore,
   MemoryCooldownStore,
+  resetDefaultCooldownStore,
+  setDefaultCooldownStore,
 } from "./cooldownStore.js";
 export {
   enableDeclarativeCommandGates,
