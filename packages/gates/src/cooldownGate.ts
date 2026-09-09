@@ -1,5 +1,5 @@
 import { type CommandContext, defineGate, type GateLike } from "@stambha/core";
-import { type CooldownStore, defaultCooldownStore } from "./cooldownStore.js";
+import { type CooldownStore, getDefaultCooldownStore } from "./cooldownStore.js";
 
 export type CooldownScope = "user" | "guild" | "global" | "userGuild";
 
@@ -50,12 +50,13 @@ function formatRetry(ms: number): string {
 export function cooldownGate(options: CooldownGateOptions): GateLike {
   const scope = options.scope ?? "userGuild";
   const perCommand = options.perCommand ?? true;
-  const store = options.store ?? defaultCooldownStore;
   const filtered = new Set(options.filteredUsers ?? []);
 
   return defineGate(`cooldown(${scope})`, async (ctx) => {
     if (filtered.has(ctx.userId)) return { allow: true };
 
+    // Resolve store per check so setDefaultCooldownStore applies to existing gates.
+    const store = options.store ?? getDefaultCooldownStore();
     const key = cooldownKey(ctx, scope, perCommand);
     const result = await store.consume(key, options.limit, options.delay);
 

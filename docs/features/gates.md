@@ -127,7 +127,7 @@ Custom store for multi-process / split-tier bots (async-capable):
 
 ```ts
 import { createClient } from "redis";
-import { cooldownGate } from "@stambha/gates";
+import { cooldownGate, setDefaultCooldownStore } from "@stambha/gates";
 import { createRedisCooldownStore } from "@stambha/cooldown-redis";
 
 const client = createClient({ url: process.env.REDIS_URL });
@@ -135,7 +135,11 @@ await client.connect();
 
 const store = createRedisCooldownStore({ client });
 
+// Per-gate:
 cooldownGate({ limit: 1, delay: 5000, store });
+
+// Or process-wide — also powers declarative `cooldown:` on Command options:
+setDefaultCooldownStore(store);
 ```
 
 Monolith bots keep the default in-memory store. `CooldownStore.consume` may return a `Promise` — `cooldownGate` always awaits it.
