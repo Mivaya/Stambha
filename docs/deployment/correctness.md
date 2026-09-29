@@ -15,7 +15,8 @@ How Stambha behaves on Discord’s hard edges — rate limits, resumes, identify
 | Gateway resume URL | Prefer `resume_gateway_url` from READY on reconnect | `@stambha/gateway` WS client · `ws.test.ts` |
 | Close codes | Classify resume vs fresh identify | `classifyCloseCode` · `ws.test.ts` |
 | Identify `max_concurrency` | Identify budget buckets | `IdentifyBudget` · reshard / gateway tests |
-| Heartbeat / zombies | Heartbeat interval from HELLO; ACK tracking in shard loop | Native WS shard implementation + tests |
+| Heartbeat / zombies | Reset `heartbeatAck` on every HELLO before the interval starts. A missed ACK reconnects once; the next HELLO sends a heartbeat instead of reconnecting again at `heartbeat_interval`. | `GatewayShard.onHello` · `ws.test.ts` |
+| Invalid Session | Opcode 9 `d: true` sends RESUME and keeps the session id and sequence. `d: false` drops the session and identifies again. | `GatewayShard.onInvalidSession` · `ws.test.ts` |
 | Guild backfill / availability | Backfill + availability event handling | Gateway guild backfill (PR #72 lineage) |
 | CamelCase dispatches | Tiers 1–4 via `normalizeDispatch`; escape hatch `dispatchNormalize: 'raw'` | `@stambha/transform` dispatch · `dispatch.test.ts` |
 
@@ -44,6 +45,10 @@ When using `HttpRestPort` → `createNativeRestWorker`, the **worker** owns Disc
 ### Resume
 
 After READY, the client stores `resume_gateway_url` (when present) and reconnects there with a Resume payload (`op: 6`) when the close code allows resume. Otherwise it identifies fresh.
+
+A missed heartbeat ACK sets an internal flag and reconnects. The next HELLO clears that flag **before** the heartbeat timer starts, so the first tick sends opcode 1 instead of reconnecting again every `heartbeat_interval`.
+
+Invalid Session (`op: 9`) with `d: true` sends RESUME on the open socket. `d: false` means Discord rejected the session: the shard clears it and identifies again. Do not RESUME when Discord says the session is not resumable.
 
 ### Identify budget
 
