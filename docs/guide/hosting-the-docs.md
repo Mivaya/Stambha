@@ -44,7 +44,9 @@ The site uses [vitepress-versioning-plugin](https://vvp.imb11.dev/) with a navba
 | URL | Content |
 |-----|---------|
 | `/Stambha/` | Latest (root `package.json` version at build time, or **Next** when that version is already archived) |
-| `/Stambha/1.3.0/` | Frozen snapshot in `docs/versions/1.3.0/` |
+| `/Stambha/1.0.0/` and later | Frozen snapshot in `docs/versions/<semver>/` |
+
+Versions **below 1.0.0** are not in the dropdown. Do not add `docs/versions/0.*` folders.
 
 **At each core npm release**, archive the docs that match the shipped version:
 
