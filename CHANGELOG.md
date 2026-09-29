@@ -5,6 +5,22 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.3] - 2026-09-29
+
+### Fixed
+
+- **Heartbeat ACK on HELLO** — `GatewayShard.onHello` sets `heartbeatAck` before the heartbeat interval starts. A missed ACK reconnects once; the next HELLO sends a heartbeat instead of reconnecting again every `heartbeat_interval` (READY storm).
+- **Resumable Invalid Session** — opcode 9 with `d: true` sends RESUME and keeps the session id and sequence. `d: false` still drops the session and identifies again.
+
+### Documentation
+
+- Gateway and correctness docs cover the HELLO ACK reset and Invalid Session resume path.
+- Version dropdown no longer lists snapshots below **1.0.0** (`0.2.1`, `0.2.2`, `0.3.5` removed). Remaining archives: **1.0.0**, **1.1.0**, **1.3.0**, **1.3.1**.
+
+### Companion (Stambha-plugins)
+
+- `@stambha/api` — OAuth guild list cache keyed by Discord user id (10 minute fresh, 30 minute stale). `GET /guilds` and `assertGuildAccess` return `degraded: true` on Discord 429 instead of throwing. Logout clears the entry. Ships as its own plugins patch; no other extension versions change.
+
 ## [1.3.2] - 2026-09-09
 
 ### Fixed
