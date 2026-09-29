@@ -95,8 +95,40 @@ Dispatch order: **subcommand method** (when `subcommandMethods: true`) → **kin
 
 ## 2. Bootstrap the client
 
+Prefer the monolith helper — one call wires REST, hub attach, and the gateway client:
+
 ```ts
 // src/main.ts
+import { loadPieces } from "@stambha/loader";
+import {
+  bootstrapNativeBot,
+  combineIntents,
+  GatewayIntent,
+} from "@stambha/gateway";
+
+const token = process.env.DISCORD_TOKEN!;
+const { client, gateway } = await bootstrapNativeBot({
+  token,
+  applicationId: process.env.DISCORD_APPLICATION_ID,
+  prefix: "!",
+  intents: combineIntents(
+    GatewayIntent.Guilds,
+    GatewayIntent.GuildMessages,
+    GatewayIntent.MessageContent,
+  ),
+});
+
+await loadPieces(client);
+await gateway.connect();
+```
+
+`bootstrapNativeBot` creates the REST port, `createStambhaBot`, hub, `attachStambhaClient`, and `createNativeGatewayClient`. Call `loadPieces` then `gateway.connect()` yourself. Tier-split / bigbot keep explicit workers — see [Tier split](/deployment/tier-split).
+
+### Advanced — raw wiring
+
+Same stack without the helper (custom REST, demo stubs, or split workers):
+
+```ts
 import { createStambhaBot } from "@stambha/core";
 import {
   attachStambhaClient,

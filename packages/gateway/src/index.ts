@@ -3,6 +3,11 @@ export {
   attachStambhaClient,
 } from "./attachStambhaClient.js";
 export {
+  type BootstrapNativeBotOptions,
+  type BootstrapNativeBotResult,
+  bootstrapNativeBot,
+} from "./bootstrapNativeBot.js";
+export {
   CapturingInteractionRestPort,
 } from "./http/CapturingRestPort.js";
 export {

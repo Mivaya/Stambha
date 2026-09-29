@@ -9,7 +9,7 @@ Part of the [**@stambha**](https://www.npmjs.com/org/stambha) monorepo · [GitHu
 ## Install
 
 ```bash
-npm install @stambha/gateway @stambha/core @stambha/transform @stambha/transport
+npm install @stambha/gateway @stambha/core @stambha/rest @stambha/transform @stambha/transport
 ```
 
 Requires **Node.js 20+**.
@@ -17,6 +17,33 @@ Requires **Node.js 20+**.
 ---
 
 ## Quick start
+
+Monolith happy path — `bootstrapNativeBot` wires REST, hub attach, and the gateway client:
+
+```ts
+import { loadPieces } from "@stambha/loader";
+import {
+  bootstrapNativeBot,
+  combineIntents,
+  GatewayIntent,
+} from "@stambha/gateway";
+
+const token = process.env.DISCORD_TOKEN!;
+const { client, gateway } = await bootstrapNativeBot({
+  token,
+  applicationId: process.env.DISCORD_APPLICATION_ID,
+  intents: combineIntents(
+    GatewayIntent.Guilds,
+    GatewayIntent.GuildMessages,
+    GatewayIntent.MessageContent,
+  ),
+});
+
+await loadPieces(client);
+await gateway.connect();
+```
+
+### Advanced — raw wiring
 
 ```ts
 import { createStambhaBot } from "@stambha/core";
@@ -81,6 +108,7 @@ See `examples/bot` (`pnpm split:gateway`) for a full tier-split relay.
 
 | Export | Purpose |
 |--------|---------|
+| `bootstrapNativeBot` | Monolith happy-path: REST + attach + gateway client |
 | `createGatewayEventHub`, `GatewayEventHub` | Event bus → Stambha client |
 | `createMessageCollector`, `awaitMessages`, … | One-shot hub collectors (messages / reactions / interactions) |
 | `createNativeGatewayClient` | Bundled WebSocket shard client (0.3.0) |
