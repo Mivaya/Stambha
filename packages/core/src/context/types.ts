@@ -48,6 +48,11 @@ export interface CommandContext {
   editReply?(payload: ReplyPayload): Promise<void>;
   /** Slash only — acknowledge with a deferred response (type 5) before `editReply`. */
   deferReply?(ephemeral?: boolean): Promise<void>;
+  /**
+   * Owning client — injected by {@link StambhaClient.invoke} for command execution.
+   * Required by helpers such as {@link runSequence}.
+   */
+  readonly client?: import("../client/StambhaClient.js").StambhaClient;
 }
 
 /** Context for Scout passive watchers. */
