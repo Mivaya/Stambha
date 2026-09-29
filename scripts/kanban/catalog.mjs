@@ -398,6 +398,66 @@ export const CARD_CATALOG = {
     }),
   },
 
+  "G-heartbeat-ack": {
+    title: "G-heartbeat-ack — reset ack on HELLO",
+    status: "In Progress",
+    track: "stambha",
+    type: "Bug",
+    pillar: "G",
+    release: "1.3.3",
+    lane: "Expedite",
+    priority: "blocker",
+    body: ticketBody({
+      userStory:
+        "As a bot operator, I want a missed heartbeat ACK to recover with one reconnect, not a READY storm every heartbeat interval.",
+      summary:
+        "HELLO after a zombie reconnect must set heartbeatAck true before the interval starts, and opcode 9 with d true must RESUME instead of IDENTIFY.",
+      problem:
+        "GatewayShard left heartbeatAck false across HELLO, so the first tick called reconnect without sending opcode 1. Invalid Session d true also cleared the session and identified.",
+      acceptance: [
+        "onHello sets heartbeatAck true before setInterval",
+        "First tick after HELLO sends Heartbeat when the previous ack was false",
+        "Invalid Session d true sends RESUME and keeps session id and sequence",
+        "Invalid Session d false still reconnects with a new session",
+        "Regression tests in packages/gateway/src/ws/ws.test.ts",
+      ],
+      meta: { ID: "G-heartbeat-ack", Release: "1.3.3", Epic: "EPIC-G" },
+      references: ["packages/gateway/src/ws/GatewayShard.ts"],
+    }),
+  },
+
+  "api-oauth-guilds-cache": {
+    title: "api-oauth-guilds-cache — OAuth guild list 429 resilience",
+    status: "In Progress",
+    track: "stambha-plugins",
+    type: "Bug",
+    pillar: "Ops",
+    release: "1.3.3",
+    lane: "Expedite",
+    priority: "blocker",
+    body: ticketBody({
+      userStory:
+        "As a dashboard user, I want server lists and guild access checks to keep working when Discord rate-limits GET /users/@me/guilds.",
+      summary:
+        "Cache OAuth guild membership by user id, single-flight fetches, and return degraded data instead of throwing 429.",
+      problem:
+        "fetchOAuthGuilds hit Discord on every /guilds and assertGuildAccess call. 429 became 500/503 and broke the dashboard session.",
+      acceptance: [
+        "Cache key is user id, not access token",
+        "Single-flight per user",
+        "TTL about 10 minutes, stale window about 30 minutes, 429 cooldown from Retry-After or 90s",
+        "On 429 with no cache, return empty guilds and degraded true — do not throw",
+        "GET /guilds and assertGuildAccess use the cache; logout invalidates it",
+        "Optional store shaped like @stambha/cache",
+      ],
+      meta: { ID: "api-oauth-guilds-cache", Track: "stambha-plugins", Release: "1.3.3" },
+      references: [
+        "packages/api/src/auth/oauthGuildsCache.ts",
+        "https://github.com/Mivaya/Stambha-plugins",
+      ],
+    }),
+  },
+
   "gates-default-cooldown-store": {
     title: "gates-default-cooldown-store — setDefaultCooldownStore",
     status: "Done",
@@ -2151,6 +2211,10 @@ export const TITLE_TO_ID = {
   "REL-1.3.2": "REL-1.3.2",
   "G-reconnect-race": "G-reconnect-race",
   "G-reconnect-race — Gateway reconnect / 1005 storm": "G-reconnect-race",
+  "G-heartbeat-ack": "G-heartbeat-ack",
+  "G-heartbeat-ack — reset ack on HELLO": "G-heartbeat-ack",
+  "api-oauth-guilds-cache": "api-oauth-guilds-cache",
+  "api-oauth-guilds-cache — OAuth guild list 429 resilience": "api-oauth-guilds-cache",
   "gates-default-cooldown-store": "gates-default-cooldown-store",
   "gates-default-cooldown-store — setDefaultCooldownStore": "gates-default-cooldown-store",
   "api-loadRoutes-cjs": "api-loadRoutes-cjs",
