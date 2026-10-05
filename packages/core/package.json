@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@stambha/runtime": "workspace:*",
-    "cron-parser": "^5.10.0"
+    "cron-parser": "^5.10.1"
   },
   "engines": {
     "node": ">=20"
