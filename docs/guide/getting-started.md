@@ -79,7 +79,7 @@ Return **`ok(value)`** or **`err(message)`** from `execute()` — the pipeline u
 
 ### Kind hooks (optional)
 
-Prefer separate handlers per invocation kind without Sapphire’s `chatInputRun` / `messageRun` names:
+Prefer separate handlers per invocation kind (`slash` / `prefix` / `menu`) instead of a single generic `execute` when the reply shape differs:
 
 ```ts
 export class PingCommand extends Command {

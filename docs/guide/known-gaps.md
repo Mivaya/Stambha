@@ -19,7 +19,7 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 | REST & Gateway correctness docs | [Correctness](/deployment/correctness) |
 | Capability ⊕ permission composition | [Capabilities](/features/capabilities#capability-permission-composition) |
 | Gateway dispatch tiers + typed event map | CamelCase hub payloads; `dispatchNormalize: 'raw'` escape hatch |
-| Native-only transform | discord.js / Discordeno shape adapters **removed** |
+| Native-only transform | Third-party client shape adapters **removed** — use native gateway/REST payloads |
 | User-install contexts, polls, SKUs, HTTP interactions | Platform DX on core REST/gateway |
 | Collectors, typing, `fetchApplication` | Gateway/REST helpers |
 | Capabilities authz | `@stambha/authz` |
@@ -34,16 +34,30 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 | --- | ----- |
 | Slash name/description localizations | Deploy-time locale maps |
 | Prefix flags + prompt/retry | Interactive prefix parsing improvements |
-| Desired-properties naming | Stambha metaphor vs legacy Discordeno naming |
-| Embed→Container migration helpers | Former `panel()` DX in planned `@stambha/display` plugin |
-| Session hooks / token refresh | `@stambha/api` (Vyne #4 — still open) |
-| Hub `shardDisconnect` / resume events | Core 1.4+ (Vyne #7) |
+| Desired-properties naming | Stambha metaphor vs older Discord payload naming |
+| Session hooks / token refresh | `@stambha/api` (still open) |
+| Hub `shardDisconnect` / resume events | Core follow-up after 1.4 Must |
 | Channel obfuscation HTTP omission | Gateway detect helpers ship now; HTTP `GET …/channels` omits inaccessible channels from **2026-11-16** — test with Identify `capabilities` |
 | Hot reload in dev | Planned `@stambha/dev-reload` |
 | Hosted admin dashboard UI | Out of core — HTTP settings via [`@stambha/api`](/extensions/api) |
 | Entity cache layer | Opt-in Guild/Channel/Member stores |
-| Voice package | Not in core — use Discord voice libraries directly if needed |
+| Voice connect package | Not in core — use a Discord voice library against typed `voiceServerUpdate` if needed |
 
+
+---
+
+## Planned for 1.4 (Sprint Ready)
+
+| Topic | Notes |
+| ----- | ----- |
+| `@stambha/display` | EmbedManager / ContainerManager + classic embed → Components V2 migration helpers |
+| `@stambha/format` | Mentions, timestamps, code-block helpers |
+| `AttachmentBuilder` | Files, spoilers, voice-message metadata |
+| Piece factory DX | Options-first / factory Command registration without Registry ctor boilerplate |
+| Pipeline concept map | First-hour Scout → … → Epilogue guide page |
+| Modal Label / radio / checkbox | Discord modal component builders + docs |
+| REST voice messages / role member counts / activity instance | Native `@stambha/rest` helpers |
+| Command deploy bulk-overwrite hook | Observable slash registry overwrite |
 
 ---
 
@@ -57,6 +71,7 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 | `create-stambha` scaffolder | [`create-stambha`](https://github.com/Mivaya/Stambha/tree/main/packages/create-stambha) — `pnpm create stambha` |
 | Fluent native bootstrap | `bootstrapNativeBot` in `@stambha/gateway` |
 | `runSequence` orchestration | [Sequences](/features/sequences) |
+| Request Guild Members / guilds `shard` / channel obfuscation helpers | [Correctness](/deployment/correctness) |
 
 
 ---
@@ -78,9 +93,9 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 
 | Not supported | Do this instead |
 | ------------- | --------------- |
-| discord.js (or Discordeno) owning the gateway while Stambha only owns commands | Full [native bootstrap](/guide/getting-started) |
+| A third-party client owning the gateway while Stambha only owns commands | Full [native bootstrap](/guide/getting-started) |
 | Library shape adapters in `@stambha/transform` | Removed in 1.3.0 — [native migration](/migration/) only |
-| `PanelBuilder` / `panel()` in core | `ContainerBuilder` + `componentsV2`, or future `@stambha/display` |
+| `PanelBuilder` / `panel()` in core | `ContainerBuilder` + `componentsV2`, or `@stambha/display` in 1.4 |
 | Editing a poll message after create | [Create / end poll](/features/polls) APIs only |
 
 

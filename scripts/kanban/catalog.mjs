@@ -502,7 +502,7 @@ export const CARD_CATALOG = {
 
   "REL-1.4.0": {
     title: "1.4.0-release",
-    status: "Backlog",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Release",
     pillar: "Ops",
@@ -511,17 +511,19 @@ export const CARD_CATALOG = {
     priority: "blocker",
     body: ticketBody({
       summary:
-        "v1.4.0 — **adoption minor**: fluent native bootstrap, create-stambha, runSequence, vault-sql onboarding, publish cache-redis. Capability stretch (FORMAT/ATTACH/display) only if Must lands early. Staff auth = `@stambha/authz` (C1 numeric levels Won't).",
+        "v1.4.0 — **adoption minor** plus DX surface: bootstrap, create-stambha, runSequence, vault onboarding (shipped), then `@stambha/display` / FORMAT / ATTACH / piece factory / mental-model docs, and Discord API surface ports (voice messages, role member counts, modal Label inputs, deploy hooks). Staff auth remains `@stambha/authz`.",
       acceptance: [
-        "Must tickets Done (see 1.4 Sprint Ready lane)",
+        "Must (Done): F3, DX-bootstrap, D1, DOCS-vault-persist, A1, pre-release Discord API ports",
+        "Sprint Ready 1.4 lane Done or explicitly deferred in CHANGELOG",
         "CHANGELOG [1.4.0] + pnpm version:bump 1.4.0",
-        "docs:archive 1.3.1 <release SHA>",
+        "docs:archive 1.3.3 <release SHA>",
         "GitHub Release v1.4.0 + npm @stambha/*@1.4.0",
-        "Plugins: cache-redis published if A1 in scope",
+        "Public docs use Stambha / Discord API vocabulary only",
       ],
       meta: { ID: "REL-1.4.0", Release: "1.4.0", Branch: "chore/release-1.4.0" },
-      dependencies: "F3, DX-bootstrap, D1, DOCS-vault-persist, A1",
-      references: ["scripts/kanban/catalog.mjs — 1.4 picks"],
+      dependencies:
+        "F3, DX-bootstrap, D1, DOCS-vault-persist, A1, EPIC-DISPLAY, FORMAT, ATTACH, DX-piece-factory, DOCS-mental-model, UPSTREAM-djs, UPSTREAM-sapphire",
+      references: ["scripts/kanban/catalog.mjs — 1.4 picks", "docs/guide/known-gaps.md"],
     }),
   },
 
@@ -581,12 +583,12 @@ export const CARD_CATALOG = {
 
   "DX-piece-factory": {
     title: "DX-piece-factory — Reduce Registry constructor boilerplate",
-    status: "Backlog",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "B",
     release: "1.4",
-    lane: "Standard",
+    lane: "Expedite",
     priority: "high",
     body: ticketBody({
       userStory:
@@ -599,7 +601,7 @@ export const CARD_CATALOG = {
         "Docs + examples/basic migrate one command",
         "No break of existing class-extends-Command pattern",
       ],
-      outOfScope: ["Mandatory decorators", "Sapphire compatibility shims"],
+      outOfScope: ["Mandatory decorators", "Third-party framework shims"],
       meta: { ID: "DX-piece-factory", Pillar: "B", Release: "1.4", Epic: "EPIC-B" },
       dependencies: "DX-bootstrap preferred first",
     }),
@@ -616,7 +618,7 @@ export const CARD_CATALOG = {
     priority: "low",
     body: ticketBody({
       summary:
-        "Deferred — no `@stambha/testing` package for 1.4. Sapphire/discord.js ecosystems rely on library mocks + user test setup; Stambha already ships MockBridge, demo REST, and examples/minimal patterns instead.",
+        "Deferred — no `@stambha/testing` package for 1.4. Stambha already ships MockBridge, demo REST, and examples/minimal patterns for local verification.",
       acceptance: [
         "Revisit only if repeated adoption feedback asks for a dedicated test kit",
         "Until then: document patterns in examples + optional DOCS-testing-lite",
@@ -648,16 +650,16 @@ export const CARD_CATALOG = {
 
   "DOCS-mental-model": {
     title: "DOCS-mental-model — First-hour pipeline concept map",
-    status: "Backlog",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Task",
     pillar: "Docs",
     release: "1.4",
-    lane: "Standard",
-    priority: "medium",
+    lane: "Expedite",
+    priority: "high",
     body: ticketBody({
       summary:
-        "Single greenfield page: Scout → … → Epilogue + Signals/Sequences/Vault/Chron one-liners. Architecture exists for stack; this is vocabulary for newcomers (not only Sapphire migrants).",
+        "Single greenfield page: Scout → … → Epilogue + Signals/Sequences/Vault/Chron one-liners. Architecture exists for stack; this is vocabulary for newcomers.",
       acceptance: [
         "New guide page or expanded why-stambha / pieces with one diagram of all piece types",
         "Linked from getting-started",
@@ -1209,10 +1211,10 @@ export class PingCommand extends Command {
     priority: "high",
     parent: "B10",
     body: ticketBody({
-      userStory: "As a bot developer, I want fluent builder classes for every Components V2 component using official Discord API names so I can construct rich messages the same way discord.js ContainerBuilder works.",
+      userStory: "As a bot developer, I want fluent builder classes for every Components V2 component using official Discord API names so I can construct rich messages with official Discord Components V2 builders.",
       summary: "Rework the Components V2 builder layer to use official Discord API names (ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, SectionBuilder, MediaGalleryBuilder, FileBuilder, ThumbnailBuilder). Add premiumButton() for ButtonStyle.Premium (type 6). Remove PanelBuilder/panel() (to be replanned as a plugin). Rename fileComponent()→file().",
       acceptance: [
-        "ContainerBuilder fluent class (1:1 Discord API, matches discord.js ContainerBuilder pattern)",
+        "ContainerBuilder fluent class (1:1 Discord API naming)",
         "TextDisplayBuilder, ThumbnailBuilder, SeparatorBuilder, SectionBuilder, MediaGalleryBuilder, FileBuilder fluent classes",
         "premiumButton({ skuId }) builder + ButtonStyle.Premium = 6",
         "file() function (renamed from fileComponent(), deprecated alias kept)",
@@ -1249,7 +1251,7 @@ export class PingCommand extends Command {
 
   "EPIC-DISPLAY": {
     title: "EPIC-DISPLAY — @stambha/display (plugins)",
-    status: "Backlog",
+    status: "Sprint Ready",
     track: "stambha-plugins",
     type: "Epic",
     pillar: "Plugins",
@@ -1282,7 +1284,7 @@ export class PingCommand extends Command {
 
   "DISPLAY-managers": {
     title: "DISPLAY-managers — EmbedManager + ContainerManager",
-    status: "Backlog",
+    status: "Sprint Ready",
     track: "stambha-plugins",
     type: "Feature",
     pillar: "Plugins",
@@ -1304,7 +1306,7 @@ export class PingCommand extends Command {
 
   "DISPLAY-migrate": {
     title: "DISPLAY-migrate — Classic embed → Container (ex-panel)",
-    status: "Backlog",
+    status: "Sprint Ready",
     track: "stambha-plugins",
     type: "Feature",
     pillar: "Plugins",
@@ -1326,13 +1328,13 @@ export class PingCommand extends Command {
 
   ATTACH: {
     title: "ATTACH — AttachmentBuilder (files + spoilers)",
-    status: "Backlog",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "B",
     release: "1.4",
     lane: "Standard",
-    priority: "medium",
+    priority: "high",
     body: ticketBody({
       summary:
         "Fluent attachment helper for REST message payloads (name, description, spoiler, voice waveform/duration).",
@@ -1343,16 +1345,16 @@ export class PingCommand extends Command {
 
   FORMAT: {
     title: "FORMAT — @stambha/format (mentions, time, code)",
-    status: "Backlog",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "B",
     release: "1.4",
     lane: "Standard",
-    priority: "medium",
+    priority: "high",
     body: ticketBody({
       summary:
-        "Small formatter utilities (user/channel/role mentions, timestamps, code blocks) — Stambha-owned, not a discord.js formatters fork.",
+        "Small formatter utilities (user/channel/role mentions, timestamps, code blocks) owned by Stambha for message content helpers.",
       acceptance: ["Package or core module", "Unit tests", "Docs link from getting-started"],
       meta: { ID: "FORMAT", Pillar: "B", Release: "1.4" },
     }),
@@ -1360,13 +1362,13 @@ export class PingCommand extends Command {
 
   "MODAL-V2": {
     title: "MODAL-V2 — Label, File Upload, Radio/Checkbox groups",
-    status: "Icebox",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "B",
-    release: "1.5",
+    release: "1.4",
     lane: "Standard",
-    priority: "low",
+    priority: "high",
     body: ticketBody({
       summary:
         "Newer Discord modal layout components (Label type 18, File Upload, Radio/Checkbox groups) once bots need them.",
@@ -2609,11 +2611,13 @@ export class PingCommand extends Command {
 
   "API-perm-endpoints": {
     title: "API-perm-endpoints — member/role guild & channel permissions REST",
-    status: "Backlog",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "Ops",
-    release: "1.5",
+    release: "1.4",
+    lane: "Standard",
+    priority: "high",
     body: ticketBody({
       summary:
         "Four new Discord endpoints (Oct 30 2026) return computed permissions for a member or role in a guild/channel, with optional `implicit=false`.",
@@ -2738,15 +2742,17 @@ export class PingCommand extends Command {
   },
 
   "UPSTREAM-djs": {
-    title: "UPSTREAM — discord.js 14.27–14.28 picks",
-    status: "Backlog",
+    title: "UPSTREAM — Discord REST & gateway surface (1.4)",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Epic",
     pillar: "B",
-    release: "1.5",
+    release: "1.4",
+    lane: "Standard",
+    priority: "high",
     body: epicBody({
-      vision: "Parity with useful discord.js surfaces without adopting discord.js as a dependency.",
-      objective: "Selectively port discord.js 14.27.0 / 14.28.0 features that map cleanly onto native REST/gateway.",
+      vision: "Expose useful Discord Developer Platform surfaces on the native `@stambha/rest` + `@stambha/gateway` stack.",
+      objective: "Ship REST helpers, typed dispatches, and modal builders that match current Discord API capabilities for 1.4.",
       childFeatures: [
         "DJS-voice-messages",
         "DJS-role-member-counts",
@@ -2755,152 +2761,159 @@ export class PingCommand extends Command {
         "DJS-activity-instance",
         "DJS-modal-inputs",
       ],
-      successCriteria: ["Each pick has a Stambha REST/gateway/types ticket or Won't rationale"],
-      meta: { ID: "UPSTREAM-djs", Release: "1.5" },
-      references: [
-        "https://github.com/discordjs/discord.js/releases/tag/14.27.0",
-        "https://github.com/discordjs/discord.js/releases/tag/14.28.0",
-      ],
+      successCriteria: ["Each child has Stambha REST/gateway/types + docs, or an explicit Won't note"],
+      meta: { ID: "UPSTREAM-djs", Release: "1.4" },
+      references: ["https://docs.discord.com/developers/change-log"],
     }),
   },
 
   "DJS-voice-messages": {
-    title: "DJS-voice-messages — send voice messages via REST",
-    status: "Backlog",
+    title: "REST-voice-messages — send voice messages via REST",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "B",
-    release: "1.5",
+    release: "1.4",
+    lane: "Standard",
+    priority: "high",
     body: ticketBody({
-      summary: "discord.js 14.27 can send voice messages. Expose attachment + duration + waveform flags through @stambha/rest message create helpers.",
-      acceptance: ["REST helper or documented payload for voice messages", "Example or docs snippet"],
-      meta: { ID: "DJS-voice-messages", Release: "1.5", Epic: "UPSTREAM-djs" },
-      references: ["discord.js #11493"],
+      summary: "Expose Discord voice-message attachments (duration + waveform flags) through `@stambha/rest` message helpers.",
+      acceptance: ["REST helper or documented payload for voice messages", "Docs snippet under REST / attachments"],
+      meta: { ID: "DJS-voice-messages", Release: "1.4", Epic: "UPSTREAM-djs" },
+      references: ["https://docs.discord.com/developers/docs/resources/channel"],
     }),
   },
 
   "DJS-role-member-counts": {
-    title: "DJS-role-member-counts — GET role member counts",
-    status: "Backlog",
+    title: "REST-role-member-counts — GET role member counts",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "Ops",
-    release: "1.5",
+    release: "1.4",
+    lane: "Standard",
+    priority: "medium",
     body: ticketBody({
-      summary: "Port RoleManager.fetchMemberCounts / GuildsAPI.getRoleMemberCounts to @stambha/rest.",
+      summary: "Add `@stambha/rest` helper for Discord’s guild role member-counts endpoint.",
       acceptance: ["REST method + types", "Docs one-liner"],
-      meta: { ID: "DJS-role-member-counts", Release: "1.5", Epic: "UPSTREAM-djs" },
-      references: ["discord.js #11352", "@discordjs/core getRoleMemberCounts"],
+      meta: { ID: "DJS-role-member-counts", Release: "1.4", Epic: "UPSTREAM-djs" },
+      references: ["https://docs.discord.com/developers/docs/resources/guild"],
     }),
   },
 
   "DJS-voice-server-update": {
-    title: "DJS-voice-server-update — emit/normalize VOICE_SERVER_UPDATE",
-    status: "Backlog",
+    title: "G-voice-server-update — typed VOICE_SERVER_UPDATE",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "G",
-    release: "1.5",
-    body: ticketBody({
-      summary: "Ensure VOICE_SERVER_UPDATE is in the typed dispatch map for voice library consumers (Stambha still won't own voice).",
-      acceptance: ["Event in GatewayEventMap / docs", "No voice connect implementation in core"],
-      meta: { ID: "DJS-voice-server-update", Release: "1.5", Epic: "UPSTREAM-djs" },
-      references: ["discord.js #11414"],
-      outOfScope: ["@stambha/voice package"],
+    release: "1.4",
+    body: doneBody({
+      summary: "Hub already types `voiceServerUpdate` for voice-library consumers (Stambha does not own voice connect).",
+      delivered: ["GatewayEventMap.voiceServerUpdate", "Correctness / gateway docs reference"],
+      meta: { ID: "DJS-voice-server-update", Release: "1.4", Epic: "UPSTREAM-djs" },
     }),
   },
 
   "DJS-channel-app-permissions": {
-    title: "DJS-channel-app-permissions — channel permissions + appPermissions",
-    status: "Backlog",
+    title: "REST-channel-app-permissions — channel + app permission helpers",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "B",
-    release: "1.5",
+    release: "1.4",
+    lane: "Standard",
+    priority: "medium",
     body: ticketBody({
-      summary: "discord.js 14.28 BaseChannel.permissions / appPermissions. Align with new Discord perm endpoints + interaction app_permissions typing.",
+      summary: "Document interaction `app_permissions` and wire helpers to the new Discord member/role permission endpoints.",
       acceptance: ["Document interaction app_permissions", "Optional helper using API-perm-endpoints"],
-      meta: { ID: "DJS-channel-app-permissions", Release: "1.5", Epic: "UPSTREAM-djs" },
+      meta: { ID: "DJS-channel-app-permissions", Release: "1.4", Epic: "UPSTREAM-djs" },
       dependencies: "API-perm-endpoints",
-      references: ["discord.js #11577"],
+      references: ["https://docs.discord.com/developers/change-log (2026-10-30)"],
     }),
   },
 
   "DJS-activity-instance": {
-    title: "DJS-activity-instance — fetchActivityInstance REST",
-    status: "Backlog",
+    title: "REST-activity-instance — fetch activity instance",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "Ops",
-    release: "1.x",
+    release: "1.4",
+    lane: "Standard",
+    priority: "medium",
     body: ticketBody({
-      summary: "Port ClientApplication.fetchActivityInstance / ApplicationsAPI.getActivityInstance for Activity-enabled apps.",
-      acceptance: ["REST helper under applications"],
-      meta: { ID: "DJS-activity-instance", Release: "1.x", Epic: "UPSTREAM-djs" },
-      references: ["discord.js #11481"],
+      summary: "REST helper for Discord activity-instance lookup for Activity-enabled applications.",
+      acceptance: ["REST helper under applications", "Short docs note"],
+      meta: { ID: "DJS-activity-instance", Release: "1.4", Epic: "UPSTREAM-djs" },
+      references: ["https://docs.discord.com/developers/docs/resources/application"],
     }),
   },
 
   "DJS-modal-inputs": {
-    title: "DJS-modal-inputs — modal Label / radio / checkbox components",
-    status: "Backlog",
+    title: "MODAL-inputs — Label / radio / checkbox modal components",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "B",
-    release: "1.5",
+    release: "1.4",
+    lane: "Standard",
+    priority: "high",
     body: ticketBody({
       summary:
-        "Discord expanded modals (Label, TextDisplay, selects; radio/checkbox in djs 14.26). Ensure @stambha/core builders + interaction parsing cover the new modal component types; deprecate ActionRow+TextInput-only guidance.",
+        "Expand `@stambha/core` modal builders and interaction parsing for Discord Label, TextDisplay, selects, radio, and checkbox modal components. Prefer Discord API component names in docs.",
       acceptance: [
         "Builders for Label and new modal select/radio/checkbox types as Discord documents them",
-        "Docs update under components / modals",
+        "Docs update under components / modals (Stambha vocabulary only)",
       ],
-      meta: { ID: "DJS-modal-inputs", Release: "1.5", Epic: "UPSTREAM-djs" },
-      references: ["discord.js #11437", "Discord October 2025 modal components newsletter"],
+      meta: { ID: "DJS-modal-inputs", Release: "1.4", Epic: "UPSTREAM-djs" },
+      references: ["https://docs.discord.com/developers/docs/components/reference"],
+      dependencies: "MODAL-V2 (same release; may land as one PR)",
     }),
   },
 
   "UPSTREAM-sapphire": {
-    title: "UPSTREAM — Sapphire framework picks (5.5.x)",
-    status: "Backlog",
+    title: "UPSTREAM — Command deploy DX (1.4)",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Epic",
     pillar: "B",
-    release: "1.5",
+    release: "1.4",
+    lane: "Standard",
+    priority: "medium",
     body: epicBody({
-      vision: "Borrow Sapphire DX that fits Stambha’s native piece model without discord.js.",
-      objective: "Port Sapphire 5.5.0–5.5.1 registration hygiene improvements.",
+      vision: "Make slash command registration observable and stable for Stambha bots.",
+      objective: "Emit a clear bulk-overwrite signal on deploy and keep integration/context compare order-independent.",
       childFeatures: ["SAP-cmd-bulk-overwrite-event", "SAP-sort-contexts"],
-      successCriteria: ["Command deploy path emits clear bulk-overwrite signal; context/integration compare is order-independent"],
-      meta: { ID: "UPSTREAM-sapphire", Release: "1.5" },
-      references: [
-        "https://github.com/sapphiredev/framework/releases/tag/v5.5.0",
-        "https://github.com/sapphiredev/framework/releases/tag/v5.5.1",
-      ],
+      successCriteria: ["Command deploy path emits bulk-overwrite hook; context/integration compare is order-independent"],
+      meta: { ID: "UPSTREAM-sapphire", Release: "1.4" },
+      references: ["packages/rest/src/deployCommands.ts"],
     }),
   },
 
   "SAP-cmd-bulk-overwrite-event": {
-    title: "SAP-cmd-bulk-overwrite-event — registries bulk overwrite listener",
-    status: "Backlog",
+    title: "CMD-bulk-overwrite — registries bulk overwrite hook",
+    status: "Sprint Ready",
     track: "stambha",
     type: "Feature",
     pillar: "B",
-    release: "1.5",
+    release: "1.4",
+    lane: "Standard",
+    priority: "medium",
     body: ticketBody({
       summary:
-        "Sapphire 5.5.0 added CoreApplicationCommandRegistriesBulkOverwrite. Stambha should emit a first-class event/hook when slash command bulk overwrite runs so bots can log/metrics without forking deploy.",
+        "Emit a first-class client/event hook when application command registries run a bulk overwrite so bots can log and metrics without forking deploy.",
       acceptance: [
         "Event or client hook when application command registries bulk-overwrite",
         "Docs for create-stambha / getting-started deploy path",
       ],
-      meta: { ID: "SAP-cmd-bulk-overwrite-event", Release: "1.5", Epic: "UPSTREAM-sapphire" },
-      references: ["sapphiredev/framework #855"],
+      meta: { ID: "SAP-cmd-bulk-overwrite-event", Release: "1.4", Epic: "UPSTREAM-sapphire" },
+      references: ["packages/rest/src/deployCommands.ts"],
     }),
   },
 
   "SAP-sort-contexts": {
-    title: "SAP-sort-contexts — stable compare for integration types & contexts",
+    title: "CMD-sort-contexts — stable integration types & contexts",
     status: "Done",
     track: "stambha",
     type: "Bug",
@@ -2908,15 +2921,15 @@ export class PingCommand extends Command {
     release: "1.4",
     lane: "Standard",
     priority: "medium",
-    body: ticketBody({
+    body: doneBody({
       summary:
-        "Sapphire 5.5.1 sorts integration types and contexts before comparison to avoid false dirty detects. Apply the same normalization in Stambha command registration diffing.",
-      acceptance: [
-        "Registration equality sorts integrationTypes / contexts",
-        "Regression test for order-only differences",
+        "Sort `integration_types` and `contexts` when mapping to Discord API ints so deploy diffs ignore input order.",
+      delivered: [
+        "integrationTypesToApi / interactionContextsToApi sort ascending",
+        "Unit tests for reverse input order",
       ],
       meta: { ID: "SAP-sort-contexts", Release: "1.4", Epic: "UPSTREAM-sapphire" },
-      references: ["sapphiredev/framework #871"],
+      references: ["packages/core/src/context/installContext.ts"],
     }),
   },
 };
@@ -3137,6 +3150,17 @@ export const TITLE_TO_ID = {
   "API-upload-limit-docs — default upload limit 20 MiB": "API-upload-limit-docs",
   "UPSTREAM — discord.js 14.27–14.28 picks": "UPSTREAM-djs",
   "UPSTREAM-djs": "UPSTREAM-djs",
+  "UPSTREAM — Discord REST & gateway surface (1.4)": "UPSTREAM-djs",
+  "UPSTREAM — Command deploy DX (1.4)": "UPSTREAM-sapphire",
+  "REST-voice-messages — send voice messages via REST": "DJS-voice-messages",
+  "REST-role-member-counts — GET role member counts": "DJS-role-member-counts",
+  "G-voice-server-update — typed VOICE_SERVER_UPDATE": "DJS-voice-server-update",
+  "REST-channel-app-permissions — channel + app permission helpers": "DJS-channel-app-permissions",
+  "REST-activity-instance — fetch activity instance": "DJS-activity-instance",
+  "MODAL-inputs — Label / radio / checkbox modal components": "DJS-modal-inputs",
+  "CMD-bulk-overwrite — registries bulk overwrite hook": "SAP-cmd-bulk-overwrite-event",
+  "CMD-sort-contexts — stable integration types & contexts": "SAP-sort-contexts",
+
   "DJS-voice-messages": "DJS-voice-messages",
   "DJS-voice-messages — send voice messages via REST": "DJS-voice-messages",
   "DJS-role-member-counts": "DJS-role-member-counts",
