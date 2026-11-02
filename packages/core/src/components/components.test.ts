@@ -21,6 +21,8 @@ import {
   FileBuilder,
   MediaGalleryBuilder,
   mentionableSelect,
+  ChannelFlags,
+  isChannelObfuscated,
   MessageFlags,
   modal,
   premiumButton,
@@ -508,6 +510,12 @@ describe("ContainerBuilder", () => {
       .toReply({ ephemeral: true });
     expect(payload.flags).toBe(MessageFlags.IsComponentsV2);
     expect(payload.ephemeral).toBe(true);
+  });
+
+  it("detects CHANNEL_OBFUSCATED channels", () => {
+    expect(isChannelObfuscated({ flags: ChannelFlags.Obfuscated })).toBe(true);
+    expect(isChannelObfuscated({ name: "___hidden___" })).toBe(true);
+    expect(isChannelObfuscated({ flags: 0, name: "general" })).toBe(false);
   });
 
   it("chains all add* methods with builder and pre-built objects", () => {

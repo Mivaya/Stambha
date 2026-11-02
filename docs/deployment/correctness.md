@@ -19,6 +19,10 @@ How Stambha behaves on Discord’s hard edges — rate limits, resumes, identify
 | Invalid Session | Opcode 9 `d: true` sends RESUME and keeps the session id and sequence. `d: false` drops the session and identifies again. | `GatewayShard.onInvalidSession` · `ws.test.ts` |
 | Guild backfill / availability | Backfill + availability event handling | Gateway guild backfill (PR #72 lineage) |
 | CamelCase dispatches | Tiers 1–4 via `normalizeDispatch`; escape hatch `dispatchNormalize: 'raw'` | `@stambha/transform` dispatch · `dispatch.test.ts` |
+| Request Guild Members (op 8) all-members | Discord rate-limits empty `query` + `limit: 0` to **1 request / guild / bot / 30s**; excess emits hub `rateLimited` (`RATE_LIMITED`) | `buildRequestGuildMembersPayload` · transform `GatewayRateLimited` |
+| Get Current User Guilds + large bot sharding | Pass `shard` (`0`…`max_concurrency-1`) or Discord returns **400** | `fetchCurrentUserGuilds({ shard })` |
+| Channel obfuscation | Channels without `VIEW_CHANNEL` may arrive obfuscated (`ChannelFlags.Obfuscated` / name `___hidden___`). Opt into early Gateway testing via Identify `capabilities` | `isChannelObfuscated` · `GatewayIdentifyCapability.PrivateChannelObfuscation` |
+| Default upload size | Discord default attachment limit is **20 MiB** (raised from 10 MiB) | Docs / operators |
 
 ## REST rate limits
 
@@ -53,6 +57,25 @@ Invalid Session (`op: 9`) with `d: true` sends RESUME on the open socket. `d: fa
 ### Identify budget
 
 Large bots must respect Discord’s identify concurrency. `IdentifyBudget` / reshard monitor cooperate so identifies are spaced (`@stambha/gateway` reshard module). Live reconnect after a reshard **plan** remains operator-owned until G2 proxy — see [Resharding](/deployment/resharding).
+
+### Request Guild Members
+
+`buildRequestGuildMembersPayload` builds opcode **8**. Requesting **all** members (`query: ""`, `limit: 0`) is limited to **one request per guild per bot every 30 seconds**. Over-limit requests receive a `RATE_LIMITED` dispatch (hub: `rateLimited`) with `retryAfter` and `meta.guildId` / `meta.nonce` — they do **not** throw on the WebSocket. Prefer user-id queries or smaller limits when you do not need a full member dump.
+
+### Get Current User Guilds (`shard`)
+
+Apps using **large bot sharding** must pass `shard` on `GET /users/@me/guilds`. Use `fetchCurrentUserGuilds(rest, { shard })` with a value from `0` through `max_concurrency - 1` (from Get Gateway Bot). Non-large-sharded apps can omit it.
+
+### Channel obfuscation
+
+When a bot lacks `VIEW_CHANNEL`, Discord may still send the channel over the Gateway with sensitive fields stripped (`ChannelFlags.Obfuscated`, name `"___hidden___"`). HTTP `GET /guilds/{id}/channels` will **omit** those channels (enforced 2026-11-16). Detect Gateway payloads with `isChannelObfuscated`. To test early, set Identify capabilities:
+
+```ts
+createNativeGatewayClient({
+  capabilities: GatewayIdentifyCapability.PrivateChannelObfuscation,
+  // …
+});
+```
 
 ### Dispatch normalization
 
