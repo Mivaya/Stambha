@@ -33,17 +33,29 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 | Gap | Notes |
 | --- | ----- |
 | Slash name/description localizations | Deploy-time locale maps |
-| `create-stambha` scaffolder | Project generator CLI (open PR #136 — post–1.3.2 / 1.4) |
 | Prefix flags + prompt/retry | Interactive prefix parsing improvements |
 | Desired-properties naming | Stambha metaphor vs legacy Discordeno naming |
 | Embed→Container migration helpers | Former `panel()` DX in planned `@stambha/display` plugin |
-| Session hooks / OAuth guilds cache | `@stambha/api` minor (Vyne #4/#5 — deferred past 1.3.2) |
-| Hub `shardDisconnect` / resume events | Core 1.4 (Vyne #7) |
-| Redis cooldown driver package | Async store in core; dedicated Redis driver in plugins |
+| Session hooks / token refresh | `@stambha/api` (Vyne #4 — still open) |
+| Hub `shardDisconnect` / resume events | Core 1.4+ (Vyne #7) |
 | Hot reload in dev | Planned `@stambha/dev-reload` |
 | Hosted admin dashboard UI | Out of core — HTTP settings via [`@stambha/api`](/extensions/api) |
 | Entity cache layer | Opt-in Guild/Channel/Member stores |
 | Voice package | Not in core — use Discord voice libraries directly if needed |
+
+
+---
+
+## Shipped since 1.3 (extensions / 1.4)
+
+| Topic | Notes |
+| ----- | ----- |
+| Redis cooldown store | [`@stambha/cooldown-redis`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cooldown-redis) on npm — [Gates](/features/gates) |
+| Shared Redis cache | [`@stambha/cache-redis`](/extensions/cache#redis-shared-workers) |
+| OAuth guilds cache / 429 resilience | `@stambha/api` 1.2.3+ |
+| `create-stambha` scaffolder | [`create-stambha`](https://github.com/Mivaya/Stambha/tree/main/packages/create-stambha) — `pnpm create stambha` |
+| Fluent native bootstrap | `bootstrapNativeBot` in `@stambha/gateway` |
+| `runSequence` orchestration | [Sequences](/features/sequences) |
 
 
 ---
@@ -53,7 +65,6 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 
 | Gap |
 | --- |
-| Automatic `runSequence` orchestration (today: `sequence()` + Signal wiring) |
 | RabbitMQ / distributed worker bus |
 | Distributed Chron across workers |
 | Gateway proxy for zero-downtime deploys |
@@ -93,7 +104,7 @@ These leftover guide topics stay out of this patch — use the pointers below un
 | ----- | ------ | ----------- |
 | Dedicated testing guide | **Deferred** — not in 1.3.1 | `examples/bot` `pnpm demo` (demo REST stub); Vault unit tests via [`MemoryDriver`](/features/vault); smoke with [`examples/minimal`](/guide/examples) |
 | Operator recipes (Docker / PM2) | **Deferred** — not in 1.3.1 | Process model in [Deployment overview](/deployment/overview) and [Tier split](/deployment/tier-split); host the VitePress site via [Hosting the docs](/guide/hosting-the-docs) (contributor) |
-| `create-stambha` scaffolder docs | **Deferred** (scaffolder itself is a core gap) | Copy [`examples/basic`](/guide/examples) or [`examples/bot`](/guide/examples) |
+| `create-stambha` scaffolder docs | **Shipped** — [`create-stambha` package](https://github.com/mivaya/Stambha/tree/main/packages/create-stambha) | [Getting started — New project](/guide/getting-started#new-project-scaffolder) |
 | i18n / localization guide | **Deferred** (slash localizations still open) | Discord deploy-time locale maps when you add them yourself |
 
 
