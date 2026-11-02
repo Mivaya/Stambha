@@ -6,12 +6,26 @@ export type Tier = "monolith" | "split" | "distributed";
 
 export type RestMethod = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
 
+/** Multipart file part for Discord REST uploads (`files[n]`). */
+export interface RestFilePart {
+  /** Form field name — typically `files[0]`, `files[1]`, … */
+  readonly name: string;
+  readonly filename: string;
+  readonly data: Uint8Array | Blob;
+  readonly contentType?: string;
+}
+
 /** Transport-agnostic Discord REST call (route is the path after `/api/v10`). */
 export interface RestRequest {
   readonly method: RestMethod;
   readonly route: string;
   readonly body?: unknown;
   readonly query?: Readonly<Record<string, string>>;
+  /**
+   * When set, the request is sent as `multipart/form-data` with `payload_json`
+   * (from {@link body}) plus these file parts.
+   */
+  readonly files?: readonly RestFilePart[];
 }
 
 export interface RestResponse<T = unknown> {
