@@ -6,6 +6,17 @@ This page is a walkthrough. For TypeScript signatures, switch to **API** in the 
 
 Pick an example by size → [Examples by scale](/guide/examples).
 
+## New project (scaffolder)
+
+Generate a runnable bot without copying `examples/`:
+
+```bash
+pnpm create stambha@latest my-bot
+cd my-bot && pnpm install && pnpm demo   # basic template — no token
+```
+
+Templates: **`basic`** (native gateway + loader, default) or **`minimal`** (MockBridge smoke). Use `pnpm create stambha my-bot --template minimal` for the smaller layout.
+
 ## Fastest path — no token
 
 | Goal | Command |
@@ -17,7 +28,7 @@ Pick an example by size → [Examples by scale](/guide/examples).
 
 No Discord token required for `demo` / minimal. You’ll see prefix commands (and on `bot`, signals + mentions) against the real pipeline.
 
-When you’re ready for a live bot, continue below — or copy `examples/basic` as your greenfield layout.
+When you’re ready for a live bot, continue below — or scaffold with `pnpm create stambha@latest`.
 
 ## Prerequisites
 
@@ -36,6 +47,7 @@ Common next packages:
 |---------|------|
 | `@stambha/authz` | Staff capabilities (not numeric levels) |
 | `@stambha/vault` | Typed guild config — often alongside Prisma/Drizzle ([guide](/guide/vault-and-orm)) |
+| `@stambha/vault-sql` | Persist Vault across restarts (SQLite / Postgres) — [extensions](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/vault-sql) |
 | `@stambha/help` | Help catalog |
 | Extensions | [Pagination](/extensions/pagination), [Metrics](/extensions/metrics), … — [Extensions hub](/extensions/) |
 
@@ -259,11 +271,32 @@ User-installable commands: set `integrationTypes` / `contexts` on the Command �
 | Next need | Guide / example |
 |-----------|-----------------|
 | Vault, authz, polls, V2 panels | [`examples/bot`](https://github.com/Mivaya/Stambha/tree/main/examples/bot) |
+| Persist Vault (SQLite / Postgres) | See below — [`@stambha/vault-sql`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/vault-sql) |
 | REST worker / multi-process | [Tier split](/deployment/tier-split), [`examples/bigbot`](https://github.com/Mivaya/Stambha/tree/main/examples/bigbot) |
 | Many shards | [Resharding](/deployment/resharding) |
 | HTTP-only / Workers | [`examples/http-interactions`](https://github.com/Mivaya/Stambha/tree/main/examples/http-interactions), [HTTP interactions](/deployment/http-interactions) |
 | Premium SKUs | [Monetization](/features/monetization) |
 | Polls / scheduled events / automod | [Polls](/features/polls), [REST surface](/features/rest-surface) |
+
+### Persist Vault settings
+
+`MemoryDriver` is fine for demos — settings reset when the process exits. For a live bot, install the SQL drivers from **Stambha-plugins** (not core):
+
+```bash
+pnpm add @stambha/vault @stambha/vault-sql
+```
+
+```ts
+import { Vault } from "@stambha/vault";
+import { SQLiteDriver } from "@stambha/vault-sql";
+
+const vault = new Vault({
+  driver: new SQLiteDriver({ path: "./data/vault.sqlite" }),
+});
+// register ledgers, then await vault.init()
+```
+
+Postgres: use `PostgresDriver` from the same package. Keep relational domain data in Prisma/Drizzle — see [Vault and your ORM](/guide/vault-and-orm) and [Vault](/features/vault#sql-drivers).
 
 ## Next steps
 

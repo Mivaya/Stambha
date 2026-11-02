@@ -1,0 +1,30 @@
+{
+  "name": "__PROJECT_NAME__",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Stambha bot — native gateway + REST, prefix + slash",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "dev": "tsx src/main.ts",
+    "demo": "DEMO=1 tsx src/main.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@stambha/args": "__STAMBHA_VERSION__",
+    "@stambha/core": "__STAMBHA_VERSION__",
+    "@stambha/gateway": "__STAMBHA_VERSION__",
+    "@stambha/gates": "__STAMBHA_VERSION__",
+    "@stambha/loader": "__STAMBHA_VERSION__",
+    "@stambha/rest": "__STAMBHA_VERSION__",
+    "@stambha/transform": "__STAMBHA_VERSION__"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "tsx": "^4.23.1",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
