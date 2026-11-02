@@ -4,7 +4,7 @@
 
 ## Native WebSocket client (0.3.0)
 
-Connect Discord gateway shards directly into a `GatewayEventHub` — no discord.js or manual `hub.emit` wiring:
+Connect Discord gateway shards directly into a `GatewayEventHub` — no third-party client library or manual `hub.emit` wiring:
 
 ```ts
 import {
@@ -219,7 +219,7 @@ const gateway = await createNativeGatewayClient({
 
 ### Guild availability (startup backfill)
 
-Discord sends unavailable guild stubs on `READY`, then full guild bodies as `GUILD_CREATE`. Stambha mirrors discord.js:
+Discord sends unavailable guild stubs on `READY`, then full guild bodies as `GUILD_CREATE`. Stambha can wait for those guilds before emitting hub `ready`:
 
 | Wire | Hub event | When |
 |------|-----------|------|

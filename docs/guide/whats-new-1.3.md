@@ -8,7 +8,7 @@ Release tag: **`v1.3.0`**. Full notes: [CHANGELOG](https://github.com/Mivaya/Sta
 |---------|---------|
 | Only use slash/prefix commands + classic buttons | Update deps to `@stambha/*@1.3.0`; skim [kind hooks](/guide/getting-started#kind-hooks-optional) |
 | Listen on `hub.on` for guild/member/invite/… events | Confirm camelCase fields for **dispatch tiers 2–4**, or keep `dispatchNormalize: 'raw'` briefly |
-| Imported discord.js/Discordeno helpers from `@stambha/transform` | **Remove them** — adapters are gone; use [native bootstrap](/guide/getting-started) |
+| Imported third-party client helpers from `@stambha/transform` | **Remove them** — adapters are gone; use [native bootstrap](/guide/getting-started) |
 | Used `panel()` / `PanelBuilder` | Switch to [`ContainerBuilder` + `componentsV2`](/features/components) |
 | Build Components V2 UIs | Read [Components & embeds](/features/components) (V2 mode ≠ Container) |
 

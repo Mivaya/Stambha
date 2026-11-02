@@ -11,7 +11,7 @@ How events move through Stambha’s native stack. For product benefits, see [Why
 @stambha/rest      →  RestPort (replies, deploy, optional REST worker)
 ```
 
-Core never imports discord.js or Discordeno. Commands and pieces talk to Stambha APIs only.
+Core never imports a third-party Discord client library. Commands and pieces talk to Stambha APIs only.
 
 ## Event flow
 

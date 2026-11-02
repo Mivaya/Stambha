@@ -2,6 +2,14 @@ import type { Command } from "@stambha/core";
 import { buildApplicationCommands, diffApplicationCommands } from "@stambha/core";
 import { createRestClient, type RestClient } from "./RestClient.js";
 
+export interface DeployBulkOverwriteInfo {
+  applicationId: string;
+  guildId?: string;
+  global: boolean;
+  count: number;
+  route: string;
+}
+
 export interface DeployCommandsOptions {
   token: string;
   applicationId: string;
@@ -18,6 +26,11 @@ export interface DeployCommandsOptions {
   existing?: readonly { name: string }[];
   /** Reuse an existing REST client (optional). */
   rest?: RestClient;
+  /**
+   * Called after a successful bulk overwrite `PUT` (not on dry-run).
+   * Use for logging / metrics without forking deploy.
+   */
+  onBulkOverwrite?: (info: DeployBulkOverwriteInfo) => void | Promise<void>;
 }
 
 export interface DeployCommandsResult {
@@ -76,6 +89,16 @@ export async function deployCommands(
     : `/applications/${options.applicationId}/commands`;
 
   await rest.request({ method: "PUT", route, body: payload });
+
+  if (options.onBulkOverwrite) {
+    await options.onBulkOverwrite({
+      applicationId: options.applicationId,
+      ...(options.guildId !== undefined ? { guildId: options.guildId } : {}),
+      global: !options.guildId,
+      count: payload.length,
+      route,
+    });
+  }
 
   return {
     count: payload.length,

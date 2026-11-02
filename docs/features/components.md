@@ -48,7 +48,7 @@ There is **no** `containerV2` API. **Container** is one component type. **Compon
 | **`EmbedView`** | Readonly reader over embed JSON | Not a V2 layout |
 | **Builder** | Compose outbound JSON (`set*` / `add*` / `toJSON`) | — |
 | **View** | Inspect received or built JSON (`title`, `hexColor`, `equals`, `toBuilder()`) | — |
-| **Panel / `PanelBuilder`** | Removed from core | Coming later as embed→container helpers in `@stambha/display` (plugins) |
+| **Panel / `PanelBuilder`** | Removed from core | Use [`@stambha/display`](/extensions/display) `ContainerManager.fromClassicOptions` / `fromEmbed` |
 
 ## Classic components (buttons / selects / modals)
 
@@ -83,7 +83,10 @@ await ctx.reply({
 | `userSelect` / `roleSelect` / `mentionableSelect` / `channelSelect` | Entity selects (types 5–8); use `selectRow(…)` |
 | `ChannelSelectChannelType` | Discord channel type ints for `channelSelect({ channelTypes })` |
 | `confirmCancelRow(signal)` | Success + secondary buttons |
-| `textInput` / `modal` | Modal layout |
+| `textInput` / `modal` | Classic modal (action rows) |
+| `label` / `fileUpload` / `radioGroup` / `checkboxGroup` / `checkbox` | Modal Label layout (types 18–23) |
+| `AttachmentBuilder` / `attachment()` | Message attachment descriptors (spoilers, voice metadata) |
+| `userMention` / `time` / `codeBlock` / … | Message content formatters |
 
 ```ts
 import {
@@ -110,6 +113,60 @@ selectRow(userSelect({ customId: signal.customId("users"), maxValues: 5 }));
 ```
 
 Custom ids should come from `signal.customId(suffix?)` so [`SignalRouter`](/features/signals) can route them.
+
+### Modal Labels (Discord types 18+)
+
+Prefer **Label** wrappers for newer modal inputs. File Upload, Radio Group, Checkbox Group, and Checkbox must sit inside a Label.
+
+```ts
+import {
+  checkbox,
+  checkboxGroup,
+  fileUpload,
+  label,
+  modal,
+  radioGroup,
+  textInput,
+  TextInputStyle,
+} from "@stambha/core";
+
+const form = modal({
+  customId: signal.customId("form"),
+  title: "Report",
+  components: [
+    label({
+      label: "Details",
+      description: "What happened?",
+      component: textInput({
+        customId: "body",
+        style: TextInputStyle.Paragraph,
+      }),
+    }),
+    label({
+      label: "Severity",
+      component: radioGroup({
+        customId: "severity",
+        options: [
+          { value: "low", label: "Low" },
+          { value: "high", label: "High" },
+        ],
+      }),
+    }),
+    label({
+      label: "Screenshots",
+      component: fileUpload({ customId: "shots", maxValues: 3, fileTypes: ["image"] }),
+    }),
+    label({
+      label: "Notify me",
+      component: checkbox({ customId: "notify" }),
+    }),
+  ],
+});
+```
+
+Classic action-row modals with `textInput({ label: "…" })` still work.
+
+For EmbedManager / classic→Container migration, see [`@stambha/display`](/extensions/display).
 
 ## Classic embeds
 
@@ -257,14 +314,14 @@ Examples: `examples/bot` — `!panel` / `/panel` (and related V2 demos).
 
 Views do **not** replace Components V2. They sit on top of the same JSON builders already produce.
 
-## Not in `@stambha/core` (yet)
+## Outside `@stambha/core`
 
-| Feature | Where it will live |
-|---------|-------------------|
-| Embed → Container migration (old `panel()` DX) | `@stambha/display` (plugins) — see roadmap **DISPLAY-migrate** |
-| `EmbedManager` / `ContainerManager` templates | `@stambha/display` — **DISPLAY-managers** |
-| Full entity select builders | Core roadmap **SELECTS** |
-| AttachmentBuilder, formatters | Roadmap **ATTACH** / **FORMAT** |
+| Feature | Where it lives |
+|---------|----------------|
+| Embed → Container migration (old `panel()` DX) | [`@stambha/display`](/extensions/display) — `ContainerManager.fromClassicOptions` / `fromEmbed` |
+| `EmbedManager` / `ContainerManager` | [`@stambha/display`](/extensions/display) |
+| Entity select builders | Core — `userSelect` / `roleSelect` / `mentionableSelect` / `channelSelect` |
+| `AttachmentBuilder`, formatters | Core — `attachment()` / `userMention` / `time` / `codeBlock` / … |
 
 ## Persistent signals
 
