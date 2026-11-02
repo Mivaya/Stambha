@@ -106,6 +106,52 @@ export async function fetchUser(rest: RestPort, userId: string): Promise<ApiUser
   return tryRequest<ApiUser>(rest, { method: "GET", route: `/users/${userId}` });
 }
 
+/** Partial guild from `GET /users/@me/guilds`. */
+export interface CurrentUserGuild {
+  id: string;
+  name: string;
+  icon?: string | null;
+  owner?: boolean;
+  permissions?: string;
+  features?: string[];
+}
+
+export interface FetchCurrentUserGuildsQuery {
+  /** Before guild id (pagination). */
+  before?: string;
+  /** After guild id (pagination). */
+  after?: string;
+  /** Max results (1–200). */
+  limit?: number;
+  /**
+   * Required for **large bot sharding**: guilds stored on that shard index
+   * (`0` … `max_concurrency - 1` from Get Gateway Bot). Omitting it returns 400
+   * for large-sharded apps.
+   */
+  shard?: number;
+  /** With user OAuth, include approximate member/presence counts when true. */
+  withCounts?: boolean;
+}
+
+/**
+ * `GET /users/@me/guilds` — bot token or OAuth user bearer via the REST port.
+ * Pass {@link FetchCurrentUserGuildsQuery.shard} when using large bot sharding.
+ */
+export async function fetchCurrentUserGuilds(
+  rest: RestPort,
+  query: FetchCurrentUserGuildsQuery = {},
+): Promise<CurrentUserGuild[]> {
+  const params = new URLSearchParams();
+  if (query.before !== undefined) params.set("before", query.before);
+  if (query.after !== undefined) params.set("after", query.after);
+  if (query.limit !== undefined) params.set("limit", String(query.limit));
+  if (query.shard !== undefined) params.set("shard", String(query.shard));
+  if (query.withCounts !== undefined) params.set("with_counts", String(query.withCounts));
+  const qs = params.toString();
+  const route = qs ? `/users/@me/guilds?${qs}` : "/users/@me/guilds";
+  return (await tryRequest<CurrentUserGuild[]>(rest, { method: "GET", route })) ?? [];
+}
+
 export async function fetchGuild(rest: RestPort, guildId: string): Promise<GuildSummary | null> {
   return tryRequest<GuildSummary>(rest, { method: "GET", route: `/guilds/${guildId}` });
 }
