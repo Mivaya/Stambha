@@ -1,6 +1,12 @@
 import type { RestPort } from "@stambha/core";
 import { describe, expect, it, vi } from "vitest";
-import { fetchApplication, fetchUser, triggerTyping, userDisplayName } from "./resources.js";
+import {
+  fetchApplication,
+  fetchCurrentUserGuilds,
+  fetchUser,
+  triggerTyping,
+  userDisplayName,
+} from "./resources.js";
 
 describe("resources", () => {
   it("fetchUser returns null on REST failure", async () => {
@@ -16,6 +22,17 @@ describe("resources", () => {
     const user = await fetchUser(rest, "1");
     expect(user?.username).toBe("bot");
     expect(request).toHaveBeenCalledWith({ method: "GET", route: "/users/1" });
+  });
+
+  it("fetchCurrentUserGuilds forwards shard query for large bot sharding", async () => {
+    const request = vi.fn().mockResolvedValue([{ id: "g1", name: "Guild" }]);
+    const rest: RestPort = { request };
+    const guilds = await fetchCurrentUserGuilds(rest, { shard: 0, limit: 100 });
+    expect(guilds).toHaveLength(1);
+    expect(request).toHaveBeenCalledWith({
+      method: "GET",
+      route: "/users/@me/guilds?limit=100&shard=0",
+    });
   });
 
   it("userDisplayName prefers global_name", () => {
