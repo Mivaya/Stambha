@@ -15,11 +15,13 @@ Current plugins line (post–core **1.3.0** peer bump):
 | `@stambha/cooldown-redis` | **1.0.1** | `^1.3.0` |
 | `@stambha/cache` | **1.0.0** | none |
 | `@stambha/cache-redis` | **1.0.0** (source ready; npm publish = **A1**) | none |
+| `@stambha/display` | **1.0.0** | `^1.3.3` |
 
 ## Guides
 
 | You need… | Guide |
 |-----------|--------|
+| Embed / Container managers + classic→V2 migration | [Display](/extensions/display) |
 | Paginated V2 messages (prev / next / dismiss) | [Pagination](/extensions/pagination) |
 | HTTP routes / Discord OAuth admin API (`src/routes/` in 1.2.0+) | [HTTP API](/extensions/api) |
 | Prometheus scrape endpoint | [Metrics](/extensions/metrics) |

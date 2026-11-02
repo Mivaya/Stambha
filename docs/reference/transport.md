@@ -29,9 +29,9 @@ Stambha-owned Discord transport primitives — no third-party Discord library re
 | **Monolith** | `core` + `gateway` + `rest` + `transform` + `loader` |
 | **Tier split** | Above + `HttpRestPort` → REST worker; gateway relay → bot worker |
 | **Tests / unit** | `core` + `MockBridge` or manual `hub.emit` |
-| **Migrating from discord.js / Discordeno** | Native stack only — library shape adapters removed in **1.5.0**; see [migration guides](/migration/) |
+| **Migrating onto Stambha** | Native stack only — library shape adapters removed; see [migration guides](/migration/) |
 
-New bots: [Getting started](/guide/getting-started). Not supported: discord.js owning the gateway while Stambha owns commands only.
+New bots: [Getting started](/guide/getting-started). Not supported: a third-party client owning the gateway while Stambha only owns commands.
 
 ---
 
@@ -95,4 +95,4 @@ const server = await createRestWorkerServer({
 - [Tier split](/deployment/tier-split) — gateway / REST / bot workers
 - [Gateway](/deployment/gateway) — `attachStambhaClient`, native WebSocket
 - [Native REST](/deployment/native-rest) — REST worker details
-- [Migration](/migration/) — Sapphire / Discordeno paths
+- [Migration](/migration/) — move onto the native Stambha stack
