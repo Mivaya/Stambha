@@ -50,6 +50,24 @@ Every piece (`Unit`) can override:
 
 Optional kind hooks on `Command`: `slash` / `prefix` / `menu` (context menu). With `subcommandMethods: true`, leaf `slashPath.subcommand` maps to a same-named method. See [Getting started](/guide/getting-started#kind-hooks-optional) and [Command tree](/features/command-tree#subcommand-methods).
 
+Options-first factory (no `constructor(registry) { super… }` boilerplate) — export as `default` for `loadPieces`:
+
+```ts
+import { defineCommand, ok } from "@stambha/core";
+
+export default defineCommand({
+  name: "ping",
+  description: "Pong",
+  kinds: ["slash"],
+  async execute(ctx) {
+    await ctx.reply("Pong!");
+    return ok(undefined);
+  },
+});
+```
+
+See also the [pipeline mental model](/guide/mental-model).
+
 ```ts
 export class CacheCommand extends Command {
   async onLoad() {

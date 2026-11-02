@@ -22,10 +22,15 @@ import {
   MediaGalleryBuilder,
   mentionableSelect,
   ChannelFlags,
+  checkbox,
+  checkboxGroup,
+  fileUpload,
   isChannelObfuscated,
+  label,
   MessageFlags,
   modal,
   premiumButton,
+  radioGroup,
   registerPersistentSignals,
   roleSelect,
   section,
@@ -126,9 +131,58 @@ describe("component builders", () => {
       ],
     });
     expect(m.custom_id).toBe("stambha:note");
-    expect(m.components[0]?.components[0]).toMatchObject({
-      type: ComponentType.TextInput,
-      custom_id: "body",
+    const row = m.components[0];
+    expect(row?.type).toBe(ComponentType.ActionRow);
+    if (row?.type === ComponentType.ActionRow) {
+      expect(row.components[0]).toMatchObject({
+        type: ComponentType.TextInput,
+        custom_id: "body",
+      });
+    }
+  });
+
+  it("builds Label modals with radio / checkbox / file upload", () => {
+    const m = modal({
+      customId: "stambha:form",
+      title: "Form",
+      components: [
+        label({
+          label: "Class",
+          description: "Pick one",
+          component: radioGroup({
+            customId: "class",
+            options: [
+              { value: "a", label: "A" },
+              { value: "b", label: "B" },
+            ],
+          }),
+        }),
+        label({
+          label: "Days",
+          component: checkboxGroup({
+            customId: "days",
+            options: [{ value: "mon", label: "Mon" }],
+          }),
+        }),
+        label({
+          label: "Agree",
+          component: checkbox({ customId: "agree" }),
+        }),
+        label({
+          label: "Upload",
+          component: fileUpload({ customId: "files", maxValues: 2, fileTypes: [".png"] }),
+        }),
+      ],
+    });
+    expect(m.components).toHaveLength(4);
+    expect(m.components[0]).toMatchObject({
+      type: ComponentType.Label,
+      label: "Class",
+      component: { type: ComponentType.RadioGroup, custom_id: "class" },
+    });
+    expect(m.components[3]).toMatchObject({
+      type: ComponentType.Label,
+      component: { type: ComponentType.FileUpload, custom_id: "files", max_values: 2 },
     });
   });
 

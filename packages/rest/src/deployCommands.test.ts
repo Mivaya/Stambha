@@ -45,4 +45,22 @@ describe("deployCommands", () => {
     expect(result.diff?.removed).toContain("legacy");
     expect(result.diff?.updated).toContain("ping");
   });
+
+  it("does not call onBulkOverwrite during dry-run", async () => {
+    const registry = { register: (c: Command) => c } as Registry<Command>;
+    const ping = new PingCommand(registry);
+    let called = false;
+
+    await deployCommands({
+      token: "test",
+      applicationId: "app-1",
+      commands: [ping],
+      dryRun: true,
+      onBulkOverwrite: () => {
+        called = true;
+      },
+    });
+
+    expect(called).toBe(false);
+  });
 });

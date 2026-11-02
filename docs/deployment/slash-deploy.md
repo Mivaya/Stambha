@@ -31,10 +31,15 @@ if (shouldDeploySlashCommands({ shardId: resolveShardIdFromEnv() })) {
     commands: client.registries.commands.values(),
     guildId: process.env.DISCORD_GUILD_ID, // omit for global
     diff: true,
+    onBulkOverwrite: (info) => {
+      console.log(`slash overwrite: ${info.count} commands (${info.route})`);
+    },
   });
   if (result.diff) console.log(formatDeployDiff(result.diff));
 }
 ```
+
+`onBulkOverwrite` runs after a successful Discord `PUT` (not on `dryRun`) — use it for logs/metrics without forking deploy.
 
 Or use {@link deployCommandsIfShardZero} — returns `null` when not shard 0.
 
