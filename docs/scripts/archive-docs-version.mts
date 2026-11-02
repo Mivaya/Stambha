@@ -2,7 +2,7 @@
 /**
  * Snapshot public docs from a git tag into docs/versions/<semver>/ for VitePress versioning.
  *
- * Usage: node docs/scripts/archive-docs-version.mts 0.2.1 [v0.2.1]
+ * Usage: node docs/scripts/archive-docs-version.mts 1.3.1 [v1.3.1]
  *
  * Run before each release after docs are final on the release tag/commit.
  */
@@ -54,7 +54,7 @@ for (const file of files) {
 
 const versionedSidebar = path.join(docsRoot, ".vitepress/sidebars/versioned", `${version}.json`);
 if (!fs.existsSync(versionedSidebar)) {
-  const mainSidebar = path.join(docsRoot, ".vitepress/sidebars/versioned", "0.2.1.json");
+  const mainSidebar = path.join(docsRoot, ".vitepress/sidebars/versioned", "1.3.1.json");
   if (fs.existsSync(mainSidebar)) {
     fs.copyFileSync(mainSidebar, versionedSidebar);
     console.warn(`Copied sidebar template → ${versionedSidebar} (review links for this version).`);

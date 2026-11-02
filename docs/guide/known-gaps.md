@@ -36,12 +36,26 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 | Prefix flags + prompt/retry | Interactive prefix parsing improvements |
 | Desired-properties naming | Stambha metaphor vs legacy Discordeno naming |
 | Embed→Container migration helpers | Former `panel()` DX in planned `@stambha/display` plugin |
-| Shared Redis cache across workers | [`@stambha/cache-redis`](/extensions/cache#redis-shared-workers) |
-| Redis cooldown driver package | Async store in core; dedicated Redis driver in plugins |
+| Session hooks / token refresh | `@stambha/api` (Vyne #4 — still open) |
+| Hub `shardDisconnect` / resume events | Core 1.4+ (Vyne #7) |
 | Hot reload in dev | Planned `@stambha/dev-reload` |
 | Hosted admin dashboard UI | Out of core — HTTP settings via [`@stambha/api`](/extensions/api) |
 | Entity cache layer | Opt-in Guild/Channel/Member stores |
 | Voice package | Not in core — use Discord voice libraries directly if needed |
+
+
+---
+
+## Shipped since 1.3 (extensions / 1.4)
+
+| Topic | Notes |
+| ----- | ----- |
+| Redis cooldown store | [`@stambha/cooldown-redis`](https://github.com/Mivaya/Stambha-plugins/tree/main/packages/cooldown-redis) on npm — [Gates](/features/gates) |
+| Shared Redis cache | [`@stambha/cache-redis`](/extensions/cache#redis-shared-workers) |
+| OAuth guilds cache / 429 resilience | `@stambha/api` 1.2.3+ |
+| `create-stambha` scaffolder | [`create-stambha`](https://github.com/Mivaya/Stambha/tree/main/packages/create-stambha) — `pnpm create stambha` |
+| Fluent native bootstrap | `bootstrapNativeBot` in `@stambha/gateway` |
+| `runSequence` orchestration | [Sequences](/features/sequences) |
 
 
 ---
@@ -51,7 +65,6 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 
 | Gap |
 | --- |
-| Automatic `runSequence` orchestration (today: `sequence()` + Signal wiring) |
 | RabbitMQ / distributed worker bus |
 | Distributed Chron across workers |
 | Gateway proxy for zero-downtime deploys |

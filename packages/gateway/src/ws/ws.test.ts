@@ -446,6 +446,100 @@ describe("GatewayShard", () => {
     vi.useRealTimers();
   });
 
+  it("resets heartbeatAck on HELLO so a zombie reconnect does not storm every interval", async () => {
+    vi.useFakeTimers();
+
+    const hub = createGatewayEventHub();
+    const sockets: MockWebSocket[] = [];
+    const createWebSocket: CreateGatewayWebSocket = (url) => {
+      const socket = new MockWebSocket([], url);
+      sockets.push(socket);
+      return socket;
+    };
+
+    const shard = new GatewayShard({
+      session: createSession({ token: "test-token" }),
+      shardId: 0,
+      totalShards: 1,
+      intents: 1,
+      hub,
+      manager: createShardManager({ totalShards: 1 }),
+      gatewayUrl: "wss://gateway.test/?v=10&encoding=json",
+      createWebSocket,
+      reconnectDelayMs: 10,
+      reconnectMaxDelayMs: 10,
+    });
+
+    const connectPromise = shard.connect();
+    await sockets[0]?.open();
+    await connectPromise;
+
+    // Leave ack false as after a missed Heartbeat ACK / zombie path.
+    const mutable = shard as unknown as {
+      heartbeatAck: boolean;
+      onHello: (data: { heartbeat_interval: number }) => Promise<void>;
+    };
+    mutable.heartbeatAck = false;
+    await mutable.onHello({ heartbeat_interval: 1_000 });
+    expect(mutable.heartbeatAck).toBe(true);
+
+    const sentBefore = sockets[0]!.sent.length;
+    await vi.advanceTimersByTimeAsync(1_000);
+    // First interval tick must send Heartbeat, not treat stale false-ack as zombie.
+    expect(sockets).toHaveLength(1);
+    expect(sockets[0]!.sent.length).toBeGreaterThan(sentBefore);
+    expect(JSON.parse(sockets[0]!.sent.at(-1)!)).toMatchObject({ op: GatewayOpcode.Heartbeat });
+
+    await shard.disconnect();
+    vi.useRealTimers();
+  });
+
+  it("sends RESUME on Invalid Session when Discord marks the session resumable", async () => {
+    const hub = createGatewayEventHub();
+    const sockets: MockWebSocket[] = [];
+    const createWebSocket: CreateGatewayWebSocket = (url) => {
+      const socket = new MockWebSocket([], url);
+      sockets.push(socket);
+      return socket;
+    };
+
+    const shard = new GatewayShard({
+      session: createSession({ token: "test-token" }),
+      shardId: 0,
+      totalShards: 1,
+      intents: 1,
+      hub,
+      manager: createShardManager({ totalShards: 1 }),
+      gatewayUrl: "wss://gateway.test/?v=10&encoding=json",
+      createWebSocket,
+    });
+
+    const connectPromise = shard.connect();
+    await sockets[0]?.open();
+    await connectPromise;
+
+    const mutable = shard as unknown as {
+      sessionId: string | null;
+      lastSequence: number | null;
+      onInvalidSession: (resumable: boolean) => void;
+    };
+    mutable.sessionId = "sess-1";
+    mutable.lastSequence = 12;
+    const sentBefore = sockets[0]!.sent.length;
+    mutable.onInvalidSession(true);
+
+    expect(mutable.sessionId).toBe("sess-1");
+    expect(mutable.lastSequence).toBe(12);
+    expect(sockets).toHaveLength(1);
+    expect(JSON.parse(sockets[0]!.sent.at(-1)!)).toMatchObject({
+      op: GatewayOpcode.Resume,
+      d: { session_id: "sess-1", seq: 12 },
+    });
+    expect(sockets[0]!.sent.length).toBe(sentBefore + 1);
+
+    await shard.disconnect();
+  });
+
   it("emits guildAvailable for READY backfill GUILD_CREATE", async () => {
     const hub = createGatewayEventHub();
     const available: unknown[] = [];

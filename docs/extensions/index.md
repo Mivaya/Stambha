@@ -8,12 +8,13 @@ Current plugins line (post–core **1.3.0** peer bump):
 
 | Package | Version | Peer on `@stambha/core` |
 |---------|---------|-------------------------|
-| `@stambha/api` | **1.2.1** | `^1.3.0` |
+| `@stambha/api` | **1.2.2** | `^1.3.0` |
 | `@stambha/pagination` | **1.1.1** | `^1.3.0` |
 | `@stambha/metrics` | **1.0.1** | `^1.3.0` |
 | `@stambha/vault-sql` | **1.0.1** | `@stambha/vault@^1.3.0` |
 | `@stambha/cooldown-redis` | **1.0.1** | `^1.3.0` |
-| `@stambha/cache` / `@stambha/cache-redis` | **1.0.0** | none |
+| `@stambha/cache` | **1.0.0** | none |
+| `@stambha/cache-redis` | **1.0.0** (source ready; npm publish = **A1**) | none |
 
 ## Guides
 

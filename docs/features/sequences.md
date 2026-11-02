@@ -1,10 +1,43 @@
 # Sequences (multi-step interactions)
 
-Sequences chain **buttons → selects → modals** without hand-rolled collectors. You define steps with `sequence()`, open a `SequenceStore` session, send components with `stambha:seq:…` custom ids, and complete each wait from a [Signal](/features/signals).
-
-Automatic `runSequence` orchestration (framework-owned step routing) is planned for **2.0** — see [Known gaps](/guide/known-gaps).
+Sequences chain **buttons → selects** (and modal *definitions*) without hand-rolled collectors. Prefer **`runSequence`** for framework-owned sessions, step UI, wrong-user handling, and timeouts.
 
 For a **single** await (reply / reaction / button) with `time` / `max`, use [Collectors](/features/collectors) on the gateway hub instead.
+
+## Happy path — `runSequence`
+
+```ts
+import { runSequence, sequence } from "@stambha/core";
+
+const flow = sequence()
+  .timeout(60_000)
+  .button("role", "Pick a role:", [
+    { id: "mod", label: "Moderator" },
+    { id: "member", label: "Member" },
+  ])
+  .select("channel", "Pick channel:", [
+    { label: "General", value: "general" },
+    { label: "Announcements", value: "announcements" },
+  ])
+  .build();
+
+const result = await runSequence(ctx, flow);
+if (!result.cancelled) {
+  // result.answers.role, result.answers.channel
+}
+```
+
+What `runSequence` owns:
+
+1. **Session** — `client.sequences.createSession` / `endSession`
+2. **Step UI** — `renderSequenceStep` (button / select rows with `stambha:seq:…` ids)
+3. **Wait / complete** — `waitForStep` + built-in **`SeqSignal`** (`name: "seq"`, auto-registered if missing)
+4. **Wrong-user / unknown** — ephemeral replies from `SeqSignal`
+5. **Timeout** — cancels with a recoverable message; returns `{ cancelled: true }`
+
+`ctx.client` is injected by `StambhaClient.invoke` during command execution. In unit tests, pass `options.client` or set `ctx.client` yourself.
+
+Slash flows use `deferReply` + `editReply` when available; prefix replies once per step.
 
 ## Define a flow
 
@@ -59,121 +92,48 @@ parseSequenceCustomId(ctx.customId);
 // → { sessionId, stepId, part? }
 ```
 
-`Signal.parseCustomId` treats these as signal name **`seq`** — register a Signal with `name: "seq"` so the router finds it.
+`Signal.parseCustomId` treats these as signal name **`seq`**. `runSequence` registers core’s `SeqSignal` automatically; you may still provide your own Signal named `seq` if you need custom copy.
 
-## End-to-end pattern (1.x)
+## Advanced — manual loop
+
+If you need custom rendering or mid-flow Vault writes, keep the manual pattern:
 
 1. **Build** the flow with `sequence()…build()`.
 2. **Create a session** — `client.sequences.createSession({ userId, guildId, channelId, timeoutMs })`.
-3. **Send each step** — map the step to Discord components with `sequenceCustomId`, then `reply` / `editReply`.
+3. **Send each step** — `renderSequenceStep(sessionId, step)` or your own payload.
 4. **Wait** — `await client.sequences.waitForStep(sessionId, stepId, timeoutMs)`.
-5. **Complete from a Signal** — on click/select, `parseSequenceCustomId` → `completeStep(sessionId, stepId, userId, value)`.
+5. **Complete from a Signal** — `ensureSeqSignal(client)` or a custom `seq` Signal calling `completeStep`.
 6. **Finish** — summarize answers, optionally persist to [Vault](/features/vault), then `endSession`.
 
-### Command (await each step)
+### Manual Signal (optional)
 
 ```ts
-const session = client.sequences.createSession({
-  userId: ctx.userId,
-  guildId: ctx.guildId,
-  channelId: ctx.channelId!,
-  timeoutMs: flow.defaultTimeoutMs,
-});
+import { ensureSeqSignal, SeqSignal } from "@stambha/core";
 
-await ctx.deferReply?.();
-
-for (const step of flow.steps) {
-  await ctx.editReply?.(renderStep(session.id, step)); // or ctx.reply for prefix
-  const value = await client.sequences.waitForStep(
-    session.id,
-    step.id,
-    step.timeoutMs ?? flow.defaultTimeoutMs,
-  );
-  answers[step.id] = value;
-}
-
-client.sequences.endSession(session.id);
-```
-
-Slash flows work best with `deferReply` + `editReply` so one message advances through steps. Prefix can `reply` a new message per step.
-
-### Signal (complete the wait)
-
-```ts
-import {
-  parseSequenceCustomId,
-  Signal,
-  type Registry,
-  type SignalContext,
-} from "@stambha/core";
-
-export class SeqSignal extends Signal {
-  constructor(registry: Registry<Signal>) {
-    super(registry, { name: "seq", types: ["button", "select"] });
-  }
-
-  async run(ctx: SignalContext) {
-    const parsed = parseSequenceCustomId(ctx.customId);
-    if (!parsed) return;
-
-    const value =
-      parsed.part !== undefined
-        ? parsed.part
-        : ctx.values.length === 1
-          ? ctx.values[0]
-          : [...ctx.values];
-
-    const status = this.client.sequences.completeStep(
-      parsed.sessionId,
-      parsed.stepId,
-      ctx.userId,
-      value,
-    );
-
-    if (status === "wrong_user") {
-      await ctx.replyEphemeral("This menu is not for you.");
-      return;
-    }
-    if (status === "unknown") {
-      await ctx.replyEphemeral("This step is no longer active.");
-      return;
-    }
-
-    await ctx.replyEphemeral("Got it.");
-  }
-}
+ensureSeqSignal(client); // or register `new SeqSignal(client.registries.signals)`
 ```
 
 `completeStep` returns `"ok" | "wrong_user" | "unknown"`. Always acknowledge the component interaction (ephemeral is enough) so Discord does not show “interaction failed”.
 
 ## Example bot
 
-Live wiring lives in `examples/bot`:
-
 | Piece | Role |
 |-------|------|
-| `commands/Admin/SetupCommand.ts` | Builds the flow, session, step UI, `waitForStep` loop |
-| `signals/SeqSignal.ts` | Completes waits for `stambha:seq:…` |
+| `commands/Admin/SetupCommand.ts` | `runSequence` + summary reply |
 
 ```bash
 cd examples/bot && pnpm start
 # /setup or !setup — click role, then pick channel type
 ```
 
-`pnpm demo` still covers confirm + mention routing; use a real token for the interactive sequence.
-
 ## Modal steps
 
-`.modal(…)` defines fields for a future show-modal callback. Until `runSequence` / a `showModal` helper lands, prefer **button + select** steps for production flows, or open a modal yourself from a button Signal and complete the step on modal submit (`types: ["modal"]`).
-
-## 2.0 — native `runSequence`
-
-Planned: framework-owned step routing, timeout cleanup, and wrong-user guards without per-bot Signal glue. Track progress on [Known gaps](/guide/known-gaps).
+`.modal(…)` defines fields for a future show-modal callback. **`runSequence` throws** if it encounters a modal step today — use **button + select** for production flows, or open a modal yourself from a button Signal and `completeStep` on modal submit (`types: ["modal"]` on a custom Signal).
 
 ## Related
 
 - [Signals](/features/signals) — `stambha:` custom ids for components
 - [Components & embeds](/features/components) — builders for rows and selects
 - [Vault](/features/vault) — persist sequence answers to schema
-- [API: `@stambha/core`](/api/core/) — `sequence`, `SequenceStore`, custom-id helpers
-- [Known gaps](/guide/known-gaps) — D1 / `runSequence` backlog
+- [API: `@stambha/core`](/api/core/) — `runSequence`, `sequence`, `SequenceStore`, custom-id helpers
+- [Known gaps](/guide/known-gaps) — remaining sequence / scale work

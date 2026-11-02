@@ -185,6 +185,10 @@ Enabled only when `auth` is configured. Paths are under `prefix`.
 
 `GET /guilds` returns OAuth guilds where the user is **owner** or has the required permission (default **Manage Guild** `0x20`), plus `botPresent` when `restPort` can see the guild.
 
+The guild list is cached per Discord user id (default 10 minutes fresh, 30 minutes stale). Dashboard traffic does not call `GET /users/@me/guilds` on every request. On HTTP 429 the route still returns the last list with `degraded: true` and `retryAfterMs` instead of failing the session. With nothing cached it returns `{ guilds: [], degraded: true }`. `assertGuildAccess` uses the same cache; if Discord is down and that guild is not in the stale list it responds **503** (`degraded: true`), not **403**. `POST /auth/logout` drops the user's entry.
+
+Pass `oauthGuilds.store` shaped like `@stambha/cache` (`get` / `set` / `delete`) when several API processes share one user. Call `fetchOAuthGuilds` only when you intentionally want an uncached Discord request — it still throws on 429.
+
 Channels, roles, and settings call `assertGuildAccess` (session + manageable + bot in guild). Missing REST → **503**.
 
 ### Auth options (`auth`)
@@ -205,6 +209,7 @@ Related top-level options:
 | `vault` | unset | Duck-typed Vault; enables settings routes |
 | `guildSettingsLedger` | `"guild"` | Ledger name for settings |
 | `authorization.requiredPermission` | Manage Guild | Bit flag; owners always pass |
+| `oauthGuilds` | memory, 10m / 30m / 90s | Shared cache for `/users/@me/guilds`; optional `store` |
 | `restPort` | `client.restPort` | Bot REST for guild/channel/role checks |
 
 ## Server options
@@ -385,7 +390,7 @@ See [Tier split](/deployment/tier-split).
 | `MemorySessionStore` / `MemoryOAuthStateStore` | Default stores |
 | `createAuthRoutes` / `createGuildRoutes` / `createSettingsRoutes` | Built-in route factories |
 | `createSessionMiddleware`, `createCsrfMiddleware`, `createRequireAuthMiddleware`, `createRateLimitMiddleware` | Auth middleware |
-| `buildAuthorizeUrl`, `exchangeAuthorizationCode`, `fetchOAuthUser`, `fetchOAuthGuilds`, `guildIsManageable`, … | Discord OAuth helpers |
+| `fetchOAuthUser`, `fetchOAuthGuilds`, `OAuthGuildsCache`, `guildIsManageable`, … | Discord OAuth helpers and cached guild list |
 | `Router`, `RouteStore`, `MiddlewareStore` | Extension points |
 | `shouldListen`, `createAuthRuntime` | Deploy / auth wiring |
 | Types | `ApiServerOptions`, `ApiAuthOptions`, `ApiSession`, `SessionStore`, `VaultLike`, `RouteDefinition`, `RouteHandler`, … |

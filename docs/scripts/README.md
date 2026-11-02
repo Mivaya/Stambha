@@ -16,8 +16,8 @@ Runs automatically before `docs:build`. `docs:dev` skips generation when `docs/a
 Snapshots public docs from a git tag into `docs/versions/<semver>/` for the VitePress version switcher.
 
 ```bash
-pnpm docs:archive 0.2.1
-pnpm docs:archive 0.2.1 v0.2.1
+pnpm docs:archive 1.3.1
+pnpm docs:archive 1.3.1 v1.3.1
 ```
 
 Also add or update `docs/.vitepress/sidebars/versioned/<semver>.json`. Commit the archive with the **core** release PR — do not edit old version folders after ship.

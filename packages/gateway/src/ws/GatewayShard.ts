@@ -205,6 +205,10 @@ export class GatewayShard {
 
   private async onHello(data: { heartbeat_interval: number }): Promise<void> {
     this.clearHeartbeat();
+    // Critical: a zombie reconnect leaves heartbeatAck=false. Without resetting
+    // here, the first interval tick (~heartbeat_interval) calls reconnect()
+    // again without ever sending a heartbeat → READY storm every ~41–43s.
+    this.heartbeatAck = true;
     const interval = data.heartbeat_interval;
     this.heartbeatTimer = setInterval(() => {
       if (!this.heartbeatAck) {
@@ -251,15 +255,24 @@ export class GatewayShard {
   }
 
   private onInvalidSession(resumable: boolean): void {
+    // Opcode 9 `d: true` means Discord will accept RESUME. Clearing the session
+    // and sending IDENTIFY here drops a resumable session on purpose.
+    if (
+      resumable &&
+      this.sessionId &&
+      this.lastSequence !== null &&
+      this.socket?.readyState === WS_OPEN
+    ) {
+      this.options.manager.markResuming(this.options.shardId);
+      this.send(buildResumePayload(this.options.session, this.sessionId, this.lastSequence));
+      return;
+    }
+
     this.sessionId = null;
     this.lastSequence = null;
     this.resumeGatewayUrl = null;
     this.options.manager.markDisconnected(this.options.shardId);
-    if (resumable) {
-      void this.identify();
-    } else {
-      void this.reconnect({ resetSession: true });
-    }
+    void this.reconnect({ resetSession: true });
   }
 
   private onDispatch(eventName: string, data: unknown, sequence: number | null): void {
