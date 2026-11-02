@@ -1,5 +1,14 @@
 import type { SessionInfo } from "@stambha/transport";
 
+/**
+ * Identify `capabilities` bitfield (temporary Discord testing flags).
+ * @see https://docs.discord.com/developers/change-log — Channel Obfuscation
+ */
+export const GatewayIdentifyCapability = {
+  /** Opt into private channel obfuscation early (`1 << 15`). */
+  PrivateChannelObfuscation: 1 << 15,
+} as const;
+
 /** Gateway opcode 2 — Identify */
 export interface GatewayIdentifyPayload {
   readonly op: 2;
@@ -12,6 +21,8 @@ export interface GatewayIdentifyPayload {
       readonly $device: string;
     };
     readonly shard: [number, number];
+    /** Optional Discord identify capabilities bitfield. */
+    readonly capabilities?: number;
   };
 }
 
@@ -31,6 +42,11 @@ export interface BuildIdentifyOptions {
   totalShards: number;
   intents: bigint | number;
   properties?: { os?: string; browser?: string; device?: string };
+  /**
+   * Discord Identify `capabilities` bitfield (e.g.
+   * {@link GatewayIdentifyCapability.PrivateChannelObfuscation}).
+   */
+  capabilities?: number;
 }
 
 export function buildIdentifyPayload(options: BuildIdentifyOptions): GatewayIdentifyPayload {
@@ -46,6 +62,47 @@ export function buildIdentifyPayload(options: BuildIdentifyOptions): GatewayIden
         $device: options.properties?.device ?? "stambha",
       },
       shard: [options.shardId, options.totalShards],
+      ...(options.capabilities !== undefined ? { capabilities: options.capabilities } : {}),
+    },
+  };
+}
+
+/** Gateway opcode 8 — Request Guild Members */
+export interface GatewayRequestGuildMembersPayload {
+  readonly op: 8;
+  readonly d: {
+    readonly guild_id: string;
+    readonly query: string;
+    readonly limit: number;
+    readonly presences?: boolean;
+    readonly user_ids?: string | readonly string[];
+    readonly nonce?: string;
+  };
+}
+
+export interface BuildRequestGuildMembersOptions {
+  guildId: string;
+  /** Empty string + `limit: 0` requests all members (rate-limited to 1/guild/bot/30s). */
+  query?: string;
+  limit?: number;
+  presences?: boolean;
+  userIds?: string | readonly string[];
+  nonce?: string;
+}
+
+/** Build a Request Guild Members (opcode 8) payload. */
+export function buildRequestGuildMembersPayload(
+  options: BuildRequestGuildMembersOptions,
+): GatewayRequestGuildMembersPayload {
+  return {
+    op: 8,
+    d: {
+      guild_id: options.guildId,
+      query: options.query ?? "",
+      limit: options.limit ?? 0,
+      ...(options.presences !== undefined ? { presences: options.presences } : {}),
+      ...(options.userIds !== undefined ? { user_ids: options.userIds } : {}),
+      ...(options.nonce !== undefined ? { nonce: options.nonce } : {}),
     },
   };
 }

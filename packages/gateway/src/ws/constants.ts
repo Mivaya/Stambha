@@ -20,6 +20,8 @@ export const GatewayOpcode = {
   Dispatch: 0,
   Heartbeat: 1,
   Identify: 2,
+  /** Request Guild Members — all-member requests (`limit: 0`, empty `query`) are rate-limited. */
+  RequestGuildMembers: 8,
   Resume: 6,
   Reconnect: 7,
   InvalidSession: 9,

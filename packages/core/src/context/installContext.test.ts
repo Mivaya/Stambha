@@ -12,8 +12,16 @@ describe("installContext mappers", () => {
     expect(integrationTypesToApi(["user", "user"])).toEqual([1]);
   });
 
+  it("sorts integration types regardless of input order", () => {
+    expect(integrationTypesToApi(["user", "guild"])).toEqual([0, 1]);
+  });
+
   it("maps friendly contexts to Discord ints", () => {
     expect(interactionContextsToApi(["guild", "bot_dm", "private_channel"])).toEqual([0, 1, 2]);
+  });
+
+  it("sorts contexts regardless of input order", () => {
+    expect(interactionContextsToApi(["private_channel", "guild", "bot_dm"])).toEqual([0, 1, 2]);
   });
 
   it("parses interaction context from API", () => {
