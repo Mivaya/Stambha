@@ -40,6 +40,17 @@ export interface MessageDetail {
   embeds?: unknown[];
 }
 
+export interface ChannelMessageAttachment {
+  id: string | number;
+  filename?: string;
+  title?: string;
+  description?: string;
+  content_type?: string;
+  duration_secs?: number;
+  waveform?: string;
+  flags?: number;
+}
+
 export interface ChannelMessageBody {
   content?: string;
   embeds?: unknown[];
@@ -47,6 +58,8 @@ export interface ChannelMessageBody {
   components?: unknown[];
   /** Discord message flags (e.g. IS_COMPONENTS_V2). */
   flags?: number;
+  /** Attachment descriptors (pair with multipart `files` on the REST request). */
+  attachments?: ChannelMessageAttachment[];
   /** Discord poll create request (snake_case). Prefer `createPoll()` from `./polls.js`. */
   poll?: unknown;
   message_reference?: { message_id: string; channel_id?: string };
@@ -325,5 +338,178 @@ export async function fetchApplication(rest: RestPort): Promise<ApiApplication |
   return tryRequest<ApiApplication>(rest, {
     method: "GET",
     route: "/oauth2/applications/@me",
+  });
+}
+
+/** Discord permissions response (`{ permissions: string }`). */
+export interface PermissionsResponse {
+  permissions: string;
+}
+
+export interface ChannelPermissionsQuery {
+  /**
+   * When true (Discord default), apply implicit masking for missing `VIEW_CHANNEL`
+   * or voice/stage `CONNECT`. Pass `false` to skip masking.
+   */
+  implicit?: boolean;
+}
+
+/** `GET /guilds/{guild.id}/members/{user.id}/permissions` */
+export async function fetchGuildMemberPermissions(
+  rest: RestPort,
+  guildId: string,
+  userId: string,
+): Promise<PermissionsResponse | null> {
+  return tryRequest<PermissionsResponse>(rest, {
+    method: "GET",
+    route: `/guilds/${guildId}/members/${userId}/permissions`,
+  });
+}
+
+/** `GET /guilds/{guild.id}/roles/{role.id}/permissions` */
+export async function fetchGuildRolePermissions(
+  rest: RestPort,
+  guildId: string,
+  roleId: string,
+): Promise<PermissionsResponse | null> {
+  return tryRequest<PermissionsResponse>(rest, {
+    method: "GET",
+    route: `/guilds/${guildId}/roles/${roleId}/permissions`,
+  });
+}
+
+/** `GET /channels/{channel.id}/members/{user.id}/permissions` */
+export async function fetchChannelMemberPermissions(
+  rest: RestPort,
+  channelId: string,
+  userId: string,
+  query: ChannelPermissionsQuery = {},
+): Promise<PermissionsResponse | null> {
+  const params = new URLSearchParams();
+  if (query.implicit !== undefined) params.set("implicit", String(query.implicit));
+  const qs = params.toString();
+  const route = qs
+    ? `/channels/${channelId}/members/${userId}/permissions?${qs}`
+    : `/channels/${channelId}/members/${userId}/permissions`;
+  return tryRequest<PermissionsResponse>(rest, { method: "GET", route });
+}
+
+/** `GET /channels/{channel.id}/roles/{role.id}/permissions` */
+export async function fetchChannelRolePermissions(
+  rest: RestPort,
+  channelId: string,
+  roleId: string,
+  query: ChannelPermissionsQuery = {},
+): Promise<PermissionsResponse | null> {
+  const params = new URLSearchParams();
+  if (query.implicit !== undefined) params.set("implicit", String(query.implicit));
+  const qs = params.toString();
+  const route = qs
+    ? `/channels/${channelId}/roles/${roleId}/permissions?${qs}`
+    : `/channels/${channelId}/roles/${roleId}/permissions`;
+  return tryRequest<PermissionsResponse>(rest, { method: "GET", route });
+}
+
+/**
+ * Interaction `app_permissions` is the bot's permissions in the interaction channel
+ * (string bitfield). Prefer Discord's computed permission endpoints when you need
+ * guild/channel member or role permissions outside an interaction.
+ */
+export function parseAppPermissions(appPermissions: string | null | undefined): bigint {
+  if (!appPermissions) return 0n;
+  try {
+    return BigInt(appPermissions);
+  } catch {
+    return 0n;
+  }
+}
+
+/** Role id → member count (`GET /guilds/{guild.id}/roles/member-counts`). Excludes `@everyone`. */
+export type GuildRoleMemberCounts = Record<string, number>;
+
+export async function fetchGuildRoleMemberCounts(
+  rest: RestPort,
+  guildId: string,
+): Promise<GuildRoleMemberCounts> {
+  return (
+    (await tryRequest<GuildRoleMemberCounts>(rest, {
+      method: "GET",
+      route: `/guilds/${guildId}/roles/member-counts`,
+    })) ?? {}
+  );
+}
+
+export interface ActivityLocation {
+  id: string;
+  kind: "gc" | "pc" | string;
+  channel_id: string;
+  guild_id?: string | null;
+}
+
+export interface ActivityInstance {
+  application_id: string;
+  instance_id: string;
+  launch_id: string;
+  location: ActivityLocation;
+  users: string[];
+}
+
+/** `GET /applications/{application.id}/activity-instances/{instance_id}` */
+export async function fetchActivityInstance(
+  rest: RestPort,
+  applicationId: string,
+  instanceId: string,
+): Promise<ActivityInstance | null> {
+  return tryRequest<ActivityInstance>(rest, {
+    method: "GET",
+    route: `/applications/${applicationId}/activity-instances/${instanceId}`,
+  });
+}
+
+/** Discord attachment flag: voice message (`1 << 13`). */
+export const VoiceMessageAttachmentFlag = 1 << 13;
+
+export interface VoiceMessageFile {
+  /** Ogg Opus (or Discord-accepted) audio bytes. */
+  data: Uint8Array | Blob;
+  filename?: string;
+  contentType?: string;
+  durationSecs: number;
+  /** Base64 waveform samples. */
+  waveform: string;
+  description?: string;
+}
+
+/**
+ * Send a Discord voice message (`POST /channels/{id}/messages` + multipart).
+ * Builds the voice-message attachment descriptor and uploads `file` as `files[0]`.
+ */
+export async function sendVoiceMessage(
+  rest: RestPort,
+  channelId: string,
+  file: VoiceMessageFile,
+): Promise<{ id: string }> {
+  const filename = file.filename ?? "voice-message.ogg";
+  const attachment: ChannelMessageAttachment = {
+    id: 0,
+    filename,
+    duration_secs: file.durationSecs,
+    waveform: file.waveform,
+    flags: VoiceMessageAttachmentFlag,
+  };
+  if (file.description !== undefined) attachment.description = file.description;
+
+  return rest.request<{ id: string }>({
+    method: "POST",
+    route: `/channels/${channelId}/messages`,
+    body: { attachments: [attachment] },
+    files: [
+      {
+        name: "files[0]",
+        filename,
+        data: file.data,
+        ...(file.contentType !== undefined ? { contentType: file.contentType } : {}),
+      },
+    ],
   });
 }

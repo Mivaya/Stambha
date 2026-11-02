@@ -4,7 +4,7 @@
 
 | You want… | Stambha gives you… |
 |-----------|-------------------|
-| Familiar command folders without discord.js in every process | Piece layout (`commands/`, `gates/`, …) on a **native** gateway + REST stack |
+| Familiar command folders without a third-party client in every process | Piece layout (`commands/`, `gates/`, …) on a **native** gateway + REST stack |
 | To test without spinning up Discord | `hub.emit`, `MockBridge`, and `examples/bot` `pnpm demo` |
 | To grow from one process to many | Same pipeline in one process or split across gateway / REST / bot workers |
 | Guild settings without inventing a schema | **Vault** for prefix/flags/modules — keep Prisma/SQL for domain data |
@@ -13,30 +13,30 @@
 
 ## The problem
 
-Building a serious Discord bot today usually means picking a lane:
+Building a serious Discord bot usually forces a trade-off:
 
 | Lane | What you get | What you give up |
 |------|----------------|------------------|
-| **Piece-based framework on discord.js** | Strong command DX — folders, preconditions, plugins | The client library in the hot path; harder to split gateway, REST, and bot workers cleanly |
-| **Native transport stack** | Sharding, REST proxy patterns, worker-friendly layout | A different command model; more wiring for piece-based ergonomics |
-| **discord.js alone** | Full API surface | No opinion on structure, gates, deploy, or multi-process layout |
+| **Piece folders on someone else’s client library** | Strong command DX — folders, preconditions, plugins | That client in the hot path; harder to split gateway, REST, and bot workers cleanly |
+| **Raw Discord WebSocket + REST only** | Full control of sharding and workers | You invent structure, gates, deploy, and multi-process layout yourself |
+| **Ad-hoc single-file bot** | Fast first message | No opinion on structure, gates, deploy, or process split |
 
-Teams coming from piece-based layouts want to **keep familiar folders** (`commands/`, `listeners/`, `gates/`). Teams scaling across processes want **first-class process split** without bolting e.g. discord.js onto every worker.
+Teams want **familiar folders** (`commands/`, `listeners/`, `gates/`) **and** a **first-class process split** without bolting a third-party Discord client onto every worker.
 
 Git commits are a poor place to capture *why* you chose a connectivity shape or where guild config should live. Those decisions belong in docs and code you can reason about when you onboard the next maintainer.
 
 ## The solution
 
-Stambha ships a **native stack by default** — your bot logic is not coupled to a third-party Discord client library. Official connectivity is `@stambha/gateway` + `@stambha/rest`, not a hybrid where discord.js owns the WebSocket:
+Stambha ships a **native stack by default** — your bot logic is not coupled to a third-party Discord client library. Official connectivity is `@stambha/gateway` + `@stambha/rest`:
 
 ```text
 @stambha/gateway  →  events, sharding, worker bus
 @stambha/rest     →  centralized rate limits, deploy, REST worker
-@stambha/transform →  stable command contexts (no library types in core)
+@stambha/transform →  stable command contexts (no foreign client types in core)
 @stambha/core     →  pipeline, pieces, vault hooks, sequences
 ```
 
-You write **pieces** (commands, hooks, gates, scouts, …) against Stambha APIs. Discord connectivity comes from Stambha-owned packages — not from wrapping another framework or requiring discord.js in core.
+You write **pieces** (commands, hooks, gates, scouts, …) against Stambha APIs. Discord connectivity comes from Stambha-owned packages.
 
 ### Design choices (in one place)
 
@@ -61,7 +61,7 @@ You write **pieces** (commands, hooks, gates, scouts, …) against Stambha APIs.
 **Extensions stay optional**
 
 - Core repo ships the framework
-- [`Stambha-plugins`](https://github.com/Mivaya/Stambha-plugins) ships optional add-ons on their own **1.0.0** line — see [Extensions](/extensions/)
+- [`Stambha-plugins`](https://github.com/Mivaya/Stambha-plugins) ships optional add-ons on their own version line — see [Extensions](/extensions/)
 
 ## The result
 
@@ -84,24 +84,24 @@ Signals (buttons / selects / modals) route in parallel on interactionCreate
 
 You get:
 
-1. **One connectivity story** — native REST and gateway; no official hybrid path that keeps e.g. discord.js for gateway and Stambha for commands only
+1. **One connectivity story** — native REST and gateway; no official hybrid where another library owns the WebSocket and Stambha only owns commands
 2. **Predictable scaling** — start in one process; split gateway / REST / bot workers when rate limits or shard count demand it
-3. **Migration guides** — [piece-based layouts and native stacks](/migration/) without renaming your entire tree
+3. **Migration guides** — [move onto the native stack](/migration/) without renaming your entire tree
 4. **Room to grow** — sequences, signals, chron, desired properties, and vault-backed config without forking the framework
 
 ## Who Stambha is for
 
 **Good fit**
 
-- Teams moving from a piece-based bot to a native stack while keeping folder structure
-- New bots that want process split from day one without discord.js in every process
+- Teams moving a piece-based bot onto a native Discord stack while keeping folder structure
+- New bots that want process split from day one without a third-party client in every process
 - Bots that need typed guild config *and* a real database for domain data
 
 **Less ideal**
 
-- Drop-in replacement for every third-party plugin from another ecosystem (use core features + [Stambha-plugins](https://github.com/Mivaya/Stambha-plugins) instead)
-- Split stack where discord.js owns the gateway and another layer owns commands — use the [native bootstrap](/guide/getting-started) path
-- Single-file bots with no interest in pieces or deployment shape — a minimal discord.js script may be simpler
+- Expecting drop-in plugins from another ecosystem (use core features + [Stambha-plugins](https://github.com/Mivaya/Stambha-plugins) instead)
+- Split stack where a third-party client owns the gateway and another layer owns commands — use the [native bootstrap](/guide/getting-started) path
+- Single-file bots with no interest in pieces or deployment shape — a minimal Discord API script may be simpler
 
 ## Next steps
 
