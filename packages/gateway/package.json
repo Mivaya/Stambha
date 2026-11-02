@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@stambha/transform": "workspace:*",
-    "ws": "^8.21.3"
+    "ws": "^8.22.0"
   },
   "devDependencies": {
     "@stambha/core": "workspace:*",
@@ -56,7 +56,7 @@
     "@stambha/transform": "workspace:*",
     "@stambha/transport": "workspace:*",
     "@types/node": "^26.1.1",
-    "@types/ws": "^8.18.1",
+    "@types/ws": "^8.18.2",
     "tsup": "^8.3.6",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
