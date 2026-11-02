@@ -15,6 +15,16 @@ export const ComponentType = {
   File: 13,
   Separator: 14,
   Container: 17,
+  /** Modal layout wrapper (label + description + child). */
+  Label: 18,
+  /** Modal file upload (must be inside a Label). */
+  FileUpload: 19,
+  /** Modal single-choice radio group (must be inside a Label). */
+  RadioGroup: 21,
+  /** Modal multi-select checkbox group (must be inside a Label). */
+  CheckboxGroup: 22,
+  /** Modal single checkbox (must be inside a Label). */
+  Checkbox: 23,
 } as const;
 
 export type ComponentTypeId = (typeof ComponentType)[keyof typeof ComponentType];
@@ -191,7 +201,8 @@ export interface TextInputComponent {
   type: typeof ComponentType.TextInput;
   custom_id: string;
   style: TextInputStyleId;
-  label: string;
+  /** Required in classic action-row modals; omit when wrapped in a {@link LabelComponent}. */
+  label?: string;
   min_length?: number;
   max_length?: number;
   required?: boolean;
@@ -212,11 +223,85 @@ export interface ActionRowComponent {
   id?: number;
 }
 
+export interface FileUploadComponent {
+  type: typeof ComponentType.FileUpload;
+  custom_id: string;
+  min_values?: number;
+  max_values?: number;
+  required?: boolean;
+  /** Extensions (`.pdf`) or categories (`image`, `video`, `audio`); max 10. */
+  file_types?: string[];
+  id?: number;
+}
+
+export interface RadioGroupOption {
+  value: string;
+  label: string;
+  description?: string;
+  default?: boolean;
+}
+
+export interface RadioGroupComponent {
+  type: typeof ComponentType.RadioGroup;
+  custom_id: string;
+  options: RadioGroupOption[];
+  required?: boolean;
+  id?: number;
+}
+
+export interface CheckboxGroupOption {
+  value: string;
+  label: string;
+  description?: string;
+  default?: boolean;
+}
+
+export interface CheckboxGroupComponent {
+  type: typeof ComponentType.CheckboxGroup;
+  custom_id: string;
+  options: CheckboxGroupOption[];
+  min_values?: number;
+  max_values?: number;
+  required?: boolean;
+  id?: number;
+}
+
+export interface CheckboxComponent {
+  type: typeof ComponentType.Checkbox;
+  custom_id: string;
+  default?: boolean;
+  id?: number;
+}
+
+/** Interactive child of a modal {@link LabelComponent}. */
+export type LabelChildComponent =
+  | TextInputComponent
+  | StringSelectComponent
+  | UserSelectComponent
+  | RoleSelectComponent
+  | MentionableSelectComponent
+  | ChannelSelectComponent
+  | FileUploadComponent
+  | RadioGroupComponent
+  | CheckboxGroupComponent
+  | CheckboxComponent;
+
+export interface LabelComponent {
+  type: typeof ComponentType.Label;
+  label: string;
+  description?: string;
+  component: LabelChildComponent;
+  id?: number;
+}
+
+/** Top-level modal rows: classic action rows or Label wrappers. */
+export type ModalTopLevelComponent = ActionRowComponent | LabelComponent;
+
 /** Modal payload for interaction responses (`type: 9` callback data). */
 export interface ModalComponent {
   custom_id: string;
   title: string;
-  components: ActionRowComponent[];
+  components: ModalTopLevelComponent[];
 }
 
 export interface TextDisplayComponent {

@@ -115,8 +115,64 @@ await sendSoundboardSound(rest, voiceChannelId, {
 
 Hub listeners: `guildSoundboardSoundCreate` / `Update` / `Delete`, `voiceChannelEffectSend`.
 
+## Permissions
+
+Discord’s computed permission endpoints (Oct 2026). Channel endpoints apply implicit masking by default — pass `{ implicit: false }` to skip.
+
+```ts
+import {
+  fetchChannelMemberPermissions,
+  fetchGuildMemberPermissions,
+  fetchGuildRolePermissions,
+  parseAppPermissions,
+} from "@stambha/rest";
+
+const guildPerms = await fetchGuildMemberPermissions(rest, guildId, userId);
+const channelPerms = await fetchChannelMemberPermissions(rest, channelId, userId, {
+  implicit: false,
+});
+
+// Interaction payloads expose the bot’s channel permissions as `app_permissions`:
+const botBits = parseAppPermissions(interaction.app_permissions);
+```
+
+| Helper | Route |
+|--------|-------|
+| `fetchGuildMemberPermissions` | `GET /guilds/{id}/members/{id}/permissions` |
+| `fetchGuildRolePermissions` | `GET /guilds/{id}/roles/{id}/permissions` |
+| `fetchChannelMemberPermissions` | `GET /channels/{id}/members/{id}/permissions` |
+| `fetchChannelRolePermissions` | `GET /channels/{id}/roles/{id}/permissions` |
+
+## Role member counts · activity instance · voice messages
+
+```ts
+import {
+  fetchActivityInstance,
+  fetchGuildRoleMemberCounts,
+  sendVoiceMessage,
+} from "@stambha/rest";
+import { AttachmentBuilder } from "@stambha/core";
+
+const counts = await fetchGuildRoleMemberCounts(rest, guildId); // roleId → count
+const instance = await fetchActivityInstance(rest, applicationId, instanceId);
+
+await sendVoiceMessage(rest, channelId, {
+  data: oggOpusBytes,
+  durationSecs: 2.5,
+  waveform: base64Waveform,
+});
+
+// Or build attachment JSON yourself:
+AttachmentBuilder.from({ filename: "clip.ogg" })
+  .setVoiceMessage({ durationSecs: 2.5, waveform: base64Waveform })
+  .toJSON();
+```
+
+Multipart uploads: pass `files: [{ name: "files[0]", filename, data }]` on `RestRequest` (used by `sendVoiceMessage`).
+
 ## Related
 
 - [Polls](/features/polls)
+- [Components & embeds](/features/components) — `AttachmentBuilder`
 - [Native REST](/deployment/native-rest)
 - [Gateway hub events](/deployment/gateway)

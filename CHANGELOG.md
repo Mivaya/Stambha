@@ -5,6 +5,22 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — 1.4.0 (pre-tag)
+
+### Added
+
+- **`defineCommand`** — options-first Command factory for `loadPieces` without Registry ctor boilerplate (`@stambha/core`).
+- **Format helpers** — `userMention`, `roleMention`, `channelMention`, `time`, `codeBlock`, style helpers (`@stambha/core`).
+- **`AttachmentBuilder`** — spoilers, voice-message metadata; REST multipart `files` on `RestRequest` (`@stambha/core` / `@stambha/rest`).
+- **Modal Label layout** — `label`, `fileUpload`, `radioGroup`, `checkboxGroup`, `checkbox` (Discord types 18–23).
+- **REST surface** — guild/channel member & role permissions, role member counts, activity instance, `sendVoiceMessage`, `parseAppPermissions`.
+- **`deployCommands({ onBulkOverwrite })`** — hook after successful slash registry PUT.
+- **Docs** — [pipeline mental model](docs/guide/mental-model.md), [what's coming in 1.4](docs/guide/whats-new-1.4.md), known-gaps trimmed to open items only.
+
+### Companion (Stambha-plugins)
+
+- **`@stambha/display@1.0.0`** — EmbedManager / ContainerManager + classic embed → Components V2 Container migration (separate plugins PR/publish).
+
 ## [1.3.3] - 2026-09-29
 
 ### Fixed
