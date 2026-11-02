@@ -38,6 +38,7 @@ These were open after **1.2.1** and are **closed** on the 1.3.0 release:
 | Embed→Container migration helpers | Former `panel()` DX in planned `@stambha/display` plugin |
 | Session hooks / token refresh | `@stambha/api` (Vyne #4 — still open) |
 | Hub `shardDisconnect` / resume events | Core 1.4+ (Vyne #7) |
+| Channel obfuscation HTTP omission | Gateway detect helpers ship now; HTTP `GET …/channels` omits inaccessible channels from **2026-11-16** — test with Identify `capabilities` |
 | Hot reload in dev | Planned `@stambha/dev-reload` |
 | Hosted admin dashboard UI | Out of core — HTTP settings via [`@stambha/api`](/extensions/api) |
 | Entity cache layer | Opt-in Guild/Channel/Member stores |

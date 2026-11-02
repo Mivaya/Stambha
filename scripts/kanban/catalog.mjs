@@ -2558,7 +2558,7 @@ export class PingCommand extends Command {
 
   "API-rate-limited": {
     title: "API-rate-limited — Gateway RATE_LIMITED for Request Guild Members",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -2584,7 +2584,7 @@ export class PingCommand extends Command {
 
   "API-channel-obfuscation": {
     title: "API-channel-obfuscation — CHANNEL_OBFUSCATED + Identify capabilities",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "G",
@@ -2702,7 +2702,7 @@ export class PingCommand extends Command {
 
   "API-guilds-shard-param": {
     title: "API-guilds-shard-param — shard query on Get Current User Guilds",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "Ops",
@@ -2724,7 +2724,7 @@ export class PingCommand extends Command {
 
   "API-upload-limit-docs": {
     title: "API-upload-limit-docs — default upload limit 20 MiB",
-    status: "Backlog",
+    status: "Done",
     track: "stambha",
     type: "Task",
     pillar: "Docs",
@@ -2901,7 +2901,7 @@ export class PingCommand extends Command {
 
   "SAP-sort-contexts": {
     title: "SAP-sort-contexts — stable compare for integration types & contexts",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Bug",
     pillar: "B",
