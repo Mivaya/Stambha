@@ -583,7 +583,7 @@ export const CARD_CATALOG = {
 
   "DX-piece-factory": {
     title: "DX-piece-factory — Reduce Registry constructor boilerplate",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -650,7 +650,7 @@ export const CARD_CATALOG = {
 
   "DOCS-mental-model": {
     title: "DOCS-mental-model — First-hour pipeline concept map",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Task",
     pillar: "Docs",
@@ -1251,7 +1251,7 @@ export class PingCommand extends Command {
 
   "EPIC-DISPLAY": {
     title: "EPIC-DISPLAY — @stambha/display (plugins)",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha-plugins",
     type: "Epic",
     pillar: "Plugins",
@@ -1271,8 +1271,8 @@ export class PingCommand extends Command {
         "Optional templates / reply helpers",
       ],
       childTickets: [
-        { id: "DISPLAY-managers", title: "EmbedManager + ContainerManager", shipped: false },
-        { id: "DISPLAY-migrate", title: "embed → container migration helper", shipped: false },
+        { id: "DISPLAY-managers", title: "EmbedManager + ContainerManager", shipped: true },
+        { id: "DISPLAY-migrate", title: "embed → container migration helper", shipped: true },
       ],
       successCriteria: [
         "Core stays Discord-API-shaped builders + Views only",
@@ -1284,7 +1284,7 @@ export class PingCommand extends Command {
 
   "DISPLAY-managers": {
     title: "DISPLAY-managers — EmbedManager + ContainerManager",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha-plugins",
     type: "Feature",
     pillar: "Plugins",
@@ -1306,7 +1306,7 @@ export class PingCommand extends Command {
 
   "DISPLAY-migrate": {
     title: "DISPLAY-migrate — Classic embed → Container (ex-panel)",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha-plugins",
     type: "Feature",
     pillar: "Plugins",
@@ -1328,7 +1328,7 @@ export class PingCommand extends Command {
 
   ATTACH: {
     title: "ATTACH — AttachmentBuilder (files + spoilers)",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -1345,7 +1345,7 @@ export class PingCommand extends Command {
 
   FORMAT: {
     title: "FORMAT — @stambha/format (mentions, time, code)",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -1362,7 +1362,7 @@ export class PingCommand extends Command {
 
   "MODAL-V2": {
     title: "MODAL-V2 — Label, File Upload, Radio/Checkbox groups",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -2611,7 +2611,7 @@ export class PingCommand extends Command {
 
   "API-perm-endpoints": {
     title: "API-perm-endpoints — member/role guild & channel permissions REST",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "Ops",
@@ -2743,7 +2743,7 @@ export class PingCommand extends Command {
 
   "UPSTREAM-djs": {
     title: "UPSTREAM — Discord REST & gateway surface (1.4)",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Epic",
     pillar: "B",
@@ -2769,7 +2769,7 @@ export class PingCommand extends Command {
 
   "DJS-voice-messages": {
     title: "REST-voice-messages — send voice messages via REST",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -2786,7 +2786,7 @@ export class PingCommand extends Command {
 
   "DJS-role-member-counts": {
     title: "REST-role-member-counts — GET role member counts",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "Ops",
@@ -2817,7 +2817,7 @@ export class PingCommand extends Command {
 
   "DJS-channel-app-permissions": {
     title: "REST-channel-app-permissions — channel + app permission helpers",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -2835,7 +2835,7 @@ export class PingCommand extends Command {
 
   "DJS-activity-instance": {
     title: "REST-activity-instance — fetch activity instance",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "Ops",
@@ -2852,7 +2852,7 @@ export class PingCommand extends Command {
 
   "DJS-modal-inputs": {
     title: "MODAL-inputs — Label / radio / checkbox modal components",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",
@@ -2874,7 +2874,7 @@ export class PingCommand extends Command {
 
   "UPSTREAM-sapphire": {
     title: "UPSTREAM — Command deploy DX (1.4)",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Epic",
     pillar: "B",
@@ -2893,7 +2893,7 @@ export class PingCommand extends Command {
 
   "SAP-cmd-bulk-overwrite-event": {
     title: "CMD-bulk-overwrite — registries bulk overwrite hook",
-    status: "Sprint Ready",
+    status: "Done",
     track: "stambha",
     type: "Feature",
     pillar: "B",

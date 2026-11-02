@@ -77,6 +77,24 @@ export class PingCommand extends Command {
 
 Return **`ok(value)`** or **`err(message)`** from `execute()` — the pipeline uses outcomes for epilogues and metrics. Uncaught throws are treated as failures.
 
+Options-first alternative (`defineCommand`) — same loader contract, less constructor boilerplate:
+
+```ts
+import { defineCommand, ok } from "@stambha/core";
+
+export default defineCommand({
+  name: "ping",
+  description: "Replies with Pong!",
+  kinds: ["slash"],
+  async execute(ctx) {
+    await ctx.reply("Pong!");
+    return ok(undefined);
+  },
+});
+```
+
+Message content helpers: `userMention`, `time`, `codeBlock`, and friends from `@stambha/core`. First-hour map: [Pipeline mental model](/guide/mental-model).
+
 ### Kind hooks (optional)
 
 Prefer separate handlers per invocation kind (`slash` / `prefix` / `menu`) instead of a single generic `execute` when the reply shape differs:

@@ -6,10 +6,19 @@ import {
   type ButtonStyleId,
   type ChannelSelectChannelTypeId,
   type ChannelSelectComponent,
+  type CheckboxComponent,
+  type CheckboxGroupComponent,
+  type CheckboxGroupOption,
   type ComponentEmoji,
   ComponentType,
+  type FileUploadComponent,
+  type LabelChildComponent,
+  type LabelComponent,
   type MentionableSelectComponent,
   type ModalComponent,
+  type ModalTopLevelComponent,
+  type RadioGroupComponent,
+  type RadioGroupOption,
   type RoleSelectComponent,
   type SelectDefaultValue,
   type SelectOption,
@@ -65,7 +74,11 @@ export interface ChannelSelectOptions extends EntitySelectOptions {
 
 export interface TextInputOptions {
   customId: string;
-  label: string;
+  /**
+   * Classic action-row modals require this. When the input is wrapped in a
+   * {@link label}, Discord uses the Label text — omit here.
+   */
+  label?: string;
   style?: TextInputStyleId;
   minLength?: number;
   maxLength?: number;
@@ -74,11 +87,49 @@ export interface TextInputOptions {
   placeholder?: string;
 }
 
+export interface LabelOptions {
+  label: string;
+  component: LabelChildComponent;
+  description?: string;
+  id?: number;
+}
+
+export interface FileUploadOptions {
+  customId: string;
+  minValues?: number;
+  maxValues?: number;
+  required?: boolean;
+  fileTypes?: string[];
+  id?: number;
+}
+
+export interface RadioGroupOptions {
+  customId: string;
+  options: readonly RadioGroupOption[];
+  required?: boolean;
+  id?: number;
+}
+
+export interface CheckboxGroupOptions {
+  customId: string;
+  options: readonly CheckboxGroupOption[];
+  minValues?: number;
+  maxValues?: number;
+  required?: boolean;
+  id?: number;
+}
+
+export interface CheckboxOptions {
+  customId: string;
+  default?: boolean;
+  id?: number;
+}
+
 export interface ModalOptions {
   customId: string;
   title: string;
-  /** Action rows of text inputs (1–5 rows). */
-  components: readonly ActionRowComponent[];
+  /** Classic action rows and/or Label wrappers (1–5 top-level components). */
+  components: readonly ModalTopLevelComponent[];
 }
 
 /** Build a non-link button (API shape). */
@@ -195,13 +246,82 @@ export function textInput(options: TextInputOptions): TextInputComponent {
     type: ComponentType.TextInput,
     custom_id: options.customId,
     style: options.style ?? TextInputStyle.Short,
-    label: options.label,
   };
+  if (options.label !== undefined) component.label = options.label;
   if (options.minLength !== undefined) component.min_length = options.minLength;
   if (options.maxLength !== undefined) component.max_length = options.maxLength;
   if (options.required !== undefined) component.required = options.required;
   if (options.value !== undefined) component.value = options.value;
   if (options.placeholder !== undefined) component.placeholder = options.placeholder;
+  return component;
+}
+
+/** Modal Label (type 18) — wraps an interactive child with label + optional description. */
+export function label(options: LabelOptions): LabelComponent {
+  const component: LabelComponent = {
+    type: ComponentType.Label,
+    label: options.label,
+    component: options.component,
+  };
+  if (options.description !== undefined) component.description = options.description;
+  if (options.id !== undefined) component.id = options.id;
+  return component;
+}
+
+/** Modal File Upload (type 19) — place inside a {@link label}. */
+export function fileUpload(options: FileUploadOptions): FileUploadComponent {
+  const component: FileUploadComponent = {
+    type: ComponentType.FileUpload,
+    custom_id: options.customId,
+  };
+  if (options.minValues !== undefined) component.min_values = options.minValues;
+  if (options.maxValues !== undefined) component.max_values = options.maxValues;
+  if (options.required !== undefined) component.required = options.required;
+  if (options.fileTypes !== undefined) component.file_types = [...options.fileTypes];
+  if (options.id !== undefined) component.id = options.id;
+  return component;
+}
+
+/** Modal Radio Group (type 21) — place inside a {@link label}. */
+export function radioGroup(options: RadioGroupOptions): RadioGroupComponent {
+  if (options.options.length < 2 || options.options.length > 10) {
+    throw new Error("radioGroup requires 2–10 options.");
+  }
+  const component: RadioGroupComponent = {
+    type: ComponentType.RadioGroup,
+    custom_id: options.customId,
+    options: options.options.map((o) => ({ ...o })),
+  };
+  if (options.required !== undefined) component.required = options.required;
+  if (options.id !== undefined) component.id = options.id;
+  return component;
+}
+
+/** Modal Checkbox Group (type 22) — place inside a {@link label}. */
+export function checkboxGroup(options: CheckboxGroupOptions): CheckboxGroupComponent {
+  if (options.options.length < 1 || options.options.length > 10) {
+    throw new Error("checkboxGroup requires 1–10 options.");
+  }
+  const component: CheckboxGroupComponent = {
+    type: ComponentType.CheckboxGroup,
+    custom_id: options.customId,
+    options: options.options.map((o) => ({ ...o })),
+  };
+  if (options.minValues !== undefined) component.min_values = options.minValues;
+  if (options.maxValues !== undefined) component.max_values = options.maxValues;
+  if (options.required !== undefined) component.required = options.required;
+  if (options.id !== undefined) component.id = options.id;
+  return component;
+}
+
+/** Modal Checkbox (type 23) — place inside a {@link label}. */
+export function checkbox(options: CheckboxOptions): CheckboxComponent {
+  const component: CheckboxComponent = {
+    type: ComponentType.Checkbox,
+    custom_id: options.customId,
+  };
+  if (options.default !== undefined) component.default = options.default;
+  if (options.id !== undefined) component.id = options.id;
   return component;
 }
 
@@ -238,7 +358,12 @@ export function buttonRow(...buttons: ButtonComponent[]): ActionRowComponent {
 
 /** Convenience: action row with a single select (string or entity). */
 export function selectRow(
-  select: StringSelectComponent | UserSelectComponent | RoleSelectComponent | MentionableSelectComponent | ChannelSelectComponent,
+  select:
+    | StringSelectComponent
+    | UserSelectComponent
+    | RoleSelectComponent
+    | MentionableSelectComponent
+    | ChannelSelectComponent,
 ): ActionRowComponent {
   return actionRow(select);
 }
@@ -262,10 +387,10 @@ export function confirmCancelRow(
   );
 }
 
-/** Modal layout for interaction responses. */
+/** Modal layout for interaction responses (classic action rows and/or Labels). */
 export function modal(options: ModalOptions): ModalComponent {
   if (options.components.length < 1 || options.components.length > 5) {
-    throw new Error("modal requires 1–5 action rows.");
+    throw new Error("modal requires 1–5 top-level components (action rows or Labels).");
   }
   return {
     custom_id: options.customId,

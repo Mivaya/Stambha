@@ -76,14 +76,26 @@ export class RestClient implements RestPort {
       "User-Agent": "StambhaBot (https://github.com/mivaya/Stambha, 1.0)",
     };
 
-    let body: string | undefined;
-    if (req.body !== undefined) {
+    const init: RequestInit = { method: req.method, headers };
+
+    if (req.files !== undefined && req.files.length > 0) {
+      const form = new FormData();
+      form.append("payload_json", JSON.stringify(req.body ?? {}));
+      for (const file of req.files) {
+        const blob =
+          file.data instanceof Blob
+            ? file.data
+            : new Blob([Uint8Array.from(file.data)], {
+                type: file.contentType ?? "application/octet-stream",
+              });
+        form.append(file.name, blob, file.filename);
+      }
+      init.body = form;
+    } else if (req.body !== undefined) {
       headers["Content-Type"] = "application/json";
-      body = JSON.stringify(req.body);
+      init.body = JSON.stringify(req.body);
     }
 
-    const init: RequestInit = { method: req.method, headers };
-    if (body !== undefined) init.body = body;
     return this.fetchImpl(url, init);
   }
 }
