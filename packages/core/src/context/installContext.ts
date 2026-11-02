@@ -56,18 +56,18 @@ const CONTEXT_API_TO_NAME: Record<number, InteractionContextName> = {
   [InteractionContextType.PrivateChannel]: "private_channel",
 };
 
-/** Map friendly names → Discord `integration_types` integers. */
+/** Map friendly names → Discord `integration_types` integers (sorted for stable deploy diffs). */
 export function integrationTypesToApi(
   types: readonly IntegrationTypeName[],
 ): IntegrationTypeValue[] {
-  return [...new Set(types.map((t) => INTEGRATION_NAME_TO_API[t]))];
+  return [...new Set(types.map((t) => INTEGRATION_NAME_TO_API[t]))].sort((a, b) => a - b);
 }
 
-/** Map friendly names → Discord `contexts` integers. */
+/** Map friendly names → Discord `contexts` integers (sorted for stable deploy diffs). */
 export function interactionContextsToApi(
   contexts: readonly InteractionContextName[],
 ): InteractionContextTypeValue[] {
-  return [...new Set(contexts.map((c) => CONTEXT_NAME_TO_API[c]))];
+  return [...new Set(contexts.map((c) => CONTEXT_NAME_TO_API[c]))].sort((a, b) => a - b);
 }
 
 /** Parse Discord `context` field on an interaction. */

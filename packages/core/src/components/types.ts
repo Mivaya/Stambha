@@ -28,6 +28,30 @@ export const MessageFlags = {
 
 export type MessageFlag = (typeof MessageFlags)[keyof typeof MessageFlags];
 
+/**
+ * Discord channel flags (bitfield on channel objects).
+ * @see https://docs.discord.com/developers/change-log — Channel Obfuscation
+ */
+export const ChannelFlags = {
+  /**
+   * Channel metadata is obfuscated because the bot lacks `VIEW_CHANNEL`
+   * (`1 << 17`). Name is typically `"___hidden___"`.
+   */
+  Obfuscated: 1 << 17,
+} as const;
+
+export type ChannelFlag = (typeof ChannelFlags)[keyof typeof ChannelFlags];
+
+/** True when a channel payload carries {@link ChannelFlags.Obfuscated}. */
+export function isChannelObfuscated(channel: {
+  flags?: number | null;
+  name?: string | null;
+}): boolean {
+  const flags = channel.flags ?? 0;
+  if ((flags & ChannelFlags.Obfuscated) === ChannelFlags.Obfuscated) return true;
+  return channel.name === "___hidden___";
+}
+
 /** Separator padding sizes (API). */
 export const SeparatorSpacing = {
   Small: 1,

@@ -31,6 +31,8 @@ export interface GatewayShardOptions {
   identifyBudget?: IdentifyBudget;
   createWebSocket: CreateGatewayWebSocket;
   properties?: BuildIdentifyOptions["properties"];
+  /** Discord Identify `capabilities` bitfield (passed through to {@link buildIdentifyPayload}). */
+  capabilities?: number;
   /**
    * Base delay (ms) for exponential reconnect backoff (default 1000).
    * Legacy fixed-delay name — still accepted as the backoff base.
@@ -246,6 +248,9 @@ export class GatewayShard {
       };
       if (this.options.properties !== undefined) {
         identifyOptions.properties = this.options.properties;
+      }
+      if (this.options.capabilities !== undefined) {
+        identifyOptions.capabilities = this.options.capabilities;
       }
       const identify = buildIdentifyPayload(identifyOptions);
       this.send(identify);

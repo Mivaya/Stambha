@@ -1,5 +1,19 @@
 /** Minimal camelCase shapes for Tier 4 hub payloads (not full Discord API types). */
 
+/**
+ * `RATE_LIMITED` — currently emitted for Request Guild Members (opcode 8) when
+ * requesting **all** members (`limit: 0`, empty `query`) more than once per guild
+ * per bot every 30 seconds.
+ */
+export interface GatewayRateLimited {
+  opcode?: number;
+  retryAfter?: number;
+  meta?: {
+    guildId?: string;
+    nonce?: string;
+  };
+}
+
 export interface GatewayApplicationCommandPermissionsUpdate {
   id: string;
   applicationId: string;
