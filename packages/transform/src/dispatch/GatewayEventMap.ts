@@ -35,6 +35,7 @@ import type {
   GatewayAutoModerationRuleCreate,
   GatewayEntitlementCreate,
   GatewayGuildSoundboardSoundCreate,
+  GatewayRateLimited,
   GatewaySubscriptionCreate,
   GatewayUserUpdate,
   GatewayVoiceChannelEffectSend,
@@ -198,6 +199,7 @@ export interface GatewayEventMap {
   guildStickersUpdate: GatewayGuildStickersUpdate;
 
   // Tier 4
+  rateLimited: GatewayRateLimited;
   applicationCommandPermissionsUpdate: GatewayApplicationCommandPermissionsUpdate;
   autoModerationRuleCreate: GatewayAutoModerationRuleCreate;
   autoModerationRuleUpdate: GatewayAutoModerationRuleCreate;
