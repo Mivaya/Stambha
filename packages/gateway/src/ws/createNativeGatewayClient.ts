@@ -41,6 +41,11 @@ export interface NativeGatewayClientOptions {
   /** Inject WebSocket factory (tests). */
   createWebSocket?: CreateGatewayWebSocket;
   properties?: BuildIdentifyOptions["properties"];
+  /**
+   * Discord Identify `capabilities` bitfield (e.g. private channel obfuscation testing).
+   * @see {@link GatewayIdentifyCapability}
+   */
+  capabilities?: number;
   reconnectDelayMs?: number;
   /** Cap for exponential reconnect backoff (default 60_000). */
   reconnectMaxDelayMs?: number;
@@ -128,6 +133,7 @@ export async function createNativeGatewayClient(
       createWebSocket,
     };
     if (options.properties !== undefined) shardOptions.properties = options.properties;
+    if (options.capabilities !== undefined) shardOptions.capabilities = options.capabilities;
     if (options.reconnectDelayMs !== undefined)
       shardOptions.reconnectDelayMs = options.reconnectDelayMs;
     if (options.reconnectMaxDelayMs !== undefined)

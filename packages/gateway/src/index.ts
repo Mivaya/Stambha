@@ -95,11 +95,15 @@ export {
 } from "./shard/calculator.js";
 export {
   type BuildIdentifyOptions,
+  type BuildRequestGuildMembersOptions,
   buildIdentifyPayload,
+  buildRequestGuildMembersPayload,
   buildResumePayload,
   combineIntents,
   type GatewayIdentifyPayload,
+  GatewayIdentifyCapability,
   GatewayIntent,
+  type GatewayRequestGuildMembersPayload,
   type GatewayResumePayload,
 } from "./shard/identify.js";
 export {

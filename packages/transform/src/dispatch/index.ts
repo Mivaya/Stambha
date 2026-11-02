@@ -74,6 +74,7 @@ export {
   type GatewayAutoModerationRuleCreate,
   type GatewayEntitlementCreate,
   type GatewayGuildSoundboardSoundCreate,
+  type GatewayRateLimited,
   type GatewaySubscriptionCreate,
   type GatewayUserUpdate,
   type GatewayVoiceChannelEffectSend,
